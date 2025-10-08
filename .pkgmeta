@@ -1,0 +1,11 @@
+ignore:
+  - README.md
+  - tmp
+  - scripts
+  - annotations.lua
+  - AssetsRaw
+plain-copy:
+  - Core
+  - Display
+  - API
+  - Assets
