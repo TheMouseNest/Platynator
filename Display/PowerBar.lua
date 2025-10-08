@@ -95,7 +95,7 @@ function addonTable.Display.PowerBarMixin:ApplyPower()
     self.background:SetTexture(fs:GetText())
     local currentPower = 0
     if powerKind == Enum.PowerType.Runes then
-      for index = 1, maxPower do
+      for index = 1, addonTable.Constants.DeathKnightMaxRunes do
         local _, _, ready = GetRuneCooldown(index)
         if ready then
           currentPower = currentPower + 1
@@ -107,7 +107,6 @@ function addonTable.Display.PowerBarMixin:ApplyPower()
     fs:SetFormattedText(addonTable.style.power.filled, maxPower, currentPower)
     self.main:SetTexture(fs:GetText())
     local color = self:GetColor() or CreateColor(240/255, 201/255, 0/255)
-    DevTools_Dump(color)
     self.main:SetVertexColor(color.r, color.g, color.b)
   else
     self:Hide()
