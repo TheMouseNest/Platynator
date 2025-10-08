@@ -1,0 +1,38 @@
+## Interface: 120000, 110205
+## Title: Platynator
+## Version: @project-version@
+## Author: plusmouse
+## SavedVariables: PLATYNATOR_CONFIG
+## SavedVariablesPerCharacter: PLATYNATOR_CURRENT_PROFILE
+
+## Category: Unit Frames
+## Category-deDE: Einheitenfenster
+## Category-esES: Marcos de unidades
+## Category-esMX: Marcos de unidades
+## Category-frFR: Portraits d'unités
+## Category-itIT: Riquadri delle unità
+## Category-koKR: 개체창
+## Category-ptBR: Quadros de unidade
+## Category-ruRU: Рамки юнитов
+## Category-zhCN: 单位框体
+## Category-zhTW: 單位框架
+
+Locales.lua
+
+Core/Objects.lua
+Core/Locales.lua
+Core/Constants.lua
+Core/Config.lua
+Core/Utilities.lua
+Core/Dialogs.lua
+Core/SlashCmd.lua
+Core/Initialize.lua
+
+Display/Initialize.lua
+Display/Styles.lua
+Display/Nameplate.lua
+Display/HealthBar.lua
+Display/CastBar.lua
+Display/PowerBar.lua
+
+API/Main.lua
