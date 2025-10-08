@@ -1,19 +1,50 @@
 ---@class addonTablePlatynator
 local addonTable = select(2, ...)
 
-local classToPower = {
-  ["ROGUE"] = Enum.PowerType.ComboPoints,
-  ["DRUID"] = Enum.PowerType.ComboPoints,
-  ["DEATHKNIGHT"] = Enum.PowerType.Runes,
-  ["WARLOCK"] = Enum.PowerType.SoulShards,
-  ["PALADIN"] = Enum.PowerType.HolyPower,
-  ["MONK"] = Enum.PowerType.Chi,
-  ["MAGE"] = Enum.PowerType.ArcaneCharges,
+local specializationToPower = {
+  --Rogue (all specs)
+  [259] = Enum.PowerType.ComboPoints,
+  [260] = Enum.PowerType.ComboPoints,
+  [261] = Enum.PowerType.ComboPoints,
+  --Druid (feral only)
+  [103] = Enum.PowerType.ComboPoints,
+  --Death Knight (all specs)
+  [250] = Enum.PowerType.Runes,
+  [251] = Enum.PowerType.Runes,
+  [252] = Enum.PowerType.Runes,
+  --Warlock (all specs)
+  [265] = Enum.PowerType.SoulShards,
+  [266] = Enum.PowerType.SoulShards,
+  [267] = Enum.PowerType.SoulShards,
+  --Paladin (ret only)
+  [70] = Enum.PowerType.HolyPower,
+  --Monk (windwalker)
+  [269] = Enum.PowerType.Chi,
+  --Mage (arcane only)
+  [62] = Enum.PowerType.ArcaneCharges,
 }
 
-local classToColor = {
-  ["DEATHKNIGHT"] = CreateColorFromRGBHexString("4282d1"),
-  ["PALADIN"] = CreateColorFromRGBHexString("f0c900"),
+local specializationToColor = {
+  --Rogue (all specs)
+  [259] = nil,
+  [260] = nil,
+  [261] = nil,
+  --Druid (feral only)
+  [103] = nil,
+  --Death Knight (all specs)
+  [250] = CreateColorFromRGBHexString("fc3c3f"),
+  [251] = CreateColorFromRGBHexString("4282d1"),
+  [252] = CreateColorFromRGBHexString("3cc435"),
+  --Warlock (all specs)
+  [265] = CreateColorFromRGBHexString("b61ff2"),
+  [266] = CreateColorFromRGBHexString("b61ff2"),
+  [267] = CreateColorFromRGBHexString("b61ff2"),
+  --Paladin (ret only)
+  [70] = CreateColorFromRGBHexString("f0c900"),
+  --Monk (windwalker)
+  [269] = nil,
+  --Mage (arcane only)
+  [62] = nil,
 }
 
 local fs = UIParent:CreateFontString(nil, nil, "GameFontNormal")
@@ -21,9 +52,6 @@ fs:Hide()
 
 addonTable.Display.PowerBarMixin = {}
 function addonTable.Display.PowerBarMixin:OnLoad()
-  local playerClass = UnitClassBase("player")
-  self.powerKind = classToPower[playerClass]
-
   self.background = self:CreateTexture()
   self.background:SetSize(addonTable.style.power.width * addonTable.style.power.scale, addonTable.style.power.height*addonTable.style.power.scale)
   self.background:SetPoint("CENTER")
@@ -32,8 +60,6 @@ function addonTable.Display.PowerBarMixin:OnLoad()
   self.main = self:CreateTexture()
   self.main:SetSize(addonTable.style.power.width * addonTable.style.power.scale, addonTable.style.power.height*addonTable.style.power.scale)
   self.main:SetPoint("CENTER")
-  local color = classToColor[playerClass] or CreateColor(240/255, 201/255, 0/255)
-  self.main:SetVertexColor(color.r, color.g, color.b)
 
   self:SetSize(addonTable.style.power.width * addonTable.style.power.scale, addonTable.style.power.height*addonTable.style.power.scale)
 end
@@ -45,15 +71,30 @@ function addonTable.Display.PowerBarMixin:SetUnit(unit)
   end
 end
 
+function addonTable.Display.PowerBarMixin:GetPower()
+  local specIndex = C_SpecializationInfo.GetSpecialization()
+  local specID = C_SpecializationInfo.GetSpecializationInfo(specIndex)
+
+  return specializationToPower[specID]
+end
+
+function addonTable.Display.PowerBarMixin:GetColor()
+  local specIndex = C_SpecializationInfo.GetSpecialization()
+  local specID = C_SpecializationInfo.GetSpecializationInfo(specIndex)
+
+  return specializationToColor[specID]
+end
+
 function addonTable.Display.PowerBarMixin:ApplyPower()
-  if UnitIsUnit("target", self.unit) and self.powerKind and UnitCanAttack("player", self.unit) then
+  local powerKind = self:GetPower()
+  if powerKind and UnitIsUnit("target", self.unit) and UnitCanAttack("player", self.unit) then
     self:Show()
 
-    local maxPower = UnitPowerMax("player", self.powerKind)
+    local maxPower = UnitPowerMax("player", powerKind)
     fs:SetFormattedText(addonTable.style.power.blank, maxPower)
     self.background:SetTexture(fs:GetText())
     local currentPower = 0
-    if self.powerKind == Enum.PowerType.Runes then
+    if powerKind == Enum.PowerType.Runes then
       for index = 1, maxPower do
         local _, _, ready = GetRuneCooldown(index)
         if ready then
@@ -61,10 +102,13 @@ function addonTable.Display.PowerBarMixin:ApplyPower()
         end
       end
     else
-      currentPower = UnitPower("player", self.powerKind)
+      currentPower = UnitPower("player", powerKind)
     end
     fs:SetFormattedText(addonTable.style.power.filled, maxPower, currentPower)
     self.main:SetTexture(fs:GetText())
+    local color = self:GetColor()
+    DevTools_Dump(color)
+    self.main:SetVertexColor(color.r, color.g, color.b)
   else
     self:Hide()
   end
