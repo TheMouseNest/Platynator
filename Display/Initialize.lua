@@ -39,6 +39,7 @@ function addonTable.Display.ManagerMixin:OnLoad()
   self:RegisterEvent("UNIT_HEALTH");
 
   self:RegisterUnitEvent("UNIT_POWER_UPDATE", "player")
+  self:RegisterEvent("RUNE_POWER_UPDATE")
 
   hooksecurefunc(NamePlateDriverFrame, "OnNamePlateAdded", function(_, unit)
     local nameplate = C_NamePlate.GetNamePlateForUnit(unit, issecure())
@@ -81,7 +82,7 @@ function addonTable.Display.ManagerMixin:OnEvent(eventName, ...)
     else
       self.lastTarget = nil
     end
-  elseif eventName == "UNIT_POWER_UPDATE" then
+  elseif eventName == "UNIT_POWER_UPDATE" or eventName == "RUNE_POWER_UPDATE" then
     local new = C_NamePlate.GetNamePlateForUnit("target")
     if new then
       self.lastTarget = self.nameplateDisplays[new]

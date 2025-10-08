@@ -19,6 +19,12 @@ function addonTable.Display.NameplateMixin:OnLoad()
   self.name:SetWidth(self.health:GetWidth())
   self.name:SetJustifyH("CENTER")
   self.name:SetPoint("BOTTOMLEFT", self.health, "TOPLEFT", 2, 2)
+
+  self.questMarker = self.nameFrame:CreateTexture()
+  self.questMarker:SetTexture("Interface/AddOns/Platynator/Assets/quest-marker.png")
+  self.questMarker:SetSize(addonTable.style.healthBar.scale * 48, addonTable.style.healthBar.scale * 170)
+  self.questMarker:SetPoint("RIGHT", self.health, "LEFT", -20)
+  self.questMarker:Hide()
 end
 
 function addonTable.Display.NameplateMixin:Install(nameplate)
@@ -42,6 +48,7 @@ function addonTable.Display.NameplateMixin:SetUnit(unit)
     self:Show()
     self:RegisterUnitEvent("UNIT_NAME_UPDATE", self.unit)
     self.name:SetText(UnitName(self.unit))
+    self.questMarker:SetShown(UnitIsQuestBoss(self.unit))
     if addonTable.Constants.IsMidnight then
       C_NamePlateManager.SetNamePlateSimplified(self.unit, false)
     end
