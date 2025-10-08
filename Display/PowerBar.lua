@@ -57,6 +57,9 @@ function addonTable.Display.PowerBarMixin:OnLoad()
   self.background:SetPoint("CENTER")
   self.background:SetDrawLayer("BACKGROUND")
 
+  self.powerKind = self:GetPower()
+  self.powerColor = self:GetColor() or CreateColor(240/255, 201/255, 0/255)
+
   self.main = self:CreateTexture()
   self.main:SetSize(addonTable.style.power.width * addonTable.style.power.scale, addonTable.style.power.height*addonTable.style.power.scale)
   self.main:SetPoint("CENTER")
@@ -86,7 +89,7 @@ function addonTable.Display.PowerBarMixin:GetColor()
 end
 
 function addonTable.Display.PowerBarMixin:ApplyPower()
-  local powerKind = self:GetPower()
+  local powerKind = self.powerKind
   if powerKind and UnitIsUnit("target", self.unit) and UnitCanAttack("player", self.unit) then
     self:Show()
 
@@ -106,7 +109,7 @@ function addonTable.Display.PowerBarMixin:ApplyPower()
     end
     fs:SetFormattedText(addonTable.style.power.filled, maxPower, currentPower)
     self.main:SetTexture(fs:GetText())
-    local color = self:GetColor() or CreateColor(240/255, 201/255, 0/255)
+    local color = self.powerColor
     self.main:SetVertexColor(color.r, color.g, color.b)
   else
     self:Hide()
