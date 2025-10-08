@@ -106,7 +106,7 @@ function addonTable.Display.PowerBarMixin:ApplyPower()
     end
     fs:SetFormattedText(addonTable.style.power.filled, maxPower, currentPower)
     self.main:SetTexture(fs:GetText())
-    local color = self:GetColor()
+    local color = self:GetColor() or CreateColor(240/255, 201/255, 0/255)
     DevTools_Dump(color)
     self.main:SetVertexColor(color.r, color.g, color.b)
   else
