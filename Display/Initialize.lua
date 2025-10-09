@@ -91,7 +91,7 @@ function addonTable.Display.ManagerMixin:OnEvent(eventName, ...)
     else
       self.lastTarget = nil
     end
-  elseif eventName == "QUEST_LOG_UDPATE" then
+  elseif eventName == "QUEST_LOG_UPDATE" then
     for _, display in pairs(self.nameplateDisplays) do
       display:UpdateQuestMarker()
     end
