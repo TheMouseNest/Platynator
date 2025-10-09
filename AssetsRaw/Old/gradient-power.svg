@@ -2,14 +2,14 @@
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 
 <svg
-   width="33.759998mm"
+   width="34mm"
    height="5mm"
-   viewBox="0 0 33.759998 5"
+   viewBox="0 0 34 5"
    version="1.1"
    id="svg1"
    inkscape:version="1.4.2 (ebf0e940d0, 2025-05-08)"
-   sodipodi:docname="power-full.svg"
-   inkscape:export-filename="power-full-bg.png"
+   sodipodi:docname="kui-power.svg"
+   inkscape:export-filename="kui/power-7.png"
    inkscape:export-xdpi="747.05884"
    inkscape:export-ydpi="747.05884"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
@@ -28,14 +28,14 @@
      inkscape:deskcolor="#d1d1d1"
      inkscape:document-units="mm"
      inkscape:zoom="5.8406941"
-     inkscape:cx="78.329731"
-     inkscape:cy="11.043208"
+     inkscape:cx="10.700783"
+     inkscape:cy="41.347825"
      inkscape:window-width="2560"
      inkscape:window-height="1368"
      inkscape:window-x="0"
      inkscape:window-y="0"
      inkscape:window-maximized="1"
-     inkscape:current-layer="g1" />
+     inkscape:current-layer="layer1" />
   <defs
      id="defs1">
     <linearGradient
@@ -47,7 +47,7 @@
        y1="91.513588"
        x2="86.101807"
        y2="95.993584"
-       gradientTransform="translate(101.03294,68.519442)" />
+       gradientTransform="translate(101.11619,68.519442)" />
     <linearGradient
        id="linearGradient20"
        inkscape:collect="always">
@@ -69,7 +69,7 @@
        y1="91.513588"
        x2="86.101807"
        y2="95.993584"
-       gradientTransform="translate(96.252957,68.536873)" />
+       gradientTransform="translate(96.373623,68.536873)" />
     <linearGradient
        inkscape:collect="always"
        xlink:href="#linearGradient20"
@@ -79,7 +79,7 @@
        y1="91.513588"
        x2="86.101807"
        y2="95.993584"
-       gradientTransform="translate(91.472939,68.488724)" />
+       gradientTransform="translate(91.631056,68.488724)" />
     <linearGradient
        inkscape:collect="always"
        xlink:href="#linearGradient20"
@@ -89,7 +89,7 @@
        y1="91.513588"
        x2="86.101807"
        y2="95.993584"
-       gradientTransform="translate(86.692944,68.550169)" />
+       gradientTransform="translate(86.888481,68.550169)" />
     <linearGradient
        inkscape:collect="always"
        xlink:href="#linearGradient20"
@@ -99,13 +99,13 @@
        y1="91.513588"
        x2="86.101807"
        y2="95.993584"
-       gradientTransform="translate(81.912946,68.536873)" />
+       gradientTransform="translate(82.145918,68.536873)" />
     <linearGradient
        inkscape:collect="always"
        xlink:href="#linearGradient20"
        id="linearGradient1"
        gradientUnits="userSpaceOnUse"
-       gradientTransform="translate(105.81293,68.519438)"
+       gradientTransform="translate(105.85807,68.519438)"
        x1="86.101807"
        y1="91.513588"
        x2="86.101807"
@@ -115,7 +115,7 @@
        xlink:href="#linearGradient20"
        id="linearGradient2"
        gradientUnits="userSpaceOnUse"
-       gradientTransform="translate(110.59293,68.519444)"
+       gradientTransform="translate(110.59997,68.519444)"
        x1="86.101807"
        y1="91.513588"
        x2="86.101807"
@@ -135,43 +135,43 @@
       <circle
          style="fill:url(#linearGradient21);stroke:#000000;stroke-width:0.7;stroke-dasharray:none"
          id="path1-3"
-         cx="187.13477"
+         cx="187.21802"
          cy="162.27303"
          r="1.89" />
       <circle
          style="fill:url(#linearGradient1);stroke:#000000;stroke-width:0.7;stroke-dasharray:none"
          id="path1-3-2"
-         cx="191.91476"
+         cx="191.9599"
          cy="162.27303"
          r="1.89" />
       <circle
          style="fill:url(#linearGradient2);stroke:#000000;stroke-width:0.7;stroke-dasharray:none"
          id="path1-3-2-6"
-         cx="196.69476"
+         cx="196.70181"
          cy="162.27303"
          r="1.89" />
       <circle
          style="fill:url(#linearGradient22);stroke:#000000;stroke-width:0.7;stroke-dasharray:none"
          id="path1-9"
-         cx="182.35477"
+         cx="182.47543"
          cy="162.29045"
          r="1.89" />
       <circle
          style="fill:url(#linearGradient23);stroke:#000000;stroke-width:0.7;stroke-dasharray:none"
          id="path1-36"
-         cx="177.57477"
+         cx="177.73288"
          cy="162.24231"
          r="1.89" />
       <circle
          style="fill:url(#linearGradient24);stroke:#000000;stroke-width:0.7;stroke-dasharray:none"
          id="path1-61"
-         cx="172.79477"
+         cx="172.99031"
          cy="162.30374"
          r="1.89" />
       <circle
          style="fill:url(#linearGradient25);stroke:#000000;stroke-width:0.7;stroke-dasharray:none"
          id="path1-69"
-         cx="168.01477"
+         cx="168.24774"
          cy="162.29045"
          r="1.89" />
     </g>
