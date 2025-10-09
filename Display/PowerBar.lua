@@ -47,9 +47,6 @@ local specializationToColor = {
   [62] = nil,
 }
 
-local fs = UIParent:CreateFontString(nil, nil, "GameFontNormal")
-fs:Hide()
-
 addonTable.Display.PowerBarMixin = {}
 function addonTable.Display.PowerBarMixin:OnLoad()
   self.background = CreateFrame("StatusBar", nil, self)

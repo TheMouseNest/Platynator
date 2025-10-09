@@ -15,6 +15,7 @@ function addonTable.Display.Initialize()
     end
     CreateFontFamily("PlatynatorNameplateFont", members)
   end
+  PlatynatorNameplateFont:SetShadowOffset(1, -1)
 
   local manager = CreateFrame("Frame")
   Mixin(manager, addonTable.Display.ManagerMixin)

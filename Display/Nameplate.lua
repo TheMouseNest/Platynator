@@ -15,7 +15,6 @@ function addonTable.Display.NameplateMixin:OnLoad()
 
   self.nameFrame = CreateFrame("Frame", nil, self)
   self.name = self.nameFrame:CreateFontString(nil, nil, "PlatynatorNameplateFont")
-  self.name:SetShadowOffset(1, -1)
   self.name:SetWidth(self.health:GetWidth())
   self.name:SetJustifyH("CENTER")
   self.name:SetPoint("BOTTOMLEFT", self.health, "TOPLEFT", 2, 2)
@@ -33,7 +32,7 @@ end
 function addonTable.Display.NameplateMixin:Install(nameplate)
   self:SetParent(nameplate)
   self:SetAllPoints()
-  nameplate.UnitFrame:SetParent(addonTable.hiddenFrame)
+  nameplate.UnitFrame:SetAlpha(0) --- XXX: Remove when unit health formatting available
   if addonTable.Constants.IsMidnight then
     nameplate.UnitFrame.HitTestFrame:SetParent(nameplate)
     nameplate.UnitFrame.HitTestFrame:ClearAllPoints()

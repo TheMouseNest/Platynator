@@ -1,6 +1,9 @@
 ---@class addonTablePlatynator
 local addonTable = select(2, ...)
 
+local fs = UIParent:CreateFontString(nil, nil, "GameFontNormal")
+fs:Hide()
+
 addonTable.Display.HealthBarMixin = {}
 function addonTable.Display.HealthBarMixin:OnLoad()
   self:SetScript("OnEvent", self.OnEvent)
@@ -46,6 +49,10 @@ function addonTable.Display.HealthBarMixin:OnLoad()
   self.targetHighlight:SetPoint("CENTER")
   self.targetHighlight:SetDrawLayer("BACKGROUND", -5)
 
+  self.healthText = self.healthBar:CreateFontString(nil, nil, "PlatynatorNameplateFont")
+  self.healthText:SetPoint("CENTER")
+  self.healthText:SetDrawLayer("OVERLAY", 6)
+
   self:SetSize(addonTable.style.healthBar.width*addonTable.style.healthBar.scale, addonTable.style.healthBar.height*addonTable.style.healthBar.scale)
 end
 
@@ -55,9 +62,12 @@ function addonTable.Display.HealthBarMixin:SetUnit(unit)
     self:RegisterUnitEvent("UNIT_HEALTH", self.unit)
     self:RegisterUnitEvent("UNIT_MAXHEALTH", self.unit)
     self:RegisterUnitEvent("UNIT_THREAT_LIST_UPDATE", self.unit)
+    local unitFrame = C_NamePlate.GetNamePlateForUnit(self.unit).UnitFrame
+    self.healthSource = unitFrame.HealthBarsContainer.healthBar
     self.healthBar:SetMinMaxValues(0, UnitHealthMax(self.unit))
     self.healthBar:SetValue(UnitHealth(self.unit))
     self:UpdateColor()
+    self:UpdateHealth()
     self:ApplyTarget()
   else
     self:UnregisterAllEvents()
@@ -126,8 +136,23 @@ end
 function addonTable.Display.HealthBarMixin:UpdateHealth()
   if UnitIsDeadOrGhost(self.unit) then
     self.healthBar:SetValue(0)
+    self.healthText:SetText("0")
   else
     self.healthBar:SetValue(UnitHealth(self.unit))
+    if addonTable.Constants.IsMidnight then
+      local right = self.healthSource.RightText:GetText()
+      local left = self.healthSource.LeftText:GetText()
+      --- XXX: Remove when unit health formatting available
+      if type(right) ~= "nil" and type(left) ~= "nil" then
+        fs:SetFormattedText("%s (%s)", right, left)
+      else
+        fs:SetText("")
+      end
+      self.healthText:SetText(fs:GetText())
+    else
+      local health = UnitHealth(self.unit)
+      self.healthText:SetFormattedText("%s (%s)", FormatLargeNumber(health), math.floor(health/UnitHealthMax(self.unit)*100) .. "%")
+    end
   end
 end
 

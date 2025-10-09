@@ -18,6 +18,11 @@ function addonTable.Core.Initialize()
 
   addonTable.SlashCmd.Initialize()
 
+  if addonTable.Constants.IsMidnight then
+    SetCVarBitfield(NamePlateConstants.INFO_DISPLAY_CVAR, Enum.NamePlateInfoDisplay.CurrentHealthPercent, true)
+    SetCVarBitfield(NamePlateConstants.INFO_DISPLAY_CVAR, Enum.NamePlateInfoDisplay.CurrentHealthValue, true)
+  end
+
   addonTable.Display.Initialize()
 end
 
