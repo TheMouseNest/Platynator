@@ -48,8 +48,8 @@ addonTable.Display.Styles = {
     power = {
       blank = "Interface/AddOns/Platynator/Assets/Power/gradient-inactive.png",
       filled = "Interface/AddOns/Platynator/Assets/Power/gradient-active.png",
-      width = 1200,
-      height = 311,
+      width = 993,
+      height = 147,
       scale = 2/3 * (addonTable.Constants.IsMidnight and 1/7 or 1/9),
       offset = {x = 0, y = 7}
     },
@@ -112,7 +112,7 @@ addonTable.Display.Styles = {
     power = {
       blank = "Interface/AddOns/Platynator/Assets/Power/gradient-inactive.png",
       filled = "Interface/AddOns/Platynator/Assets/Power/gradient-active.png",
-      width = 1000,
+      width = 993,
       height = 147,
       scale = 2/3 * (addonTable.Constants.IsMidnight and 1/8 or 1/10),
       offset = {x = 0, y = addonTable.Constants.IsMidnight and 7 or 6}
