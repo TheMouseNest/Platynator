@@ -62,7 +62,7 @@ function addonTable.Display.NameplateMixin:SetUnit(unit)
     self:Show()
     self:RegisterUnitEvent("UNIT_NAME_UPDATE", self.unit)
     self.name:SetText(UnitName(self.unit))
-    self.questMarker:SetShown(UnitIsQuestBoss(self.unit) or C_QuestLog.UnitIsRelatedToActiveQuest(self.unit))
+    self:UpdateQuestMarker()
     if addonTable.Constants.IsMidnight then
       C_NamePlateManager.SetNamePlateSimplified(self.unit, false)
     end
@@ -70,6 +70,13 @@ function addonTable.Display.NameplateMixin:SetUnit(unit)
     self:Hide()
     self:UnregisterAllEvents()
   end
+end
+
+function addonTable.Display.NameplateMixin:UpdateQuestMarker()
+  if not self.unit then
+    return
+  end
+  self.questMarker:SetShown(UnitIsQuestBoss(self.unit) or C_QuestLog.UnitIsRelatedToActiveQuest(self.unit))
 end
 
 function addonTable.Display.NameplateMixin:UpdateForTarget()

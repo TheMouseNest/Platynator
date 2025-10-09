@@ -37,8 +37,7 @@ function addonTable.Display.ManagerMixin:OnLoad()
   self:RegisterEvent("PLAYER_SOFT_INTERACT_CHANGED");
   self:RegisterEvent("PLAYER_SOFT_FRIEND_CHANGED");
   self:RegisterEvent("PLAYER_SOFT_ENEMY_CHANGED");
-  self:RegisterEvent("UNIT_THREAT_LIST_UPDATE");
-  self:RegisterEvent("UNIT_HEALTH");
+  self:RegisterEvent("QUEST_LOG_UPDATE");
 
   self:RegisterUnitEvent("UNIT_POWER_UPDATE", "player")
   self:RegisterEvent("RUNE_POWER_UPDATE")
@@ -91,6 +90,10 @@ function addonTable.Display.ManagerMixin:OnEvent(eventName, ...)
       self.nameplateDisplays[new]:UpdateForTarget()
     else
       self.lastTarget = nil
+    end
+  elseif eventName == "QUEST_LOG_UDPATE" then
+    for _, display in pairs(self.nameplateDisplays) do
+      display:UpdateQuestMarker()
     end
   end
 end
