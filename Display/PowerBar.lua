@@ -52,17 +52,21 @@ fs:Hide()
 
 addonTable.Display.PowerBarMixin = {}
 function addonTable.Display.PowerBarMixin:OnLoad()
-  self.background = self:CreateTexture()
-  self.background:SetSize(addonTable.style.power.width * addonTable.style.power.scale, addonTable.style.power.height*addonTable.style.power.scale)
+  self.background = CreateFrame("StatusBar", nil, self)
+  self.background:SetStatusBarTexture(addonTable.style.power.blank)
   self.background:SetPoint("CENTER")
-  self.background:SetDrawLayer("BACKGROUND")
+  self.background:SetSize(addonTable.style.power.width * addonTable.style.power.scale, addonTable.style.power.height*addonTable.style.power.scale)
+  self.background:SetFillStyle("CENTER")
+  self.background:SetMinMaxValues(0, 7)
 
   self.powerKind = self:GetPower()
   self.powerColor = self:GetColor() or CreateColor(240/255, 201/255, 0/255)
 
-  self.main = self:CreateTexture()
+  self.main = CreateFrame("StatusBar", nil, self)
+  self.main:SetStatusBarTexture(addonTable.style.power.filled)
+  self.main:SetPoint("LEFT", self.background:GetStatusBarTexture())
   self.main:SetSize(addonTable.style.power.width * addonTable.style.power.scale, addonTable.style.power.height*addonTable.style.power.scale)
-  self.main:SetPoint("CENTER")
+  self.main:SetMinMaxValues(0, 7)
 
   self:SetSize(addonTable.style.power.width * addonTable.style.power.scale, addonTable.style.power.height*addonTable.style.power.scale)
 end
@@ -94,8 +98,7 @@ function addonTable.Display.PowerBarMixin:ApplyPower()
     self:Show()
 
     local maxPower = UnitPowerMax("player", powerKind)
-    fs:SetFormattedText(addonTable.style.power.blank, maxPower)
-    self.background:SetTexture(fs:GetText())
+    self.background:SetValue(maxPower)
     local currentPower = 0
     if powerKind == Enum.PowerType.Runes then
       for index = 1, addonTable.Constants.DeathKnightMaxRunes do
@@ -107,10 +110,9 @@ function addonTable.Display.PowerBarMixin:ApplyPower()
     else
       currentPower = UnitPower("player", powerKind)
     end
-    fs:SetFormattedText(addonTable.style.power.filled, maxPower, currentPower)
-    self.main:SetTexture(fs:GetText())
+    self.main:SetValue(currentPower)
     local color = self.powerColor
-    self.main:SetVertexColor(color.r, color.g, color.b)
+    self.main:GetStatusBarTexture():SetVertexColor(color.r, color.g, color.b)
   else
     self:Hide()
   end
