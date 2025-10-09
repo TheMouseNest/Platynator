@@ -32,8 +32,8 @@ end
 function addonTable.Display.NameplateMixin:Install(nameplate)
   self:SetParent(nameplate)
   self:SetAllPoints()
-  nameplate.UnitFrame:SetAlpha(0) --- XXX: Remove when unit health formatting available
   if addonTable.Constants.IsMidnight then
+    nameplate.UnitFrame:SetAlpha(0) --- XXX: Remove when unit health formatting available
     nameplate.UnitFrame.HitTestFrame:SetParent(nameplate)
     nameplate.UnitFrame.HitTestFrame:ClearAllPoints()
     nameplate.UnitFrame.HitTestFrame:SetPoint("TOPLEFT", self.name)
@@ -47,6 +47,8 @@ function addonTable.Display.NameplateMixin:Install(nameplate)
     nameplate.UnitFrame.AurasFrame:ClearAllPoints()
     nameplate.UnitFrame.AurasFrame:SetPoint("BOTTOMLEFT", self.name, "TOPLEFT")
   else
+    nameplate.UnitFrame:SetParent(addonTable.hiddenFrame)
+    nameplate.UnitFrame:UnregisterAllEvents()
     -- NYI
   end
 end
