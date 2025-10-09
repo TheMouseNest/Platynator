@@ -31,13 +31,14 @@ function addonTable.Display.ManagerMixin:OnLoad()
   self:SetScript("OnEvent", self.OnEvent)
 
   self:RegisterEvent("NAME_PLATE_CREATED")
-  self:RegisterEvent("NAME_PLATE_UNIT_ADDED");
-  self:RegisterEvent("NAME_PLATE_UNIT_REMOVED");
-  self:RegisterEvent("PLAYER_TARGET_CHANGED");
-  self:RegisterEvent("PLAYER_SOFT_INTERACT_CHANGED");
-  self:RegisterEvent("PLAYER_SOFT_FRIEND_CHANGED");
-  self:RegisterEvent("PLAYER_SOFT_ENEMY_CHANGED");
-  self:RegisterEvent("QUEST_LOG_UPDATE");
+  self:RegisterEvent("NAME_PLATE_UNIT_ADDED")
+  self:RegisterEvent("NAME_PLATE_UNIT_REMOVED")
+  self:RegisterEvent("PLAYER_TARGET_CHANGED")
+  self:RegisterEvent("PLAYER_SOFT_INTERACT_CHANGED")
+  self:RegisterEvent("PLAYER_SOFT_FRIEND_CHANGED")
+  self:RegisterEvent("PLAYER_SOFT_ENEMY_CHANGED")
+  self:RegisterEvent("UPDATE_MOUSEOVER_UNIT")
+  self:RegisterEvent("QUEST_LOG_UPDATE")
 
   self:RegisterUnitEvent("UNIT_POWER_UPDATE", "player")
   self:RegisterEvent("RUNE_POWER_UPDATE")
