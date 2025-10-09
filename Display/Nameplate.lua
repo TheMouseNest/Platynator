@@ -22,9 +22,12 @@ function addonTable.Display.NameplateMixin:OnLoad()
 
   self.questMarker = self.nameFrame:CreateTexture()
   self.questMarker:SetTexture("Interface/AddOns/Platynator/Assets/quest-marker.png")
-  self.questMarker:SetSize(addonTable.style.healthBar.scale * 48, addonTable.style.healthBar.scale * 170)
-  self.questMarker:SetPoint("RIGHT", self.health, "LEFT", -20)
+  self.questMarker:SetSize(addonTable.style.healthBar.scale * 48 * 0.9, addonTable.style.healthBar.scale * 170 * 0.9)
+  self.questMarker:SetPoint("RIGHT", self.health, "LEFT", -2, 0)
   self.questMarker:Hide()
+
+  self.AurasFrame = nil
+  self.OldUnitFrame = nil
 end
 
 function addonTable.Display.NameplateMixin:Install(nameplate)
@@ -36,6 +39,16 @@ function addonTable.Display.NameplateMixin:Install(nameplate)
     nameplate.UnitFrame.HitTestFrame:ClearAllPoints()
     nameplate.UnitFrame.HitTestFrame:SetPoint("TOPLEFT", self.name)
     nameplate.UnitFrame.HitTestFrame:SetPoint("BOTTOMRIGHT", self.cast)
+    if self.AurasFrame and self.AurasFrame:GetParent() == self then
+      self.AurasFrame:SetParent(self.OldUnitFrame)
+    end
+    nameplate.UnitFrame.AurasFrame:SetParent(self)
+    self.AurasFrame = nameplate.UnitFrame.AurasFrame
+    self.OldUnitFrame = nameplate.UnitFrame
+    nameplate.UnitFrame.AurasFrame:ClearAllPoints()
+    nameplate.UnitFrame.AurasFrame:SetPoint("BOTTOMLEFT", self.name, "TOPLEFT")
+  else
+    -- NYI
   end
 end
 
