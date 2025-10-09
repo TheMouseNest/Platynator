@@ -142,18 +142,22 @@ function addonTable.Display.HealthBarMixin:UpdateHealth()
     self.healthText:SetText("0")
   else
     self.healthBar:SetValue(UnitHealth(self.unit))
+
     local values = {percentage = "", absolute = ""}
+    local types = addonTable.style.healthText.types
     if addonTable.Constants.IsMidnight then
-      --- XXX: Remove when unit health formatting available
+      --- XXX: Remove when unit health formatting available, currently hides non-target friends cause the value stops updating
       values.absolute = self.healthSource.RightText:GetText()
       values.percentage = self.healthSource.LeftText:GetText()
+      if type(values.absolute) == "nil" or UnitIsFriend("player", self.unit) and not UnitIsUnit("target", self.unit) then
+        self.healthText:SetText("")
+        return
+      end
     else
       local health = UnitHealth(self.unit)
       values.absolute = FormatLargeNumber(health)
       values.percentage = math.floor(health/UnitHealthMax(self.unit)*100) .. "%"
     end
-    local pattern = "%s"
-    local types = addonTable.style.healthText.types
     if #types == 2 then
       self.healthText:SetFormattedText("%s (%s)", values[types[1]], values[types[2]])
     elseif #types == 1 then
@@ -164,6 +168,11 @@ end
 
 function addonTable.Display.HealthBarMixin:ApplyTarget()
   self.targetHighlight:SetShown(self.unit and UnitIsUnit(self.unit, "target"))
+  C_Timer.After(0, function()
+    if self.unit then
+      self:UpdateHealth()
+    end
+  end)
 end
 
 function addonTable.Display.HealthBarMixin:OnEvent(eventName)
