@@ -4,14 +4,15 @@ local addonTable = select(2, ...)
 function addonTable.Display.Initialize()
   addonTable.style = addonTable.Display.Styles[addonTable.Config.Get("style")]
 
+  local flags = "OUTLINE"
   do
     local members = {
-      {alphabet = "roman", file = addonTable.style.font.file, height = addonTable.style.font.size, flags = ""},
+      {alphabet = "roman", file = addonTable.style.font.file, height = addonTable.style.font.size, flags = flags},
     }
     for _, alphabet in ipairs({"simplifiedchinese", "traditionalchinese", "korean", "russian"}) do
       local fontObject = ChatFontNormal:GetFontObjectForAlphabet(alphabet)
       local file = fontObject:GetFont()
-      table.insert(members, {alphabet = alphabet, file = file, height = addonTable.style.font.size, flags = ""})
+      table.insert(members, {alphabet = alphabet, file = file, height = addonTable.style.font.size, flags = flags})
     end
     CreateFontFamily("PlatynatorNameplateFont", members)
   end

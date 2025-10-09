@@ -49,9 +49,12 @@ function addonTable.Display.HealthBarMixin:OnLoad()
   self.targetHighlight:SetPoint("CENTER")
   self.targetHighlight:SetDrawLayer("BACKGROUND", -5)
 
-  self.healthText = self.healthBar:CreateFontString(nil, nil, "PlatynatorNameplateFont")
-  self.healthText:SetPoint("CENTER")
+  self.healthTextContainer = CreateFrame("Frame", nil, self)
+  self.healthTextContainer:SetAllPoints()
+  self.healthText = self.healthTextContainer:CreateFontString(nil, nil, "PlatynatorNameplateFont")
+  self.healthText:SetPoint(unpack(addonTable.style.healthText.anchor))
   self.healthText:SetDrawLayer("OVERLAY", 6)
+  self.healthText:SetTextScale(addonTable.style.healthText.scale)
 
   self:SetSize(addonTable.style.healthBar.width*addonTable.style.healthBar.scale, addonTable.style.healthBar.height*addonTable.style.healthBar.scale)
 end
@@ -139,19 +142,22 @@ function addonTable.Display.HealthBarMixin:UpdateHealth()
     self.healthText:SetText("0")
   else
     self.healthBar:SetValue(UnitHealth(self.unit))
+    local values = {percentage = "", absolute = ""}
     if addonTable.Constants.IsMidnight then
-      local right = self.healthSource.RightText:GetText()
-      local left = self.healthSource.LeftText:GetText()
       --- XXX: Remove when unit health formatting available
-      if type(right) ~= "nil" and type(left) ~= "nil" then
-        fs:SetFormattedText("%s (%s)", right, left)
-      else
-        fs:SetText("")
-      end
-      self.healthText:SetText(fs:GetText())
+      values.absolute = self.healthSource.RightText:GetText()
+      values.percentage = self.healthSource.LeftText:GetText()
     else
       local health = UnitHealth(self.unit)
-      self.healthText:SetFormattedText("%s (%s)", FormatLargeNumber(health), math.floor(health/UnitHealthMax(self.unit)*100) .. "%")
+      values.absolute = FormatLargeNumber(health)
+      values.percentage = math.floor(health/UnitHealthMax(self.unit)*100) .. "%"
+    end
+    local pattern = "%s"
+    local types = addonTable.style.healthText.types
+    if #types == 2 then
+      self.healthText:SetFormattedText("%s (%s)", values[types[1]], values[types[2]])
+    elseif #types == 1 then
+      self.healthText:SetFormattedText("%s", values[types[1]])
     end
   end
 end

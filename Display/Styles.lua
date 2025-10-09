@@ -45,13 +45,18 @@ addonTable.Display.Styles = {
         },]]
       }
     },
+    healthText = {
+      scale = 0.9,
+      anchor = {"CENTER"},
+      types = {"absolute", "percentage"},
+    },
     power = {
       blank = "Interface/AddOns/Platynator/Assets/Power/gradient-inactive.png",
       filled = "Interface/AddOns/Platynator/Assets/Power/gradient-active.png",
       width = 993,
       height = 147,
       scale = 2/3 * (addonTable.Constants.IsMidnight and 1/7 or 1/9),
-      offset = {x = 0, y = 7}
+      offset = {x = 0, y = 2}
     },
     castBar = {
       colors = {
@@ -108,6 +113,11 @@ addonTable.Display.Styles = {
           hostile = CreateColor(1, 0, 0),
         },
       },
+    },
+    healthText = {
+      scale = 0.9,
+      anchor = {"BOTTOMRIGHT", -2, -3},
+      types = {"percentage"},
     },
     power = {
       blank = "Interface/AddOns/Platynator/Assets/Power/gradient-inactive.png",
