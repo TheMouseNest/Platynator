@@ -26,11 +26,11 @@ local specializationToPower = {
 
 local specializationToColor = {
   --Rogue (all specs)
-  [259] = nil,
-  [260] = nil,
-  [261] = nil,
+  [259] = CreateColorFromRGBHexString("f71322"),
+  [260] = CreateColorFromRGBHexString("f71322"),
+  [261] = CreateColorFromRGBHexString("f71322"),
   --Druid (feral only)
-  [103] = nil,
+  [103] = CreateColorFromRGBHexString("e82020"),
   --Death Knight (all specs)
   [250] = CreateColorFromRGBHexString("fc3c3f"),
   [251] = CreateColorFromRGBHexString("4282d1"),
@@ -42,9 +42,9 @@ local specializationToColor = {
   --Paladin (ret only)
   [70] = CreateColorFromRGBHexString("f0c900"),
   --Monk (windwalker)
-  [269] = nil,
+  [269] = CreateColorFromRGBHexString("31f78a"),
   --Mage (arcane only)
-  [62] = nil,
+  [62] = CreateColorFromRGBHexString("46d8fc"),
 }
 
 addonTable.Display.PowerBarMixin = {}
