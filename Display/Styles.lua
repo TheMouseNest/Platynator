@@ -1,11 +1,14 @@
 ---@class addonTablePlatynator
 local addonTable = select(2, ...)
 
+local healthScale = addonTable.Constants.IsMidnight and 1/7 or 1/9
+
 addonTable.Display.Styles = {
   ["bold"] = {
     font = {
       file = "Interface/AddOns/Platynator/Assets/RobotoCondensed-Bold.ttf",
       size = addonTable.Constants.IsMidnight and 12 or 10,
+      flags = "",
     },
     healthBar = {
       colorBackground = false,
@@ -15,7 +18,7 @@ addonTable.Display.Styles = {
       border = "Interface/AddOns/Platynator/Assets/Bars/Wide/bold-bar-border.png",
       width = 1000,
       height = 125,
-      scale = addonTable.Constants.IsMidnight and 1/7 or 1/9,
+      scale = healthScale,
       marker = {
         texture = nil,
         width = 0,
@@ -46,16 +49,16 @@ addonTable.Display.Styles = {
       }
     },
     healthText = {
-      scale = 0.9,
+      scale = 1,
       anchor = {"CENTER"},
-      types = {"absolute", "percentage"},
+      types = {},
     },
     power = {
       blank = "Interface/AddOns/Platynator/Assets/Power/gradient-inactive.png",
       filled = "Interface/AddOns/Platynator/Assets/Power/gradient-active.png",
       width = 993,
       height = 147,
-      scale = 2/3 * (addonTable.Constants.IsMidnight and 1/7 or 1/9),
+      scale = 2/3 * healthScale,
       offset = {x = 0, y = 2}
     },
     castBar = {
@@ -74,16 +77,17 @@ addonTable.Display.Styles = {
       border = "Interface/AddOns/Platynator/Assets/Bars/Wide/bold-bar-border.png",
       width = 1000,
       height = 125,
-      scale = addonTable.Constants.IsMidnight and 1/7 or 1/9,
+      scale = healthScale,
     },
     castText = {
-      scale = 0.9,
+      scale = 1,
     },
   },
   ["slight"] = {
     font = {
       file = "Interface/AddOns/Platynator/Assets/RobotoCondensed-Bold.ttf",
       size = addonTable.Constants.IsMidnight and 12 or 10,
+      flags = "OUTLINE",
     },
     healthBar = {
       colorBackground = true,
@@ -93,7 +97,7 @@ addonTable.Display.Styles = {
       border = "Interface/AddOns/Platynator/Assets/Bars/Wide/slight-bar-border.png",
       width = 1000,
       height = 125,
-      scale = addonTable.Constants.IsMidnight and 1/7 or 1/9,
+      scale = healthScale,
       marker = {
         texture = "Interface/AddOns/Platynator/Assets/Bars/Wide/highlight.png",
         width = 54,
@@ -127,7 +131,7 @@ addonTable.Display.Styles = {
       filled = "Interface/AddOns/Platynator/Assets/Power/gradient-active.png",
       width = 993,
       height = 147,
-      scale = 2/3 * (addonTable.Constants.IsMidnight and 1/8 or 1/10),
+      scale = healthScale,
       offset = {x = 0, y = addonTable.Constants.IsMidnight and 7 or 6}
     },
     castBar = {
@@ -147,7 +151,7 @@ addonTable.Display.Styles = {
       border = "Interface/AddOns/Platynator/Assets/Bars/Wide/slight-bar-border.png",
       width = 1000,
       height = 125,
-      scale = addonTable.Constants.IsMidnight and 1/7 or 1/9,
+      scale = healthScale,
     },
     castText = {
       scale = 0.9,

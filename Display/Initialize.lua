@@ -4,7 +4,7 @@ local addonTable = select(2, ...)
 function addonTable.Display.Initialize()
   addonTable.style = addonTable.Display.Styles[addonTable.Config.Get("style")]
 
-  local flags = "OUTLINE"
+  local flags = addonTable.style.font.flags
   do
     local members = {
       {alphabet = "roman", file = addonTable.style.font.file, height = addonTable.style.font.size, flags = flags},
