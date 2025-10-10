@@ -24,8 +24,8 @@ function addonTable.Display.NameplateMixin:Install(nameplate)
     nameplate.UnitFrame:SetAlpha(0) --- XXX: Remove when unit health formatting available
     nameplate.UnitFrame.HitTestFrame:SetParent(nameplate)
     nameplate.UnitFrame.HitTestFrame:ClearAllPoints()
-    nameplate.UnitFrame.HitTestFrame:SetPoint("TOPLEFT", self.name)
-    nameplate.UnitFrame.HitTestFrame:SetPoint("BOTTOMRIGHT", self.cast)
+    nameplate.UnitFrame.HitTestFrame:SetPoint("TOPLEFT", self.widgets[1])
+    nameplate.UnitFrame.HitTestFrame:SetPoint("BOTTOMRIGHT", self.widgets[2])
     if self.AurasFrame and self.AurasFrame:GetParent() == self then
       self.AurasFrame:SetParent(self.OldUnitFrame)
     end
