@@ -75,20 +75,26 @@ function addonTable.Design.GetDefaultDesignSlight()
         kind = "power",
         blank = "normal/gradient-faded",
         filled = "normal/gradient-full",
-        scale = 2/3 * healthScale,
-        anchor = {0, -9},
+        scale = healthScale * 0.60,
+        anchor = {0, -7},
       },
     },
     texts = {
       {
         kind = "health",
-        scale = 1.08,
+        scale = 0.98,
         anchor = {"BOTTOMRIGHT", 61, -12},
         displayTypes = {"percentage"}, -- or "absolute", or both
       },
       {
+        kind = "health",
+        scale = 1.08,
+        anchor = {"LEFT", -60, 0},
+        displayTypes = {"absolute"}, -- or "absolute", or both
+      },
+      {
         kind = "creatureName",
-        scale = 1.2,
+        scale = 1.1,
         anchor = {"BOTTOM", 0, 9},
       },
       {
