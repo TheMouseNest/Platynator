@@ -15,7 +15,7 @@ addonTable.Assets.BarBorders = {
   ["wide/slight-1"] = {file = "Interface/AddOns/Platynator/Assets/Bars/Wide/slight-bar-border.png", width = 1000, height = 125},
 }
 
-addonTable.Assets.TargetHighlights = {
+addonTable.Assets.Highlights = {
   ["wide/outline"] = {file = "Interface/AddOns/Platynator/Assets/Bars/Wide/outline.png", width = 1030, height = 155},
   ["wide/glow"] = {file = "Interface/AddOns/Platynator/Assets/Bars/Wide/glow.png", width = 1472, height = 592},
 }

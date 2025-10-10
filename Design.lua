@@ -21,7 +21,7 @@ function addonTable.Design.GetDefaultDesignSlight()
         kind = "target",
         texture = "wide/glow",
         color = GetColor("1CE2ED"),
-        scale = healthScale
+        scale = healthScale,
       },
     },
     bars = {

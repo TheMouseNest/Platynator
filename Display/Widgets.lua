@@ -112,14 +112,29 @@ end
 function addonTable.Display.GetHighlight(frame, parent)
   frame = frame or CreateFrame("Frame", nil, parent or UIParent)
 
-  frame.targetHighlight = frame:CreateTexture()
-  frame.targetHighlight:SetAllPoints()
-  frame.targetHighlight:SetDrawLayer("BACKGROUND", -5)
+  frame.highlight = frame:CreateTexture()
+  frame.highlight:SetAllPoints()
 
   function frame:Init(details)
-    local highlightetails = addonTable.Assets.TargetHighlights[details.texture]
-    frame.targetHighlight:SetTexture(highlightDetails.texture)
-    frame:SetSize(highlightDetails.width * highlightDetails.scale, highlightDetails.height * highlightDetails.scale)
+    ApplyAnchor(frame, details.anchor)
+
+    local highlightDetails = addonTable.Assets.Highlights[details.texture]
+
+    frame.highlight:SetTexture(highlightDetails.file)
+    frame.highlight:SetVertexColor(details.color.r, details.color.g, details.color.b)
+    frame:SetSize(highlightDetails.width * details.scale, highlightDetails.height * details.scale)
+
+    if details.kind == "target" then
+      Mixin(frame, addonTable.Display.HighlightMixin)
+    else
+      assert(false)
+    end
+
+    frame:SetScript("OnEvent", frame.OnEvent)
+
+    if frame.PostInit then
+      frame:PostInit()
+    end
   end
 
   return frame
@@ -171,6 +186,7 @@ local pools = {
   bars = CreateFramePool("Frame", UIParent, nil, nil, false, addonTable.Display.GetBar),
   text = CreateFramePool("Frame", UIParent, nil, nil, false, addonTable.Display.GetText),
   power = CreateFramePool("Frame", UIParent, nil, nil, false, addonTable.Display.GetPower),
+  highlight = CreateFramePool("Frame", UIParent, nil, nil, false, addonTable.Display.GetHighlight),
 }
 
 local poolType = {}
@@ -195,6 +211,16 @@ function addonTable.Display.GetWidgets(design, parent)
     w:Init(textDetails)
     w:Show()
     w:SetFrameStrata("MEDIUM")
+    table.insert(widgets, w)
+  end
+
+  for _, highlightDetails in ipairs(design.highlights) do
+    local w = pools.highlight:Acquire()
+    poolType[w] = "highlight"
+    w:SetParent(parent)
+    w:Init(highlightDetails)
+    w:Show()
+    w:SetFrameStrata("BACKGROUND")
     table.insert(widgets, w)
   end
 
