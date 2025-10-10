@@ -29,8 +29,6 @@ function addonTable.Display.GetBar(frame, parent)
   frame.background:SetAllPoints()
   frame.background:SetDrawLayer("BACKGROUND")
 
-  frame:SetFrameStrata("BACKGROUND")
-
   local knownKeys = {"statusBar", "marker", "border", "background"}
 
   function frame:Init(details)
@@ -80,8 +78,6 @@ function addonTable.Display.GetPower(frame, parent)
 
   frame.main = CreateFrame("StatusBar", nil, frame)
   frame.main:SetMinMaxValues(0, 7)
-
-  frame:SetFrameStrata("MEDIUM")
 
   local knownKeys = {"main", "background"}
 
@@ -150,7 +146,6 @@ function addonTable.Display.GetText(frame, parent)
     frame.text:SetPoint(details.anchor[1] or "CENTER")
     frame:SetHeight(frame.text:GetLineHeight())
     frame.details = details
-    frame:SetFrameStrata("HIGH")
 
     if details.kind == "health" then
       Mixin(frame, addonTable.Display.HealthTextMixin)
@@ -189,6 +184,17 @@ function addonTable.Display.GetWidgets(design, parent)
     w:SetParent(parent)
     w:Init(barDetails)
     w:Show()
+    w:SetFrameStrata("LOW")
+    table.insert(widgets, w)
+  end
+
+  for _, textDetails in ipairs(design.texts) do
+    local w = pools.text:Acquire()
+    poolType[w] = "text"
+    w:SetParent(parent)
+    w:Init(textDetails)
+    w:Show()
+    w:SetFrameStrata("MEDIUM")
     table.insert(widgets, w)
   end
 
@@ -199,15 +205,7 @@ function addonTable.Display.GetWidgets(design, parent)
     w:SetParent(parent)
     w:Init(specialDetails)
     w:Show()
-    table.insert(widgets, w)
-  end
-
-  for _, textDetails in ipairs(design.texts) do
-    local w = pools.text:Acquire()
-    poolType[w] = "text"
-    w:SetParent(parent)
-    w:Init(textDetails)
-    w:Show()
+    w:SetFrameStrata("HIGH")
     table.insert(widgets, w)
   end
 
