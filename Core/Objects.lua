@@ -6,3 +6,6 @@ addonTable.CustomiseDialog = {}
 addonTable.API = {}
 addonTable.Dialogs = {}
 addonTable.Display = {}
+addonTable.Assets = {}
+addonTable.Design = {}
+addonTable.CustomiseDialog = {}

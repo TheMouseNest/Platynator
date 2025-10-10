@@ -16,6 +16,10 @@ addonTable.offscreenFrame = hidden
 function addonTable.Core.Initialize()
   addonTable.Config.InitializeData()
 
+  --if next(addonTable.Config.Get(addonTable.Config.Options.DESIGN)) == nil then
+    addonTable.Config.Set(addonTable.Config.Options.DESIGN, addonTable.Design.GetDefaultDesignSlight())
+  --end
+
   addonTable.SlashCmd.Initialize()
 
   if addonTable.Constants.IsMidnight then

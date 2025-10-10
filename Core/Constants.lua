@@ -21,5 +21,5 @@ addonTable.Constants.Events = {
 }
 
 addonTable.Constants.RefreshReason = {
-  Locked = 1000,
+  Design = 1,
 }

@@ -60,7 +60,7 @@ function addonTable.SlashCmd.CustomiseUI()
 end
 
 local COMMANDS = {
-  --[""] = addonTable.SlashCmd.CustomiseUI,
+  [""] = addonTable.SlashCmd.CustomiseUI,
   ["c"] = addonTable.SlashCmd.Config,
   ["config"] = addonTable.SlashCmd.Config,
   ["reset"] = addonTable.SlashCmd.Reset,

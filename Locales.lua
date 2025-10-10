@@ -19,6 +19,7 @@ PLATYNATOR_LOCALES = Locales
 local L = Locales.enUS
 
 L["PLATYNATOR"] = "Platynator"
+L["DESIGNER"] = "Designer"
 
 local L = Locales.frFR
 --@localization(locale="frFR", format="lua_additive_table")@

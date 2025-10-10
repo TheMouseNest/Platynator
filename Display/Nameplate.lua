@@ -3,26 +3,14 @@ local addonTable = select(2, ...)
 
 addonTable.Display.NameplateMixin = {}
 function addonTable.Display.NameplateMixin:OnLoad()
-  self:SetScript("OnEvent", self.OnEvent)
+  local style = addonTable.Config.Get(addonTable.Config.Options.DESIGN)
+  self.widgets = addonTable.Display.GetWidgets(style, self)
 
-  self.health = addonTable.Utilities.InitFrameWithMixin(self, addonTable.Display.HealthBarMixin)
-  self.health:SetPoint("CENTER")
-  self.cast = addonTable.Utilities.InitFrameWithMixin(self, addonTable.Display.CastBarMixin)
-  self.cast:SetPoint("TOP", self.health, "BOTTOM")
-  self.power = addonTable.Utilities.InitFrameWithMixin(self, addonTable.Display.PowerBarMixin)
-  self.power:SetPoint("TOP", self.health, "BOTTOM", addonTable.style.power.offset.x, addonTable.style.power.offset.y)
-  self.power:SetFrameLevel(math.max(self.health:GetFrameLevel(), self.cast:GetFrameLevel()) + 1)
-
-  self.nameFrame = CreateFrame("Frame", nil, self)
-  self.name = self.nameFrame:CreateFontString(nil, nil, "PlatynatorNameplateFont")
-  self.name:SetWidth(self.health:GetWidth())
-  self.name:SetJustifyH("CENTER")
-  self.name:SetPoint("BOTTOMLEFT", self.health, "TOPLEFT", 2, 2)
-
-  self.questMarker = self.nameFrame:CreateTexture()
+  self.questFrame = CreateFrame("Frame", nil, self)
+  self.questMarker = self.questFrame:CreateTexture()
   self.questMarker:SetTexture("Interface/AddOns/Platynator/Assets/quest-marker.png")
-  self.questMarker:SetSize(addonTable.style.healthBar.scale * 48 * 0.9, addonTable.style.healthBar.scale * 170 * 0.9)
-  self.questMarker:SetPoint("RIGHT", self.health, "LEFT", -2, 0)
+  self.questMarker:SetSize(style.bars[1].scale * 48 * 0.9, style.bars[1].scale * 170 * 0.9)
+  self.questMarker:SetPoint("RIGHT", self.widgets[1], "LEFT", -2, 0)
   self.questMarker:Hide()
 
   self.AurasFrame = nil
@@ -47,6 +35,7 @@ function addonTable.Display.NameplateMixin:Install(nameplate)
     nameplate.UnitFrame.AurasFrame:ClearAllPoints()
     nameplate.UnitFrame.AurasFrame:SetPoint("BOTTOMLEFT", self.name, "TOPLEFT")
   else
+    self:SetScale(9/10)
     nameplate.UnitFrame:SetParent(addonTable.hiddenFrame)
     nameplate.UnitFrame:UnregisterAllEvents()
     -- NYI
@@ -55,13 +44,12 @@ end
 
 function addonTable.Display.NameplateMixin:SetUnit(unit)
   self.unit = unit
-  self.health:SetUnit(self.unit)
-  self.cast:SetUnit(self.unit)
-  self.power:SetUnit(self.unit)
+  for _, w in ipairs(self.widgets) do
+    w:SetUnit(self.unit)
+  end
   if self.unit then
     self:Show()
     self:RegisterUnitEvent("UNIT_NAME_UPDATE", self.unit)
-    self.name:SetText(UnitName(self.unit))
     self:UpdateQuestMarker()
     if addonTable.Constants.IsMidnight then
       C_NamePlateManager.SetNamePlateSimplified(self.unit, false)
@@ -81,21 +69,18 @@ end
 
 function addonTable.Display.NameplateMixin:UpdateForTarget()
   if self.unit then
-    self.power:ApplyPower()
-    self.health:ApplyTarget()
+    for _, w in ipairs(self.widgets) do
+      if w.ApplyTarget then
+        w:ApplyTarget()
+      end
+    end
   end
 
   if not addonTable.Constants.IsMidnight then
     if UnitIsUnit("target", self.unit) then
-      self:SetScale(1.2)
+      self:SetScale(1.2 * 9/10)
     else
-      self:SetScale(1)
+      self:SetScale(1 * 9/10)
     end
-  end
-end
-
-function addonTable.Display.NameplateMixin:OnEvent(eventName)
-  if eventName == "UNIT_NAME_UPDATE" then
-    self.name:SetText(UnitName(self.unit))
   end
 end

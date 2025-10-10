@@ -16,7 +16,9 @@ local specializationToPower = {
   [265] = Enum.PowerType.SoulShards,
   [266] = Enum.PowerType.SoulShards,
   [267] = Enum.PowerType.SoulShards,
-  --Paladin (ret only)
+  --Paladin (all specs)
+  [65] = Enum.PowerType.HolyPower,
+  [66] = Enum.PowerType.HolyPower,
   [70] = Enum.PowerType.HolyPower,
   --Monk (windwalker)
   [269] = Enum.PowerType.Chi,
@@ -39,7 +41,9 @@ local specializationToColor = {
   [265] = CreateColorFromRGBHexString("b61ff2"),
   [266] = CreateColorFromRGBHexString("b61ff2"),
   [267] = CreateColorFromRGBHexString("b61ff2"),
-  --Paladin (ret only)
+  --Paladin (all specs)
+  [65] = CreateColorFromRGBHexString("f0c900"),
+  [66] = CreateColorFromRGBHexString("f0c900"),
   [70] = CreateColorFromRGBHexString("f0c900"),
   --Monk (windwalker)
   [269] = CreateColorFromRGBHexString("31f78a"),
@@ -48,30 +52,15 @@ local specializationToColor = {
 }
 
 addonTable.Display.PowerBarMixin = {}
-function addonTable.Display.PowerBarMixin:OnLoad()
-  self.background = CreateFrame("StatusBar", nil, self)
-  self.background:SetStatusBarTexture(addonTable.style.power.blank)
-  self.background:SetPoint("CENTER")
-  self.background:SetSize(addonTable.style.power.width * addonTable.style.power.scale, addonTable.style.power.height*addonTable.style.power.scale)
-  self.background:SetFillStyle("CENTER")
-  self.background:SetMinMaxValues(0, 7)
-
+function addonTable.Display.PowerBarMixin:PostInit()
   self.powerKind = self:GetPower()
   self.powerColor = self:GetColor() or CreateColor(240/255, 201/255, 0/255)
-
-  self.main = CreateFrame("StatusBar", nil, self)
-  self.main:SetStatusBarTexture(addonTable.style.power.filled)
-  self.main:SetPoint("LEFT", self.background:GetStatusBarTexture())
-  self.main:SetSize(addonTable.style.power.width * addonTable.style.power.scale, addonTable.style.power.height*addonTable.style.power.scale)
-  self.main:SetMinMaxValues(0, 7)
-
-  self:SetSize(addonTable.style.power.width * addonTable.style.power.scale, addonTable.style.power.height*addonTable.style.power.scale)
 end
 
 function addonTable.Display.PowerBarMixin:SetUnit(unit)
   self.unit = unit
   if self.unit then
-    self:ApplyPower()
+    self:ApplyTarget()
   end
 end
 
@@ -89,7 +78,7 @@ function addonTable.Display.PowerBarMixin:GetColor()
   return specializationToColor[specID]
 end
 
-function addonTable.Display.PowerBarMixin:ApplyPower()
+function addonTable.Display.PowerBarMixin:ApplyTarget()
   local powerKind = self.powerKind
   if powerKind and UnitIsUnit("target", self.unit) and UnitCanAttack("player", self.unit) then
     self:Show()

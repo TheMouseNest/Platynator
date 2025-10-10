@@ -2,47 +2,6 @@
 local addonTable = select(2, ...)
 
 addonTable.Display.CastBarMixin = {}
-function addonTable.Display.CastBarMixin:OnLoad()
-  self:SetScript("OnEvent", self.OnEvent)
-
-  local castStyle = addonTable.style.castBar
-
-  self.castBar = CreateFrame("StatusBar", nil, self)
-  local castBar = self.castBar
-  castBar:SetStatusBarTexture(addonTable.style.castBar.foreground)
-  castBar:SetPoint("CENTER")
-  castBar:SetSize(castStyle.width*castStyle.scale, castStyle.height*castStyle.scale)
-  castBar:SetClipsChildren(true)
-
-  if addonTable.style.castBar.marker and addonTable.style.castBar.marker.texture then
-    local castMarker = self.castBar:CreateTexture()
-    castMarker:SetTexture(addonTable.style.castBar.marker.texture)
-    castMarker:SetPoint("RIGHT", castBar:GetStatusBarTexture(), "RIGHT", addonTable.style.castBar.marker.width * addonTable.style.castBar.scale / 2, 0)
-    castMarker:SetSize(addonTable.style.castBar.marker.width * addonTable.style.castBar.scale, castBar:GetHeight())
-    castMarker:SetDrawLayer("OVERLAY", 1)
-    castBar.marker = castMarker
-  end
-
-  self.border = castBar:CreateTexture()
-  self.border:SetTexture(addonTable.style.castBar.border)
-  self.border:SetSize(addonTable.style.castBar.width*addonTable.style.castBar.scale, addonTable.style.castBar.height*addonTable.style.castBar.scale)
-  self.border:SetPoint("CENTER")
-  self.border:SetDrawLayer("OVERLAY", 2)
-  self.background = castBar:CreateTexture()
-  self.background:SetTexture(addonTable.style.castBar.background)
-  self.background:SetSize(addonTable.style.castBar.width*addonTable.style.castBar.scale, addonTable.style.castBar.height*addonTable.style.castBar.scale)
-  self.background:SetPoint("CENTER")
-  self.background:SetDrawLayer("BACKGROUND", -7)
-  self.background:SetAlpha(addonTable.style.castBar.backgroundAlpha)
-
-  self.text = castBar:CreateFontString(nil, nil, "PlatynatorNameplateFont")
-  self.text:SetPoint("CENTER")
-  self.text:SetWordWrap(false)
-  self.text:SetTextScale(addonTable.style.castText.scale)
-
-  self:SetSize(addonTable.style.castBar.width*addonTable.style.castBar.scale, addonTable.style.castBar.height*addonTable.style.castBar.scale)
-  self.text:SetWidth(self:GetWidth())
-end
 
 function addonTable.Display.CastBarMixin:SetUnit(unit)
   self.unit = unit
@@ -55,9 +14,13 @@ function addonTable.Display.CastBarMixin:SetUnit(unit)
 
     self:ApplyCasting()
   else
-    self:UnregisterAllEvents()
-    self:SetScript("OnUpdate", nil)
+    self:Strip()
   end
+end
+
+function addonTable.Display.CastBarMixin:Strip()
+  self:UnregisterAllEvents()
+  self:SetScript("OnUpdate", nil)
 end
 
 function addonTable.Display.CastBarMixin:OnEvent(eventName, ...)
@@ -65,18 +28,18 @@ function addonTable.Display.CastBarMixin:OnEvent(eventName, ...)
 end
 
 function addonTable.Display.CastBarMixin:ApplyColor()
-  local color = addonTable.style.castBar.colors.normal
+  local color = self.details.colors.normal
   local nameplate = C_NamePlate.GetNamePlateForUnit(self.unit, issecure())
   if nameplate and nameplate.UnitFrame then
     if nameplate.UnitFrame.castBar.barType == "uninterruptable" then
-      color = addonTable.style.castBar.colors.uninterruptable
+      color = self.details.colors.uninterruptable
     end
   end
-  self.castBar:GetStatusBarTexture():SetVertexColor(color.r, color.g, color.b)
-  if self.castBar.marker then
-    self.castBar.marker:SetVertexColor(color.r, color.g, color.b)
+  self.statusBar:GetStatusBarTexture():SetVertexColor(color.r, color.g, color.b)
+  if self.marker then
+    self.marker:SetVertexColor(color.r, color.g, color.b)
   end
-  if addonTable.style.castBar.colorBackground then
+  if self.details.colorBackground then
     self.background:SetVertexColor(color.r, color.g, color.b)
   end
 end
@@ -86,10 +49,9 @@ function addonTable.Display.CastBarMixin:ApplyCasting()
 
   if type(startTime) ~= "nil" and type(endTime) ~= "nil" then
     self:Show()
-    self.text:SetText(name)
-    self.castBar:SetMinMaxValues(startTime, endTime)
+    self.statusBar:SetMinMaxValues(startTime, endTime)
     self:SetScript("OnUpdate", function()
-      self.castBar:SetValue(GetTimePreciseSec() * 1000)
+      self.statusBar:SetValue(GetTimePreciseSec() * 1000)
     end)
     self:ApplyColor()
     C_Timer.After(0, function()
@@ -97,7 +59,7 @@ function addonTable.Display.CastBarMixin:ApplyCasting()
         self:ApplyColor()
       end
     end)
-    self.castBar:SetValue(GetTimePreciseSec())
+    self.statusBar:SetValue(GetTimePreciseSec())
   else
     self:SetScript("OnUpdate", nil)
     self:Hide()

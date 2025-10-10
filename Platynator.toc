@@ -34,5 +34,12 @@ Display/Nameplate.lua
 Display/HealthBar.lua
 Display/CastBar.lua
 Display/PowerBar.lua
+Display/CreatureText.lua
+Display/HealthText.lua
+Display/CastText.lua
+Display/Widgets.lua
+
+Design.lua
+Assets.lua
 
 API/Main.lua
