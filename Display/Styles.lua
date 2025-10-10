@@ -131,7 +131,7 @@ addonTable.Display.Styles = {
       filled = "Interface/AddOns/Platynator/Assets/Power/gradient-active.png",
       width = 993,
       height = 147,
-      scale = healthScale,
+      scale = 2/3 * healthScale,
       offset = {x = 0, y = addonTable.Constants.IsMidnight and 7 or 6}
     },
     castBar = {

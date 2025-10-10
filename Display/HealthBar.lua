@@ -139,7 +139,11 @@ end
 function addonTable.Display.HealthBarMixin:UpdateHealth()
   if UnitIsDeadOrGhost(self.unit) then
     self.healthBar:SetValue(0)
-    self.healthText:SetText("0")
+    if #addonTable.style.healthText.types > 0 then
+      self.healthText:SetText("0")
+    else
+      self.healthText:SetText("")
+    end
   else
     self.healthBar:SetValue(UnitHealth(self.unit))
 
