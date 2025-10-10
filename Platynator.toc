@@ -29,7 +29,6 @@ Core/SlashCmd.lua
 Core/Initialize.lua
 
 Display/Initialize.lua
-Display/Styles.lua
 Display/Nameplate.lua
 Display/HealthBar.lua
 Display/CastBar.lua

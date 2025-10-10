@@ -17,8 +17,13 @@ function addonTable.Core.Initialize()
   addonTable.Config.InitializeData()
 
   --if next(addonTable.Config.Get(addonTable.Config.Options.DESIGN)) == nil then
-    addonTable.Config.Set(addonTable.Config.Options.DESIGN, addonTable.Design.GetDefaultDesignSlight())
+  --  addonTable.Config.Set(addonTable.Config.Options.DESIGN, addonTable.Design.GetDefaultDesignSlight())
   --end
+  if addonTable.Config.Get(addonTable.Config.Options.STYLE) == "slight" then
+    addonTable.Config.Set(addonTable.Config.Options.DESIGN, addonTable.Design.GetDefaultDesignSlight())
+  else
+    addonTable.Config.Set(addonTable.Config.Options.DESIGN, addonTable.Design.GetDefaultDesignBold())
+  end
 
   addonTable.SlashCmd.Initialize()
 

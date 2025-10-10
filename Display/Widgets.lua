@@ -43,9 +43,14 @@ function addonTable.Display.GetBar(frame, parent)
     frame.statusBar:GetStatusBarTexture():SetDrawLayer("ARTWORK")
     frame.background:SetTexture(addonTable.Assets.BarBackgrounds[details.background].file)
     frame.border:SetTexture(addonTable.Assets.BarBorders[details.border].file)
-    local markerDetails = addonTable.Assets.BarPositionHighlights[details.marker.texture]
-    frame.marker:SetTexture(markerDetails.file)
-    frame.marker:SetSize(markerDetails.width * details.scale, foregroundDetails.height * details.scale)
+    if details.marker.texture ~= "none" then
+      frame.marker:Show()
+      local markerDetails = addonTable.Assets.BarPositionHighlights[details.marker.texture]
+      frame.marker:SetTexture(markerDetails.file)
+      frame.marker:SetSize(markerDetails.width * details.scale, foregroundDetails.height * details.scale)
+    else
+      frame.marker:Hide()
+    end
     frame:SetSize(foregroundDetails.width * details.scale, foregroundDetails.height * details.scale)
 
     frame.details = details
@@ -166,7 +171,7 @@ function addonTable.Display.GetText(frame, parent)
       Mixin(frame, addonTable.Display.HealthTextMixin)
     elseif details.kind == "creatureName" then
       Mixin(frame, addonTable.Display.CreatureTextMixin)
-    elseif details.kind == "castName" then
+    elseif details.kind == "castSpellName" then
       Mixin(frame, addonTable.Display.CastTextMixin)
     else
       assert(false)

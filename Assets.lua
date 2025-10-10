@@ -21,6 +21,7 @@ addonTable.Assets.Highlights = {
 }
 
 addonTable.Assets.BarPositionHighlights = {
+  ["none"] = {file = "", width = 0, height = 0},
   ["wide/glow"] = {file = "Interface/AddOns/Platynator/Assets/Bars/Wide/highlight.png", width = 54, height = 125},
 }
 
