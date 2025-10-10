@@ -75,7 +75,10 @@ addonTable.Display.Styles = {
       width = 1000,
       height = 125,
       scale = addonTable.Constants.IsMidnight and 1/7 or 1/9,
-    }
+    },
+    castText = {
+      scale = 0.9,
+    },
   },
   ["slight"] = {
     font = {
@@ -145,6 +148,9 @@ addonTable.Display.Styles = {
       width = 1000,
       height = 125,
       scale = addonTable.Constants.IsMidnight and 1/7 or 1/9,
+    },
+    castText = {
+      scale = 0.9,
     },
   },
 }

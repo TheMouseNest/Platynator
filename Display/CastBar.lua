@@ -35,7 +35,13 @@ function addonTable.Display.CastBarMixin:OnLoad()
   self.background:SetDrawLayer("BACKGROUND", -7)
   self.background:SetAlpha(addonTable.style.castBar.backgroundAlpha)
 
+  self.text = castBar:CreateFontString(nil, nil, "PlatynatorNameplateFont")
+  self.text:SetPoint("CENTER")
+  self.text:SetWordWrap(false)
+  self.text:SetTextScale(addonTable.style.castText.scale)
+
   self:SetSize(addonTable.style.castBar.width*addonTable.style.castBar.scale, addonTable.style.castBar.height*addonTable.style.castBar.scale)
+  self.text:SetWidth(self:GetWidth())
 end
 
 function addonTable.Display.CastBarMixin:SetUnit(unit)
@@ -80,6 +86,7 @@ function addonTable.Display.CastBarMixin:ApplyCasting()
 
   if type(startTime) ~= "nil" and type(endTime) ~= "nil" then
     self:Show()
+    self.text:SetText(name)
     self.castBar:SetMinMaxValues(startTime, endTime)
     self:SetScript("OnUpdate", function()
       self.castBar:SetValue(GetTimePreciseSec() * 1000)
