@@ -36,7 +36,6 @@ function addonTable.Display.NameplateMixin:Install(nameplate)
     end
     nameplate.UnitFrame.AurasFrame:SetParent(self)
     self.AurasFrame = nameplate.UnitFrame.AurasFrame
-    self.OldUnitFrame = nameplate.UnitFrame
     nameplate.UnitFrame.AurasFrame:ClearAllPoints()
     nameplate.UnitFrame.AurasFrame:SetPoint("BOTTOMLEFT", self.name, "TOPLEFT")
   else
@@ -45,21 +44,26 @@ function addonTable.Display.NameplateMixin:Install(nameplate)
     nameplate.UnitFrame:UnregisterAllEvents()
     -- NYI
   end
+  if self.OldUnitFrame and self.OldUnitFrame.WidgetContainer:GetParent() == nameplate then
+    self.OldUnitFrame.WidgetContainer:SetParent(self.OldUnitFrame)
+  end
+  nameplate.UnitFrame.WidgetContainer:SetParent(nameplate)
 end
 
 function addonTable.Display.NameplateMixin:SetUnit(unit)
   self.unit = unit
-  for _, w in ipairs(self.widgets) do
-    w:SetUnit(self.unit)
-  end
-  if self.unit then
+  if self.unit and not UnitNameplateShowsWidgetsOnly(self.unit) then
     self:Show()
     if addonTable.Constants.IsMidnight then
       C_NamePlateManager.SetNamePlateSimplified(self.unit, false)
     end
-  else
+  elseif self.unit and UnitNameplateShowsWidgetsOnly(self.unit) then
     self:Hide()
     self:UnregisterAllEvents()
+  end
+
+  for _, w in ipairs(self.widgets) do
+    w:SetUnit(self.unit)
   end
 end
 
