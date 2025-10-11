@@ -18,19 +18,42 @@ local function GetMainDesigner(parent)
     end)
   end
 
-  local preview = CreateFrame("Frame", nil, container)
+  local selector = CreateFrame("Frame")
+  local selectionTexture = selector:CreateTexture()
+  selectionTexture:SetTexture("Interface/AddOns/Platynator/Assets/selection-outline.png")
+  selectionTexture:SetTextureSliceMargins(45, 45, 45, 45)
+  selectionTexture:SetTextureSliceMode(Enum.UITextureSliceMode.Tiled)
+  selectionTexture:SetScale(0.25)
+  selectionTexture:SetAllPoints()
+
+  local hoverMarker = CreateFrame("Frame")
+  local hoverTexture = hoverMarker:CreateTexture()
+  hoverTexture:SetTexture("Interface/AddOns/Platynator/Assets/selection-outline.png")
+  hoverTexture:SetAlpha(0.5)
+  hoverTexture:SetTextureSliceMargins(45, 45, 45, 45)
+  hoverTexture:SetTextureSliceMode(Enum.UITextureSliceMode.Tiled)
+  hoverTexture:SetScale(0.25)
+  hoverTexture:SetAllPoints()
+
+  local previewInset = CreateFrame("Frame", nil, container, "InsetFrameTemplate")
+  previewInset:SetPoint("TOP")
+  previewInset:SetPoint("LEFT", 20, 0)
+  previewInset:SetPoint("RIGHT", -20, 0)
+  previewInset:SetHeight(200)
+
+  local preview = CreateFrame("Frame", nil, previewInset)
 
   preview:SetPoint("TOP")
-  preview:SetPoint("LEFT")
-  preview:SetPoint("RIGHT")
-  preview:SetHeight(60)
+  preview:SetAllPoints()
   preview:SetFlattensRenderLayers(true)
   preview:SetScale(2)
 
   addonTable.Config.Get(addonTable.Config.Options.DESIGN)
   local widgets = addonTable.Display.GetWidgets(design, preview)
   for _, w in ipairs(widgets) do
-    if w.kind == "bar" then
+    local hover
+    if w.kind == "bars" then
+      hover = w.statusBar
       local defaultColor
       if w.details.kind == "health" then
         defaultColor = w.details.colors.threat.warning
@@ -44,7 +67,8 @@ local function GetMainDesigner(parent)
         w.background:SetVertexColor(defaultColor.r, defaultColor.g, defaultColor.b)
       end
       w.marker:SetVertexColor(defaultColor.r, defaultColor.g, defaultColor.b)
-    elseif w.kind == "text" then
+    elseif w.kind == "texts" then
+      hover = w.text
       local display
       if w.details.kind == "health" then
         if #w.details.displayTypes == 1 and w.details.displayTypes[1] == "percentage" then
@@ -64,11 +88,26 @@ local function GetMainDesigner(parent)
       if display then
         w.text:SetText(display)
       end
-    elseif w.kind == "power" then
+    elseif w.kind == "specialBars" and w.details.kind == "power" then
+      hover = w.main
       w.main:GetStatusBarTexture():SetVertexColor(234/255, 61/255, 247/255)
       w.main:SetValue(4)
       w.background:SetValue(6)
     end
+
+    hover = hover or w
+    hover:SetScript("OnEnter", function()
+      hoverMarker:Show()
+      hoverMarker:SetFrameStrata("HIGH")
+      hoverMarker:SetPoint("TOPLEFT", hover, "TOPLEFT", -2, 2)
+      hoverMarker:SetPoint("BOTTOMRIGHT", hover, "BOTTOMRIGHT", 2, -2)
+    end)
+    hover:SetScript("OnLeave", function()
+      hoverMarker:Hide()
+    end)
+    hover:SetScript("OnMouseUp", function()
+      print("hit", w.kind, w.kindIndex)
+    end)
   end
 
   return container

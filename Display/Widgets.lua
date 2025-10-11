@@ -99,6 +99,8 @@ function addonTable.Display.GetPower(frame, parent)
 
     ApplyAnchor(frame, details.anchor)
 
+    frame.details = details
+
     local blankDetails = addonTable.Assets.PowerBars[details.blank]
     self.background:SetStatusBarTexture(blankDetails.file)
     self.main:SetStatusBarTexture(addonTable.Assets.PowerBars[details.filled].file)
@@ -201,38 +203,44 @@ local poolType = {}
 function addonTable.Display.GetWidgets(design, parent)
   local widgets = {}
 
-  for _, barDetails in ipairs(design.bars) do
+  for index, barDetails in ipairs(design.bars) do
     local w = pools.bar:Acquire()
     w:SetParent(parent)
     w:Init(barDetails)
     w:Show()
-    w:SetFrameStrata("LOW")
-    w.kind = "bar"
+    w:SetFrameStrata("MEDIUM")
+    w:SetFrameLevel(500)
+    w.kind = "bars"
+    w.kindIndex = index
     table.insert(widgets, w)
   end
 
-  for _, textDetails in ipairs(design.texts) do
+  for index, textDetails in ipairs(design.texts) do
     local w = pools.text:Acquire()
     poolType[w] = "text"
     w:SetParent(parent)
     w:Init(textDetails)
     w:Show()
     w:SetFrameStrata("MEDIUM")
-    w.kind = "text"
+    w:SetFrameLevel(1000)
+    w.kind = "texts"
+    w.kindIndex = index
     table.insert(widgets, w)
   end
 
-  for _, highlightDetails in ipairs(design.highlights) do
+  for index, highlightDetails in ipairs(design.highlights) do
     local w = pools.highlight:Acquire()
     w:SetParent(parent)
     w:Init(highlightDetails)
     w:Show()
-    w:SetFrameStrata("BACKGROUND")
-    w.kind = "highlight"
+    w:SetFrameStrata("MEDIUM")
+    w:SetFrameLevel(200)
+    w.kind = "highlights"
+    w.kindIndex = index
     table.insert(widgets, w)
   end
 
-  for _, specialDetails in ipairs(design.specialBars) do
+  for index, specialDetails in ipairs(design.specialBars) do
     assert(specialDetails.kind == "power")
     local w = pools.power:Acquire()
     poolType[w] = "power"
@@ -240,7 +248,8 @@ function addonTable.Display.GetWidgets(design, parent)
     w:Init(specialDetails)
     w:Show()
     w:SetFrameStrata("HIGH")
-    w.kind = "power"
+    w.kind = "specialBars"
+    w.kindIndex = index
     table.insert(widgets, w)
   end
 

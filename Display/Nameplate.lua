@@ -3,7 +3,10 @@ local addonTable = select(2, ...)
 
 addonTable.Display.NameplateMixin = {}
 function addonTable.Display.NameplateMixin:OnLoad()
+  self:SetFlattensRenderLayers(true)
+
   local style = addonTable.Config.Get(addonTable.Config.Options.DESIGN)
+
   self.widgets = addonTable.Display.GetWidgets(style, self)
 
   self.questFrame = CreateFrame("Frame", nil, self)
