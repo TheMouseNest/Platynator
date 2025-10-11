@@ -19,9 +19,64 @@ local function GetMainDesigner(parent)
   end
 
   local preview = CreateFrame("Frame", nil, container)
+
+  preview:SetPoint("TOP")
+  preview:SetPoint("LEFT")
+  preview:SetPoint("RIGHT")
+  preview:SetHeight(60)
+  preview:SetFlattensRenderLayers(true)
+  preview:SetScale(2)
+
+  addonTable.Config.Get(addonTable.Config.Options.DESIGN)
+  local widgets = addonTable.Display.GetWidgets(design, preview)
+  for _, w in ipairs(widgets) do
+    if w.kind == "bar" then
+      local defaultColor
+      if w.details.kind == "health" then
+        defaultColor = w.details.colors.threat.warning
+      else
+        defaultColor = w.details.colors.normal
+      end
+      w.statusBar:SetMinMaxValues(0, 100)
+      w.statusBar:SetValue(70)
+      w.statusBar:GetStatusBarTexture():SetVertexColor(defaultColor.r, defaultColor.g, defaultColor.b)
+      if w.details.colorBackground then
+        w.background:SetVertexColor(defaultColor.r, defaultColor.g, defaultColor.b)
+      end
+      w.marker:SetVertexColor(defaultColor.r, defaultColor.g, defaultColor.b)
+    elseif w.kind == "text" then
+      local display
+      if w.details.kind == "health" then
+        if #w.details.displayTypes == 1 and w.details.displayTypes[1] == "percentage" then
+          display = "70%"
+        elseif #w.details.displayTypes == 1 and w.details.displayTypes[1] == "absolute" then
+          display = "70,000"
+        elseif #w.details.displayTypes == 2 and w.details.displayTypes[1] == "absolute" then
+          display = "70,000 (70%)"
+        elseif #w.details.displayTypes == 2 and w.details.displayTypes[1] == "percentage" then
+          display = "70% (70,000)"
+        end
+      elseif w.details.kind == "creatureName" then
+        display = "Cheesanator"
+      elseif w.details.kind == "castSpellName" then
+        display = "Arcane Flurry"
+      end
+      if display then
+        w.text:SetText(display)
+      end
+    elseif w.kind == "power" then
+      w.main:GetStatusBarTexture():SetVertexColor(234/255, 61/255, 247/255)
+      w.main:SetValue(4)
+      w.background:SetValue(6)
+    end
+  end
+
+  return container
 end
 
-local TabSetups = {callback = GetMainDesigner, name = addonTable.Locales.DESIGNER}
+local TabSetups = {
+  {callback = GetMainDesigner, name = addonTable.Locales.DESIGNER},
+}
 
 function addonTable.CustomiseDialog.Toggle()
   if customisers[addonTable.Config.Get(addonTable.Config.Options.CURRENT_SKIN)] then

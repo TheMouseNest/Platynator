@@ -43,3 +43,6 @@ Design.lua
 Assets.lua
 
 API/Main.lua
+
+CustomiseDialog/Components.lua
+CustomiseDialog/Main.lua

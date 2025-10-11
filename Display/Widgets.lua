@@ -39,6 +39,8 @@ function addonTable.Display.GetBar(frame, parent)
     ApplyAnchor(frame, details.anchor)
 
     local foregroundDetails = addonTable.Assets.BarBackgrounds[details.foreground]
+    frame:SetSize(foregroundDetails.width * details.scale, foregroundDetails.height * details.scale)
+
     frame.statusBar:SetStatusBarTexture(foregroundDetails.file)
     frame.statusBar:GetStatusBarTexture():SetDrawLayer("ARTWORK")
     frame.background:SetTexture(addonTable.Assets.BarBackgrounds[details.background].file)
@@ -47,11 +49,11 @@ function addonTable.Display.GetBar(frame, parent)
       frame.marker:Show()
       local markerDetails = addonTable.Assets.BarPositionHighlights[details.marker.texture]
       frame.marker:SetTexture(markerDetails.file)
-      frame.marker:SetSize(markerDetails.width * details.scale, foregroundDetails.height * details.scale)
+      frame.marker:SetSize(markerDetails.width * details.scale, frame:GetHeight())
+      frame.marker:SetPoint("CENTER", frame.statusBar:GetStatusBarTexture(), "RIGHT")
     else
       frame.marker:Hide()
     end
-    frame:SetSize(foregroundDetails.width * details.scale, foregroundDetails.height * details.scale)
 
     frame.details = details
 
@@ -188,7 +190,7 @@ function addonTable.Display.GetText(frame, parent)
 end
 
 local pools = {
-  bars = CreateFramePool("Frame", UIParent, nil, nil, false, addonTable.Display.GetBar),
+  bar = CreateFramePool("Frame", UIParent, nil, nil, false, addonTable.Display.GetBar),
   text = CreateFramePool("Frame", UIParent, nil, nil, false, addonTable.Display.GetText),
   power = CreateFramePool("Frame", UIParent, nil, nil, false, addonTable.Display.GetPower),
   highlight = CreateFramePool("Frame", UIParent, nil, nil, false, addonTable.Display.GetHighlight),
@@ -200,12 +202,12 @@ function addonTable.Display.GetWidgets(design, parent)
   local widgets = {}
 
   for _, barDetails in ipairs(design.bars) do
-    local w = pools.bars:Acquire()
-    poolType[w] = "bars"
+    local w = pools.bar:Acquire()
     w:SetParent(parent)
     w:Init(barDetails)
     w:Show()
     w:SetFrameStrata("LOW")
+    w.kind = "bar"
     table.insert(widgets, w)
   end
 
@@ -216,16 +218,17 @@ function addonTable.Display.GetWidgets(design, parent)
     w:Init(textDetails)
     w:Show()
     w:SetFrameStrata("MEDIUM")
+    w.kind = "text"
     table.insert(widgets, w)
   end
 
   for _, highlightDetails in ipairs(design.highlights) do
     local w = pools.highlight:Acquire()
-    poolType[w] = "highlight"
     w:SetParent(parent)
     w:Init(highlightDetails)
     w:Show()
     w:SetFrameStrata("BACKGROUND")
+    w.kind = "highlight"
     table.insert(widgets, w)
   end
 
@@ -237,6 +240,7 @@ function addonTable.Display.GetWidgets(design, parent)
     w:Init(specialDetails)
     w:Show()
     w:SetFrameStrata("HIGH")
+    w.kind = "power"
     table.insert(widgets, w)
   end
 

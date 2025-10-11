@@ -12,6 +12,8 @@ addonTable.Constants = {
   IsMidnight = select(4, GetBuildInfo()) >= 120000,
 
   DeathKnightMaxRunes = 6,
+
+  ButtonFrameOffset = 5,
 }
 addonTable.Constants.Events = {
   "SettingChanged",

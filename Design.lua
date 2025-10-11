@@ -87,7 +87,7 @@ function addonTable.Design.GetDefaultDesignBold()
       },
       {
         kind = "castSpellName",
-        scale = 1.08,
+        scale = 1,
         anchor = {},
         anchor = {"TOP", 0, -12},
       }
@@ -180,7 +180,7 @@ function addonTable.Design.GetDefaultDesignSlight()
       },
       {
         kind = "castSpellName",
-        scale = 1.08,
+        scale = 1,
         anchor = {},
         anchor = {"TOP", 0, -12},
       }
