@@ -72,6 +72,8 @@ function addonTable.Display.ManagerMixin:OnLoad()
       end)
     end
   end)
+
+  NamePlateDriverFrame:UnregisterEvent("DISPLAY_SIZE_CHANGED")
 end
 
 function addonTable.Display.ManagerMixin:OnEvent(eventName, ...)
