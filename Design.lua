@@ -19,7 +19,7 @@ function addonTable.Design.GetDefaultDesignBold()
       {
         anchor = {},
         kind = "target",
-        texture = "wide/outline",
+        asset = "wide/outline",
         color = GetColor("FFFFFF"),
         scale = healthScale,
       },
@@ -36,7 +36,7 @@ function addonTable.Design.GetDefaultDesignBold()
         foreground = "wide/bold-1",
         border = "wide/bold-1",
         marker = {
-          texture = "none",
+          asset = "none",
         },
         colors = {
           threat = {
@@ -59,7 +59,7 @@ function addonTable.Design.GetDefaultDesignBold()
           uninterruptable = GetColor("83C0C3")
         },
         marker = {
-          texture = "none",
+          asset = "none",
         },
         colorBackground = true,
         backgroundAlpha = 1,
@@ -92,6 +92,14 @@ function addonTable.Design.GetDefaultDesignBold()
         anchor = {"TOP", 0, -12},
       }
     },
+    markers = {
+      {
+        kind = "quest",
+        scale = healthScale * 0.9,
+        asset = "normal/quest-marker",
+        anchor = {"RIGHT", -64, 0}
+      }
+    }
   }
 end
 
@@ -106,7 +114,7 @@ function addonTable.Design.GetDefaultDesignSlight()
       {
         anchor = {},
         kind = "target",
-        texture = "wide/glow",
+        asset = "wide/glow",
         color = GetColor("1CE2ED"),
         scale = healthScale,
       },
@@ -123,7 +131,7 @@ function addonTable.Design.GetDefaultDesignSlight()
         foreground = "wide/slight-2",
         border = "wide/slight-1",
         marker = {
-          texture = "wide/glow",
+          asset = "wide/glow",
         },
         colors = {
           threat = {
@@ -146,7 +154,7 @@ function addonTable.Design.GetDefaultDesignSlight()
           uninterruptable = GetColor("83C0C3")
         },
         marker = {
-          texture = "wide/glow",
+          asset = "wide/glow",
         },
         colorBackground = true,
         backgroundAlpha = 1,
@@ -185,5 +193,13 @@ function addonTable.Design.GetDefaultDesignSlight()
         anchor = {"TOP", 0, -12},
       }
     },
+    markers = {
+      {
+        kind = "quest",
+        scale = healthScale * 0.9,
+        asset = "normal/quest-marker",
+        anchor = {"RIGHT", -64, 0}
+      }
+    }
   }
 end

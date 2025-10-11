@@ -7,17 +7,18 @@ function addonTable.Display.NameplateMixin:OnLoad()
 
   local style = addonTable.Config.Get(addonTable.Config.Options.DESIGN)
 
-  self.widgets = addonTable.Display.GetWidgets(style, self)
-
-  self.questFrame = CreateFrame("Frame", nil, self)
-  self.questMarker = self.questFrame:CreateTexture()
-  self.questMarker:SetTexture("Interface/AddOns/Platynator/Assets/quest-marker.png")
-  self.questMarker:SetSize(style.bars[1].scale * 48 * 0.9, style.bars[1].scale * 170 * 0.9)
-  self.questMarker:SetPoint("RIGHT", self.widgets[1], "LEFT", -2, 0)
-  self.questMarker:Hide()
+  self:InitializeWidgets()
 
   self.AurasFrame = nil
   self.OldUnitFrame = nil
+end
+
+function addonTable.Display.NameplateMixin:InitializeWidgets()
+  if self.widgets then
+    addonTable.Display.ReleaseWidgets(self.widgets)
+  end
+  local style = addonTable.Config.Get(addonTable.Config.Options.DESIGN)
+  self.widgets = addonTable.Display.GetWidgets(style, self)
 end
 
 function addonTable.Display.NameplateMixin:Install(nameplate)
@@ -52,8 +53,6 @@ function addonTable.Display.NameplateMixin:SetUnit(unit)
   end
   if self.unit then
     self:Show()
-    self:RegisterUnitEvent("UNIT_NAME_UPDATE", self.unit)
-    self:UpdateQuestMarker()
     if addonTable.Constants.IsMidnight then
       C_NamePlateManager.SetNamePlateSimplified(self.unit, false)
     end
@@ -61,13 +60,6 @@ function addonTable.Display.NameplateMixin:SetUnit(unit)
     self:Hide()
     self:UnregisterAllEvents()
   end
-end
-
-function addonTable.Display.NameplateMixin:UpdateQuestMarker()
-  if not self.unit then
-    return
-  end
-  self.questMarker:SetShown(UnitIsQuestBoss(self.unit) or C_QuestLog.UnitIsRelatedToActiveQuest(self.unit))
 end
 
 function addonTable.Display.NameplateMixin:UpdateForTarget()

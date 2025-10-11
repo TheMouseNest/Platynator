@@ -45,9 +45,9 @@ function addonTable.Display.GetBar(frame, parent)
     frame.statusBar:GetStatusBarTexture():SetDrawLayer("ARTWORK")
     frame.background:SetTexture(addonTable.Assets.BarBackgrounds[details.background].file)
     frame.border:SetTexture(addonTable.Assets.BarBorders[details.border].file)
-    if details.marker.texture ~= "none" then
+    if details.marker.asset ~= "none" then
       frame.marker:Show()
-      local markerDetails = addonTable.Assets.BarPositionHighlights[details.marker.texture]
+      local markerDetails = addonTable.Assets.BarPositionHighlights[details.marker.asset]
       frame.marker:SetTexture(markerDetails.file)
       frame.marker:SetSize(markerDetails.width * details.scale, frame:GetHeight())
       frame.marker:SetPoint("CENTER", frame.statusBar:GetStatusBarTexture(), "RIGHT")
@@ -127,7 +127,7 @@ function addonTable.Display.GetHighlight(frame, parent)
   function frame:Init(details)
     ApplyAnchor(frame, details.anchor)
 
-    local highlightDetails = addonTable.Assets.Highlights[details.texture]
+    local highlightDetails = addonTable.Assets.Highlights[details.asset]
 
     frame.highlight:SetTexture(highlightDetails.file)
     frame.highlight:SetVertexColor(details.color.r, details.color.g, details.color.b)
@@ -135,6 +135,36 @@ function addonTable.Display.GetHighlight(frame, parent)
 
     if details.kind == "target" then
       Mixin(frame, addonTable.Display.HighlightMixin)
+    else
+      assert(false)
+    end
+
+    frame:SetScript("OnEvent", frame.OnEvent)
+
+    if frame.PostInit then
+      frame:PostInit()
+    end
+  end
+
+  return frame
+end
+
+function addonTable.Display.GetMarker(frame, parent)
+  frame = frame or CreateFrame("Frame", nil, parent or UIParent)
+
+  frame.marker = frame:CreateTexture()
+  frame.marker:SetAllPoints()
+
+  function frame:Init(details)
+    ApplyAnchor(frame, details.anchor)
+
+    local markerDetails = addonTable.Assets.Markers[details.asset]
+
+    frame.marker:SetTexture(markerDetails.file)
+    frame:SetSize(markerDetails.width * details.scale, markerDetails.height * details.scale)
+
+    if details.kind == "quest" then
+      Mixin(frame, addonTable.Display.QuestMarkerMixin)
     else
       assert(false)
     end
@@ -192,10 +222,11 @@ function addonTable.Display.GetText(frame, parent)
 end
 
 local pools = {
-  bar = CreateFramePool("Frame", UIParent, nil, nil, false, addonTable.Display.GetBar),
-  text = CreateFramePool("Frame", UIParent, nil, nil, false, addonTable.Display.GetText),
-  power = CreateFramePool("Frame", UIParent, nil, nil, false, addonTable.Display.GetPower),
-  highlight = CreateFramePool("Frame", UIParent, nil, nil, false, addonTable.Display.GetHighlight),
+  bars = CreateFramePool("Frame", UIParent, nil, nil, false, addonTable.Display.GetBar),
+  texts = CreateFramePool("Frame", UIParent, nil, nil, false, addonTable.Display.GetText),
+  powers = CreateFramePool("Frame", UIParent, nil, nil, false, addonTable.Display.GetPower),
+  highlights = CreateFramePool("Frame", UIParent, nil, nil, false, addonTable.Display.GetHighlight),
+  markers = CreateFramePool("Frame", UIParent, nil, nil, false, addonTable.Display.GetMarker),
 }
 
 local poolType = {}
@@ -204,7 +235,7 @@ function addonTable.Display.GetWidgets(design, parent)
   local widgets = {}
 
   for index, barDetails in ipairs(design.bars) do
-    local w = pools.bar:Acquire()
+    local w = pools.bars:Acquire()
     w:SetParent(parent)
     w:Init(barDetails)
     w:Show()
@@ -216,7 +247,7 @@ function addonTable.Display.GetWidgets(design, parent)
   end
 
   for index, textDetails in ipairs(design.texts) do
-    local w = pools.text:Acquire()
+    local w = pools.texts:Acquire()
     poolType[w] = "text"
     w:SetParent(parent)
     w:Init(textDetails)
@@ -229,7 +260,7 @@ function addonTable.Display.GetWidgets(design, parent)
   end
 
   for index, highlightDetails in ipairs(design.highlights) do
-    local w = pools.highlight:Acquire()
+    local w = pools.highlights:Acquire()
     w:SetParent(parent)
     w:Init(highlightDetails)
     w:Show()
@@ -242,8 +273,8 @@ function addonTable.Display.GetWidgets(design, parent)
 
   for index, specialDetails in ipairs(design.specialBars) do
     assert(specialDetails.kind == "power")
-    local w = pools.power:Acquire()
-    poolType[w] = "power"
+    local w = pools.powers:Acquire()
+    poolType[w] = "powers"
     w:SetParent(parent)
     w:Init(specialDetails)
     w:Show()
@@ -253,11 +284,24 @@ function addonTable.Display.GetWidgets(design, parent)
     table.insert(widgets, w)
   end
 
+  for index, markerDetails in ipairs(design.markers) do
+    local w = pools.markers:Acquire()
+    poolType[w] = "markers"
+    w:SetParent(parent)
+    w:Init(markerDetails)
+    w:Show()
+    w:SetFrameStrata("HIGH")
+    w.kind = "markers"
+    w.kindIndex = index
+    table.insert(widgets, w)
+  end
+
   return widgets
 end
 
 function addonTable.Display.ReleaseWidgets(widgets)
   for _, w in ipairs(widgets) do
+    w:Strip()
     pools[poolType[w]]:Release(w)
     pools[poolType[w]] = nil
   end

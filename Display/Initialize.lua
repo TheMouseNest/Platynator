@@ -40,7 +40,6 @@ function addonTable.Display.ManagerMixin:OnLoad()
   self:RegisterEvent("PLAYER_SOFT_FRIEND_CHANGED")
   self:RegisterEvent("PLAYER_SOFT_ENEMY_CHANGED")
   self:RegisterEvent("UPDATE_MOUSEOVER_UNIT")
-  self:RegisterEvent("QUEST_LOG_UPDATE")
 
   self:RegisterUnitEvent("UNIT_POWER_UPDATE", "player")
   self:RegisterEvent("RUNE_POWER_UPDATE")
@@ -56,6 +55,16 @@ function addonTable.Display.ManagerMixin:OnLoad()
     local nameplate = C_NamePlate.GetNamePlateForUnit(unit, issecure())
     if self.nameplateDisplays[nameplate] then
       self.nameplateDisplays[nameplate]:SetUnit(nil)
+    end
+  end)
+
+  addonTable.CallbackRegistry:RegisterCallback("RefreshStateChange", function(_, state)
+    if state[addonTable.Constants.RefreshReason.Design] then
+      self:SetScript("OnUpdate", function()
+        for _, display in pairs(self.nameplateDisplays) do
+          display:InitializeWidgets()
+        end
+      end)
     end
   end)
 end
@@ -93,10 +102,6 @@ function addonTable.Display.ManagerMixin:OnEvent(eventName, ...)
       self.nameplateDisplays[new]:UpdateForTarget()
     else
       self.lastTarget = nil
-    end
-  elseif eventName == "QUEST_LOG_UPDATE" then
-    for _, display in pairs(self.nameplateDisplays) do
-      display:UpdateQuestMarker()
     end
   end
 end

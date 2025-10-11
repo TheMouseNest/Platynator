@@ -29,3 +29,7 @@ addonTable.Assets.PowerBars = {
   ["normal/gradient-faded"] = {file = "Interface/AddOns/Platynator/Assets/Power/gradient-inactive.png", width = 993, height = 147},
   ["normal/gradient-full"] = {file = "Interface/AddOns/Platynator/Assets/Power/gradient-active.png", width = 993, height = 147},
 }
+
+addonTable.Assets.Markers = {
+  ["normal/quest-marker"] = {file = "Interface/AddOns/Platynator/Assets/quest-marker.png", width = 48, height = 170},
+}
