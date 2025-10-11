@@ -19,6 +19,10 @@ function addonTable.Display.HealthTextMixin:Strip()
   self:UnregisterAllEvents()
 end
 
+function addonTable.Display.HealthTextMixin:OnEvent()
+  self:UpdateText()
+end
+
 function addonTable.Display.HealthTextMixin:UpdateText()
   if UnitIsDeadOrGhost(self.unit) then
     self.text:SetText("0")
@@ -36,7 +40,7 @@ function addonTable.Display.HealthTextMixin:UpdateText()
     else
       local health = UnitHealth(self.unit)
       values.absolute = FormatLargeNumber(health)
-      values.percentage = math.floor(health/UnitHealthMax(self.unit)*100) .. "%"
+      values.percentage = math.ceil(health/UnitHealthMax(self.unit)*100) .. "%"
     end
     if #types == 2 then
       self.text:SetFormattedText("%s (%s)", values[types[1]], values[types[2]])
