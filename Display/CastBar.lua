@@ -36,10 +36,8 @@ function addonTable.Display.CastBarMixin:ApplyColor()
     end
   end
   self.statusBar:GetStatusBarTexture():SetVertexColor(color.r, color.g, color.b)
-  if self.marker then
-    self.marker:SetVertexColor(color.r, color.g, color.b)
-  end
-  if self.details.colorBackground then
+  self.marker:SetVertexColor(color.r, color.g, color.b)
+  if self.details.background.applyColor then
     self.background:SetVertexColor(color.r, color.g, color.b)
   end
 end

@@ -27,12 +27,10 @@ end
 
 function addonTable.Display.HealthBarMixin:SetHealthColor(c)
   self.statusBar:GetStatusBarTexture():SetVertexColor(c.r, c.g, c.b)
-  if self.details.colorBackground then
+  if self.details.background.applyColor then
     self.background:SetVertexColor(c.r, c.g, c.b)
   end
-  if self.marker then
-    self.marker:SetVertexColor(c.r, c.g, c.b)
-  end
+  self.marker:SetVertexColor(c.r, c.g, c.b)
 end
 
 function addonTable.Display.HealthBarMixin:UpdateColor()

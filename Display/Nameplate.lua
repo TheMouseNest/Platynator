@@ -16,6 +16,7 @@ end
 function addonTable.Display.NameplateMixin:InitializeWidgets()
   if self.widgets then
     addonTable.Display.ReleaseWidgets(self.widgets)
+    self.widgets = nil
   end
   local style = addonTable.Config.Get(addonTable.Config.Options.DESIGN)
   self.widgets = addonTable.Display.GetWidgets(style, self)

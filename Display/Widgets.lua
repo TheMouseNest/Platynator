@@ -15,16 +15,17 @@ function addonTable.Display.GetBar(frame, parent)
   frame = frame or CreateFrame("Frame", nil, parent or UIParent)
 
   frame.statusBar = CreateFrame("StatusBar", nil, frame)
-  frame.statusBar:SetPoint("CENTER")
   frame.statusBar:SetAllPoints()
   frame.statusBar:SetClipsChildren(true)
 
   frame.marker = frame.statusBar:CreateTexture()
   frame.marker:SetDrawLayer("ARTWORK", 2)
 
-  frame.border = frame.statusBar:CreateTexture()
-  frame.border:SetAllPoints()
+  local borderHolder = CreateFrame("Frame", nil, frame)
+  frame.border = borderHolder:CreateTexture()
   frame.border:SetDrawLayer("OVERLAY")
+  frame.border:SetPoint("CENTER", frame)
+
   frame.background = frame.statusBar:CreateTexture()
   frame.background:SetAllPoints()
   frame.background:SetDrawLayer("BACKGROUND")
@@ -38,13 +39,18 @@ function addonTable.Display.GetBar(frame, parent)
 
     ApplyAnchor(frame, details.anchor)
 
-    local foregroundDetails = addonTable.Assets.BarBackgrounds[details.foreground]
+    local foregroundDetails = addonTable.Assets.BarBackgrounds[details.foreground.asset]
     frame:SetSize(foregroundDetails.width * details.scale, foregroundDetails.height * details.scale)
 
     frame.statusBar:SetStatusBarTexture(foregroundDetails.file)
     frame.statusBar:GetStatusBarTexture():SetDrawLayer("ARTWORK")
-    frame.background:SetTexture(addonTable.Assets.BarBackgrounds[details.background].file)
-    frame.border:SetTexture(addonTable.Assets.BarBorders[details.border].file)
+    local backgroundDetails = addonTable.Assets.BarBackgrounds[details.background.asset]
+    frame.background:SetTexture(backgroundDetails.file)
+    frame.background:SetSize(backgroundDetails.width * details.scale, backgroundDetails.height * details.scale)
+    local borderDetails = addonTable.Assets.BarBorders[details.border.asset]
+    frame.border:SetTexture(borderDetails.file)
+    frame.border:SetSize(borderDetails.width * details.scale, borderDetails.height * details.scale)
+    frame.border:SetVertexColor(details.border.color.r, details.border.color.g, details.border.color.b)
     if details.marker.asset ~= "none" then
       frame.marker:Show()
       local markerDetails = addonTable.Assets.BarPositionHighlights[details.marker.asset]
@@ -236,6 +242,7 @@ function addonTable.Display.GetWidgets(design, parent)
 
   for index, barDetails in ipairs(design.bars) do
     local w = pools.bars:Acquire()
+    poolType[w] = "bars"
     w:SetParent(parent)
     w:Init(barDetails)
     w:Show()
@@ -248,7 +255,7 @@ function addonTable.Display.GetWidgets(design, parent)
 
   for index, textDetails in ipairs(design.texts) do
     local w = pools.texts:Acquire()
-    poolType[w] = "text"
+    poolType[w] = "texts"
     w:SetParent(parent)
     w:Init(textDetails)
     w:Show()
@@ -261,6 +268,7 @@ function addonTable.Display.GetWidgets(design, parent)
 
   for index, highlightDetails in ipairs(design.highlights) do
     local w = pools.highlights:Acquire()
+    poolType[w] = "highlights"
     w:SetParent(parent)
     w:Init(highlightDetails)
     w:Show()
@@ -303,6 +311,6 @@ function addonTable.Display.ReleaseWidgets(widgets)
   for _, w in ipairs(widgets) do
     w:Strip()
     pools[poolType[w]]:Release(w)
-    pools[poolType[w]] = nil
+    poolType[w] = nil
   end
 end

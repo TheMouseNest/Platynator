@@ -3,6 +3,10 @@ local addonTable = select(2, ...)
 
 local customisers = {}
 
+local function GetBarOptions(parent)
+  local container = CreateFrame("Frame", nil, parent)
+end
+
 local function GetMainDesigner(parent)
   local container = CreateFrame("Frame", nil, parent)
 

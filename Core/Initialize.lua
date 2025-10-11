@@ -13,17 +13,29 @@ local offscreen = CreateFrame("Frame")
 offscreen:SetPoint("TOPLEFT", UIParent, "TOPRIGHT")
 addonTable.offscreenFrame = hidden
 
+local function SetStyle()
+  if addonTable.Config.Get(addonTable.Config.Options.STYLE) == "slight" then
+    addonTable.Config.Set(addonTable.Config.Options.DESIGN, addonTable.Design.GetDefaultDesignSlight())
+  elseif addonTable.Config.Get(addonTable.Config.Options.STYLE) == "tooltip" then
+    addonTable.Config.Set(addonTable.Config.Options.DESIGN, addonTable.Design.GetDefaultDesignTooltip())
+  else
+    addonTable.Config.Set(addonTable.Config.Options.DESIGN, addonTable.Design.GetDefaultDesignBold())
+  end
+end
+
 function addonTable.Core.Initialize()
   addonTable.Config.InitializeData()
 
   --if next(addonTable.Config.Get(addonTable.Config.Options.DESIGN)) == nil then
   --  addonTable.Config.Set(addonTable.Config.Options.DESIGN, addonTable.Design.GetDefaultDesignSlight())
   --end
-  if addonTable.Config.Get(addonTable.Config.Options.STYLE) == "slight" then
-    addonTable.Config.Set(addonTable.Config.Options.DESIGN, addonTable.Design.GetDefaultDesignSlight())
-  else
-    addonTable.Config.Set(addonTable.Config.Options.DESIGN, addonTable.Design.GetDefaultDesignBold())
-  end
+
+  SetStyle()
+  addonTable.CallbackRegistry:RegisterCallback("SettingChanged", function(_, name)
+    if name == addonTable.Config.Options.STYLE then
+      SetStyle()
+    end
+  end)
 
   addonTable.SlashCmd.Initialize()
 

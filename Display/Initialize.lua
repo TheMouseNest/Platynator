@@ -61,8 +61,13 @@ function addonTable.Display.ManagerMixin:OnLoad()
   addonTable.CallbackRegistry:RegisterCallback("RefreshStateChange", function(_, state)
     if state[addonTable.Constants.RefreshReason.Design] then
       self:SetScript("OnUpdate", function()
-        for _, display in pairs(self.nameplateDisplays) do
+        self:SetScript("OnUpdate", nil)
+        for nameplate, display in pairs(self.nameplateDisplays) do
           display:InitializeWidgets()
+          local unit = nameplate:GetName():lower()
+          if UnitExists(unit) then
+            display:SetUnit(unit)
+          end
         end
       end)
     end

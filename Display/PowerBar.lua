@@ -57,6 +57,9 @@ function addonTable.Display.PowerBarMixin:PostInit()
   self.powerColor = self:GetColor() or CreateColor(240/255, 201/255, 0/255)
 end
 
+function addonTable.Display.PowerBarMixin:Strip()
+end
+
 function addonTable.Display.PowerBarMixin:SetUnit(unit)
   self.unit = unit
   if self.unit then

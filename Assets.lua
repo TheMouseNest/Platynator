@@ -13,11 +13,13 @@ addonTable.Assets.BarBackgrounds = {
 addonTable.Assets.BarBorders = {
   ["wide/bold-1"] = {file = "Interface/AddOns/Platynator/Assets/Bars/Wide/bold-bar-border.png", width = 1000, height = 125},
   ["wide/slight-1"] = {file = "Interface/AddOns/Platynator/Assets/Bars/Wide/slight-bar-border.png", width = 1000, height = 125},
+  ["wide/tooltip-1"] = {file = "Interface/AddOns/Platynator/Assets/Bars/Wide/tooltip-border.png", width = 1023, height = 149},
 }
 
 addonTable.Assets.Highlights = {
   ["wide/outline"] = {file = "Interface/AddOns/Platynator/Assets/Bars/Wide/outline.png", width = 1030, height = 155},
   ["wide/glow"] = {file = "Interface/AddOns/Platynator/Assets/Bars/Wide/glow.png", width = 1472, height = 592},
+  ["wide/soft-glow"] = {file = "Interface/AddOns/Platynator/Assets/Bars/Wide/soft-glow.png", width = 1066, height = 193},
 }
 
 addonTable.Assets.BarPositionHighlights = {
