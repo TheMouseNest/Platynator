@@ -28,6 +28,9 @@ end
 
 function addonTable.Display.CastTextMixin:ApplyCasting()
   local name = UnitCastingInfo(self.unit)
+  if type(name) == "nil" then
+    name = UnitChannelInfo(self.unit)
+  end
 
   if type(name) ~= "nil" then
     self:Show()

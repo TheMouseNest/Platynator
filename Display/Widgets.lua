@@ -18,6 +18,10 @@ function addonTable.Display.GetBar(frame, parent)
   frame.statusBar:SetAllPoints()
   frame.statusBar:SetClipsChildren(true)
 
+  frame.reverseStatusTexture = frame.statusBar:CreateTexture()
+  frame.reverseStatusTexture:SetPoint("LEFT", frame)
+  frame.reverseStatusTexture:SetDrawLayer("ARTWORK", -1)
+
   frame.marker = frame.statusBar:CreateTexture()
   frame.marker:SetDrawLayer("ARTWORK", 2)
 
@@ -25,6 +29,20 @@ function addonTable.Display.GetBar(frame, parent)
   frame.border = borderHolder:CreateTexture()
   frame.border:SetDrawLayer("OVERLAY")
   frame.border:SetPoint("CENTER", frame)
+
+  function frame:SetReverseFill(value)
+    if value then
+      frame.statusBar:SetFillStyle("REVERSE")
+      frame.marker:SetPoint("CENTER", frame.reverseStatusTexture, "RIGHT")
+      self.statusBar:GetStatusBarTexture():SetColorTexture(1, 1, 1, 0)
+      self.reverseStatusTexture:Show()
+    else
+      frame.statusBar:SetFillStyle("STANDARD")
+      frame.marker:SetPoint("CENTER", frame.statusBar:GetStatusBarTexture(), "RIGHT")
+      self.statusBar:SetStatusBarTexture(addonTable.Assets.BarBackgrounds[frame.details.foreground.asset].file)
+      self.reverseStatusTexture:Hide()
+    end
+  end
 
   frame.background = frame.statusBar:CreateTexture()
   frame.background:SetAllPoints()
@@ -44,6 +62,15 @@ function addonTable.Display.GetBar(frame, parent)
 
     frame.statusBar:SetStatusBarTexture(foregroundDetails.file)
     frame.statusBar:GetStatusBarTexture():SetDrawLayer("ARTWORK")
+
+    frame.reverseStatusTexture:Hide()
+    -- Scaling to avoid zooming in on the texture at the current size
+    frame.reverseStatusTexture:SetScale(frame:GetWidth() / foregroundDetails.width)
+    frame.reverseStatusTexture:SetTexture(foregroundDetails.file)
+    frame.reverseStatusTexture:SetHeight(foregroundDetails.height)
+    frame.reverseStatusTexture:SetPoint("RIGHT", frame.statusBar:GetStatusBarTexture(), "LEFT")
+    frame.reverseStatusTexture:SetHorizTile(true)
+
     local backgroundDetails = addonTable.Assets.BarBackgrounds[details.background.asset]
     frame.background:SetTexture(backgroundDetails.file)
     frame.background:SetSize(backgroundDetails.width * details.scale, backgroundDetails.height * details.scale)

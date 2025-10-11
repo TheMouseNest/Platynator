@@ -19,6 +19,8 @@ function addonTable.Display.CastBarMixin:SetUnit(unit)
 end
 
 function addonTable.Display.CastBarMixin:Strip()
+  self:SetReverseFill(false)
+
   self:UnregisterAllEvents()
   self:SetScript("OnUpdate", nil)
 end
@@ -36,6 +38,7 @@ function addonTable.Display.CastBarMixin:ApplyColor()
     end
   end
   self.statusBar:GetStatusBarTexture():SetVertexColor(color.r, color.g, color.b)
+  self.reverseStatusTexture:SetVertexColor(color.r, color.g, color.b)
   self.marker:SetVertexColor(color.r, color.g, color.b)
   if self.details.background.applyColor then
     self.background:SetVertexColor(color.r, color.g, color.b)
@@ -44,6 +47,13 @@ end
 
 function addonTable.Display.CastBarMixin:ApplyCasting()
   local name, text, texture, startTime, endTime, _, _, _, _ = UnitCastingInfo(self.unit)
+  local isChanneled = false
+
+  if type(name) == "nil" then
+    name, text, texture, startTime, endTime, _, _, _, _ = UnitChannelInfo(self.unit)
+    isChanneled = true
+  end
+  self:SetReverseFill(isChanneled)
 
   if type(startTime) ~= "nil" and type(endTime) ~= "nil" then
     self:Show()
