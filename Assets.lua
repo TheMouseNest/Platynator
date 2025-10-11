@@ -30,6 +30,8 @@ addonTable.Assets.BarPositionHighlights = {
 addonTable.Assets.PowerBars = {
   ["normal/gradient-faded"] = {file = "Interface/AddOns/Platynator/Assets/Power/gradient-inactive.png", width = 993, height = 147},
   ["normal/gradient-full"] = {file = "Interface/AddOns/Platynator/Assets/Power/gradient-active.png", width = 993, height = 147},
+  ["normal/soft-faded"] = {file = "Interface/AddOns/Platynator/Assets/Power/soft-inactive.png", width = 993, height = 147},
+  ["normal/soft-full"] = {file = "Interface/AddOns/Platynator/Assets/Power/soft-active.png", width = 993, height = 147},
 }
 
 addonTable.Assets.Markers = {

@@ -310,8 +310,8 @@ function addonTable.Design.GetDefaultDesignTooltip()
     specialBars = {
       {
         kind = "power",
-        blank = "normal/gradient-faded",
-        filled = "normal/gradient-full",
+        blank = "normal/soft-faded",
+        filled = "normal/soft-full",
         scale = healthScale * 0.60,
         anchor = {0, -7},
       },
