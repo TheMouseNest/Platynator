@@ -39,11 +39,11 @@ function addonTable.Display.HealthBarMixin:UpdateColor()
   if UnitIsPlayer(self.unit) then
     local c = RAID_CLASS_COLORS[UnitClassBase(self.unit)]
     self:SetHealthColor(c)
-  elseif UnitIsFriend("player", self.unit) then
-    local c = self.details.colors.npc.friendly
-    self:SetHealthColor(c)
   elseif UnitSelectionType(self.unit) == 2 and not UnitAffectingCombat(self.unit) then
     local c = self.details.colors.npc.neutral
+    self:SetHealthColor(c)
+  elseif UnitIsFriend("player", self.unit) then
+    local c = self.details.colors.npc.friendly
     self:SetHealthColor(c)
   elseif (not UnitCanAttack("player", self.unit)--[[or not UnitAffectingCombat(self.unit)]]) and UnitIsEnemy("player", self.unit) then
     local c = self.details.colors.npc.hostile
@@ -96,7 +96,7 @@ function addonTable.Display.HealthBarMixin:OnEvent(eventName)
   if eventName == "UNIT_HEALTH" then
     self:UpdateHealth()
   elseif eventName == "UNIT_MAXHEALTH" then
-    self.healthBar:SetMinMaxValues(0, UnitHealthMax(self.unit))
+    self.statusBar:SetMinMaxValues(0, UnitHealthMax(self.unit))
   elseif eventName == "UNIT_THREAT_LIST_UPDATE" then
     self:UpdateColor()
   end
