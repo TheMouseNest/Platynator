@@ -24,6 +24,11 @@ local specializationToPower = {
   [269] = Enum.PowerType.Chi,
   --Mage (arcane only)
   [62] = Enum.PowerType.ArcaneCharges,
+  --Evokers
+  [1465] = Enum.PowerType.Essence, -- No spec
+  [1467] = Enum.PowerType.Essence,
+  [1468] = Enum.PowerType.Essence,
+  [1473] = Enum.PowerType.Essence,
 }
 
 local specializationToColor = {
@@ -49,6 +54,11 @@ local specializationToColor = {
   [269] = CreateColorFromRGBHexString("31f78a"),
   --Mage (arcane only)
   [62] = CreateColorFromRGBHexString("46d8fc"),
+  --Evokers
+  [1465] = CreateColorFromRGBHexString("37e5fc"), -- No spec
+  [1467] = CreateColorFromRGBHexString("37e5fc"),
+  [1468] = CreateColorFromRGBHexString("37e5fc"),
+  [1473] = CreateColorFromRGBHexString("37e5fc"),
 }
 
 addonTable.Display.PowerBarMixin = {}
