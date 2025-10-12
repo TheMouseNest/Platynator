@@ -394,9 +394,9 @@ function addonTable.Design.GetDefaultDesignBlizzard()
         scale = healthScale,
         colorBackground = true,
         background = {
-          asset = "transparent",
+          asset = "wide/blizzard-1",
           applyColor = false,
-          alpha = 1,
+          alpha = 0.3,
         },
         foreground = {
           asset = "wide/blizzard-1",
