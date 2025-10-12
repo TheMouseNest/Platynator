@@ -74,6 +74,8 @@ function addonTable.Display.GetBar(frame, parent)
     local backgroundDetails = addonTable.Assets.BarBackgrounds[details.background.asset]
     frame.background:SetTexture(backgroundDetails.file)
     frame.background:SetSize(backgroundDetails.width * details.scale, backgroundDetails.height * details.scale)
+    frame.background:SetAlpha(details.background.alpha)
+    frame.background:SetVertexColor(1, 1, 1)
     local borderDetails = addonTable.Assets.BarBorders[details.border.asset]
     frame.border:SetTexture(borderDetails.file)
     frame.border:SetSize(borderDetails.width * details.scale, borderDetails.height * details.scale)
@@ -237,6 +239,7 @@ function addonTable.Display.GetText(frame, parent)
     end
 
     ApplyAnchor(frame, details.anchor)
+    frame.text:SetPoint(details.anchor[1] or "CENTER")
 
     frame.text:SetText("TEST")
     frame.text:SetTextScale(details.scale)

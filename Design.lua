@@ -32,7 +32,7 @@ function addonTable.Design.GetDefaultDesignRabbit()
         scale = healthScale,
         background = {
           asset = "wide/bold-1",
-          alpha = 1,
+          alpha = 0.5,
           applyColor = false,
         },
         foreground = {
@@ -70,7 +70,7 @@ function addonTable.Design.GetDefaultDesignRabbit()
         },
         background = {
           asset = "wide/bold-1",
-          alpha = 1,
+          alpha = 0.5,
           applyColor = false,
         },
         foreground = {
@@ -391,9 +391,9 @@ function addonTable.Design.GetDefaultDesignBlizzard()
         scale = healthScale,
         colorBackground = true,
         background = {
-          asset = "wide/blizzard-1",
-          applyColor = true,
-          alpha = 0.7,
+          asset = "transparent",
+          applyColor = false,
+          alpha = 1,
         },
         foreground = {
           asset = "wide/blizzard-1",
@@ -422,41 +422,34 @@ function addonTable.Design.GetDefaultDesignBlizzard()
         kind = "cast",
         anchor = {"TOP", 0, -10},
         colors = {
-          normal = GetColor("FC8C00"),
-          uninterruptable = GetColor("83C0C3")
+          normal = GetColor("ffbd00"),
+          uninterruptable = GetColor("878787")
         },
         marker = {
           asset = "wide/glow",
         },
         background = {
-          asset = "wide/blizzard-1",
+          asset = "transparent",
           applyColor = true,
-          alpha = 0.7,
+          alpha = 1,
         },
         foreground = {
-          asset = "wide/blizzard-1",
+          asset = "special/blizzard-cast-bar",
         },
         border = {
-          asset = "wide/blizzard-glow",
-          color = GetColor("ffe87c")
+          asset = "transparent",
+          color = GetColor("FFFFFF")
         },
         scale = healthScale,
       },
     },
     specialBars = {
-      {
-        kind = "power",
-        blank = "normal/soft-faded",
-        filled = "normal/soft-full",
-        scale = healthScale * 0.60,
-        anchor = {0, -8},
-      },
     },
     texts = {
       {
         kind = "health",
         scale = 0.98,
-        anchor = {"BOTTOMRIGHT", 61, -13},
+        anchor = {"RIGHT", 61, 0},
         displayTypes = {"percentage"}, -- or "absolute", or both
       },
       {
@@ -466,9 +459,9 @@ function addonTable.Design.GetDefaultDesignBlizzard()
       },
       {
         kind = "castSpellName",
-        scale = 1,
+        scale = 0.8,
         anchor = {},
-        anchor = {"TOP", 0, -13},
+        anchor = {"LEFT", -61, -13},
       }
     },
     markers = {
@@ -476,15 +469,8 @@ function addonTable.Design.GetDefaultDesignBlizzard()
         kind = "quest",
         scale = healthScale * 0.9,
         asset = "normal/quest-gradient",
-        anchor = {"RIGHT", -64, 0}
+        anchor = {"RIGHT", -66, 0}
       },
-      {
-        kind = "cannotInterrupt",
-        scale = healthScale * 0.5,
-        asset = "normal/shield-gradient",
-        color = GetColor("647b7f"),
-        anchor = {"TOPRIGHT", -50, -13}
-      }
     }
   }
 end
