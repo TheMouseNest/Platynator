@@ -21,7 +21,7 @@ addonTable.Assets.BarBorders = {
   ["wide/slight-1"] = {file = "Interface/AddOns/Platynator/Assets/Bars/Wide/slight-bar-border.png", width = 1000, height = 125},
   ["wide/soft-1"] = {file = "Interface/AddOns/Platynator/Assets/Bars/Wide/soft-border.png", width = 1023, height = 149},
   ["wide/blizzard-normal"] = {file = "Interface/AddOns/Platynator/Assets/Bars/Wide/blizzard-border.png", width = 1116, height = 248},
-  ["wide/blizzard-glow"] = {file = "Interface/AddOns/Platynator/Assets/Bars/Wide/blizzard-border-glow.png", width = 1364, height = 248},
+  ["special/blizzard-cast-bar-border"] = {file = "Interface/AddOns/Platynator/Assets/Bars/Special/blizzard-cast-bar-border.png", width = 1000, height = 57},
 }
 
 addonTable.Assets.Highlights = {

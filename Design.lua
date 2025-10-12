@@ -437,7 +437,7 @@ function addonTable.Design.GetDefaultDesignBlizzard()
           asset = "special/blizzard-cast-bar",
         },
         border = {
-          asset = "transparent",
+          asset = "special/blizzard-cast-bar-border",
           color = GetColor("FFFFFF")
         },
         scale = healthScale,
@@ -461,7 +461,7 @@ function addonTable.Design.GetDefaultDesignBlizzard()
         kind = "castSpellName",
         scale = 0.8,
         anchor = {},
-        anchor = {"LEFT", -61, -13},
+        anchor = {"LEFT", -61, -20},
       }
     },
     markers = {
