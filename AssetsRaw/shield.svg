@@ -9,7 +9,7 @@
    id="svg1"
    inkscape:version="1.4.2 (ebf0e940d0, 2025-05-08)"
    sodipodi:docname="shield.svg"
-   inkscape:export-filename="shield.png"
+   inkscape:export-filename="shield-gradient.png"
    inkscape:export-xdpi="440.82419"
    inkscape:export-ydpi="440.82419"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
@@ -65,7 +65,7 @@
      inkscape:groupmode="layer"
      id="layer1">
     <path
-       style="fill:url(#linearGradient2);fill-opacity:1;stroke:#000000;stroke-width:1.061;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1"
+       style="fill:url(#linearGradient2);fill-opacity:1;stroke:#363636;stroke-width:0.96100004;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1"
        d="M 2.4384656,6.41992 C 1.5516556,5.17298 0.85295561,4.58415 0.53049561,0.53159999 l 3.79094999,-5.5e-4 3.79096,-5.5e-4 C 7.7899256,4.58304 7.0912256,5.17188 6.2044256,6.41882 c -0.8868,1.24694 -1.74674,2.00896 -1.88298,2.00951 -0.13624,5.5e-4 -0.99617,-0.76148 -1.88298,-2.00841 z"
        id="path3"
        sodipodi:nodetypes="ccccccc" />
