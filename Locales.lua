@@ -36,6 +36,8 @@ L["OPEN_OPTIONS"] = "Open Options"
 L["GLOBAL_SCALE"] = "Global scale"
 
 L["MAIN_TEXTURE"] = "Main texture"
+L["BACKGROUND_TEXTURE"] = "Background texture"
+L["BORDER_TEXTURE"] = "Border texture"
 
 L["ENTER_PROFILE_NAME"] = "Enter Profile Name:"
 L["PROFILES"] = "Profiles"

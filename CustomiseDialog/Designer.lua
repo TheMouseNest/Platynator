@@ -1,6 +1,27 @@
 ---@class addonTablePlatynator
 local addonTable = select(2, ...)
 
+local function GetLabelsValues(allAssets, filter)
+  local labels, values = {}, {}
+
+  for _, key in ipairs(GetKeysArray(allAssets)) do
+    if not filter or filter(key) then
+      local details = allAssets[key]
+      local height = 20
+      local width = details.width * height/details.height
+      if width > 180 then
+        height = 180/width * height
+        width = 180
+      end
+
+      table.insert(labels, "|T".. details.file .. ":" .. height .. ":" .. width .. "|t")
+      table.insert(values, key)
+    end
+  end
+
+  return labels, values
+end
+
 local function GetBarSettings(parent)
   local container = CreateFrame("Frame", nil, parent)
   local allFrames = {}
@@ -12,13 +33,19 @@ local function GetBarSettings(parent)
     addonTable.CallbackRegistry:TriggerEvent("RefreshStateChange", {[addonTable.Constants.RefreshReason.Design] = true})
   end
 
+  local function ApplySpecial(value)
+    local group = addonTable.Assets.SpecialBars[value]
+    currentBar.foreground.asset = group.foreground
+    currentBar.background.asset = group.background
+    currentBar.border.asset = group.border
+  end
+
   do
-    local backgroundDropdown = addonTable.CustomiseDialog.Components.GetBasicDropdown(container, addonTable.Locales.MAIN_TEXTURE, function(value)
+    local foregroundDropdown = addonTable.CustomiseDialog.Components.GetBasicDropdown(container, addonTable.Locales.MAIN_TEXTURE, function(value)
       return currentBar and currentBar.foreground.asset == value
     end, function(value)
       if addonTable.Assets.BarBackgrounds[value].special then
-        currentBar.background.asset = value
-        currentBar.border.asset = value
+          ApplySpecial(value)
       elseif addonTable.Assets.BarBackgrounds[currentBar.foreground.asset].special then
         local design = addonTable.Design.GetDefaultDesignSquirrel()
         currentBar.background.asset = design.bars[1].background.asset
@@ -28,25 +55,52 @@ local function GetBarSettings(parent)
       Announce()
     end)
 
-    local labels, values = {}, {}
+    foregroundDropdown:Init(GetLabelsValues(addonTable.Assets.BarBackgrounds))
 
-    for _, key in ipairs(GetKeysArray(addonTable.Assets.BarBackgrounds)) do
-      local details = addonTable.Assets.BarBackgrounds[key]
-      local height = 20
-      local width = details.width * height/details.height
-      if width > 180 then
-        height = 180/width * height
-        width = 180
+    foregroundDropdown:SetPoint("TOP")
+    table.insert(allFrames, foregroundDropdown)
+  end
+
+  do
+    local backgroundDropdown = addonTable.CustomiseDialog.Components.GetBasicDropdown(container, addonTable.Locales.BACKGROUND_TEXTURE, function(value)
+      return currentBar and currentBar.background.asset == value
+    end, function(value)
+      if addonTable.Assets.BarBackgrounds[value].special then
+        ApplySpecial(value)
+      elseif addonTable.Assets.BarBackgrounds[currentBar.background.asset].special then
+        local design = addonTable.Design.GetDefaultDesignSquirrel()
+        currentBar.foreground.asset = design.bars[1].foreground.asset
+        currentBar.border.asset = design.bars[1].border.asset
       end
+      currentBar.background.asset = value
+      Announce()
+    end)
 
-      table.insert(labels, "|T".. details.file .. ":" .. height .. ":" .. width .. "|t")
-      table.insert(values, key)
-    end
+    backgroundDropdown:Init(GetLabelsValues(addonTable.Assets.BarBackgrounds))
 
-    backgroundDropdown:Init(labels, values)
-
-    backgroundDropdown:SetPoint("TOP")
+    backgroundDropdown:SetPoint("TOP", allFrames[#allFrames], "BOTTOM")
     table.insert(allFrames, backgroundDropdown)
+  end
+
+  do
+    local borderDropdown = addonTable.CustomiseDialog.Components.GetBasicDropdown(container, addonTable.Locales.BORDER_TEXTURE, function(value)
+      return currentBar and currentBar.border.asset == value
+    end, function(value)
+      if addonTable.Assets.BarBackgrounds[value].special then
+        ApplySpecial(value)
+      elseif addonTable.Assets.BarBorders[currentBar.background.asset].special then
+        local design = addonTable.Design.GetDefaultDesignSquirrel()
+        currentBar.foreground.asset = design.bars[1].foreground.asset
+        currentBar.background.asset = design.bars[1].background.asset
+      end
+      currentBar.border.asset = value
+      Announce()
+    end)
+
+    borderDropdown:Init(GetLabelsValues(addonTable.Assets.BarBorders))
+
+    borderDropdown:SetPoint("TOP", allFrames[#allFrames], "BOTTOM")
+    table.insert(allFrames, borderDropdown)
   end
 
   function container:SetBar(details)

@@ -47,3 +47,11 @@ addonTable.Assets.Markers = {
   ["normal/shield-gradient"] = {file = "Interface/AddOns/Platynator/Assets/Markers/shield-gradient.png", width = 150, height = 155},
   ["normal/shield-soft"] = {file = "Interface/AddOns/Platynator/Assets/Markers/shield-soft.png", width = 160, height = 165},
 }
+
+addonTable.Assets.SpecialBars = {
+  ["special/blizzard-cast-bar"] = {
+    background = "transparent",
+    foreground = "special/blizzard-cast-bar",
+    border = "special/blizzard-cast-bar",
+  }
+}
