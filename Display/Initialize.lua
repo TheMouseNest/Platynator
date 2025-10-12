@@ -65,6 +65,10 @@ function addonTable.Display.ManagerMixin:OnLoad()
         for nameplate, display in pairs(self.nameplateDisplays) do
           local unit = display.unit
           display:InitializeWidgets()
+          local nameplate = C_NamePlate.GetNamePlateForUnit(display.unit)
+          if nameplate then
+            display:Install(nameplate)
+          end
           display:SetUnit(unit)
         end
       end)

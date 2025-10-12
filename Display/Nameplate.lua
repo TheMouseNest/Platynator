@@ -10,7 +10,7 @@ function addonTable.Display.NameplateMixin:OnLoad()
   self:InitializeWidgets()
 
   self.AurasFrame = nil
-  self.OldUnitFrame = nil
+  self.UnitFrame = nil
 end
 
 function addonTable.Display.NameplateMixin:InitializeWidgets()
@@ -29,24 +29,26 @@ function addonTable.Display.NameplateMixin:Install(nameplate)
     nameplate.UnitFrame:SetAlpha(0) --- XXX: Remove when unit health formatting available
     nameplate.UnitFrame.HitTestFrame:SetParent(nameplate)
     nameplate.UnitFrame.HitTestFrame:ClearAllPoints()
-    nameplate.UnitFrame.HitTestFrame:SetPoint("TOPLEFT", self.widgets[1])
-    nameplate.UnitFrame.HitTestFrame:SetPoint("BOTTOMRIGHT", self.widgets[2])
+    nameplate.UnitFrame.HitTestFrame:SetPoint("BOTTOMLEFT", self, "CENTER", addonTable.Rect.left, addonTable.Rect.bottom)
+    nameplate.UnitFrame.HitTestFrame:SetSize(addonTable.Rect.width, addonTable.Rect.height)
+
     if self.AurasFrame and self.AurasFrame:GetParent() == self then
-      self.AurasFrame:SetParent(self.OldUnitFrame)
+      self.AurasFrame:SetParent(self.UnitFrame)
     end
     nameplate.UnitFrame.AurasFrame:SetParent(self)
     self.AurasFrame = nameplate.UnitFrame.AurasFrame
     nameplate.UnitFrame.AurasFrame:ClearAllPoints()
-    nameplate.UnitFrame.AurasFrame:SetPoint("BOTTOMLEFT", self.name, "TOPLEFT")
+    nameplate.UnitFrame.AurasFrame:SetPoint("BOTTOM", self, "CENTER", 0, addonTable.Rect.bottom + addonTable.Rect.height)
   else
     self:SetScale(9/10)
     nameplate.UnitFrame:SetParent(addonTable.hiddenFrame)
     nameplate.UnitFrame:UnregisterAllEvents()
     -- NYI
   end
-  if self.OldUnitFrame and self.OldUnitFrame.WidgetContainer:GetParent() == nameplate then
-    self.OldUnitFrame.WidgetContainer:SetParent(self.OldUnitFrame)
+  if self.UnitFrame and self.UnitFrame.WidgetContainer:GetParent() == nameplate then
+    self.UnitFrame.WidgetContainer:SetParent(self.UnitFrame)
   end
+  self.UnitFrame = nameplate.UnitFrame
   nameplate.UnitFrame.WidgetContainer:SetParent(nameplate)
 end
 
