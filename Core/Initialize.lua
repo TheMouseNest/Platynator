@@ -14,12 +14,12 @@ offscreen:SetPoint("TOPLEFT", UIParent, "TOPRIGHT")
 addonTable.offscreenFrame = hidden
 
 local function SetStyle()
-  if addonTable.Config.Get(addonTable.Config.Options.STYLE) == "slight" then
-    addonTable.Config.Set(addonTable.Config.Options.DESIGN, addonTable.Design.GetDefaultDesignSlight())
-  elseif addonTable.Config.Get(addonTable.Config.Options.STYLE) == "soft" then
-    addonTable.Config.Set(addonTable.Config.Options.DESIGN, addonTable.Design.GetDefaultDesignSoft())
-  else
-    addonTable.Config.Set(addonTable.Config.Options.DESIGN, addonTable.Design.GetDefaultDesignBold())
+  if addonTable.Config.Get(addonTable.Config.Options.STYLE) == "hedgehog" then
+    addonTable.Config.Set(addonTable.Config.Options.DESIGN, addonTable.Design.GetDefaultDesignHedgehog())
+  elseif addonTable.Config.Get(addonTable.Config.Options.STYLE) == "rabbit" then
+    addonTable.Config.Set(addonTable.Config.Options.DESIGN, addonTable.Design.GetDefaultDesignRabbit())
+  elseif addonTable.Config.Get(addonTable.Config.Options.STYLE) ~= "custom" then
+    addonTable.Config.Set(addonTable.Config.Options.DESIGN, addonTable.Design.GetDefaultDesignSquirrel())
   end
 end
 

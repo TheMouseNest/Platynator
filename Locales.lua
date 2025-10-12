@@ -20,6 +20,27 @@ local L = Locales.enUS
 
 L["PLATYNATOR"] = "Platynator"
 L["DESIGNER"] = "Designer"
+L["GENERAL"] = "General"
+L["STYLE"] = "Style"
+L["CUSTOMISE_PLATYNATOR"] = "Customise Platynator"
+L["CTRL_C_TO_COPY"] = "Ctrl+C to copy"
+L["JOIN_THE_DISCORD"] = "Join the Discord"
+L["DISCORD_DESCRIPTION"] = "Updates, feature suggestions and support"
+L["BY_PLUSMOUSE"] = "by plusmouse"
+L["DEVELOPMENT_IS_TIME_CONSUMING"] = "|cff04cca4Development takes a huge amount of time|r"
+L["DONATE"] = "Donate"
+L["LINK"] = "Link"
+
+L["ENTER_PROFILE_NAME"] = "Enter Profile Name:"
+L["PROFILES"] = "Profiles"
+L["NEW_PROFILE_CLONE"] = "New Profile (clone current)"
+L["NEW_PROFILE_BLANK"] = "New Profile (blank)"
+L["CONFIRM_DELETE_PROFILE_X"] = "Are you sure you want to delete profile \"%s\"?"
+
+L["SQUIRREL"] = "Squirrel"
+L["RABBIT"] = "Rabbit"
+L["HEDGEHOG"] = "Hedgehog"
+L["CUSTOM"] = "Custom"
 
 local L = Locales.frFR
 --@localization(locale="frFR", format="lua_additive_table")@

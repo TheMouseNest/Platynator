@@ -262,7 +262,15 @@ function addonTable.Display.GetText(frame, parent)
   return frame
 end
 
-local pools = {
+local livePools = {
+  bars = CreateFramePool("Frame", UIParent, nil, nil, false, addonTable.Display.GetBar),
+  texts = CreateFramePool("Frame", UIParent, nil, nil, false, addonTable.Display.GetText),
+  powers = CreateFramePool("Frame", UIParent, nil, nil, false, addonTable.Display.GetPower),
+  highlights = CreateFramePool("Frame", UIParent, nil, nil, false, addonTable.Display.GetHighlight),
+  markers = CreateFramePool("Frame", UIParent, nil, nil, false, addonTable.Display.GetMarker),
+}
+
+local editorPools = {
   bars = CreateFramePool("Frame", UIParent, nil, nil, false, addonTable.Display.GetBar),
   texts = CreateFramePool("Frame", UIParent, nil, nil, false, addonTable.Display.GetText),
   powers = CreateFramePool("Frame", UIParent, nil, nil, false, addonTable.Display.GetPower),
@@ -272,8 +280,10 @@ local pools = {
 
 local poolType = {}
 
-function addonTable.Display.GetWidgets(design, parent)
+function addonTable.Display.GetWidgets(design, parent, isEditor)
   local widgets = {}
+
+  local pools = isEditor and editorPools or livePools
 
   for index, barDetails in ipairs(design.bars) do
     local w = pools.bars:Acquire()
@@ -342,7 +352,9 @@ function addonTable.Display.GetWidgets(design, parent)
   return widgets
 end
 
-function addonTable.Display.ReleaseWidgets(widgets)
+function addonTable.Display.ReleaseWidgets(widgets, isEditor)
+  local pools = isEditor and editorPools or livePools
+
   for _, w in ipairs(widgets) do
     w:Strip()
     pools[poolType[w]]:Release(w)

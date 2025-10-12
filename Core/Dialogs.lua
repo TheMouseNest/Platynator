@@ -4,9 +4,9 @@ local addonTable = select(2, ...)
 local counter = 0
 local function GenerateDialog()
   counter = counter + 1
-  local dialog = CreateFrame("Frame", "ChattynatorDialog" .. counter, UIParent)
+  local dialog = CreateFrame("Frame", "PlatynatorDialog" .. counter, UIParent)
   dialog:SetToplevel(true)
-  table.insert(UISpecialFrames, "ChattynatorDialog" .. counter)
+  table.insert(UISpecialFrames, "PlatynatorDialog" .. counter)
   dialog:SetPoint("TOP", 0, -135)
   dialog:EnableMouse(true)
   dialog:SetFrameStrata("DIALOG")

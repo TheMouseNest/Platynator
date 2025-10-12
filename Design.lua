@@ -8,7 +8,7 @@ local function GetColor(rgb)
   return {r = color.r, g = color.g, b = color.b}
 end
 
-function addonTable.Design.GetDefaultDesignBold()
+function addonTable.Design.GetDefaultDesignRabbit()
   return {
     appliesToAll = true,
     font = {
@@ -114,16 +114,16 @@ function addonTable.Design.GetDefaultDesignBold()
       },
       {
         kind = "cannotInterrupt",
-        scale = healthScale * 0.9,
+        scale = healthScale * 0.5,
         asset = "normal/shield-gradient",
         color = GetColor("647b7f"),
-        anchor = {"TOPRIGHT", -48, -14}
+        anchor = {"TOPRIGHT", -50, -12}
       }
     }
   }
 end
 
-function addonTable.Design.GetDefaultDesignSlight()
+function addonTable.Design.GetDefaultDesignHedgehog()
   return {
     appliesToAll = true,
     font = {
@@ -245,7 +245,7 @@ function addonTable.Design.GetDefaultDesignSlight()
   }
 end
 
-function addonTable.Design.GetDefaultDesignSoft()
+function addonTable.Design.GetDefaultDesignSquirrel()
   return {
     appliesToAll = true,
     font = {
