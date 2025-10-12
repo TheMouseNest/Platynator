@@ -245,7 +245,7 @@ local function GetMainDesigner(parent)
             display = "70% (70,000)"
           end
         elseif w.details.kind == "creatureName" then
-          display = "Cheesanator is Epic And Should Be Used"
+          display = "Cheesanator"
         elseif w.details.kind == "castSpellName" then
           display = "Arcane Flurry"
         end
