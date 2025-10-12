@@ -69,7 +69,10 @@ function addonTable.Design.GetDefaultDesignRabbit()
           asset = "none",
         },
         background = {
-          },
+          asset = "wide/bold-1",
+          alpha = 0.5,
+          applyColor = false,
+        },
         foreground = {
           asset = "wide/bold-1",
         },
