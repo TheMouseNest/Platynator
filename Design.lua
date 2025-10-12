@@ -60,7 +60,7 @@ function addonTable.Design.GetDefaultDesignRabbit()
       },
       {
         kind = "cast",
-        anchor = {"TOP", 0, -9},
+        anchor = {"TOP", 0, -10},
         colors = {
           normal = GetColor("FC8C00"),
           uninterruptable = GetColor("83C0C3")
@@ -111,7 +111,7 @@ function addonTable.Design.GetDefaultDesignRabbit()
         kind = "quest",
         scale = healthScale * 0.9,
         asset = "normal/quest-gradient",
-        anchor = {"RIGHT", -64, 0}
+        anchor = {"RIGHT", -65, 0}
       },
       {
         kind = "cannotInterrupt",

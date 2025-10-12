@@ -63,11 +63,13 @@ function addonTable.Display.ManagerMixin:OnLoad()
       self:SetScript("OnUpdate", function()
         self:SetScript("OnUpdate", nil)
         for nameplate, display in pairs(self.nameplateDisplays) do
-          local unit = display.unit
           display:InitializeWidgets()
-          local nameplate = C_NamePlate.GetNamePlateForUnit(display.unit)
-          if nameplate then
-            display:Install(nameplate)
+          local unit = display.unit
+          if unit then
+            local nameplate = C_NamePlate.GetNamePlateForUnit(display.unit)
+            if nameplate then
+              display:Install(nameplate)
+            end
           end
           display:SetUnit(unit)
         end
