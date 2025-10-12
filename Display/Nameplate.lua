@@ -56,6 +56,7 @@ function addonTable.Display.NameplateMixin:SetUnit(unit)
   self.unit = unit
   if self.unit and not UnitNameplateShowsWidgetsOnly(self.unit) then
     self:Show()
+    self:UpdateScale()
     if addonTable.Constants.IsMidnight then
       C_NamePlateManager.SetNamePlateSimplified(self.unit, false)
     end
@@ -78,11 +79,17 @@ function addonTable.Display.NameplateMixin:UpdateForTarget()
     end
   end
 
+  self:UpdateScale()
+end
+
+function addonTable.Display.NameplateMixin:UpdateScale()
+  self:SetScale(addonTable.Config.Get(addonTable.Config.Options.GLOBAL_SCALE))
+
   if not addonTable.Constants.IsMidnight then
     if UnitIsUnit("target", self.unit) then
-      self:SetScale(1.2 * 9/10)
+      self:SetScale(1.08 * addonTable.Config.Get(addonTable.Config.Options.GLOBAL_SCALE))
     else
-      self:SetScale(1 * 9/10)
+      self:SetScale(0.9 * addonTable.Config.Get(addonTable.Config.Options.GLOBAL_SCALE))
     end
   end
 end

@@ -33,6 +33,7 @@ L["LINK"] = "Link"
 L["VERSION_COLON_X"] = "Version: %s"
 L["TO_OPEN_OPTIONS_X"] = "Access options with /platy"
 L["OPEN_OPTIONS"] = "Open Options"
+L["GLOBAL_SCALE"] = "Global scale"
 
 L["ENTER_PROFILE_NAME"] = "Enter Profile Name:"
 L["PROFILES"] = "Profiles"

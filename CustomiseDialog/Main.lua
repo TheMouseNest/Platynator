@@ -149,6 +149,8 @@ local function GetMainDesigner(parent)
     end, function(value)
       addonTable.Config.Set(addonTable.Config.Options.STYLE, value)
     end)
+    styleDropdown.option = addonTable.Config.Options.STYLE
+
     styleDropdown:Init({
       addonTable.Locales.CUSTOM,
       addonTable.Locales.SQUIRREL,
@@ -165,6 +167,18 @@ local function GetMainDesigner(parent)
 
     styleDropdown:SetPoint("TOP")
     table.insert(allFrames, styleDropdown)
+  end
+
+  do
+    local globalScale = addonTable.CustomiseDialog.Components.GetSlider(container, addonTable.Locales.GLOBAL_SCALE, 1, 300, "%d%%", function(value)
+      addonTable.Config.Set(addonTable.Config.Options.GLOBAL_SCALE, value/100)
+    end)
+    globalScale:SetValue(addonTable.Config.Get(addonTable.Config.Options.GLOBAL_SCALE) * 100)
+    globalScale.option = addonTable.Config.Options.GLOBAL_SCALE
+    globalScale.scale = 100
+
+    globalScale:SetPoint("TOP", allFrames[#allFrames], "BOTTOM")
+    table.insert(allFrames, globalScale)
   end
 
 
@@ -281,6 +295,16 @@ local function GetMainDesigner(parent)
   addonTable.CallbackRegistry:RegisterCallback("RefreshStateChange", function(_, state)
     if state[addonTable.Constants.RefreshReason.Design] then
       GenerateWidgets()
+    end
+  end)
+
+  container:SetScript("OnShow", function()
+    for _, f in ipairs(allFrames) do
+      if f.SetValue and f.scale then
+        f:SetValue(addonTable.Config.Get(f.option) * f.scale)
+      elseif f.SetValue then
+        f:SetValue(addonTable.Config.Get(f.option))
+      end
     end
   end)
 

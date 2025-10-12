@@ -24,4 +24,5 @@ addonTable.Constants.Events = {
 
 addonTable.Constants.RefreshReason = {
   Design = 1,
+  Scale = 2,
 }

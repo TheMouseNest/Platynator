@@ -12,6 +12,8 @@ function addonTable.Display.CastBarMixin:SetUnit(unit)
     self:RegisterUnitEvent("UNIT_SPELLCAST_CHANNEL_START", self.unit)
     self:RegisterUnitEvent("UNIT_SPELLCAST_CHANNEL_STOP", self.unit)
 
+    self:RegisterUnitEvent("UNIT_SPELLCAST_INTERRUPTED", self.unit)
+
     self:ApplyCasting()
   else
     self:Strip()
@@ -26,7 +28,10 @@ function addonTable.Display.CastBarMixin:Strip()
 end
 
 function addonTable.Display.CastBarMixin:OnEvent(eventName, ...)
-  self:ApplyCasting()
+  if eventName == "UNIT_SPELLCAST_INTERRUPTED" then
+  else
+    self:ApplyCasting()
+  end
 end
 
 function addonTable.Display.CastBarMixin:ApplyColor()

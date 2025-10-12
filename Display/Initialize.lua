@@ -74,6 +74,10 @@ function addonTable.Display.ManagerMixin:OnLoad()
           display:SetUnit(unit)
         end
       end)
+    elseif state[addonTable.Constants.RefreshReason.Scale] then
+      for nameplate, display in pairs(self.nameplateDisplays) do
+        display:UpdateScale()
+      end
     end
   end)
 
