@@ -44,7 +44,6 @@ L["CONFIRM_DELETE_PROFILE_X"] = "Are you sure you want to delete profile \"%s\"?
 L["SQUIRREL"] = "Squirrel"
 L["RABBIT"] = "Rabbit"
 L["HEDGEHOG"] = "Hedgehog"
-L["RABBIT"] = "Rabbit"
 L["BLIZZARD"] = "Blizzard"
 L["CUSTOM"] = "Custom"
 
