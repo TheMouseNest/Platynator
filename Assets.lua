@@ -13,7 +13,7 @@ addonTable.Assets.BarBackgrounds = {
 addonTable.Assets.BarBorders = {
   ["wide/bold-1"] = {file = "Interface/AddOns/Platynator/Assets/Bars/Wide/bold-bar-border.png", width = 1000, height = 125},
   ["wide/slight-1"] = {file = "Interface/AddOns/Platynator/Assets/Bars/Wide/slight-bar-border.png", width = 1000, height = 125},
-  ["wide/tooltip-1"] = {file = "Interface/AddOns/Platynator/Assets/Bars/Wide/tooltip-border.png", width = 1023, height = 149},
+  ["wide/soft-1"] = {file = "Interface/AddOns/Platynator/Assets/Bars/Wide/soft-border.png", width = 1023, height = 149},
 }
 
 addonTable.Assets.Highlights = {
@@ -35,5 +35,7 @@ addonTable.Assets.PowerBars = {
 }
 
 addonTable.Assets.Markers = {
-  ["normal/quest-marker"] = {file = "Interface/AddOns/Platynator/Assets/quest-marker.png", width = 48, height = 170},
+  ["normal/quest-gradient"] = {file = "Interface/AddOns/Platynator/Assets/Markers/quest-gradient.png", width = 48, height = 170},
+  ["normal/shield-gradient"] = {file = "Interface/AddOns/Platynator/Assets/Markers/shield-gradient.png", width = 150, height = 155},
+  ["normal/shield-soft"] = {file = "Interface/AddOns/Platynator/Assets/Markers/shield-soft.png", width = 160, height = 165},
 }

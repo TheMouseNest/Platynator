@@ -16,8 +16,8 @@ addonTable.offscreenFrame = hidden
 local function SetStyle()
   if addonTable.Config.Get(addonTable.Config.Options.STYLE) == "slight" then
     addonTable.Config.Set(addonTable.Config.Options.DESIGN, addonTable.Design.GetDefaultDesignSlight())
-  elseif addonTable.Config.Get(addonTable.Config.Options.STYLE) == "tooltip" then
-    addonTable.Config.Set(addonTable.Config.Options.DESIGN, addonTable.Design.GetDefaultDesignTooltip())
+  elseif addonTable.Config.Get(addonTable.Config.Options.STYLE) == "soft" then
+    addonTable.Config.Set(addonTable.Config.Options.DESIGN, addonTable.Design.GetDefaultDesignSoft())
   else
     addonTable.Config.Set(addonTable.Config.Options.DESIGN, addonTable.Design.GetDefaultDesignBold())
   end

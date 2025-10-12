@@ -38,6 +38,7 @@ Display/HealthText.lua
 Display/CastText.lua
 Display/Highlight.lua
 Display/QuestMarker.lua
+Display/CannotInterruptMarker.lua
 Display/Widgets.lua
 
 Design.lua

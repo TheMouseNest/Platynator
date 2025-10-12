@@ -194,10 +194,17 @@ function addonTable.Display.GetMarker(frame, parent)
     local markerDetails = addonTable.Assets.Markers[details.asset]
 
     frame.marker:SetTexture(markerDetails.file)
+    if details.color then
+      frame.marker:SetVertexColor(details.color.r, details.color.g, details.color.b)
+    else
+      frame.marker:SetVertexColor(1, 1, 1)
+    end
     frame:SetSize(markerDetails.width * details.scale, markerDetails.height * details.scale)
 
     if details.kind == "quest" then
       Mixin(frame, addonTable.Display.QuestMarkerMixin)
+    elseif details.kind == "cannotInterrupt" then
+      Mixin(frame, addonTable.Display.CannotInterruptMarkerMixin)
     else
       assert(false)
     end

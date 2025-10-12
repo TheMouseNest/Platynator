@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="9.6029015mm"
+   height="9.9188366mm"
+   viewBox="0 0 9.6029014 9.9188366"
+   version="1.1"
+   id="svg1"
+   inkscape:version="1.4.2 (ebf0e940d0, 2025-05-08)"
+   sodipodi:docname="shield-soft.svg"
+   inkscape:export-filename="shield-soft.png"
+   inkscape:export-xdpi="423.19122"
+   inkscape:export-ydpi="423.19122"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#5e309f"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="mm"
+     inkscape:zoom="11.681388"
+     inkscape:cx="22.557251"
+     inkscape:cy="25.724682"
+     inkscape:window-width="2560"
+     inkscape:window-height="1368"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1" />
+  <defs
+     id="defs1">
+    <linearGradient
+       id="linearGradient11"
+       inkscape:collect="always">
+      <stop
+         style="stop-color:#ffffff;stop-opacity:1;"
+         offset="0"
+         id="stop11" />
+      <stop
+         style="stop-color:#6e6e6e;stop-opacity:1;"
+         offset="1"
+         id="stop12" />
+    </linearGradient>
+    <filter
+       style="color-interpolation-filters:sRGB"
+       inkscape:label="Blur"
+       id="filter8"
+       x="-0.10030424"
+       y="-0.096292269"
+       width="1.2006085"
+       height="1.192585">
+      <feGaussianBlur
+         stdDeviation="0.2 0.2"
+         result="blur"
+         id="feGaussianBlur8" />
+    </filter>
+    <filter
+       style="color-interpolation-filters:sRGB"
+       inkscape:label="Blur"
+       id="filter9"
+       x="-0.13327718"
+       y="-0.12794654"
+       width="1.2665544"
+       height="1.255894">
+      <feGaussianBlur
+         stdDeviation="0.2 0.2"
+         result="blur"
+         id="feGaussianBlur9" />
+    </filter>
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient11"
+       id="linearGradient12"
+       x1="4.3214507"
+       y1="0.68845987"
+       x2="4.3214507"
+       y2="8.2703705"
+       gradientUnits="userSpaceOnUse" />
+  </defs>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(0.41204989,0.36674993)">
+    <path
+       style="fill:url(#linearGradient12);stroke:none;stroke-width:1.061;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1"
+       d="M 2.4384656,6.41992 C 1.5516556,5.17298 0.85295561,4.58415 0.53049561,0.53159999 l 3.79094999,-5.5e-4 3.79096,-5.5e-4 C 7.7899256,4.58304 7.0912256,5.17188 6.2044256,6.41882 c -0.8868,1.24694 -1.74674,2.00896 -1.88298,2.00951 -0.13624,5.5e-4 -0.99617,-0.76148 -1.88298,-2.00841 z"
+       id="path3"
+       sodipodi:nodetypes="ccccccc" />
+    <path
+       style="fill:none;fill-opacity:1;stroke:#181818;stroke-width:1.061;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1;filter:url(#filter9)"
+       d="m 2.5064157,6.5331699 c -0.88681,-1.24694 -1.58551002,-1.83577 -1.90797002,-5.88831979 l 3.79095002,-5.5e-4 3.79096,-5.5e-4 C 7.8578754,4.6962899 7.1591754,5.2851299 6.2723757,6.5320699 c -0.8868,1.24694 -1.74674,2.00896 -1.88298,2.00951 -0.13624,5.5e-4 -0.99617,-0.76148 -1.88298,-2.00841 z"
+       id="path3-2"
+       sodipodi:nodetypes="ccccccc" />
+    <path
+       style="fill:none;fill-opacity:1;stroke:#ffffff;stroke-width:0.561;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1;filter:url(#filter8)"
+       d="m 2.4384656,6.4199199 c -0.88681,-1.24694 -1.58550974,-1.83577 -1.90796974,-5.88832 l 3.79094974,-5.5e-4 3.79096,-5.5e-4 c -0.32248,4.05254 -1.02118,4.64138 -1.90798,5.88832 -0.8868,1.24694 -1.74674,2.00896 -1.88298,2.00951 -0.13624,5.5e-4 -0.99617,-0.76148 -1.88298,-2.00841 z"
+       id="path3-9"
+       sodipodi:nodetypes="ccccccc"
+       inkscape:export-filename="shield-soft.png"
+       inkscape:export-xdpi="423.19122"
+       inkscape:export-ydpi="423.19122" />
+  </g>
+</svg>

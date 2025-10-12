@@ -109,8 +109,15 @@ function addonTable.Design.GetDefaultDesignBold()
       {
         kind = "quest",
         scale = healthScale * 0.9,
-        asset = "normal/quest-marker",
+        asset = "normal/quest-gradient",
         anchor = {"RIGHT", -64, 0}
+      },
+      {
+        kind = "cannotInterrupt",
+        scale = healthScale * 0.9,
+        asset = "normal/shield-gradient",
+        color = GetColor("647b7f"),
+        anchor = {"TOPRIGHT", -48, -14}
       }
     }
   }
@@ -224,14 +231,21 @@ function addonTable.Design.GetDefaultDesignSlight()
       {
         kind = "quest",
         scale = healthScale * 0.9,
-        asset = "normal/quest-marker",
+        asset = "normal/quest-gradient",
         anchor = {"RIGHT", -64, 0}
+      },
+      {
+        kind = "cannotInterrupt",
+        scale = healthScale * 0.5,
+        asset = "normal/shield-gradient",
+        color = GetColor("647b7f"),
+        anchor = {"TOPRIGHT", -50, -12}
       }
     }
   }
 end
 
-function addonTable.Design.GetDefaultDesignTooltip()
+function addonTable.Design.GetDefaultDesignSoft()
   return {
     appliesToAll = true,
     font = {
@@ -263,7 +277,7 @@ function addonTable.Design.GetDefaultDesignTooltip()
           asset = "wide/slight-2",
         },
         border = {
-          asset = "wide/tooltip-1",
+          asset = "wide/soft-1",
           color = GetColor("808080")
         },
         marker = {
@@ -301,7 +315,7 @@ function addonTable.Design.GetDefaultDesignTooltip()
           asset = "wide/slight-2",
         },
         border = {
-          asset = "wide/tooltip-1",
+          asset = "wide/soft-1",
           color = GetColor("AAAAAA")
         },
         scale = healthScale,
@@ -339,8 +353,15 @@ function addonTable.Design.GetDefaultDesignTooltip()
       {
         kind = "quest",
         scale = healthScale * 0.9,
-        asset = "normal/quest-marker",
+        asset = "normal/quest-gradient",
         anchor = {"RIGHT", -64, 0}
+      },
+      {
+        kind = "cannotInterrupt",
+        scale = healthScale * 0.5,
+        asset = "normal/shield-soft",
+        color = GetColor("647b7f"),
+        anchor = {"TOPRIGHT", -50, -12}
       }
     }
   }
