@@ -55,9 +55,7 @@ local function GetMainDesigner(parent)
   addonTable.Config.Get(addonTable.Config.Options.DESIGN)
   local widgets = addonTable.Display.GetWidgets(design, preview)
   for _, w in ipairs(widgets) do
-    local hover
     if w.kind == "bars" then
-      hover = w.statusBar
       local defaultColor
       if w.details.kind == "health" then
         defaultColor = w.details.colors.threat.warning
@@ -72,7 +70,6 @@ local function GetMainDesigner(parent)
       end
       w.marker:SetVertexColor(defaultColor.r, defaultColor.g, defaultColor.b)
     elseif w.kind == "texts" then
-      hover = w.text
       local display
       if w.details.kind == "health" then
         if #w.details.displayTypes == 1 and w.details.displayTypes[1] == "percentage" then
@@ -93,27 +90,25 @@ local function GetMainDesigner(parent)
         w.text:SetText(display)
       end
     elseif w.kind == "specialBars" and w.details.kind == "power" then
-      hover = w.main
       w.main:GetStatusBarTexture():SetVertexColor(234/255, 61/255, 247/255)
       w.main:SetValue(4)
       w.background:SetValue(6)
     end
 
-    hover = hover or w
-    hover:SetScript("OnEnter", function()
+    w:SetScript("OnEnter", function()
       hoverMarker:Show()
       hoverMarker:SetFrameStrata("HIGH")
-      hoverMarker:SetPoint("TOPLEFT", hover, "TOPLEFT", -2, 2)
-      hoverMarker:SetPoint("BOTTOMRIGHT", hover, "BOTTOMRIGHT", 2, -2)
+      hoverMarker:SetPoint("TOPLEFT", w, "TOPLEFT", -2, 2)
+      hoverMarker:SetPoint("BOTTOMRIGHT", w, "BOTTOMRIGHT", 2, -2)
     end)
-    hover:SetScript("OnLeave", function()
+    w:SetScript("OnLeave", function()
       hoverMarker:Hide()
     end)
-    hover:SetScript("OnMouseUp", function()
+    w:SetScript("OnMouseUp", function()
       selector:Show()
       selector:SetFrameStrata("HIGH")
-      selector:SetPoint("TOPLEFT", hover, "TOPLEFT", -2, 2)
-      selector:SetPoint("BOTTOMRIGHT", hover, "BOTTOMRIGHT", 2, -2)
+      selector:SetPoint("TOPLEFT", w, "TOPLEFT", -2, 2)
+      selector:SetPoint("BOTTOMRIGHT", w, "BOTTOMRIGHT", 2, -2)
     end)
   end
 
