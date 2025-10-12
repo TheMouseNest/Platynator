@@ -69,10 +69,7 @@ function addonTable.Design.GetDefaultDesignRabbit()
           asset = "none",
         },
         background = {
-          asset = "wide/bold-1",
-          alpha = 0.5,
-          applyColor = false,
-        },
+          },
         foreground = {
           asset = "wide/bold-1",
         },
@@ -97,6 +94,7 @@ function addonTable.Design.GetDefaultDesignRabbit()
         kind = "creatureName",
         scale = 1.1,
         anchor = {"BOTTOM", 0, 10},
+        widthLimit = 124,
       },
       {
         kind = "castSpellName",
@@ -219,6 +217,7 @@ function addonTable.Design.GetDefaultDesignHedgehog()
         kind = "creatureName",
         scale = 1.1,
         anchor = {"BOTTOM", 0, 9},
+        widthLimit = 124,
       },
       {
         kind = "castSpellName",
@@ -341,6 +340,7 @@ function addonTable.Design.GetDefaultDesignSquirrel()
         kind = "creatureName",
         scale = 1.1,
         anchor = {"BOTTOM", 0, 9},
+        widthLimit = 124,
       },
       {
         kind = "castSpellName",
@@ -456,6 +456,7 @@ function addonTable.Design.GetDefaultDesignBlizzard()
         kind = "creatureName",
         scale = 1.1,
         anchor = {"BOTTOM", 0, 10},
+        widthLimit = 124,
       },
       {
         kind = "castSpellName",
@@ -571,6 +572,7 @@ function addonTable.Design.GetDefaultDesignSquirrel()
         kind = "creatureName",
         scale = 1.1,
         anchor = {"BOTTOM", 0, 9},
+        widthLimit = 124,
       },
       {
         kind = "castSpellName",

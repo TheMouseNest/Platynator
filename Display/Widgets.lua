@@ -239,7 +239,14 @@ function addonTable.Display.GetText(frame, parent)
     end
 
     ApplyAnchor(frame, details.anchor)
+    frame.text:ClearAllPoints()
     frame.text:SetPoint(details.anchor[1] or "CENTER")
+
+    if details.widthLimit then
+      frame.text:SetWidth(details.widthLimit)
+    else
+      frame.text:SetWidth(0)
+    end
 
     frame.text:SetText("TEST")
     frame.text:SetTextScale(details.scale)
