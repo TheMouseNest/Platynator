@@ -223,6 +223,10 @@ function addonTable.Display.GetText(frame, parent)
   frame = frame or CreateFrame("Frame", nil, parent or UIParent)
 
   frame.text = frame:CreateFontString(nil, nil, "PlatynatorNameplateFont") --XXX: Change this later
+  frame.text:SetPoint("CENTER")
+  hooksecurefunc(frame.text, "SetText", function()
+    frame:SetSize(frame.text:GetSize())
+  end)
   frame:SetSize(1, 1)
 
   local knownKeys = {"text"}
@@ -236,9 +240,6 @@ function addonTable.Display.GetText(frame, parent)
 
     frame.text:SetText("TEST")
     frame.text:SetTextScale(details.scale)
-    frame.text:ClearAllPoints()
-    frame.text:SetPoint(details.anchor[1] or "CENTER")
-    frame:SetHeight(frame.text:GetLineHeight())
     frame.details = details
 
     if details.kind == "health" then
