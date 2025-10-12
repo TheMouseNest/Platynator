@@ -18,6 +18,8 @@ local function SetStyle()
     addonTable.Config.Set(addonTable.Config.Options.DESIGN, addonTable.Design.GetDefaultDesignHedgehog())
   elseif addonTable.Config.Get(addonTable.Config.Options.STYLE) == "rabbit" then
     addonTable.Config.Set(addonTable.Config.Options.DESIGN, addonTable.Design.GetDefaultDesignRabbit())
+  elseif addonTable.Config.Get(addonTable.Config.Options.STYLE) == "blizzard" then
+    addonTable.Config.Set(addonTable.Config.Options.DESIGN, addonTable.Design.GetDefaultDesignBlizzard())
   elseif addonTable.Config.Get(addonTable.Config.Options.STYLE) ~= "custom" then
     addonTable.Config.Set(addonTable.Config.Options.DESIGN, addonTable.Design.GetDefaultDesignSquirrel())
   end
@@ -36,6 +38,8 @@ function addonTable.Core.Initialize()
       SetStyle()
     end
   end)
+
+  addonTable.CustomiseDialog.Initialize()
 
   addonTable.SlashCmd.Initialize()
 

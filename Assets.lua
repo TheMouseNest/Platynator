@@ -2,18 +2,23 @@
 local addonTable = select(2, ...)
 
 addonTable.Assets.Fonts = {
+  ["ArialNarrow"] = {file = "Fonts\\ARIALN.TTF", size = 10},
+  ["FritzQuadrata"] = {file = "Fonts\\FRIZQT__.TTF", size = 10},
   ["RobotoCondensed-Bold"] = {file = "Interface/AddOns/Platynator/Assets/RobotoCondensed-Bold.ttf", size = 10},
 }
 addonTable.Assets.BarBackgrounds = {
   ["wide/bold-1"] = {file = "Interface/AddOns/Platynator/Assets/Bars/Wide/bold-bar-background.png", width = 1000, height = 125},
   ["wide/slight-1"] = {file = "Interface/AddOns/Platynator/Assets/Bars/Wide/slight-bar-background.png", width = 1000, height = 125},
   ["wide/slight-2"] = {file = "Interface/AddOns/Platynator/Assets/Bars/Wide/slight-bar-foreground.png", width = 1000, height = 125},
+  ["wide/blizzard-1"] = {file = "Interface/AddOns/Platynator/Assets/Bars/Wide/blizzard-background.png", width = 1000, height = 125},
 }
 
 addonTable.Assets.BarBorders = {
   ["wide/bold-1"] = {file = "Interface/AddOns/Platynator/Assets/Bars/Wide/bold-bar-border.png", width = 1000, height = 125},
   ["wide/slight-1"] = {file = "Interface/AddOns/Platynator/Assets/Bars/Wide/slight-bar-border.png", width = 1000, height = 125},
   ["wide/soft-1"] = {file = "Interface/AddOns/Platynator/Assets/Bars/Wide/soft-border.png", width = 1023, height = 149},
+  ["wide/blizzard-normal"] = {file = "Interface/AddOns/Platynator/Assets/Bars/Wide/blizzard-border.png", width = 1116, height = 248},
+  ["wide/blizzard-glow"] = {file = "Interface/AddOns/Platynator/Assets/Bars/Wide/blizzard-border-glow.png", width = 1364, height = 248},
 }
 
 addonTable.Assets.Highlights = {

@@ -30,6 +30,9 @@ L["BY_PLUSMOUSE"] = "by plusmouse"
 L["DEVELOPMENT_IS_TIME_CONSUMING"] = "|cff04cca4Development takes a huge amount of time|r"
 L["DONATE"] = "Donate"
 L["LINK"] = "Link"
+L["VERSION_COLON_X"] = "Version: %s"
+L["TO_OPEN_OPTIONS_X"] = "Access options with /platy"
+L["OPEN_OPTIONS"] = "Open Options"
 
 L["ENTER_PROFILE_NAME"] = "Enter Profile Name:"
 L["PROFILES"] = "Profiles"
@@ -40,6 +43,8 @@ L["CONFIRM_DELETE_PROFILE_X"] = "Are you sure you want to delete profile \"%s\"?
 L["SQUIRREL"] = "Squirrel"
 L["RABBIT"] = "Rabbit"
 L["HEDGEHOG"] = "Hedgehog"
+L["RABBIT"] = "Rabbit"
+L["BLIZZARD"] = "Blizzard"
 L["CUSTOM"] = "Custom"
 
 local L = Locales.frFR

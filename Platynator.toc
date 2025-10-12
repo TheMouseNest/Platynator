@@ -48,3 +48,4 @@ API/Main.lua
 
 CustomiseDialog/Components.lua
 CustomiseDialog/Main.lua
+CustomiseDialog/Initialize.lua

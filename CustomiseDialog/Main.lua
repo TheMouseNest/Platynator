@@ -154,11 +154,13 @@ local function GetMainDesigner(parent)
       addonTable.Locales.SQUIRREL,
       addonTable.Locales.RABBIT,
       addonTable.Locales.HEDGEHOG,
+      addonTable.Locales.BLIZZARD,
     }, {
       "custom",
       "squirrel",
       "rabbit",
       "hedgehog",
+      "blizzard",
     })
 
     styleDropdown:SetPoint("TOP")
