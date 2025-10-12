@@ -1,7 +1,77 @@
 ---@class addonTablePlatynator
 local addonTable = select(2, ...)
 
-local function GetBarSettings()
+local function GetBarSettings(parent)
+  local container = CreateFrame("Frame", nil, parent)
+  local allFrames = {}
+
+  local currentBar
+
+  local function Announce()
+    addonTable.Config.Set(addonTable.Config.Options.STYLE, "custom")
+    addonTable.CallbackRegistry:TriggerEvent("RefreshStateChange", {[addonTable.Constants.RefreshReason.Design] = true})
+  end
+
+  do
+    local backgroundDropdown = addonTable.CustomiseDialog.Components.GetBasicDropdown(container, addonTable.Locales.MAIN_TEXTURE, function(value)
+      return currentBar and currentBar.foreground.asset == value
+    end, function(value)
+      if addonTable.Assets.BarBackgrounds[value].special then
+        currentBar.background.asset = value
+        currentBar.border.asset = value
+      elseif addonTable.Assets.BarBackgrounds[currentBar.foreground.asset].special then
+        local design = addonTable.Design.GetDefaultDesignSquirrel()
+        currentBar.background.asset = design.bars[1].background.asset
+        currentBar.border.asset = design.bars[1].border.asset
+      end
+      currentBar.foreground.asset = value
+      Announce()
+    end)
+
+    local labels, values = {}, {}
+
+    for _, key in ipairs(GetKeysArray(addonTable.Assets.BarBackgrounds)) do
+      local details = addonTable.Assets.BarBackgrounds[key]
+      local height = 20
+      local width = details.width * height/details.height
+      if width > 180 then
+        height = 180/width * height
+        width = 180
+      end
+
+      table.insert(labels, "|T".. details.file .. ":" .. height .. ":" .. width .. "|t")
+      table.insert(values, key)
+    end
+
+    backgroundDropdown:Init(labels, values)
+
+    backgroundDropdown:SetPoint("TOP")
+    table.insert(allFrames, backgroundDropdown)
+  end
+
+  function container:SetBar(details)
+    currentBar = details
+
+    for _, f in ipairs(allFrames) do
+      if f.SetValue and f.scale then
+        f:SetValue(addonTable.Config.Get(f.option) * f.scale)
+      elseif f.SetValue and f.option then
+        f:SetValue(addonTable.Config.Get(f.option))
+      else
+        f:SetValue()
+      end
+    end
+  end
+
+  container:SetScript("OnHide", function()
+    currentBar = nil
+  end)
+
+  container:SetHeight(200)
+  container:SetPoint("LEFT")
+  container:SetPoint("RIGHT")
+
+  return container
 end
 
 function addonTable.CustomiseDialog.GetMainDesigner(parent)
@@ -33,6 +103,12 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
 
     styleDropdown:SetPoint("TOP")
     table.insert(allFrames, styleDropdown)
+
+    addonTable.CallbackRegistry:RegisterCallback("SettingChanged", function(_, name)
+      if name == addonTable.Config.Options.STYLE then
+        styleDropdown:SetValue()
+      end
+    end)
   end
 
   do
@@ -47,6 +123,7 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
     table.insert(allFrames, globalScale)
   end
 
+  local SetSelection
 
   local function MakeMovable(frame)
     frame:SetDraggable(true)
@@ -59,6 +136,7 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
   end
 
   local selector = CreateFrame("Frame", nil, container)
+  local selectionIndex = 0 
   local selectionTexture = selector:CreateTexture()
   selectionTexture:SetTexture("Interface/AddOns/Platynator/Assets/selection-outline.png")
   selectionTexture:SetTextureSliceMargins(45, 45, 45, 45)
@@ -108,7 +186,7 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
         w.statusBar:SetMinMaxValues(0, 100)
         w.statusBar:SetValue(70)
         w.statusBar:GetStatusBarTexture():SetVertexColor(defaultColor.r, defaultColor.g, defaultColor.b)
-        if w.details.colorBackground then
+        if w.details.background.applyColor then
           w.background:SetVertexColor(defaultColor.r, defaultColor.g, defaultColor.b)
         end
         w.marker:SetVertexColor(defaultColor.r, defaultColor.g, defaultColor.b)
@@ -148,10 +226,11 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
         hoverMarker:Hide()
       end)
       w:SetScript("OnMouseUp", function()
-        selector:Show()
-        selector:SetFrameStrata("HIGH")
-        selector:SetPoint("TOPLEFT", w, "TOPLEFT", -2, 2)
-        selector:SetPoint("BOTTOMRIGHT", w, "BOTTOMRIGHT", 2, -2)
+        if selectionIndex == tIndexOf(widgets, w) then
+          SetSelection()
+        else
+          SetSelection(w, w.kind, w.details)
+        end
       end)
     end
   end
@@ -161,17 +240,56 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
   addonTable.CallbackRegistry:RegisterCallback("RefreshStateChange", function(_, state)
     if state[addonTable.Constants.RefreshReason.Design] then
       GenerateWidgets()
+      SetSelection(widgets[selectionIndex])
     end
   end)
+
+  table.insert(allFrames, previewInset)
+
+  local settingsFrames = {}
+
+  local barSettingsContainer = GetBarSettings(container)
+  barSettingsContainer:SetPoint("TOP", allFrames[#allFrames], "BOTTOM")
+  table.insert(allFrames, barSettingsContainer)
+  table.insert(settingsFrames, barSettingsContainer)
+
+  SetSelection = function(w)
+    for _, frame in ipairs(settingsFrames) do
+      frame:Hide()
+    end
+
+    if not w then
+      selectionIndex = 0
+      selector:Hide()
+      return
+    end
+
+    selectionIndex = tIndexOf(widgets, w)
+
+    local kind, details = w.kind, w.details
+    if kind == "bars" then
+      barSettingsContainer:Show()
+      barSettingsContainer:SetBar(details)
+    end
+
+    selector:Show()
+    selector:SetFrameStrata("HIGH")
+    selector:SetPoint("TOPLEFT", w, "TOPLEFT", -2, 2)
+    selector:SetPoint("BOTTOMRIGHT", w, "BOTTOMRIGHT", 2, -2)
+  end
 
   container:SetScript("OnShow", function()
     for _, f in ipairs(allFrames) do
       if f.SetValue and f.scale then
         f:SetValue(addonTable.Config.Get(f.option) * f.scale)
-      elseif f.SetValue then
+      elseif f.SetValue and f.option then
         f:SetValue(addonTable.Config.Get(f.option))
+      elseif f.SetValue then
+        f:SetValue()
       end
     end
+
+    barSettingsContainer:Hide()
   end)
 
   return container

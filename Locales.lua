@@ -35,6 +35,8 @@ L["TO_OPEN_OPTIONS_X"] = "Access options with /platy"
 L["OPEN_OPTIONS"] = "Open Options"
 L["GLOBAL_SCALE"] = "Global scale"
 
+L["MAIN_TEXTURE"] = "Main texture"
+
 L["ENTER_PROFILE_NAME"] = "Enter Profile Name:"
 L["PROFILES"] = "Profiles"
 L["NEW_PROFILE_CLONE"] = "New Profile (clone current)"

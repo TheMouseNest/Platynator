@@ -146,7 +146,6 @@ function addonTable.Design.GetDefaultDesignHedgehog()
         anchor = {},
         relativeTo = 0,
         scale = healthScale,
-        colorBackground = true,
         background = {
           asset = "wide/slight-1",
           applyColor = true,
@@ -269,7 +268,6 @@ function addonTable.Design.GetDefaultDesignSquirrel()
         anchor = {},
         relativeTo = 0,
         scale = healthScale,
-        colorBackground = true,
         background = {
           asset = "wide/slight-1",
           applyColor = true,
@@ -392,7 +390,6 @@ function addonTable.Design.GetDefaultDesignBlizzard()
         anchor = {},
         relativeTo = 0,
         scale = healthScale,
-        colorBackground = true,
         background = {
           asset = "wide/blizzard-1",
           applyColor = false,
@@ -501,7 +498,6 @@ function addonTable.Design.GetDefaultDesignSquirrel()
         anchor = {},
         relativeTo = 0,
         scale = healthScale,
-        colorBackground = true,
         background = {
           asset = "wide/slight-1",
           applyColor = true,
