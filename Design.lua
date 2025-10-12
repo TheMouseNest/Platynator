@@ -440,7 +440,7 @@ function addonTable.Design.GetDefaultDesignBlizzard()
           asset = "special/blizzard-cast-bar",
         },
         border = {
-          asset = "special/blizzard-cast-bar-border",
+          asset = "special/blizzard-cast-bar",
           color = GetColor("FFFFFF")
         },
         scale = healthScale,

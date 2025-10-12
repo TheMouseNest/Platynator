@@ -12,7 +12,7 @@ addonTable.Assets.BarBackgrounds = {
   ["wide/slight-1"] = {file = "Interface/AddOns/Platynator/Assets/Bars/Wide/slight-bar-background.png", width = 1000, height = 125},
   ["wide/slight-2"] = {file = "Interface/AddOns/Platynator/Assets/Bars/Wide/slight-bar-foreground.png", width = 1000, height = 125},
   ["wide/blizzard-1"] = {file = "Interface/AddOns/Platynator/Assets/Bars/Wide/blizzard-background.png", width = 1000, height = 125},
-  ["special/blizzard-cast-bar"] = {file = "Interface/AddOns/Platynator/Assets/Bars/Special/blizzard-cast-bar.png", width = 1000, height = 57},
+  ["special/blizzard-cast-bar"] = {file = "Interface/AddOns/Platynator/Assets/Bars/Special/blizzard-cast-bar.png", width = 1000, height = 57, special = true},
 }
 
 addonTable.Assets.BarBorders = {
@@ -21,7 +21,7 @@ addonTable.Assets.BarBorders = {
   ["wide/slight-1"] = {file = "Interface/AddOns/Platynator/Assets/Bars/Wide/slight-bar-border.png", width = 1000, height = 125},
   ["wide/soft-1"] = {file = "Interface/AddOns/Platynator/Assets/Bars/Wide/soft-border.png", width = 1023, height = 149},
   ["wide/blizzard-normal"] = {file = "Interface/AddOns/Platynator/Assets/Bars/Wide/blizzard-border.png", width = 1116, height = 248},
-  ["special/blizzard-cast-bar-border"] = {file = "Interface/AddOns/Platynator/Assets/Bars/Special/blizzard-cast-bar-border.png", width = 1000, height = 57},
+  ["special/blizzard-cast-bar"] = {file = "Interface/AddOns/Platynator/Assets/Bars/Special/blizzard-cast-bar-border.png", width = 1000, height = 57, special = true},
 }
 
 addonTable.Assets.Highlights = {

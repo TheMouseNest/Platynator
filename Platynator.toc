@@ -47,5 +47,6 @@ Assets.lua
 API/Main.lua
 
 CustomiseDialog/Components.lua
+CustomiseDialog/Designer.lua
 CustomiseDialog/Main.lua
 CustomiseDialog/Initialize.lua
