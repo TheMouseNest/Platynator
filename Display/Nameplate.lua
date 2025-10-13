@@ -55,21 +55,24 @@ function addonTable.Display.NameplateMixin:Install(nameplate)
 end
 
 function addonTable.Display.NameplateMixin:SetUnit(unit)
-  self.unit = unit
-  if self.unit and (not UnitNameplateShowsWidgetsOnly or UnitNameplateShowsWidgetsOnly(self.unit)) then
+  if unit and (not UnitNameplateShowsWidgetsOnly or not UnitNameplateShowsWidgetsOnly(unit)) then
+    self.unit = unit
     self:Show()
-    self:UpdateScale()
     if addonTable.Constants.IsMidnight then
       C_NamePlateManager.SetNamePlateSimplified(self.unit, false)
     end
-  elseif self.unit and UnitNameplateShowsWidgetsOnly and UnitNameplateShowsWidgetsOnly(self.unit) then
+
+    for _, w in ipairs(self.widgets) do
+      w:SetUnit(self.unit)
+    end
+  elseif not self.unit or (UnitNameplateShowsWidgetsOnly and UnitNameplateShowsWidgetsOnly(unit)) then
     self:Hide()
     self:UnregisterAllEvents()
+    for _, w in ipairs(self.widgets) do
+      w:SetUnit(nil)
+    end
   end
-
-  for _, w in ipairs(self.widgets) do
-    w:SetUnit(self.unit)
-  end
+  self:UpdateForTarget()
 end
 
 function addonTable.Display.NameplateMixin:UpdateForTarget()
@@ -95,7 +98,7 @@ function addonTable.Display.NameplateMixin:UpdateScale()
     if UnitIsUnit("target", self.unit) then
       self:SetScale(1.08 * addonTable.Config.Get(addonTable.Config.Options.GLOBAL_SCALE))
     else
-      self:SetScale(0.9 * addonTable.Config.Get(addonTable.Config.Options.GLOBAL_SCALE))
+      self:SetScale(0.7 * addonTable.Config.Get(addonTable.Config.Options.GLOBAL_SCALE))
     end
   end
 end

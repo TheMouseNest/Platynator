@@ -67,11 +67,27 @@ local specializationToColor = {
   [1473] = CreateColorFromRGBHexString("37e5fc"),
 }
 
-addonTable.Display.PowerBarMixin = {}
-function addonTable.Display.PowerBarMixin:PostInit()
-  self.powerKind = self:GetPower()
-  self.powerColor = self:GetColor() or CreateColor(240/255, 201/255, 0/255)
+local powerKind, powerColor
+
+local specializationMonitor = CreateFrame("Frame")
+specializationMonitor:RegisterEvent("PLAYER_LOGIN")
+if C_EventUtils.IsEventValid("PLAYER_SPECIALIZATION_CHANGED") then
+  specializationMonitor:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
 end
+specializationMonitor:SetScript("OnEvent", function()
+  local specID
+  if C_SpecializationInfo.GetSpecialization then
+    local specIndex = C_SpecializationInfo.GetSpecialization()
+    specID = C_SpecializationInfo.GetSpecializationInfo(specIndex)
+  else
+    specID = classToSpec[UnitClassBase("player")]
+  end
+
+  powerKind = specializationToPower[specID]
+  powerColor = specializationToColor[specID]
+end)
+
+addonTable.Display.PowerBarMixin = {}
 
 function addonTable.Display.PowerBarMixin:Strip()
 end
@@ -83,30 +99,7 @@ function addonTable.Display.PowerBarMixin:SetUnit(unit)
   end
 end
 
-function addonTable.Display.PowerBarMixin:GetPower()
-  if not C_SpecializationInfo.GetSpecialization then
-    return specializationToPower[classToSpec[UnitClassBase("player")]]
-  end
-
-  local specIndex = C_SpecializationInfo.GetSpecialization()
-  local specID = C_SpecializationInfo.GetSpecializationInfo(specIndex)
-
-  return specializationToPower[specID]
-end
-
-function addonTable.Display.PowerBarMixin:GetColor()
-  if not C_SpecializationInfo.GetSpecialization then
-    return specializationToColor[classToSpec[UnitClassBase("player")]]
-  end
-
-  local specIndex = C_SpecializationInfo.GetSpecialization()
-  local specID = C_SpecializationInfo.GetSpecializationInfo(specIndex)
-
-  return specializationToColor[specID]
-end
-
 function addonTable.Display.PowerBarMixin:ApplyTarget()
-  local powerKind = self.powerKind
   if powerKind and UnitIsUnit("target", self.unit) and UnitCanAttack("player", self.unit) then
     self:Show()
 
@@ -124,8 +117,7 @@ function addonTable.Display.PowerBarMixin:ApplyTarget()
       currentPower = UnitPower("player", powerKind)
     end
     self.main:SetValue(currentPower)
-    local color = self.powerColor
-    self.main:GetStatusBarTexture():SetVertexColor(color.r, color.g, color.b)
+    self.main:GetStatusBarTexture():SetVertexColor(powerColor.r, powerColor.g, powerColor.b)
   else
     self:Hide()
   end
