@@ -119,7 +119,13 @@ function addonTable.Design.GetDefaultDesignRabbit()
         asset = "normal/shield-gradient",
         color = GetColor("647b7f"),
         anchor = {"TOPRIGHT", -50, -12}
-      }
+      },
+      {
+        kind = "elite",
+        scale = healthScale * 0.7,
+        asset = "special/blizzard-elite",
+        anchor = {"LEFT", -60, 0}
+      },
     }
   }
 end
@@ -241,7 +247,13 @@ function addonTable.Design.GetDefaultDesignHedgehog()
         asset = "normal/shield-gradient",
         color = GetColor("647b7f"),
         anchor = {"TOPRIGHT", -50, -12}
-      }
+      },
+      {
+        kind = "elite",
+        scale = healthScale * 0.8,
+        asset = "special/blizzard-elite",
+        anchor = {"LEFT", -61, 0}
+      },
     }
   }
 end
@@ -472,6 +484,12 @@ function addonTable.Design.GetDefaultDesignBlizzard()
         asset = "normal/quest-blizzard",
         anchor = {"RIGHT", -66, -1}
       },
+      {
+        kind = "elite",
+        scale = healthScale * 0.8,
+        asset = "special/blizzard-elite",
+        anchor = {"LEFT", -61, 0}
+      },
     }
   }
 end
@@ -593,7 +611,13 @@ function addonTable.Design.GetDefaultDesignSquirrel()
         asset = "normal/shield-soft",
         color = GetColor("647b7f"),
         anchor = {"TOPRIGHT", -50, -12}
-      }
+      },
+      {
+        kind = "elite",
+        scale = healthScale * 0.8,
+        asset = "special/blizzard-elite",
+        anchor = {"LEFT", -61, 0}
+      },
     }
   }
 end

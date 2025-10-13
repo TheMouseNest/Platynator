@@ -47,6 +47,9 @@ addonTable.Assets.Markers = {
   ["normal/quest-blizzard"] = {file = "Interface/AddOns/Platynator/Assets/Markers/quest-blizzard.png", width = 97, height = 170},
   ["normal/shield-gradient"] = {file = "Interface/AddOns/Platynator/Assets/Markers/shield-gradient.png", width = 150, height = 155},
   ["normal/shield-soft"] = {file = "Interface/AddOns/Platynator/Assets/Markers/shield-soft.png", width = 160, height = 165},
+  ["special/blizzard-elite"] = {file = "Interface/AddOns/Platynator/Assets/Markers/eliterarecombo-blizzard.png", width = 150, height = 155, special = true},
+  ["normal/blizzard-elite"] = {file = "Interface/AddOns/Platynator/Assets/Markers/elite-blizzard.png", width = 150, height = 155},
+  ["normal/blizzard-rareelite"] = {file = "Interface/AddOns/Platynator/Assets/Markers/rareelite-blizzard.png", width = 150, height = 155},
 }
 
 addonTable.Assets.SpecialBars = {
@@ -54,5 +57,12 @@ addonTable.Assets.SpecialBars = {
     background = "transparent",
     foreground = "special/blizzard-cast-bar",
     border = "special/blizzard-cast-bar",
+  }
+}
+
+addonTable.Assets.SpecialEliteMarkers = {
+  ["special/blizzard-elite"] = {
+    elite = "normal/blizzard-elite",
+    rareElite = "normal/blizzard-rareelite",
   }
 }

@@ -192,6 +192,7 @@ function addonTable.Display.GetMarker(frame, parent)
 
   function frame:Init(details)
     ApplyAnchor(frame, details.anchor)
+    frame.details = details
 
     local markerDetails = addonTable.Assets.Markers[details.asset]
 
@@ -207,6 +208,8 @@ function addonTable.Display.GetMarker(frame, parent)
       Mixin(frame, addonTable.Display.QuestMarkerMixin)
     elseif details.kind == "cannotInterrupt" then
       Mixin(frame, addonTable.Display.CannotInterruptMarkerMixin)
+    elseif details.kind == "elite" then
+      Mixin(frame, addonTable.Display.EliteMarkerMixin)
     else
       assert(false)
     end
