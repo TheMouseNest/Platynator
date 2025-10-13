@@ -85,6 +85,10 @@ end
 function addonTable.Display.NameplateMixin:UpdateScale()
   self:SetScale(addonTable.Config.Get(addonTable.Config.Options.GLOBAL_SCALE))
 
+  if not self.unit then
+    return
+  end
+
   if not addonTable.Constants.IsMidnight then
     if UnitIsUnit("target", self.unit) then
       self:SetScale(1.08 * addonTable.Config.Get(addonTable.Config.Options.GLOBAL_SCALE))
