@@ -65,7 +65,8 @@ function addonTable.Display.NameplateMixin:SetUnit(unit)
     for _, w in ipairs(self.widgets) do
       w:SetUnit(self.unit)
     end
-  elseif not self.unit or (UnitNameplateShowsWidgetsOnly and UnitNameplateShowsWidgetsOnly(unit)) then
+  else
+    self.unit = nil
     self:Hide()
     self:UnregisterAllEvents()
     for _, w in ipairs(self.widgets) do
