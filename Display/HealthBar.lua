@@ -33,17 +33,26 @@ function addonTable.Display.HealthBarMixin:SetHealthColor(c)
   self.marker:SetVertexColor(c.r, c.g, c.b)
 end
 
+function addonTable.Display.HealthBarMixin:IsNeutral()
+  if UnitSelectionType then
+    return UnitSelectionType(self.unit) == 2
+  else
+    local r, g, b = UnitSelectionColor(self.unit)
+    return r == 1 and g == 1 and b == 0
+  end
+end
+
 function addonTable.Display.HealthBarMixin:UpdateColor()
   if UnitIsPlayer(self.unit) then
     local c = RAID_CLASS_COLORS[UnitClassBase(self.unit)]
     self:SetHealthColor(c)
-  elseif UnitSelectionType(self.unit) == 2 and not UnitAffectingCombat(self.unit) then
+  elseif self:IsNeutral() and not UnitAffectingCombat(self.unit) then
     local c = self.details.colors.npc.neutral
     self:SetHealthColor(c)
   elseif UnitIsFriend("player", self.unit) then
     local c = self.details.colors.npc.friendly
     self:SetHealthColor(c)
-  elseif (not UnitCanAttack("player", self.unit)--[[or not UnitAffectingCombat(self.unit)]]) and UnitIsEnemy("player", self.unit) then
+  elseif not UnitCanAttack("player", self.unit) and UnitIsEnemy("player", self.unit) then
     local c = self.details.colors.npc.hostile
     self:SetHealthColor(c)
   else
@@ -64,6 +73,9 @@ local roleMap = {
 
 }
 function addonTable.Display.HealthBarMixin:GetRole()
+  if not C_SpecializationInfo.GetSpecialization then
+    return roleType.Damage
+  end
   local specIndex = C_SpecializationInfo.GetSpecialization()
   local _, _, _, _, role = C_SpecializationInfo.GetSpecializationInfo(specIndex)
 

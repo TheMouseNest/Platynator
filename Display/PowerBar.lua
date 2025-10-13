@@ -31,6 +31,12 @@ local specializationToPower = {
   [1473] = Enum.PowerType.Essence,
 }
 
+-- Used in classic era, so excludes classes without an appropriate resource
+local classToSpec = {
+  ["ROGUE"] = 259,
+  ["DRUID"] = 103,
+}
+
 local specializationToColor = {
   --Rogue (all specs)
   [259] = CreateColorFromRGBHexString("f71322"),
@@ -78,6 +84,10 @@ function addonTable.Display.PowerBarMixin:SetUnit(unit)
 end
 
 function addonTable.Display.PowerBarMixin:GetPower()
+  if not C_SpecializationInfo.GetSpecialization then
+    return specializationToPower[classToSpec[UnitClassBase("player")]]
+  end
+
   local specIndex = C_SpecializationInfo.GetSpecialization()
   local specID = C_SpecializationInfo.GetSpecializationInfo(specIndex)
 
@@ -85,6 +95,10 @@ function addonTable.Display.PowerBarMixin:GetPower()
 end
 
 function addonTable.Display.PowerBarMixin:GetColor()
+  if not C_SpecializationInfo.GetSpecialization then
+    return specializationToColor[classToSpec[UnitClassBase("player")]]
+  end
+
   local specIndex = C_SpecializationInfo.GetSpecialization()
   local specID = C_SpecializationInfo.GetSpecializationInfo(specIndex)
 

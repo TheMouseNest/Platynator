@@ -3,7 +3,7 @@ local addonTable = select(2, ...)
 addonTable.Config = {}
 
 local settings = {
-  STYLE = {key = "style", default = "slight", refresh = {addonTable.Constants.RefreshReason.Design}},
+  STYLE = {key = "style", default = "squirrel", refresh = {addonTable.Constants.RefreshReason.Design}},
   CURRENT_SKIN = {key = "current_skin", default = "blizzard", refresh = {addonTable.Constants.RefreshReason.Skin}},
 
   DESIGN = {key = "design_all", default = {}, refresh = {addonTable.Constants.RefreshReason.Design}},

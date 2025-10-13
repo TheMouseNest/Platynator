@@ -45,22 +45,24 @@ function addonTable.Display.NameplateMixin:Install(nameplate)
     nameplate.UnitFrame:UnregisterAllEvents()
     -- NYI
   end
-  if self.UnitFrame and self.UnitFrame.WidgetContainer:GetParent() == nameplate then
-    self.UnitFrame.WidgetContainer:SetParent(self.UnitFrame)
+  if nameplate.UnitFrame.WidgetContainer then
+    if self.UnitFrame and self.UnitFrame.WidgetContainer:GetParent() == nameplate then
+      self.UnitFrame.WidgetContainer:SetParent(self.UnitFrame)
+    end
+    nameplate.UnitFrame.WidgetContainer:SetParent(nameplate)
   end
   self.UnitFrame = nameplate.UnitFrame
-  nameplate.UnitFrame.WidgetContainer:SetParent(nameplate)
 end
 
 function addonTable.Display.NameplateMixin:SetUnit(unit)
   self.unit = unit
-  if self.unit and not UnitNameplateShowsWidgetsOnly(self.unit) then
+  if self.unit and (not UnitNameplateShowsWidgetsOnly or UnitNameplateShowsWidgetsOnly(self.unit)) then
     self:Show()
     self:UpdateScale()
     if addonTable.Constants.IsMidnight then
       C_NamePlateManager.SetNamePlateSimplified(self.unit, false)
     end
-  elseif self.unit and UnitNameplateShowsWidgetsOnly(self.unit) then
+  elseif self.unit and UnitNameplateShowsWidgetsOnly and UnitNameplateShowsWidgetsOnly(self.unit) then
     self:Hide()
     self:UnregisterAllEvents()
   end

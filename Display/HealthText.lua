@@ -7,7 +7,9 @@ function addonTable.Display.HealthTextMixin:SetUnit(unit)
   self.unit = unit
   if self.unit then
     local unitFrame = C_NamePlate.GetNamePlateForUnit(self.unit).UnitFrame
-    self.healthSource = unitFrame.HealthBarsContainer.healthBar
+    if addonTable.Constants.IsMidnight then
+      self.healthSource = unitFrame.HealthBarsContainer.healthBar
+    end
     self:RegisterUnitEvent("UNIT_HEALTH", self.unit)
     self:UpdateText()
   else

@@ -18,7 +18,7 @@ function addonTable.Display.QuestMarkerMixin:Strip()
 end
 
 function addonTable.Display.QuestMarkerMixin:UpdateMarker()
-  self.marker:SetShown(C_QuestLog.UnitIsRelatedToActiveQuest(self.unit))
+  self.marker:SetShown(C_QuestLog.UnitIsRelatedToActiveQuest and C_QuestLog.UnitIsRelatedToActiveQuest(self.unit))
 end
 
 function addonTable.Display.QuestMarkerMixin:OnEvent(eventName, ...)
