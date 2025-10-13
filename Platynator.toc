@@ -1,4 +1,4 @@
-## Interface: 120000, 110205
+## Interface: 120000, 110205, 50501, 11507
 ## Title: Platynator
 ## Version: @project-version@
 ## Author: plusmouse
