@@ -43,7 +43,9 @@ function addonTable.Display.CannotInterruptMarkerMixin:ApplyCasting()
   if type(name) ~= "nil"then
     self.marker:SetShown(self:IsUninterruptible())
     C_Timer.After(0, function()
-      self.marker:SetShown(self:IsUninterruptible())
+      if self.unit then
+        self.marker:SetShown(self:IsUninterruptible())
+      end
     end)
   else
     self.marker:Hide()
