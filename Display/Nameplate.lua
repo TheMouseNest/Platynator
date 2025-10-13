@@ -7,6 +7,8 @@ function addonTable.Display.NameplateMixin:OnLoad()
 
   local style = addonTable.Config.Get(addonTable.Config.Options.DESIGN)
 
+  self:SetIgnoreParentScale(true)
+
   self:InitializeWidgets()
 
   self.AurasFrame = nil
@@ -89,17 +91,15 @@ function addonTable.Display.NameplateMixin:UpdateForTarget()
 end
 
 function addonTable.Display.NameplateMixin:UpdateScale()
-  self:SetScale(addonTable.Config.Get(addonTable.Config.Options.GLOBAL_SCALE))
+  self:SetScale(addonTable.Config.Get(addonTable.Config.Options.GLOBAL_SCALE) * UIParent:GetScale() * UIParent:GetScale())
 
   if not self.unit then
     return
   end
 
-  if not addonTable.Constants.IsMidnight then
-    if UnitIsUnit("target", self.unit) then
-      self:SetScale(1.08 * addonTable.Config.Get(addonTable.Config.Options.GLOBAL_SCALE))
-    else
-      self:SetScale(0.7 * addonTable.Config.Get(addonTable.Config.Options.GLOBAL_SCALE))
-    end
+  if UnitIsUnit("target", self.unit) then
+    self:SetScale(1.25 * addonTable.Config.Get(addonTable.Config.Options.GLOBAL_SCALE) * UIParent:GetEffectiveScale())
+  else
+    self:SetScale(1 * addonTable.Config.Get(addonTable.Config.Options.GLOBAL_SCALE) * UIParent:GetEffectiveScale())
   end
 end
