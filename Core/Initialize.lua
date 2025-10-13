@@ -100,6 +100,8 @@ function addonTable.Core.Initialize()
     end
   end)
 
+  addonTable.Assets.ApplyScale()
+
   addonTable.CustomiseDialog.Initialize()
 
   addonTable.SlashCmd.Initialize()

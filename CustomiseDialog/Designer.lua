@@ -86,7 +86,7 @@ local function GetBarSettings(parent)
     local borderDropdown = addonTable.CustomiseDialog.Components.GetBasicDropdown(container, addonTable.Locales.BORDER_TEXTURE, function(value)
       return currentBar and currentBar.border.asset == value
     end, function(value)
-      if addonTable.Assets.BarBackgrounds[value].special then
+      if addonTable.Assets.BarBorders[value].special then
         ApplySpecial(value)
       elseif addonTable.Assets.BarBorders[currentBar.background.asset].special then
         local design = addonTable.Design.GetDefaultDesignSquirrel()

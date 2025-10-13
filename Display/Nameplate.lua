@@ -26,7 +26,8 @@ end
 
 function addonTable.Display.NameplateMixin:Install(nameplate)
   self:SetParent(nameplate)
-  self:SetAllPoints()
+  self:SetSize(10, 10)
+  self:SetPoint("CENTER")
   if addonTable.Constants.IsMidnight then
     nameplate.UnitFrame:SetAlpha(0) --- XXX: Remove when unit health formatting available
     nameplate.UnitFrame.HitTestFrame:SetParent(nameplate)
@@ -91,15 +92,21 @@ function addonTable.Display.NameplateMixin:UpdateForTarget()
 end
 
 function addonTable.Display.NameplateMixin:UpdateScale()
-  self:SetScale(addonTable.Config.Get(addonTable.Config.Options.GLOBAL_SCALE) * UIParent:GetScale() * UIParent:GetScale())
+  self:SetScale(addonTable.Config.Get(addonTable.Config.Options.GLOBAL_SCALE) * UIParent:GetEffectiveScale())
 
   if not self.unit then
     return
   end
 
   if UnitIsUnit("target", self.unit) then
-    self:SetScale(1.25 * addonTable.Config.Get(addonTable.Config.Options.GLOBAL_SCALE) * UIParent:GetEffectiveScale())
+    local change = addonTable.Config.Get(addonTable.Config.Options.TARGET_BEHAVIOUR)
+    if change == "enlarge" then
+      self:SetScale(1.25 * addonTable.Config.Get(addonTable.Config.Options.GLOBAL_SCALE) * UIParent:GetEffectiveScale())
+    elseif change == "shiftUp" then
+      self:SetPoint("CENTER", 0, 20)
+    end
   else
-    self:SetScale(1 * addonTable.Config.Get(addonTable.Config.Options.GLOBAL_SCALE) * UIParent:GetEffectiveScale())
+    self:SetPoint("CENTER")
+    self:SetScale(addonTable.Config.Get(addonTable.Config.Options.GLOBAL_SCALE) * UIParent:GetEffectiveScale())
   end
 end

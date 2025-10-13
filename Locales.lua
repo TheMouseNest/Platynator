@@ -39,6 +39,11 @@ L["MAIN_TEXTURE"] = "Main texture"
 L["BACKGROUND_TEXTURE"] = "Background texture"
 L["BORDER_TEXTURE"] = "Border texture"
 
+L["ON_TARGETING"] = "On targeting"
+L["ENLARGE_NAMEPLATE"] = "Enlarge nameplate"
+L["SHIFT_NAMEPLATE_UP"] = "Shift nameplate up"
+L["DO_NOTHING"] = "Do nothing"
+
 L["ENTER_PROFILE_NAME"] = "Enter Profile Name:"
 L["PROFILES"] = "Profiles"
 L["NEW_PROFILE_CLONE"] = "New Profile (clone current)"

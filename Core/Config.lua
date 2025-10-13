@@ -6,9 +6,10 @@ local settings = {
   STYLE = {key = "style", default = "squirrel", refresh = {addonTable.Constants.RefreshReason.Design}},
   CURRENT_SKIN = {key = "current_skin", default = "blizzard", refresh = {addonTable.Constants.RefreshReason.Skin}},
 
+  GLOBAL_SCALE = {key = "global_scale", default = 1, refresh = {addonTable.Constants.RefreshReason.Scale}},
   DESIGN = {key = "design_all", default = {}, refresh = {addonTable.Constants.RefreshReason.Design}},
 
-  GLOBAL_SCALE = {key = "global_scale", default = 1, refresh = {addonTable.Constants.RefreshReason.Scale}},
+  TARGET_BEHAVIOUR = {key = "target_behaviour", default = "enlarge"},
 }
 
 addonTable.Config.RefreshType = {}

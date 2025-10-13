@@ -138,9 +138,51 @@ local function SetupGeneral(parent)
   return container
 end
 
+local function SetupBehaviour(parent)
+  local container = CreateFrame("Frame", nil, parent)
+
+  local allFrames = {}
+
+  local targetDropdown = addonTable.CustomiseDialog.Components.GetBasicDropdown(container, addonTable.Locales.ON_TARGETING, function(value)
+    return addonTable.Config.Get(addonTable.Config.Options.TARGET_BEHAVIOUR) == value
+  end, function(value)
+    addonTable.Config.Set(addonTable.Config.Options.TARGET_BEHAVIOUR, value)
+  end)
+  targetDropdown:SetPoint("TOP")
+  do
+    local entries = {
+      addonTable.Locales.DO_NOTHING,
+      addonTable.Locales.ENLARGE_NAMEPLATE,
+      addonTable.Locales.SHIFT_NAMEPLATE_UP,
+    }
+    local values = {
+      "none",
+      "enlarge",
+      "shiftUp"
+    }
+    targetDropdown:Init(entries, values)
+  end
+  table.insert(allFrames, targetDropdown)
+
+  container:SetScript("OnShow", function()
+    for _, f in ipairs(allFrames) do
+      if f.SetValue then
+        if f.option then
+          f:SetValue(addonTable.Config.Get(f.option))
+        else
+          f:SetValue()
+        end
+      end
+    end
+  end)
+
+  return container
+end
+
 local TabSetups = {
   {callback = SetupGeneral, name = addonTable.Locales.GENERAL},
   {callback = addonTable.CustomiseDialog.GetMainDesigner, name = addonTable.Locales.DESIGNER},
+  {callback = SetupBehaviour, name = addonTable.Locales.DESIGNER},
 }
 
 function addonTable.CustomiseDialog.Toggle()
