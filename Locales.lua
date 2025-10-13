@@ -20,6 +20,7 @@ local L = Locales.enUS
 
 L["PLATYNATOR"] = "Platynator"
 L["DESIGNER"] = "Designer"
+L["BEHAVIOUR"] = "Behaviour"
 L["GENERAL"] = "General"
 L["STYLE"] = "Style"
 L["CUSTOMISE_PLATYNATOR"] = "Customise Platynator"
