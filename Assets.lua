@@ -44,6 +44,7 @@ addonTable.Assets.PowerBars = {
 
 addonTable.Assets.Markers = {
   ["normal/quest-gradient"] = {file = "Interface/AddOns/Platynator/Assets/Markers/quest-gradient.png", width = 48, height = 170},
+  ["normal/quest-blizzard"] = {file = "Interface/AddOns/Platynator/Assets/Markers/quest-blizzard.png", width = 97, height = 170},
   ["normal/shield-gradient"] = {file = "Interface/AddOns/Platynator/Assets/Markers/shield-gradient.png", width = 150, height = 155},
   ["normal/shield-soft"] = {file = "Interface/AddOns/Platynator/Assets/Markers/shield-soft.png", width = 160, height = 165},
 }

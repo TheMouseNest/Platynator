@@ -110,7 +110,7 @@ function addonTable.Design.GetDefaultDesignRabbit()
       {
         kind = "quest",
         scale = healthScale * 0.9,
-        asset = "normal/quest-gradient",
+        asset = "normal/quest-blizzard",
         anchor = {"RIGHT", -65, 0}
       },
       {
@@ -469,8 +469,8 @@ function addonTable.Design.GetDefaultDesignBlizzard()
       {
         kind = "quest",
         scale = healthScale * 0.9,
-        asset = "normal/quest-gradient",
-        anchor = {"RIGHT", -66, 0}
+        asset = "normal/quest-blizzard",
+        anchor = {"RIGHT", -66, -1}
       },
     }
   }
@@ -584,7 +584,7 @@ function addonTable.Design.GetDefaultDesignSquirrel()
       {
         kind = "quest",
         scale = healthScale * 0.9,
-        asset = "normal/quest-gradient",
+        asset = "normal/quest-blizzard",
         anchor = {"RIGHT", -64, 0}
       },
       {
