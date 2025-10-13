@@ -23,7 +23,7 @@ function addonTable.Display.GetBar(frame, parent)
   frame.reverseStatusTexture:SetDrawLayer("ARTWORK", -1)
 
   frame.marker = frame.statusBar:CreateTexture()
-  frame.marker:SetDrawLayer("ARTWORK", 2)
+  frame.marker:SetSnapToPixelGrid(false)
 
   local borderHolder = CreateFrame("Frame", nil, frame)
   frame.border = borderHolder:CreateTexture()
@@ -62,6 +62,8 @@ function addonTable.Display.GetBar(frame, parent)
 
     frame.statusBar:SetStatusBarTexture(foregroundDetails.file)
     frame.statusBar:GetStatusBarTexture():SetDrawLayer("ARTWORK")
+    frame.statusBar:GetStatusBarTexture():SetSnapToPixelGrid(false)
+    frame.statusBar:GetStatusBarTexture():SetTexelSnappingBias(0)
 
     frame.reverseStatusTexture:Hide()
     -- Scaling to avoid zooming in on the texture at the current size
@@ -91,6 +93,15 @@ function addonTable.Display.GetBar(frame, parent)
     end
 
     frame.details = details
+
+    frame.reverseStatusTexture:SetSnapToPixelGrid(false)
+    frame.reverseStatusTexture:SetTexelSnappingBias(0)
+    frame.marker:SetTexelSnappingBias(0)
+    frame.marker:SetDrawLayer("ARTWORK", 2)
+    frame.border:SetSnapToPixelGrid(false)
+    frame.border:SetTexelSnappingBias(0)
+    frame.background:SetSnapToPixelGrid(false)
+    frame.background:SetTexelSnappingBias(0)
 
     if details.kind == "health" then
       Mixin(frame, addonTable.Display.HealthBarMixin)
@@ -141,6 +152,10 @@ function addonTable.Display.GetPower(frame, parent)
     self.main:SetStatusBarTexture(addonTable.Assets.PowerBars[details.filled].file)
     self.main:SetPoint("LEFT", frame.background:GetStatusBarTexture())
     self.main:SetWidth(self.background:GetWidth())
+    self.main:GetStatusBarTexture():SetSnapToPixelGrid(false)
+    self.main:GetStatusBarTexture():SetTexelSnappingBias(0)
+    self.background:GetStatusBarTexture():SetSnapToPixelGrid(false)
+    self.background:GetStatusBarTexture():SetTexelSnappingBias(0)
     frame:SetSize(blankDetails.width * details.scale, blankDetails.height * details.scale)
 
     Mixin(frame, addonTable.Display.PowerBarMixin)
@@ -168,6 +183,9 @@ function addonTable.Display.GetHighlight(frame, parent)
     frame.highlight:SetVertexColor(details.color.r, details.color.g, details.color.b)
     frame:SetSize(highlightDetails.width * details.scale, highlightDetails.height * details.scale)
 
+    frame.highlight:SetSnapToPixelGrid(false)
+    frame.highlight:SetTexelSnappingBias(0)
+
     if details.kind == "target" then
       Mixin(frame, addonTable.Display.HighlightMixin)
     else
@@ -188,6 +206,7 @@ function addonTable.Display.GetMarker(frame, parent)
   frame = frame or CreateFrame("Frame", nil, parent or UIParent)
 
   frame.marker = frame:CreateTexture()
+
   frame.marker:SetAllPoints()
 
   function frame:Init(details)
@@ -202,6 +221,8 @@ function addonTable.Display.GetMarker(frame, parent)
     else
       frame.marker:SetVertexColor(1, 1, 1)
     end
+    frame.marker:SetSnapToPixelGrid(false)
+    frame.marker:SetTexelSnappingBias(0)
     frame:SetSize(markerDetails.width * details.scale, markerDetails.height * details.scale)
 
     if details.kind == "quest" then
