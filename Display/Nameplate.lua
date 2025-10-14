@@ -53,6 +53,7 @@ function addonTable.Display.NameplateMixin:Install(nameplate)
     -- NYI
   end
   self.SoftTargetIcon:SetParent(nameplate)
+  self.SoftTargetIcon:ClearAllPoints()
   self.SoftTargetIcon:SetPoint("BOTTOM", nameplate, "TOP", 0, -8)
   self.SoftTargetIcon:Hide()
   if nameplate.UnitFrame.WidgetContainer then
@@ -66,10 +67,9 @@ end
 
 function addonTable.Display.NameplateMixin:SetUnit(unit)
   self.SoftTargetIcon:Hide()
-  self:UnregisterEvent("PLAYER_SOFT_INTERACT_CHANGED")
-  if unit and (not UnitNameplateShowsWidgetsOnly or not UnitNameplateShowsWidgetsOnly(unit)) and not UnitIsInteractable(unit) then
+  self.interactUnit = nil
+  if unit and (not UnitNameplateShowsWidgetsOnly or not UnitNameplateShowsWidgetsOnly(unit)) and (not UnitIsUnit(unit, "softinteract") or UnitIsUnit(unit, "target")) then
     self.unit = unit
-    self.interactUnit = nil
     self:Show()
     if addonTable.Constants.IsMidnight then
       C_NamePlateManager.SetNamePlateSimplified(self.unit, false)
@@ -78,6 +78,12 @@ function addonTable.Display.NameplateMixin:SetUnit(unit)
     for _, w in ipairs(self.widgets) do
       w:SetUnit(self.unit)
     end
+
+    for _, w in ipairs(self.widgets) do
+      if w.ApplyTarget then
+        w:ApplyTarget()
+      end
+    end
   else
     self.unit = nil
     self:Hide()
@@ -85,17 +91,25 @@ function addonTable.Display.NameplateMixin:SetUnit(unit)
     for _, w in ipairs(self.widgets) do
       w:SetUnit(nil)
     end
-
-    if unit and UnitIsInteractable(unit) then
-      self.interactUnit = unit
-      self:UpdateSoftInteract()
-      self:RegisterEvent("PLAYER_SOFT_INTERACT_CHANGED")
-    end
   end
-  self:UpdateForTarget()
+
+  if unit and UnitIsInteractable(unit) then
+    self.interactUnit = unit
+    self:UpdateSoftInteract()
+    self:RegisterEvent("PLAYER_SOFT_INTERACT_CHANGED")
+  else
+    self:UnregisterEvent("PLAYER_SOFT_INTERACT_CHANGED")
+  end
+
+  self:UpdateScale()
 end
 
 function addonTable.Display.NameplateMixin:UpdateForTarget()
+  if self.interactUnit and not self.unit and UnitExists(self.interactUnit) and UnitIsUnit("target", self.interactUnit) then
+    self:SetUnit(self.interactUnit)
+    return
+  end
+
   if self.unit then
     for _, w in ipairs(self.widgets) do
       if w.ApplyTarget then

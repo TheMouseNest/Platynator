@@ -100,7 +100,7 @@ function addonTable.Display.ManagerMixin:OnEvent(eventName, ...)
     Mixin(self.nameplateDisplays[nameplate], addonTable.Display.NameplateMixin)
     self.nameplateDisplays[nameplate]:OnLoad()
   elseif eventName == "PLAYER_TARGET_CHANGED" then
-    if self.lastTarget and self.lastTarget.unit and UnitExists(self.lastTarget.unit) then
+    if self.lastTarget and (not self.lastTarget.unit or UnitExists(self.lastTarget.unit)) then
       self.lastTarget:UpdateForTarget()
     end
     local new = C_NamePlate.GetNamePlateForUnit("target")
