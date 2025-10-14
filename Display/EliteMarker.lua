@@ -6,7 +6,7 @@ addonTable.Display.EliteMarkerMixin = {}
 function addonTable.Display.EliteMarkerMixin:PostInit()
   local markerDetails = addonTable.Assets.Markers[self.details.asset]
   local special = addonTable.Assets.SpecialEliteMarkers[self.details.asset]
-  if markerDetails.special and special then
+  if markerDetails.mode == addonTable.Assets.Mode.Special and special then
     self.eliteTexture = addonTable.Assets.Markers[special.elite].file
     self.rareEliteTexture = addonTable.Assets.Markers[special.rareElite].file
   else

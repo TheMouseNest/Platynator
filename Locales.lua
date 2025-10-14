@@ -46,6 +46,7 @@ L["ON_TARGETING"] = "On targeting"
 L["ENLARGE_NAMEPLATE"] = "Enlarge nameplate"
 L["DO_NOTHING"] = "Do nothing"
 L["SPECIAL_BRACKETS"] = "(Special)"
+L["NARROW_BRACKETS"] = "(Narrow)"
 
 L["ENTER_PROFILE_NAME"] = "Enter Profile Name:"
 L["PROFILES"] = "Profiles"
