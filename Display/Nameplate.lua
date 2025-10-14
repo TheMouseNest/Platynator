@@ -13,6 +13,10 @@ function addonTable.Display.NameplateMixin:OnLoad()
 
   self.AurasFrame = nil
   self.UnitFrame = nil
+  self.SoftTargetIcon = self:CreateTexture(nil, "OVERLAY")
+  self.SoftTargetIcon:SetSize(24, 24)
+
+  self:SetScript("OnEvent", self.OnEvent)
 end
 
 function addonTable.Display.NameplateMixin:InitializeWidgets()
@@ -48,6 +52,9 @@ function addonTable.Display.NameplateMixin:Install(nameplate)
     nameplate.UnitFrame:UnregisterAllEvents()
     -- NYI
   end
+  self.SoftTargetIcon:SetParent(nameplate)
+  self.SoftTargetIcon:SetPoint("BOTTOM", nameplate, "TOP", 0, -8)
+  self.SoftTargetIcon:Hide()
   if nameplate.UnitFrame.WidgetContainer then
     if self.UnitFrame and self.UnitFrame.WidgetContainer:GetParent() == nameplate then
       self.UnitFrame.WidgetContainer:SetParent(self.UnitFrame)
@@ -58,8 +65,11 @@ function addonTable.Display.NameplateMixin:Install(nameplate)
 end
 
 function addonTable.Display.NameplateMixin:SetUnit(unit)
-  if unit and (not UnitNameplateShowsWidgetsOnly or not UnitNameplateShowsWidgetsOnly(unit)) then
+  self.SoftTargetIcon:Hide()
+  self:UnregisterEvent("PLAYER_SOFT_INTERACT_CHANGED")
+  if unit and (not UnitNameplateShowsWidgetsOnly or not UnitNameplateShowsWidgetsOnly(unit)) and not UnitIsInteractable(unit) then
     self.unit = unit
+    self.interactUnit = nil
     self:Show()
     if addonTable.Constants.IsMidnight then
       C_NamePlateManager.SetNamePlateSimplified(self.unit, false)
@@ -74,6 +84,13 @@ function addonTable.Display.NameplateMixin:SetUnit(unit)
     self:UnregisterAllEvents()
     for _, w in ipairs(self.widgets) do
       w:SetUnit(nil)
+    end
+
+    if unit and UnitIsInteractable(unit) then
+      self.interactUnit = unit
+      self.SoftTargetIcon:Show()
+      SetUnitCursorTexture(self.SoftTargetIcon, unit)
+      self:RegisterEvent("PLAYER_SOFT_INTERACT_CHANGED")
     end
   end
   self:UpdateForTarget()
@@ -105,5 +122,11 @@ function addonTable.Display.NameplateMixin:UpdateScale()
     end
   else
     self:SetScale(addonTable.Config.Get(addonTable.Config.Options.GLOBAL_SCALE) * UIParent:GetEffectiveScale())
+  end
+end
+
+function addonTable.Display.NameplateMixin:OnEvent(eventName)
+  if eventName == "PLAYER_SOFT_INTERACT_CHANGED" then
+    SetUnitCursorTexture(self.SoftTargetIcon, self.interactUnit)
   end
 end
