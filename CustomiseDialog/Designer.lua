@@ -13,8 +13,12 @@ local function GetLabelsValues(allAssets, filter)
         height = 180/width * height
         width = 180
       end
+      local tail = ""
+      if details.special then
+        tail = " " .. addonTable.Locales.SPECIAL_BRACKETS
+      end
 
-      table.insert(labels, "|T".. details.file .. ":" .. height .. ":" .. width .. "|t")
+      table.insert(labels, "|T".. details.file .. ":" .. height .. ":" .. width .. "|t" .. tail)
       table.insert(values, key)
     end
   end
@@ -44,18 +48,20 @@ local function GetBarSettings(parent)
     local foregroundDropdown = addonTable.CustomiseDialog.Components.GetBasicDropdown(container, addonTable.Locales.MAIN_TEXTURE, function(value)
       return currentBar and currentBar.foreground.asset == value
     end, function(value)
-      if addonTable.Assets.BarBackgrounds[value].special then
+      if addonTable.Assets.BarForegrounds[value].special then
           ApplySpecial(value)
-      elseif addonTable.Assets.BarBackgrounds[currentBar.foreground.asset].special then
-        local design = addonTable.Design.GetDefaultDesignSquirrel()
-        currentBar.background.asset = design.bars[1].background.asset
-        currentBar.border.asset = design.bars[1].border.asset
+      else
+        if addonTable.Assets.BarForegrounds[currentBar.foreground.asset].special then
+          local design = addonTable.Design.GetDefaultDesignSquirrel()
+          currentBar.background.asset = design.bars[1].background.asset
+          currentBar.border.asset = design.bars[1].border.asset
+        end
+        currentBar.foreground.asset = value
       end
-      currentBar.foreground.asset = value
       Announce()
     end)
 
-    foregroundDropdown:Init(GetLabelsValues(addonTable.Assets.BarBackgrounds))
+    foregroundDropdown:Init(GetLabelsValues(addonTable.Assets.BarForegrounds))
 
     foregroundDropdown:SetPoint("TOP")
     table.insert(allFrames, foregroundDropdown)
@@ -67,12 +73,14 @@ local function GetBarSettings(parent)
     end, function(value)
       if addonTable.Assets.BarBackgrounds[value].special then
         ApplySpecial(value)
-      elseif addonTable.Assets.BarBackgrounds[currentBar.background.asset].special then
-        local design = addonTable.Design.GetDefaultDesignSquirrel()
-        currentBar.foreground.asset = design.bars[1].foreground.asset
-        currentBar.border.asset = design.bars[1].border.asset
+      else
+        if addonTable.Assets.BarBackgrounds[currentBar.background.asset].special then
+          local design = addonTable.Design.GetDefaultDesignSquirrel()
+          currentBar.foreground.asset = design.bars[1].foreground.asset
+          currentBar.border.asset = design.bars[1].border.asset
+        end
+        currentBar.background.asset = value
       end
-      currentBar.background.asset = value
       Announce()
     end)
 
@@ -88,12 +96,14 @@ local function GetBarSettings(parent)
     end, function(value)
       if addonTable.Assets.BarBorders[value].special then
         ApplySpecial(value)
-      elseif addonTable.Assets.BarBorders[currentBar.background.asset].special then
-        local design = addonTable.Design.GetDefaultDesignSquirrel()
-        currentBar.foreground.asset = design.bars[1].foreground.asset
-        currentBar.background.asset = design.bars[1].background.asset
+      else
+        if addonTable.Assets.BarBorders[currentBar.border.asset].special then
+          local design = addonTable.Design.GetDefaultDesignSquirrel()
+          currentBar.foreground.asset = design.bars[1].foreground.asset
+          currentBar.background.asset = design.bars[1].background.asset
+        end
+        currentBar.border.asset = value
       end
-      currentBar.border.asset = value
       Announce()
     end)
 

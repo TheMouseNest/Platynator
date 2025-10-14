@@ -42,8 +42,8 @@ L["BORDER_TEXTURE"] = "Border texture"
 
 L["ON_TARGETING"] = "On targeting"
 L["ENLARGE_NAMEPLATE"] = "Enlarge nameplate"
-L["SHIFT_NAMEPLATE_UP"] = "Shift nameplate up"
 L["DO_NOTHING"] = "Do nothing"
+L["SPECIAL_BRACKETS"] = "(Special)"
 
 L["ENTER_PROFILE_NAME"] = "Enter Profile Name:"
 L["PROFILES"] = "Profiles"

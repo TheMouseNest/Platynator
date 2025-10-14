@@ -65,7 +65,7 @@ local function SetStyle()
   end
 
   for index, barDetails in ipairs(design.bars) do
-    local rect = GetRect(addonTable.Assets.BarBackgrounds[barDetails.foreground.asset], barDetails.scale, barDetails.anchor)
+    local rect = GetRect(addonTable.Assets.BarForegrounds[barDetails.foreground.asset], barDetails.scale, barDetails.anchor)
     CacheSize(rect)
   end
 

@@ -153,12 +153,10 @@ local function SetupBehaviour(parent)
     local entries = {
       addonTable.Locales.DO_NOTHING,
       addonTable.Locales.ENLARGE_NAMEPLATE,
-      addonTable.Locales.SHIFT_NAMEPLATE_UP,
     }
     local values = {
       "none",
       "enlarge",
-      "shiftUp"
     }
     targetDropdown:Init(entries, values)
   end

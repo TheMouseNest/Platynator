@@ -6,12 +6,23 @@ addonTable.Assets.Fonts = {
   ["FritzQuadrata"] = {file = "Fonts\\FRIZQT__.TTF", size = 10},
   ["RobotoCondensed-Bold"] = {file = "Interface/AddOns/Platynator/Assets/RobotoCondensed-Bold.ttf", size = 10},
 }
+
 addonTable.Assets.BarBackgrounds = {
   ["transparent"] = {file = "Interface/AddOns/Platynator/Assets/transparency.png", width = 1000, height = 125},
   ["wide/bold-1"] = {file = "Interface/AddOns/Platynator/Assets/Bars/Wide%s/bold-bar-background.png", width = 1000, height = 125, has4k = true},
   ["wide/slight-1"] = {file = "Interface/AddOns/Platynator/Assets/Bars/Wide%s/slight-bar-background.png", width = 1000, height = 125, has4k = true},
   ["wide/slight-2"] = {file = "Interface/AddOns/Platynator/Assets/Bars/Wide%s/slight-bar-foreground.png", width = 1000, height = 125, has4k = true},
-  ["wide/blizzard-1"] = {file = "Interface/AddOns/Platynator/Assets/Bars/Wide%s/blizzard-background.png", width = 1000, height = 125, has4k = true},
+  ["wide/fade-left-1"] = {file = "Interface/AddOns/Platynator/Assets/Bars/Wide%s/fade-left-background.png", width = 1000, height = 125, has4k = true},
+  ["special/blizzard-health"] = {file = "Interface/AddOns/Platynator/Assets/Bars/Wide%s/blizzard-background.png", width = 1000, height = 125, has4k = true, special = true},
+}
+
+addonTable.Assets.BarForegrounds = {
+  ["transparent"] = {file = "Interface/AddOns/Platynator/Assets/transparency.png", width = 1000, height = 125},
+  ["wide/bold-1"] = {file = "Interface/AddOns/Platynator/Assets/Bars/Wide%s/bold-bar-background.png", width = 1000, height = 125, has4k = true},
+  ["wide/slight-1"] = {file = "Interface/AddOns/Platynator/Assets/Bars/Wide%s/slight-bar-background.png", width = 1000, height = 125, has4k = true},
+  ["wide/slight-2"] = {file = "Interface/AddOns/Platynator/Assets/Bars/Wide%s/slight-bar-foreground.png", width = 1000, height = 125, has4k = true},
+  ["wide/fade-left-1"] = {file = "Interface/AddOns/Platynator/Assets/Bars/Wide%s/fade-left-background.png", width = 1000, height = 125, has4k = true},
+  ["special/blizzard-health"] = {file = "Interface/AddOns/Platynator/Assets/Bars/Wide%s/blizzard-foreground.png", width = 1000, height = 125, has4k = true, special = true},
   ["special/blizzard-cast-bar"] = {file = "Interface/AddOns/Platynator/Assets/Bars/Special/blizzard-cast-bar.png", width = 1000, height = 57, special = true},
 }
 
@@ -20,7 +31,7 @@ addonTable.Assets.BarBorders = {
   ["wide/bold-1"] = {file = "Interface/AddOns/Platynator/Assets/Bars/Wide%s/bold-bar-border.png", width = 1000, height = 125, has4k = true},
   ["wide/slight-1"] = {file = "Interface/AddOns/Platynator/Assets/Bars/Wide%s/slight-bar-border.png", width = 1000, height = 125, has4k = true},
   ["wide/soft-1"] = {file = "Interface/AddOns/Platynator/Assets/Bars/Wide%s/soft-border.png", width = 1023, height = 149, has4k = true},
-  ["wide/blizzard-normal"] = {file = "Interface/AddOns/Platynator/Assets/Bars/Wide%s/blizzard-border.png", width = 1116, height = 248, has4k = true},
+  ["special/blizzard-health"] = {file = "Interface/AddOns/Platynator/Assets/Bars/Wide%s/blizzard-border.png", width = 1116, height = 248, has4k = true, special = true},
   ["special/blizzard-cast-bar"] = {file = "Interface/AddOns/Platynator/Assets/Bars/Special/blizzard-cast-bar-border.png", width = 1000, height = 57, special = true},
 }
 
@@ -57,7 +68,12 @@ addonTable.Assets.SpecialBars = {
     background = "transparent",
     foreground = "special/blizzard-cast-bar",
     border = "special/blizzard-cast-bar",
-  }
+  },
+  ["special/blizzard-health"] = {
+    background = "special/blizzard-health",
+    foreground = "special/blizzard-health",
+    border = "special/blizzard-health",
+  },
 }
 
 addonTable.Assets.SpecialEliteMarkers = {
@@ -82,6 +98,7 @@ function addonTable.Assets.ApplyScale()
   end
 
   Iterate(addonTable.Assets.BarBackgrounds)
+  Iterate(addonTable.Assets.BarForegrounds)
   Iterate(addonTable.Assets.BarBorders)
   Iterate(addonTable.Assets.Highlights)
   Iterate(addonTable.Assets.BarPositionHighlights)

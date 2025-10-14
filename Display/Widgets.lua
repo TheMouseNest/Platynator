@@ -39,7 +39,7 @@ function addonTable.Display.GetBar(frame, parent)
     else
       frame.statusBar:SetFillStyle("STANDARD")
       frame.marker:SetPoint("CENTER", frame.statusBar:GetStatusBarTexture(), "RIGHT")
-      self.statusBar:SetStatusBarTexture(addonTable.Assets.BarBackgrounds[frame.details.foreground.asset].file)
+      self.statusBar:SetStatusBarTexture(addonTable.Assets.BarForegrounds[frame.details.foreground.asset].file)
       self.reverseStatusTexture:Hide()
     end
   end
@@ -57,7 +57,7 @@ function addonTable.Display.GetBar(frame, parent)
 
     ApplyAnchor(frame, details.anchor)
 
-    local foregroundDetails = addonTable.Assets.BarBackgrounds[details.foreground.asset]
+    local foregroundDetails = addonTable.Assets.BarForegrounds[details.foreground.asset]
     frame:SetSize(foregroundDetails.width * details.scale, foregroundDetails.height * details.scale)
 
     frame.statusBar:SetStatusBarTexture(foregroundDetails.file)

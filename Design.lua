@@ -279,15 +279,15 @@ function addonTable.Design.GetDefaultDesignBlizzard()
         relativeTo = 0,
         scale = healthScale,
         background = {
-          asset = "wide/blizzard-1",
+          asset = "special/blizzard-health",
           applyColor = false,
-          alpha = 0.3,
+          alpha = 1,
         },
         foreground = {
-          asset = "wide/blizzard-1",
+          asset = "special/blizzard-health",
         },
         border = {
-          asset = "wide/blizzard-normal",
+          asset = "special/blizzard-health",
           color = GetColor("DDDDDD")
         },
         marker = {

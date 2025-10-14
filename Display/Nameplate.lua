@@ -102,11 +102,8 @@ function addonTable.Display.NameplateMixin:UpdateScale()
     local change = addonTable.Config.Get(addonTable.Config.Options.TARGET_BEHAVIOUR)
     if change == "enlarge" then
       self:SetScale(1.25 * addonTable.Config.Get(addonTable.Config.Options.GLOBAL_SCALE) * UIParent:GetEffectiveScale())
-    elseif change == "shiftUp" then
-      self:SetPoint("CENTER", 0, 20)
     end
   else
-    self:SetPoint("CENTER")
     self:SetScale(addonTable.Config.Get(addonTable.Config.Options.GLOBAL_SCALE) * UIParent:GetEffectiveScale())
   end
 end
