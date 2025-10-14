@@ -31,15 +31,15 @@ function addonTable.Design.GetDefaultDesignRabbit()
         relativeTo = 0,
         scale = healthScale,
         background = {
-          asset = "wide/bold-1",
+          asset = "wide/fade-bottom",
           alpha = 0.5,
           applyColor = false,
         },
         foreground = {
-          asset = "wide/bold-1",
+          asset = "wide/fade-bottom",
         },
         border = {
-          asset = "wide/bold-1",
+          asset = "wide/bold",
           color = GetColor("000000")
         },
         marker = {
@@ -69,15 +69,15 @@ function addonTable.Design.GetDefaultDesignRabbit()
           asset = "none",
         },
         background = {
-          asset = "wide/bold-1",
+          asset = "wide/fade-bottom",
           alpha = 0.5,
           applyColor = false,
         },
         foreground = {
-          asset = "wide/bold-1",
+          asset = "wide/fade-bottom",
         },
         border = {
-          asset = "wide/bold-1",
+          asset = "wide/bold",
           color = GetColor("000000")
         },
         scale = healthScale,
@@ -152,15 +152,15 @@ function addonTable.Design.GetDefaultDesignHedgehog()
         relativeTo = 0,
         scale = healthScale,
         background = {
-          asset = "wide/slight-1",
+          asset = "wide/bevelled-grey",
           applyColor = true,
           alpha = 1,
         },
         foreground = {
-          asset = "wide/slight-2",
+          asset = "wide/bevelled",
         },
         border = {
-          asset = "wide/slight-1",
+          asset = "wide/slight",
           color = GetColor("000000")
         },
         marker = {
@@ -190,15 +190,15 @@ function addonTable.Design.GetDefaultDesignHedgehog()
           asset = "wide/glow",
         },
         background = {
-          asset = "wide/slight-1",
+          asset = "wide/bevelled-grey",
           applyColor = true,
           alpha = 1,
         },
         foreground = {
-          asset = "wide/slight-2",
+          asset = "wide/bevelled",
         },
         border = {
-          asset = "wide/slight-1",
+          asset = "wide/slight",
           color = GetColor("000000")
         },
         scale = healthScale,
@@ -279,15 +279,15 @@ function addonTable.Design.GetDefaultDesignBlizzard()
         relativeTo = 0,
         scale = healthScale,
         background = {
-          asset = "special/blizzard-health",
+          asset = "grey",
           applyColor = false,
           alpha = 1,
         },
         foreground = {
-          asset = "special/blizzard-health",
+          asset = "wide/fade-left",
         },
         border = {
-          asset = "special/blizzard-health",
+          asset = "wide/blizzard-health",
           color = GetColor("DDDDDD")
         },
         marker = {
@@ -392,15 +392,15 @@ function addonTable.Design.GetDefaultDesignSquirrel()
         relativeTo = 0,
         scale = healthScale,
         background = {
-          asset = "wide/slight-1",
+          asset = "wide/bevelled-grey",
           applyColor = true,
           alpha = 1,
         },
         foreground = {
-          asset = "wide/slight-2",
+          asset = "wide/bevelled",
         },
         border = {
-          asset = "wide/soft-1",
+          asset = "wide/soft",
           color = GetColor("808080")
         },
         marker = {
@@ -430,15 +430,15 @@ function addonTable.Design.GetDefaultDesignSquirrel()
           asset = "wide/glow",
         },
         background = {
-          asset = "wide/slight-1",
+          asset = "wide/bevelled-grey",
           applyColor = true,
           alpha = 1,
         },
         foreground = {
-          asset = "wide/slight-2",
+          asset = "wide/bevelled",
         },
         border = {
-          asset = "wide/soft-1",
+          asset = "wide/soft",
           color = GetColor("AAAAAA")
         },
         scale = healthScale,

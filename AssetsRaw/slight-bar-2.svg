@@ -7,7 +7,7 @@
    viewBox="0 0 60 7.5"
    version="1.1"
    id="svg1"
-   inkscape:export-filename="slight-background.png"
+   inkscape:export-filename="slight-mask.png"
    inkscape:export-xdpi="423.32999"
    inkscape:export-ydpi="423.32999"
    inkscape:version="1.4.2 (ebf0e940d0, 2025-05-08)"
@@ -27,11 +27,11 @@
      inkscape:pagecheckerboard="0"
      inkscape:deskcolor="#01262a"
      inkscape:document-units="mm"
-     inkscape:zoom="5.840694"
-     inkscape:cx="118.05104"
-     inkscape:cy="25.938698"
+     inkscape:zoom="4.1299943"
+     inkscape:cx="109.08005"
+     inkscape:cy="-3.8740973"
      inkscape:window-width="2560"
-     inkscape:window-height="1368"
+     inkscape:window-height="1366"
      inkscape:window-x="0"
      inkscape:window-y="0"
      inkscape:window-maximized="1"
@@ -233,7 +233,7 @@
        transform="matrix(1.0153653,0,0,1.1472476,-5.2386964,-49.170206)" />
     <g
        id="g6"
-       transform="matrix(0.91286248,0,0,1.0546582,49.712429,69.428021)"
+       transform="matrix(0.91286248,0,0,1.0546582,57.594626,68.023722)"
        inkscape:export-filename="slight-highlight.png"
        inkscape:export-xdpi="426.68982"
        inkscape:export-ydpi="426.68982">
@@ -255,7 +255,7 @@
     </g>
     <path
        style="baseline-shift:baseline;display:inline;overflow:visible;opacity:1;vector-effect:none;enable-background:accumulate;stop-color:#000000;stop-opacity:1"
-       d="m 111.82568,187.69072 v 7.5 h 59.99804 v -7.5 z m 0.69922,0.69922 h 58.5996 v 6.10156 h -58.5996 z"
+       d="m 81.189501,159.7764 v 7.5 h 59.998039 v -7.5 z m 0.69922,0.69922 h 58.599599 v 6.10156 H 81.888721 Z"
        id="rect1"
        sodipodi:nodetypes="cccccccccc" />
     <path
@@ -263,6 +263,13 @@
        style="baseline-shift:baseline;display:inline;overflow:visible;vector-effect:none;fill:url(#linearGradient3);stroke:none;filter:url(#filter4-9);enable-background:accumulate;stop-color:#000000"
        id="path1-3"
        sodipodi:nodetypes="ccccc"
-       transform="matrix(1.0153653,0,0,1.1472476,-4.7027421,-26.367349)" />
+       transform="matrix(1.0238978,0,0,1.2291938,-9.5013463,-52.282576)" />
+    <rect
+       style="fill:#ffffff;stroke-width:0.264583"
+       id="rect3"
+       width="59.264858"
+       height="6.9043655"
+       x="110.83327"
+       y="176.34644" />
   </g>
 </svg>

@@ -19,7 +19,7 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:svg="http://www.w3.org/2000/svg"><sodipodi:namedview
      id="namedview1"
-     pagecolor="#ffffff"
+     pagecolor="#c55fe3"
      bordercolor="#000000"
      borderopacity="0.25"
      inkscape:showpageshadow="2"
@@ -29,8 +29,8 @@
      inkscape:document-units="mm"
      showguides="true"
      inkscape:zoom="5.8406941"
-     inkscape:cx="91.855521"
-     inkscape:cy="8.7318389"
+     inkscape:cx="145.61625"
+     inkscape:cy="49.822846"
      inkscape:window-width="2560"
      inkscape:window-height="1366"
      inkscape:window-x="0"
@@ -135,8 +135,15 @@
        inkscape:export-ydpi="423.33334" /><path
        id="rect1-7"
        style="fill:none;stroke:#ffffff;stroke-width:0.561;stroke-miterlimit:3.3;stroke-dasharray:none;stroke-opacity:1"
-       d="m -25.561593,-13.280131 h 57.722387 l 1.249198,1.174883 v 5.4442924 l -1.147096,1.1670977 H -25.612556 L -26.77337,-6.6345744 V -12.08279 Z"
+       d="M 9.1601089,12.045011 H 66.882496 l 1.249198,1.174882 v 5.444293 l -1.147096,1.167098 H 9.1091459 l -1.160814,-1.140717 v -5.448215 z"
        sodipodi:nodetypes="ccccccccc"
        inkscape:export-filename="blizzard-border.png"
+       inkscape:export-xdpi="423.33334"
+       inkscape:export-ydpi="423.33334" /><path
+       style="fill:#ffffff;stroke-width:0.264583;fill-opacity:1"
+       d="M -0.09617496,1.088621 1.2061995,-0.16844802 H 58.782476 L 60.096175,1.009351 60.069165,6.5785011 58.782474,7.668448 H 1.2061995 L -0.09617496,6.354744 Z"
+       id="path2"
+       sodipodi:nodetypes="ccccccccc"
+       inkscape:export-filename="blizzard-mask.png"
        inkscape:export-xdpi="423.33334"
        inkscape:export-ydpi="423.33334" /></g></svg>

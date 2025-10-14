@@ -7,7 +7,7 @@
    viewBox="0 0 60 7.5"
    version="1.1"
    id="svg1"
-   inkscape:export-filename="slight-background.png"
+   inkscape:export-filename="slight.png"
    inkscape:export-xdpi="423.32999"
    inkscape:export-ydpi="423.32999"
    inkscape:version="1.4.2 (ebf0e940d0, 2025-05-08)"
@@ -27,11 +27,11 @@
      inkscape:pagecheckerboard="0"
      inkscape:deskcolor="#12e3f9"
      inkscape:document-units="mm"
-     inkscape:zoom="2.920347"
-     inkscape:cx="105.98056"
-     inkscape:cy="21.059141"
+     inkscape:zoom="5.840694"
+     inkscape:cx="90.99946"
+     inkscape:cy="8.9030516"
      inkscape:window-width="2560"
-     inkscape:window-height="1368"
+     inkscape:window-height="1366"
      inkscape:window-x="0"
      inkscape:window-y="0"
      inkscape:window-maximized="1"
@@ -197,7 +197,7 @@
        style="baseline-shift:baseline;display:inline;overflow:visible;vector-effect:none;fill:url(#linearGradient2);stroke:none;filter:url(#filter4);enable-background:accumulate;stop-color:#000000"
        id="path1"
        sodipodi:nodetypes="ccccc"
-       transform="matrix(1.0153653,0,0,1.1472476,-2.1582976,-26.474915)" /><g
+       transform="matrix(1.0238978,0,0,1.2291938,-3.3568212,-41.208729)" /><g
        id="g6"
        transform="matrix(0.91286248,0,0,1.0546582,50.980828,69.609221)"
        inkscape:export-filename="slight-highlight.png"
@@ -220,9 +220,9 @@
        style="baseline-shift:baseline;display:inline;overflow:visible;vector-effect:none;fill:url(#linearGradient3);stroke:none;filter:url(#filter4-9);enable-background:accumulate;stop-color:#000000"
        id="path1-3"
        sodipodi:nodetypes="ccccc"
-       transform="matrix(1.0153653,0,0,1.1472476,-31.737686,-36.361309)" /><path
+       transform="matrix(1.0153653,0,0,1.1472476,-14.659593,-34.63991)" /><path
        style="baseline-shift:baseline;display:inline;overflow:visible;opacity:1;vector-effect:none;enable-background:accumulate;stop-color:#000000;stop-opacity:1"
-       d="m 110.46668,176.04862 v 7.5 h 59.99804 v -7.5 z m 0.69922,0.69922 h 58.5996 v 6.10156 h -58.5996 z"
+       d="m 111.01028,164.81422 v 7.5 h 59.99804 v -7.5 z m 0.69922,0.69922 h 58.5996 v 6.10156 h -58.5996 z"
        id="rect1"
        sodipodi:nodetypes="cccccccccc" /><path
        d="m 111.1659,176.74784 h 58.5996 v 6.10156 h -58.5996 z"

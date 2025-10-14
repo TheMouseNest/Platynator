@@ -65,7 +65,7 @@ local function SetStyle()
   end
 
   for index, barDetails in ipairs(design.bars) do
-    local rect = GetRect(addonTable.Assets.BarForegrounds[barDetails.foreground.asset], barDetails.scale, barDetails.anchor)
+    local rect = GetRect(addonTable.Assets.BarBackgrounds[barDetails.foreground.asset], barDetails.scale, barDetails.anchor)
     CacheSize(rect)
   end
 
@@ -89,6 +89,8 @@ end
 function addonTable.Core.Initialize()
   addonTable.Config.InitializeData()
 
+  addonTable.SlashCmd.Initialize()
+
   --if next(addonTable.Config.Get(addonTable.Config.Options.DESIGN)) == nil then
   --  addonTable.Config.Set(addonTable.Config.Options.DESIGN, addonTable.Design.GetDefaultDesignSlight())
   --end
@@ -103,8 +105,6 @@ function addonTable.Core.Initialize()
   addonTable.Assets.ApplyScale()
 
   addonTable.CustomiseDialog.Initialize()
-
-  addonTable.SlashCmd.Initialize()
 
   if addonTable.Constants.IsMidnight then
     SetCVarBitfield(NamePlateConstants.INFO_DISPLAY_CVAR, Enum.NamePlateInfoDisplay.CurrentHealthPercent, true)

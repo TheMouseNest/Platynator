@@ -39,10 +39,13 @@ function addonTable.Display.GetBar(frame, parent)
     else
       frame.statusBar:SetFillStyle("STANDARD")
       frame.marker:SetPoint("CENTER", frame.statusBar:GetStatusBarTexture(), "RIGHT")
-      self.statusBar:SetStatusBarTexture(addonTable.Assets.BarForegrounds[frame.details.foreground.asset].file)
+      self.statusBar:SetStatusBarTexture(addonTable.Assets.BarBackgrounds[frame.details.foreground.asset].file)
       self.reverseStatusTexture:Hide()
     end
   end
+
+  frame.mask = frame:CreateMaskTexture()
+  frame.mask:SetPoint("CENTER")
 
   frame.background = frame.statusBar:CreateTexture()
   frame.background:SetAllPoints()
@@ -57,7 +60,7 @@ function addonTable.Display.GetBar(frame, parent)
 
     ApplyAnchor(frame, details.anchor)
 
-    local foregroundDetails = addonTable.Assets.BarForegrounds[details.foreground.asset]
+    local foregroundDetails = addonTable.Assets.BarBackgrounds[details.foreground.asset]
     frame:SetSize(foregroundDetails.width * details.scale, foregroundDetails.height * details.scale)
 
     frame.statusBar:SetStatusBarTexture(foregroundDetails.file)
@@ -90,6 +93,24 @@ function addonTable.Display.GetBar(frame, parent)
       frame.marker:SetPoint("CENTER", frame.statusBar:GetStatusBarTexture(), "RIGHT")
     else
       frame.marker:Hide()
+    end
+
+    frame.statusBar:GetStatusBarTexture():RemoveMaskTexture(frame.mask)
+    frame.reverseStatusTexture:RemoveMaskTexture(frame.mask)
+    frame.background:RemoveMaskTexture(frame.mask)
+    frame.marker:RemoveMaskTexture(frame.mask)
+
+    local maskInfo = addonTable.Assets.BarMasks[details.border.asset]
+    if maskInfo then
+      frame.mask:SetTexture(maskInfo.file, "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
+      frame.mask:SetSize(maskInfo.width * details.scale, maskInfo.height * details.scale)
+      frame.mask:SetSnapToPixelGrid(false)
+      frame.mask:SetTexelSnappingBias(0)
+
+      frame.statusBar:GetStatusBarTexture():AddMaskTexture(frame.mask)
+      frame.reverseStatusTexture:AddMaskTexture(frame.mask)
+      frame.background:AddMaskTexture(frame.mask)
+      frame.marker:AddMaskTexture(frame.mask)
     end
 
     frame.details = details
