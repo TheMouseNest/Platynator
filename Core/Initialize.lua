@@ -65,7 +65,13 @@ local function SetStyle()
   end
 
   for index, barDetails in ipairs(design.bars) do
-    local rect = GetRect(addonTable.Assets.BarBackgrounds[barDetails.foreground.asset], barDetails.scale, barDetails.anchor)
+    local foregroundDetails = addonTable.Assets.BarBackgrounds[barDetails.foreground.asset]
+    local borderDetails = addonTable.Assets.BarBorders[barDetails.border.asset]
+    local asset = foregroundDetails
+    if borderDetails.mode and borderDetails.mode ~= foregroundDetails.mode then
+      asset = {width = math.min(borderDetails.width, foregroundDetails.width), height = math.min(borderDetails.height, foregroundDetails.height)}
+    end
+    local rect = GetRect(asset, barDetails.scale, barDetails.anchor)
     CacheSize(rect)
   end
 

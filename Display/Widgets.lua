@@ -61,7 +61,12 @@ function addonTable.Display.GetBar(frame, parent)
     ApplyAnchor(frame, details.anchor)
 
     local foregroundDetails = addonTable.Assets.BarBackgrounds[details.foreground.asset]
-    frame:SetSize(foregroundDetails.width * details.scale, foregroundDetails.height * details.scale)
+    local borderDetails = addonTable.Assets.BarBorders[details.border.asset]
+    local width, height = foregroundDetails.width, foregroundDetails.height
+    if borderDetails.mode and borderDetails.mode ~= foregroundDetails.mode then
+      width, height = math.min(borderDetails.width, width), math.min(borderDetails.height, height)
+    end
+    frame:SetSize(width * details.scale, height * details.scale)
 
     frame.statusBar:SetStatusBarTexture(foregroundDetails.file)
     frame.statusBar:GetStatusBarTexture():SetDrawLayer("ARTWORK")
@@ -72,7 +77,7 @@ function addonTable.Display.GetBar(frame, parent)
     -- Scaling to avoid zooming in on the texture at the current size
     frame.reverseStatusTexture:SetScale(frame:GetWidth() / foregroundDetails.width)
     frame.reverseStatusTexture:SetTexture(foregroundDetails.file)
-    frame.reverseStatusTexture:SetHeight(foregroundDetails.height)
+    frame.reverseStatusTexture:SetHeight(height)
     frame.reverseStatusTexture:SetPoint("RIGHT", frame.statusBar:GetStatusBarTexture(), "LEFT")
     frame.reverseStatusTexture:SetHorizTile(true)
 
