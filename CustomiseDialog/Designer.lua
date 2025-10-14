@@ -1,6 +1,11 @@
 ---@class addonTablePlatynator
 local addonTable = select(2, ...)
 
+local function Announce()
+  addonTable.Config.Set(addonTable.Config.Options.STYLE, "custom")
+  addonTable.CallbackRegistry:TriggerEvent("RefreshStateChange", {[addonTable.Constants.RefreshReason.Design] = true})
+end
+
 local function GetLabelsValues(allAssets, filter)
   local labels, values = {}, {}
 
@@ -32,10 +37,16 @@ local function GetBarSettings(parent)
 
   local currentBar
 
-  local function Announce()
-    addonTable.Config.Set(addonTable.Config.Options.STYLE, "custom")
-    addonTable.CallbackRegistry:TriggerEvent("RefreshStateChange", {[addonTable.Constants.RefreshReason.Design] = true})
-  end
+  local scaleSlider = addonTable.CustomiseDialog.Components.GetSlider(container, addonTable.Locales.BAR_SCALE, 1, 300, "%s%%", function(value)
+    local oldScale = currentBar.scale
+    currentBar.scale = value / 100
+    if currentBar.scale ~= oldScale then
+      Announce()
+    end
+  end)
+
+  scaleSlider:SetPoint("TOP")
+  table.insert(allFrames, scaleSlider)
 
   local function ApplySpecial(value)
     local group = addonTable.Assets.SpecialBars[value]
@@ -63,7 +74,7 @@ local function GetBarSettings(parent)
 
     foregroundDropdown:Init(GetLabelsValues(addonTable.Assets.BarBackgrounds))
 
-    foregroundDropdown:SetPoint("TOP")
+    foregroundDropdown:SetPoint("TOP", allFrames[#allFrames], "BOTTOM")
     table.insert(allFrames, foregroundDropdown)
   end
 
@@ -113,18 +124,19 @@ local function GetBarSettings(parent)
     table.insert(allFrames, borderDropdown)
   end
 
-  function container:SetBar(details)
+  function container:Set(details)
     currentBar = details
+    scaleSlider:SetValue(Round(currentBar.scale * 100))
 
     for _, f in ipairs(allFrames) do
-      if f.SetValue and f.scale then
-        f:SetValue(addonTable.Config.Get(f.option) * f.scale)
-      elseif f.SetValue and f.option then
-        f:SetValue(addonTable.Config.Get(f.option))
-      else
+      if f.DropDown then
         f:SetValue()
       end
     end
+  end
+
+  function container:IsFor(kind, details)
+    return kind == "bars"
   end
 
   container:SetScript("OnHide", function()
@@ -134,6 +146,50 @@ local function GetBarSettings(parent)
   container:SetHeight(200)
   container:SetPoint("LEFT")
   container:SetPoint("RIGHT")
+
+  return container
+end
+
+local function GetTextSettings(parent)
+  local container = CreateFrame("Frame", nil, parent)
+  local allFrames = {}
+
+  local currentText
+
+  local scaleSlider = addonTable.CustomiseDialog.Components.GetSlider(container, addonTable.Locales.TEXT_SCALE, 1, 300, "%s%%", function(value)
+    local oldScale = currentText.scale
+    currentText.scale = value / 100
+    if currentText.scale ~= oldScale then
+      Announce()
+    end
+  end)
+
+  scaleSlider:SetPoint("TOP")
+  table.insert(allFrames, scaleSlider)
+
+  function container:Set(details)
+    currentText = details
+    scaleSlider:SetValue(Round(currentText.scale * 100))
+
+    for _, f in ipairs(allFrames) do
+      if f.DropDown then
+        f:SetValue()
+      end
+    end
+  end
+
+  function container:IsFor(kind, details)
+    return kind == "texts"
+  end
+
+  container:SetScript("OnHide", function()
+    currentBar = nil
+  end)
+
+  container:SetHeight(200)
+  container:SetPoint("LEFT")
+  container:SetPoint("RIGHT")
+  container:Hide()
 
   return container
 end
@@ -188,16 +244,6 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
   end
 
   local SetSelection
-
-  local function MakeMovable(frame)
-    frame:SetDraggable(true)
-    frame:SetScript("OnDragStart", function()
-      frame:StartMoving()
-    end)
-    frame:SetScript("OnDragStop", function()
-      frame:StopMovingOrSizing()
-    end)
-  end
 
   local selector = CreateFrame("Frame", nil, container)
   local selectionIndex = 0 
@@ -283,11 +329,60 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
       w:SetScript("OnEnter", function()
         hoverMarker:Show()
         hoverMarker:SetFrameStrata("HIGH")
+        hoverMarker:ClearAllPoints()
         hoverMarker:SetPoint("TOPLEFT", w, "TOPLEFT", -2, 2)
         hoverMarker:SetPoint("BOTTOMRIGHT", w, "BOTTOMRIGHT", 2, -2)
       end)
       w:SetScript("OnLeave", function()
         hoverMarker:Hide()
+      end)
+
+      w:SetMovable(true)
+      w:EnableMouse(true)
+      w:RegisterForDrag("LeftButton")
+      w:SetScript("OnDragStart", function()
+        w:StartMoving()
+      end)
+      w:SetScript("OnDragStop", function()
+        w:StopMovingOrSizing()
+        local left, bottom, width, height = w:GetRect()
+        local widgetRect = {left = left, bottom = bottom, width = width, height = height}
+        left, bottom, width, height = preview:GetRect()
+        local previewRect = {left = left, bottom = bottom, width = width, height = height}
+        local widgetCenter = {x = widgetRect.left + widgetRect.width / 2, y = widgetRect.bottom + widgetRect.height / 2}
+        local previewCenter = {x = previewRect.left + previewRect.width / 2, y = previewRect.bottom + previewRect.height / 2}
+
+        local point, x, y = "", 0, 0
+        if math.floor(math.abs(widgetCenter.x - previewCenter.x)) <= 1 then
+          point = point
+        elseif widgetCenter.x < previewCenter.x then
+          point = "LEFT"
+          x = widgetRect.left - previewCenter.x
+        else
+          point = "RIGHT"
+          x = widgetRect.left + widgetRect.width - previewCenter.x
+        end
+
+        if math.floor((math.abs(widgetCenter.y - previewCenter.y))) <= 1 then
+          point = point
+        elseif widgetCenter.y < previewCenter.y then
+          point = "TOP" .. point
+          y = widgetRect.bottom + widgetRect.height - previewCenter.y
+        else
+          point = "BOTTOM" .. point
+          y = widgetRect.bottom - previewCenter.y
+        end
+
+        if point == "" then
+          w.details.anchor = {}
+        elseif x == 0 and y == 0 then
+          w.details.anchor = {point}
+        else
+          w.details.anchor = {point, Round(x), Round(y)}
+        end
+        C_Timer.After(0, function()
+          Announce()
+        end)
       end)
       w:SetScript("OnMouseUp", function()
         if selectionIndex == tIndexOf(widgets, w) then
@@ -314,27 +409,36 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
 
   local barSettingsContainer = GetBarSettings(container)
   barSettingsContainer:SetPoint("TOP", allFrames[#allFrames], "BOTTOM")
-  table.insert(allFrames, barSettingsContainer)
+  --table.insert(allFrames, barSettingsContainer)
   table.insert(settingsFrames, barSettingsContainer)
 
-  SetSelection = function(w)
-    for _, frame in ipairs(settingsFrames) do
-      frame:Hide()
-    end
+  local textSettingsContainer = GetTextSettings(container)
+  textSettingsContainer:SetPoint("TOP", allFrames[#allFrames], "BOTTOM")
+  --table.insert(allFrames, textSettingsContainer)
+  table.insert(settingsFrames, textSettingsContainer)
 
+  SetSelection = function(w)
     if not w then
+      for _, frame in ipairs(settingsFrames) do
+        frame:Hide()
+      end
       selectionIndex = 0
       selector:Hide()
       return
     end
 
-    selectionIndex = tIndexOf(widgets, w)
-
-    local kind, details = w.kind, w.details
-    if kind == "bars" then
-      barSettingsContainer:Show()
-      barSettingsContainer:SetBar(details)
+    local kind = w.kind
+    for _, frame in ipairs(settingsFrames) do
+      if frame:IsFor(kind, w) then
+        frame:Show()
+        frame:Set(w.details)
+      else
+        frame:Hide()
+      end
     end
+
+
+    selectionIndex = tIndexOf(widgets, w)
 
     selector:Show()
     selector:SetFrameStrata("HIGH")

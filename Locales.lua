@@ -35,6 +35,8 @@ L["VERSION_COLON_X"] = "Version: %s"
 L["TO_OPEN_OPTIONS_X"] = "Access options with /platy"
 L["OPEN_OPTIONS"] = "Open Options"
 L["GLOBAL_SCALE"] = "Global scale"
+L["BAR_SCALE"] = "Bar scale"
+L["TEXT_SCALE"] = "Text scale"
 
 L["MAIN_TEXTURE"] = "Main texture"
 L["BACKGROUND_TEXTURE"] = "Background texture"

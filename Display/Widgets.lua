@@ -204,6 +204,7 @@ function addonTable.Display.GetHighlight(frame, parent)
     ApplyAnchor(frame, details.anchor)
 
     local highlightDetails = addonTable.Assets.Highlights[details.asset]
+    frame.details = details
 
     frame.highlight:SetTexture(highlightDetails.file)
     frame.highlight:SetVertexColor(details.color.r, details.color.g, details.color.b)

@@ -98,6 +98,8 @@ function addonTable.Assets.ApplyScale()
       if entry.has4k then
         entry.file = entry.file:format(DPIScale)
       end
+      entry.width = entry.width / 8
+      entry.height = entry.height / 8
     end
   end
 

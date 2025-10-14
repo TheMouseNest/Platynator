@@ -1,7 +1,7 @@
 ---@class addonTablePlatynator
 local addonTable = select(2, ...)
 
-local healthScale = 1/8
+local healthScale = 1
 
 local function GetColor(rgb)
   local color = CreateColorFromRGBHexString(rgb)
