@@ -35,8 +35,8 @@ addonTable.Assets.BarMasks = {
 
 addonTable.Assets.Highlights = {
   ["wide/outline"] = {file = "Interface/AddOns/Platynator/Assets/%s/Highlights/outline.png", width = 1030, height = 155, has4k = true},
-  ["wide/glow"] = {file = "Interface/AddOns/Platynator/Assets/%s/Highlights/glow.png", width = 1472, height = 592},
-  ["wide/soft-glow"] = {file = "Interface/AddOns/Platynator/Assets/%s/Highlights/soft-glow.png", width = 1066, height = 193},
+  ["wide/glow"] = {file = "Interface/AddOns/Platynator/Assets/%s/Highlights/glow.png", width = 1472, height = 592, has4k = true},
+  ["wide/soft-glow"] = {file = "Interface/AddOns/Platynator/Assets/%s/Highlights/soft-glow.png", width = 1066, height = 193, has4k = true},
 }
 
 addonTable.Assets.BarPositionHighlights = {
