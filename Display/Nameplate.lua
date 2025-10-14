@@ -88,8 +88,7 @@ function addonTable.Display.NameplateMixin:SetUnit(unit)
 
     if unit and UnitIsInteractable(unit) then
       self.interactUnit = unit
-      self.SoftTargetIcon:Show()
-      SetUnitCursorTexture(self.SoftTargetIcon, unit)
+      self:UpdateSoftInteract()
       self:RegisterEvent("PLAYER_SOFT_INTERACT_CHANGED")
     end
   end
@@ -125,8 +124,22 @@ function addonTable.Display.NameplateMixin:UpdateScale()
   end
 end
 
+function addonTable.Display.NameplateMixin:UpdateSoftInteract()
+  -- From Blizzard code, modified
+  local doEnemyIcon = GetCVarBool("SoftTargetIconEnemy")
+  local doFriendIcon = GetCVarBool("SoftTargetIconFriend")
+  local doInteractIcon = GetCVarBool("SoftTargetIconInteract")
+  local hasCursorTexture = false
+  if ((doEnemyIcon and UnitIsUnit(self.interactUnit, "softenemy")) or
+    (doFriendIcon and UnitIsUnit(self.interactUnit, "softfriend")) or
+    (doInteractIcon and UnitIsUnit(self.interactUnit, "softinteract"))
+    ) then
+    hasCursorTexture = SetUnitCursorTexture(self.SoftTargetIcon, self.interactUnit)
+  end
+  self.SoftTargetIcon:SetShown(hasCursorTexture)
+end
 function addonTable.Display.NameplateMixin:OnEvent(eventName)
   if eventName == "PLAYER_SOFT_INTERACT_CHANGED" then
-    SetUnitCursorTexture(self.SoftTargetIcon, self.interactUnit)
+    self:UpdateSoftInteract()
   end
 end
