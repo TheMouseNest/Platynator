@@ -291,6 +291,7 @@ function addonTable.Display.GetText(frame, parent)
     ApplyAnchor(frame, details.anchor)
     frame.text:ClearAllPoints()
     frame.text:SetPoint(details.anchor[1] or "CENTER")
+    frame.text:SetTextColor(details.color.r, details.color.g, details.color.b)
 
     if details.widthLimit then
       frame.text:SetWidth(details.widthLimit)

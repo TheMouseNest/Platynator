@@ -98,11 +98,13 @@ function addonTable.Design.GetDefaultDesignRabbit()
         scale = 1.1,
         anchor = {"BOTTOM", 0, 10},
         widthLimit = 124,
+        color = GetColor("FFFFFF"),
       },
       {
         kind = "castSpellName",
         scale = 1,
         anchor = {"TOP", 0, -12},
+        color = GetColor("FFFFFF"),
       }
     },
     markers = {
@@ -219,17 +221,20 @@ function addonTable.Design.GetDefaultDesignHedgehog()
         scale = 0.98,
         anchor = {"BOTTOMRIGHT", 61, -12},
         displayTypes = {"percentage"}, -- or "absolute", or both
+        color = GetColor("FFFFFF"),
       },
       {
         kind = "creatureName",
         scale = 1.1,
         anchor = {"BOTTOM", 0, 9},
         widthLimit = 124,
+        color = GetColor("FFFFFF"),
       },
       {
         kind = "castSpellName",
         scale = 1,
         anchor = {"TOP", 0, -12},
+        color = GetColor("FFFFFF"),
       }
     },
     markers = {
@@ -339,17 +344,20 @@ function addonTable.Design.GetDefaultDesignBlizzard()
         scale = 0.98,
         anchor = {"RIGHT", 61, 0},
         displayTypes = {"percentage"}, -- or "absolute", or both
+        color = GetColor("FFFFFF"),
       },
       {
         kind = "creatureName",
         scale = 1.1,
         anchor = {"BOTTOM", 0, 10},
         widthLimit = 124,
+        color = GetColor("FFFFFF"),
       },
       {
         kind = "castSpellName",
         scale = 0.8,
         anchor = {"LEFT", -61, -20},
+        color = GetColor("FFFFFF"),
       }
     },
     markers = {
@@ -459,17 +467,20 @@ function addonTable.Design.GetDefaultDesignSquirrel()
         scale = 0.98,
         anchor = {},
         displayTypes = {"percentage"}, -- or "absolute", or both
+        color = GetColor("FFFFFF"),
       },
       {
         kind = "creatureName",
         scale = 1.1,
         anchor = {"BOTTOM", 0, 9},
         widthLimit = 124,
+        color = GetColor("FFFFFF"),
       },
       {
         kind = "castSpellName",
         scale = 1,
         anchor = {"TOP", 0, -12},
+        color = GetColor("FFFFFF"),
       }
     },
     markers = {
