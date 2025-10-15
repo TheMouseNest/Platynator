@@ -258,6 +258,8 @@ function addonTable.Display.GetMarker(frame, parent)
       Mixin(frame, addonTable.Display.CannotInterruptMarkerMixin)
     elseif details.kind == "elite" then
       Mixin(frame, addonTable.Display.EliteMarkerMixin)
+    elseif details.kind == "raid" then
+      Mixin(frame, addonTable.Display.RaidMarkerMixin)
     else
       assert(false)
     end

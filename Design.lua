@@ -261,6 +261,13 @@ function addonTable.Design.GetDefaultDesignHedgehog()
         color = GetColor("ffffff"),
         anchor = {"LEFT", -61, 0}
       },
+      {
+        kind = "raid",
+        scale = healthScale,
+        asset = "normal/blizzard-raid",
+        color = GetColor("ffffff"),
+        anchor = {"BOTTOM", 0, 20}
+      },
     }
   }
 end
@@ -378,6 +385,13 @@ function addonTable.Design.GetDefaultDesignBlizzard()
         asset = "special/blizzard-elite",
         color = GetColor("ffffff"),
         anchor = {"LEFT", -61, 0}
+      },
+      {
+        kind = "raid",
+        scale = healthScale,
+        asset = "normal/blizzard-raid",
+        color = GetColor("ffffff"),
+        anchor = {"BOTTOM", 0, 20}
       },
     }
   }
@@ -511,6 +525,13 @@ function addonTable.Design.GetDefaultDesignSquirrel()
         color = GetColor("ffffff"),
         anchor = {"LEFT", -61, 0}
       },
+      {
+        kind = "raid",
+        scale = healthScale,
+        asset = "normal/blizzard-raid",
+        color = GetColor("ffffff"),
+        anchor = {"BOTTOM", 0, 20}
+      },
     }
   }
 end
@@ -641,6 +662,13 @@ function addonTable.Design.GetDefaultDesignHare()
         asset = "special/blizzard-elite",
         color = GetColor("ffffff"),
         anchor = {"LEFT", -61, 0}
+      },
+      {
+        kind = "raid",
+        scale = healthScale,
+        asset = "normal/blizzard-raid",
+        color = GetColor("ffffff"),
+        anchor = {"BOTTOM", 0, 20}
       },
     }
   }

@@ -13,7 +13,7 @@ local function GetLabelsValues(allAssets, filter)
   table.sort(allKeys)
 
   for _, key in ipairs(allKeys) do
-    if not filter or filter(key) then
+    if not filter or filter(allAssets[key]) then
       local details = allAssets[key]
       local height = 20
       local width = details.width * height/details.height
@@ -447,15 +447,14 @@ local function GetMarkerSettings(parent)
   scaleSlider:SetPoint("TOP")
   table.insert(allFrames, scaleSlider)
 
+  local assetDropdown
   do
-    local assetDropdown = addonTable.CustomiseDialog.Components.GetBasicDropdown(container, addonTable.Locales.MAIN_TEXTURE, function(value)
+    assetDropdown = addonTable.CustomiseDialog.Components.GetBasicDropdown(container, addonTable.Locales.MAIN_TEXTURE, function(value)
       return currentMarker and currentMarker.asset == value
     end, function(value)
       currentMarker.asset = value
       Announce()
     end)
-
-    assetDropdown:Init(GetLabelsValues(addonTable.Assets.Markers))
 
     assetDropdown:SetPoint("TOP", allFrames[#allFrames], "BOTTOM")
     table.insert(allFrames, assetDropdown)
@@ -472,6 +471,10 @@ local function GetMarkerSettings(parent)
     currentMarker = details
     scaleSlider:SetValue(Round(currentMarker.scale * 100))
     colorPicker:SetValue(currentMarker.color)
+
+    assetDropdown:Init(GetLabelsValues(addonTable.Assets.Markers, function(asset)
+      return asset.tag == details.kind
+    end))
 
     for _, f in ipairs(allFrames) do
       if f.DropDown then
