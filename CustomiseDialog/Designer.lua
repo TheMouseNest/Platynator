@@ -357,7 +357,7 @@ local function GetPowerSettings(parent)
   table.insert(allFrames, scaleSlider)
 
   do
-    local assetDropdown = addonTable.CustomiseDialog.Components.GetBasicDropdown(container, addonTable.Locales.MAIN_TEXTURE, function(value)
+    local assetDropdown = addonTable.CustomiseDialog.Components.GetBasicDropdown(container, addonTable.Locales.FILLED_TEXTURE, function(value)
       return currentPower and currentPower.filled == value
     end, function(value)
       currentPower.filled = value
@@ -371,7 +371,7 @@ local function GetPowerSettings(parent)
   end
 
   do
-    local assetDropdown = addonTable.CustomiseDialog.Components.GetBasicDropdown(container, addonTable.Locales.MAIN_TEXTURE, function(value)
+    local assetDropdown = addonTable.CustomiseDialog.Components.GetBasicDropdown(container, addonTable.Locales.EMPTY_TEXTURE, function(value)
       return currentPower and currentPower.blank == value
     end, function(value)
       currentPower.blank = value

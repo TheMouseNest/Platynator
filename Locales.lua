@@ -40,6 +40,8 @@ L["TEXT_SCALE"] = "Text scale"
 L["HIGHLIGHT_SCALE"] = "Highlight scale"
 L["MARKER_SCALE"] = "Marker scale"
 L["POWER_SCALE"] = "Power scale"
+L["FILLED_TEXTURE"] = "Filled texture"
+L["EMPTY_TEXTURE"] = "Empty texture"
 
 L["MAIN_TEXTURE"] = "Main texture"
 L["BACKGROUND_TEXTURE"] = "Background texture"
