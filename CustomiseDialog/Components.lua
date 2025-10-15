@@ -207,18 +207,6 @@ function addonTable.CustomiseDialog.Components.GetColorSwatch(parent, callback)
       colorSwatch.pendingColor = nil
     end
   end)
-  colorSwatch:HookScript("OnEnter", function()
-    GameTooltip:SetOwner(colorSwatch, "ANCHOR_TOP")
-    GameTooltip:SetText(addonTable.Locales.CHANGE_COLOR)
-    local c = colorSwatch.currentColor
-    if c.r ~= 1 or c.g ~= 1 or c.b ~= 1 then
-      GameTooltip:AddLine(GREEN_FONT_COLOR:WrapTextInColorCode(addonTable.Locales.RIGHT_CLICK_TO_RESET))
-    end
-    GameTooltip:Show()
-  end)
-  colorSwatch:HookScript("OnLeave", function()
-    GameTooltip:Hide()
-  end)
 
   return colorSwatch
 end

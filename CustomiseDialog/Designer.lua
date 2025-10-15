@@ -36,6 +36,51 @@ local function GetLabelsValues(allAssets, filter)
   return labels, values
 end
 
+local function GetCastBarSpecificSettings(parent)
+  local container = CreateFrame("Frame", nil, parent)
+  local allFrames = {}
+
+  local normalCastColorPicker = addonTable.CustomiseDialog.Components.GetColorPicker(container, addonTable.Locales.NORMAL_CAST_COLOR, function(color)
+    currentBar.colors.normal = CopyTable(color)
+    Announce()
+  end)
+  normalCastColorPicker:SetPoint("TOP")
+  table.insert(allFrames, normalCastColorPicker)
+
+  local uninterruptableCastColorPicker = addonTable.CustomiseDialog.Components.GetColorPicker(container, addonTable.Locales.UNINTERRUPTABLE_CAST_COLOR, function(color)
+    currentBar.colors.uninterruptable = CopyTable(color)
+    Announce()
+  end)
+  uninterruptableCastColorPicker:SetPoint("TOP", allFrames[#allFrames], "BOTTOM")
+  table.insert(allFrames, uninterruptableCastColorPicker)
+
+  function container:Set(details)
+    currentBar = details
+    normalCastColorPicker:SetValue(CopyTable(currentBar.colors.normal))
+    uninterruptableCastColorPicker:SetValue(CopyTable(currentBar.colors.uninterruptable))
+
+    for _, f in ipairs(allFrames) do
+      if f.DropDown then
+        f:SetValue()
+      end
+    end
+  end
+
+  function container:IsFor(kind, details)
+    return kind == "bars" and details.kind == "cast"
+  end
+
+  container:SetScript("OnHide", function()
+    currentBar = nil
+  end)
+
+  container:SetHeight(200)
+  container:SetPoint("LEFT")
+  container:SetPoint("RIGHT")
+
+  return container
+end
+
 local function GetBarSettings(parent)
   local container = CreateFrame("Frame", nil, parent)
   local allFrames = {}
@@ -136,10 +181,27 @@ local function GetBarSettings(parent)
   borderColorPicker:SetPoint("TOP", allFrames[#allFrames], "BOTTOM")
   table.insert(allFrames, borderColorPicker)
 
+  local settingsFrames = {}
+  local function Generate(func)
+    local settingsContainer = func(container)
+    settingsContainer:SetPoint("TOP", allFrames[#allFrames], "BOTTOM", 0, -30)
+    table.insert(settingsFrames, settingsContainer)
+  end
+  Generate(GetCastBarSpecificSettings)
+
   function container:Set(details)
     currentBar = details
     scaleSlider:SetValue(Round(currentBar.scale * 100))
     borderColorPicker:SetValue(CopyTable(currentBar.border.color))
+
+    for _, frame in ipairs(settingsFrames) do
+      if frame:IsFor("bars", details) then
+        frame:Show()
+        frame:Set(details)
+      else
+        frame:Hide()
+      end
+    end
 
     for _, f in ipairs(allFrames) do
       if f.DropDown then
@@ -237,6 +299,17 @@ local function GetTextSettings(parent)
   scaleSlider:SetPoint("TOP")
   table.insert(allFrames, scaleSlider)
 
+  local widthSlider = addonTable.CustomiseDialog.Components.GetSlider(container, addonTable.Locales.WIDTH_RESTRICTION, 0, 300, "%spx", function(value)
+    local oldWidth = currentText.widthLimit or 0
+    currentText.widthLimit = value
+    if currentText.widthLimit ~= oldWidth then
+      Announce()
+    end
+  end)
+
+  widthSlider:SetPoint("TOP", allFrames[#allFrames], "BOTTOM")
+  table.insert(allFrames, widthSlider)
+
   local colorPicker = addonTable.CustomiseDialog.Components.GetColorPicker(container, addonTable.Locales.COLOR, function(color)
     currentText.color = CopyTable(color)
     Announce()
@@ -248,7 +321,7 @@ local function GetTextSettings(parent)
 
   local function Generate(func)
     local settingsContainer = func(container)
-    settingsContainer:SetPoint("TOP", allFrames[#allFrames], "BOTTOM")
+    settingsContainer:SetPoint("TOP", allFrames[#allFrames], "BOTTOM", 0, -30)
     table.insert(settingsFrames, settingsContainer)
   end
   Generate(GetHealthTextSpecificSettings)
@@ -256,6 +329,7 @@ local function GetTextSettings(parent)
   function container:Set(details)
     currentText = details
     scaleSlider:SetValue(Round(currentText.scale * 100))
+    widthSlider:SetValue(currentText.widthLimit and currentText.widthLimit or 0)
     colorPicker:SetValue(currentText.color)
 
     for _, frame in ipairs(settingsFrames) do
@@ -694,7 +768,7 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
         if selectionIndex == tIndexOf(widgets, w) then
           SetSelection()
         else
-          SetSelection(w, w.kind, w.details)
+          SetSelection(w)
         end
       end)
     end
