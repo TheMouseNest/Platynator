@@ -129,6 +129,13 @@ function addonTable.Design.GetDefaultDesignRabbit()
         color = GetColor("ffffff"),
         anchor = {"LEFT", -60, 0}
       },
+      {
+        kind = "raid",
+        scale = healthScale,
+        asset = "normal/blizzard-raid",
+        color = GetColor("ffffff"),
+        anchor = {"BOTTOM", 0, 20}
+      },
     }
   }
 end
