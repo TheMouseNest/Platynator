@@ -20,6 +20,11 @@ function addonTable.Core.MigrateSettings()
       text.color = {r = 1, g = 1, b = 1}
     end
   end
+  for _, marker in ipairs(design.markers) do
+    if not marker.color then
+      marker.color = {r = 1, g = 1, b = 1}
+    end
+  end
 end
 
 local function SetStyle()

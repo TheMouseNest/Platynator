@@ -112,6 +112,7 @@ function addonTable.Design.GetDefaultDesignRabbit()
         kind = "quest",
         scale = healthScale * 0.9,
         asset = "normal/quest-blizzard",
+        color = GetColor("ffffff"),
         anchor = {"RIGHT", -65, 0}
       },
       {
@@ -125,6 +126,7 @@ function addonTable.Design.GetDefaultDesignRabbit()
         kind = "elite",
         scale = healthScale * 0.7,
         asset = "special/blizzard-elite",
+        color = GetColor("ffffff"),
         anchor = {"LEFT", -60, 0}
       },
     }
@@ -242,6 +244,7 @@ function addonTable.Design.GetDefaultDesignHedgehog()
         kind = "quest",
         scale = healthScale * 0.9,
         asset = "normal/quest-gradient",
+        color = GetColor("ffffff"),
         anchor = {"RIGHT", -64, 0}
       },
       {
@@ -255,6 +258,7 @@ function addonTable.Design.GetDefaultDesignHedgehog()
         kind = "elite",
         scale = healthScale * 0.8,
         asset = "special/blizzard-elite",
+        color = GetColor("ffffff"),
         anchor = {"LEFT", -61, 0}
       },
     }
@@ -365,12 +369,14 @@ function addonTable.Design.GetDefaultDesignBlizzard()
         kind = "quest",
         scale = healthScale * 0.9,
         asset = "normal/quest-blizzard",
+        color = GetColor("ffffff"),
         anchor = {"RIGHT", -66, -1}
       },
       {
         kind = "elite",
         scale = healthScale * 0.8,
         asset = "special/blizzard-elite",
+        color = GetColor("ffffff"),
         anchor = {"LEFT", -61, 0}
       },
     }
@@ -488,6 +494,7 @@ function addonTable.Design.GetDefaultDesignSquirrel()
         kind = "quest",
         scale = healthScale * 0.9,
         asset = "normal/quest-blizzard",
+        color = GetColor("ffffff"),
         anchor = {"RIGHT", -64, 0}
       },
       {
@@ -501,6 +508,7 @@ function addonTable.Design.GetDefaultDesignSquirrel()
         kind = "elite",
         scale = healthScale * 0.8,
         asset = "special/blizzard-elite",
+        color = GetColor("ffffff"),
         anchor = {"LEFT", -61, 0}
       },
     }
@@ -617,6 +625,7 @@ function addonTable.Design.GetDefaultDesignHare()
         kind = "quest",
         scale = healthScale * 0.9,
         asset = "normal/quest-blizzard",
+        color = GetColor("ffffff"),
         anchor = {"RIGHT", -64, 0}
       },
       {
@@ -630,6 +639,7 @@ function addonTable.Design.GetDefaultDesignHare()
         kind = "elite",
         scale = healthScale * 0.8,
         asset = "special/blizzard-elite",
+        color = GetColor("ffffff"),
         anchor = {"LEFT", -61, 0}
       },
     }
