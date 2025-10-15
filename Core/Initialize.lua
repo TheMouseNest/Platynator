@@ -13,6 +13,15 @@ local offscreen = CreateFrame("Frame")
 offscreen:SetPoint("TOPLEFT", UIParent, "TOPRIGHT")
 addonTable.offscreenFrame = hidden
 
+function addonTable.Core.MigrateSettings()
+  local design = addonTable.Config.Get(addonTable.Config.Options.DESIGN)
+  for _, text in ipairs(design.texts) do
+    if not text.color then
+      text.color = {r = 1, g = 1, b = 1}
+    end
+  end
+end
+
 local function SetStyle()
   local design = addonTable.Config.Get(addonTable.Config.Options.DESIGN)
 
@@ -96,6 +105,7 @@ end
 
 function addonTable.Core.Initialize()
   addonTable.Config.InitializeData()
+  addonTable.Core.MigrateSettings()
 
   addonTable.SlashCmd.Initialize()
 
