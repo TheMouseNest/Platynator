@@ -110,8 +110,6 @@ end
 
 function addonTable.Core.Initialize()
   addonTable.Config.InitializeData()
-  addonTable.Core.MigrateSettings()
-
   addonTable.SlashCmd.Initialize()
 
   --if next(addonTable.Config.Get(addonTable.Config.Options.DESIGN)) == nil then
@@ -124,6 +122,8 @@ function addonTable.Core.Initialize()
       SetStyle()
     end
   end)
+
+  addonTable.Core.MigrateSettings()
 
   addonTable.Assets.ApplyScale()
 
