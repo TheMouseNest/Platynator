@@ -21,6 +21,10 @@ function addonTable.Display.RaidMarkerMixin:Strip()
   self:UnregisterAllEvents()
 end
 
+function addonTable.Display.RaidMarkerMixin:OnEvent()
+  self:UpdateMarker()
+end
+
 local fontString = UIParent:CreateFontString(nil, nil, "GameFontNormal")
 
 function addonTable.Display.RaidMarkerMixin:UpdateMarker()
