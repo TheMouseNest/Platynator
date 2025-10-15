@@ -221,12 +221,14 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
       addonTable.Locales.CUSTOM,
       addonTable.Locales.SQUIRREL,
       addonTable.Locales.RABBIT,
+      addonTable.Locales.HARE,
       addonTable.Locales.HEDGEHOG,
       addonTable.Locales.BLIZZARD,
     }, {
       "custom",
       "squirrel",
       "rabbit",
+      "hare",
       "hedgehog",
       "blizzard",
     })

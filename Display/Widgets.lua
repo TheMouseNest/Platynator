@@ -380,7 +380,7 @@ function addonTable.Display.GetWidgets(design, parent, isEditor)
     w:Init(highlightDetails)
     w:Show()
     w:SetFrameStrata("MEDIUM")
-    w:SetFrameLevel(200)
+    w:SetFrameLevel(200 + index)
     w.kind = "highlights"
     w.kindIndex = index
     table.insert(widgets, w)

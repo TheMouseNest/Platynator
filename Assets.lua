@@ -48,6 +48,8 @@ addonTable.Assets.Highlights = {
   ["wide/outline"] = {file = "Interface/AddOns/Platynator/Assets/%s/Highlights/outline.png", width = 1030, height = 155, has4k = true, mode = mode.Wide},
   ["wide/glow"] = {file = "Interface/AddOns/Platynator/Assets/%s/Highlights/glow.png", width = 1472, height = 592, has4k = true, mode = mode.Wide},
   ["wide/soft-glow"] = {file = "Interface/AddOns/Platynator/Assets/%s/Highlights/soft-glow.png", width = 1066, height = 193, has4k = true, mode = mode.Wide},
+  ["wide/arrows"] = {file = "Interface/AddOns/Platynator/Assets/%s/Highlights/arrows.png", width = 1230, height = 164, has4k = true, mode = mode.Wide},
+  ["wide/double-arrows"] = {file = "Interface/AddOns/Platynator/Assets/%s/Highlights/double-arrows.png", width = 1351, height = 173, has4k = true, mode = mode.Wide},
 }
 
 addonTable.Assets.BarPositionHighlights = {

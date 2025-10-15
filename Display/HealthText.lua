@@ -41,7 +41,7 @@ function addonTable.Display.HealthTextMixin:UpdateText()
       end
     else
       local health = UnitHealth(self.unit)
-      values.absolute = FormatLargeNumber(health)
+      values.absolute = AbbreviateNumbers(health)
       values.percentage = math.ceil(health/UnitHealthMax(self.unit)*100) .. "%"
     end
     if #types == 2 then

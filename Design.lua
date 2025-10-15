@@ -506,3 +506,132 @@ function addonTable.Design.GetDefaultDesignSquirrel()
     }
   }
 end
+
+function addonTable.Design.GetDefaultDesignHare()
+  return {
+    appliesToAll = true,
+    font = {
+      asset = "RobotoCondensed-Bold",
+      flags = "OUTLINE",
+    },
+    highlights = {
+      {
+        anchor = {},
+        kind = "target",
+        asset = "wide/glow",
+        color = GetColor("ed25cf"),
+        scale = healthScale,
+      },
+      {
+        anchor = {},
+        kind = "target",
+        asset = "wide/arrows",
+        color = GetColor("ffffff"),
+        scale = healthScale,
+      },
+    },
+    bars = {
+      {
+        kind = "health",
+        anchor = {},
+        relativeTo = 0,
+        scale = healthScale,
+        background = {
+          asset = "grey",
+          applyColor = false,
+          alpha = 1,
+        },
+        foreground = {
+          asset = "wide/fade-bottom",
+        },
+        border = {
+          asset = "wide/slight",
+          color = GetColor("000000")
+        },
+        marker = {
+          asset = "none",
+        },
+        colors = {
+          threat = {
+            safe = GetColor("0F96E6"),
+            transition = GetColor("FFA000"),
+            warning = GetColor("CC0000"),
+          },
+          npc = {
+            friendly = GetColor("00FF00"),
+            neutral = GetColor("FFFF00"),
+            hostile = GetColor("FF0000"),
+          },
+        }
+      },
+      {
+        kind = "cast",
+        anchor = {"TOP", 0, -9},
+        colors = {
+          normal = GetColor("FC8C00"),
+          uninterruptable = GetColor("83C0C3")
+        },
+        marker = {
+          asset = "none",
+        },
+        background = {
+          asset = "grey",
+          alpha = 1,
+        },
+        foreground = {
+          asset = "wide/fade-bottom",
+        },
+        border = {
+          asset = "wide/slight",
+          color = GetColor("000000")
+        },
+        scale = healthScale,
+      },
+    },
+    specialBars = {
+    },
+    texts = {
+      {
+        kind = "health",
+        scale = 0.98,
+        anchor = {},
+        displayTypes = {"absolute"}, -- or "absolute", or both
+        color = GetColor("FFFFFF"),
+      },
+      {
+        kind = "creatureName",
+        scale = 1.1,
+        anchor = {"BOTTOM", 0, 9},
+        widthLimit = 124,
+        color = GetColor("FFFFFF"),
+      },
+      {
+        kind = "castSpellName",
+        scale = 1,
+        anchor = {"TOP", 0, -12},
+        color = GetColor("FFFFFF"),
+      }
+    },
+    markers = {
+      {
+        kind = "quest",
+        scale = healthScale * 0.9,
+        asset = "normal/quest-blizzard",
+        anchor = {"RIGHT", -64, 0}
+      },
+      {
+        kind = "cannotInterrupt",
+        scale = healthScale * 0.5,
+        asset = "normal/shield-soft",
+        color = GetColor("647b7f"),
+        anchor = {"TOPRIGHT", -50, -12}
+      },
+      {
+        kind = "elite",
+        scale = healthScale * 0.8,
+        asset = "special/blizzard-elite",
+        anchor = {"LEFT", -61, 0}
+      },
+    }
+  }
+end

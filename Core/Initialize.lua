@@ -20,6 +20,8 @@ local function SetStyle()
     design = addonTable.Design.GetDefaultDesignHedgehog()
   elseif addonTable.Config.Get(addonTable.Config.Options.STYLE) == "rabbit" then
     design = addonTable.Design.GetDefaultDesignRabbit()
+  elseif addonTable.Config.Get(addonTable.Config.Options.STYLE) == "hare" then
+    design = addonTable.Design.GetDefaultDesignHare()
   elseif addonTable.Config.Get(addonTable.Config.Options.STYLE) == "blizzard" then
     design = addonTable.Design.GetDefaultDesignBlizzard()
   elseif addonTable.Config.Get(addonTable.Config.Options.STYLE) ~= "custom" then
