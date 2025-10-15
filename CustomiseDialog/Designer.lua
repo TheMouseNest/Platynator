@@ -193,7 +193,74 @@ local function GetTextSettings(parent)
   end
 
   container:SetScript("OnHide", function()
-    currentBar = nil
+    currentText = nil
+  end)
+
+  container:SetHeight(200)
+  container:SetPoint("LEFT")
+  container:SetPoint("RIGHT")
+  container:Hide()
+
+  return container
+end
+
+local function GetHighlightSettings(parent)
+  local container = CreateFrame("Frame", nil, parent)
+  local allFrames = {}
+
+  local currentHighlight
+
+  local scaleSlider = addonTable.CustomiseDialog.Components.GetSlider(container, addonTable.Locales.TEXT_SCALE, 1, 300, "%s%%", function(value)
+    local oldScale = currentHighlight.scale
+    currentHighlight.scale = value / 100
+    if currentHighlight.scale ~= oldScale then
+      Announce()
+    end
+  end)
+
+  scaleSlider:SetPoint("TOP")
+  table.insert(allFrames, scaleSlider)
+
+  local assetDropdown
+  do
+    local assetDropdown = addonTable.CustomiseDialog.Components.GetBasicDropdown(container, addonTable.Locales.MAIN_TEXTURE, function(value)
+      return currentHighlight and currentHighlight.asset == value
+    end, function(value)
+      currentHighlight.asset = value
+      Announce()
+    end)
+
+    assetDropdown:Init(GetLabelsValues(addonTable.Assets.Highlights))
+
+    assetDropdown:SetPoint("TOP", allFrames[#allFrames], "BOTTOM")
+    table.insert(allFrames, assetDropdown)
+  end
+
+  local colorPicker = addonTable.CustomiseDialog.Components.GetColorPicker(container, addonTable.Locales.COLOR, function(color)
+    currentHighlight.color = CopyTable(color)
+    Announce()
+  end)
+  colorPicker:SetPoint("TOP", allFrames[#allFrames], "BOTTOM")
+  table.insert(allFrames, colorPicker)
+
+  function container:Set(details)
+    currentHighlight = details
+    scaleSlider:SetValue(Round(currentHighlight.scale * 100))
+    colorPicker:SetValue(currentHighlight.color)
+
+    for _, f in ipairs(allFrames) do
+      if f.DropDown then
+        f:SetValue()
+      end
+    end
+  end
+
+  function container:IsFor(kind, details)
+    return kind == "highlights"
+  end
+
+  container:SetScript("OnHide", function()
+    currentHighlight = nil
   end)
 
   container:SetHeight(200)
@@ -421,13 +488,15 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
 
   local barSettingsContainer = GetBarSettings(container)
   barSettingsContainer:SetPoint("TOP", allFrames[#allFrames], "BOTTOM")
-  --table.insert(allFrames, barSettingsContainer)
   table.insert(settingsFrames, barSettingsContainer)
 
   local textSettingsContainer = GetTextSettings(container)
   textSettingsContainer:SetPoint("TOP", allFrames[#allFrames], "BOTTOM")
-  --table.insert(allFrames, textSettingsContainer)
   table.insert(settingsFrames, textSettingsContainer)
+
+  local highlightSettingsContainer = GetHighlightSettings(container)
+  highlightSettingsContainer:SetPoint("TOP", allFrames[#allFrames], "BOTTOM")
+  table.insert(settingsFrames, highlightSettingsContainer)
 
   SetSelection = function(w)
     if not w then
