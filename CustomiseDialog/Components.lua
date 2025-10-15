@@ -237,6 +237,7 @@ function addonTable.CustomiseDialog.Components.GetColorPicker(parent, label, cal
 
   function holder:SetValue(color)
     swatch.currentColor = CopyTable(color)
+    swatch:SetColor(CreateColor(color.r, color.g, color.b))
   end
 
   holder:SetScript("OnEnter", function()
