@@ -47,7 +47,7 @@ function addonTable.Display.ManagerMixin:OnLoad()
   self:RegisterUnitEvent("UNIT_POWER_UPDATE", "player")
   self:RegisterEvent("RUNE_POWER_UPDATE")
 
-  self.HitRegions = {}
+  self.ModifiedUFs = {}
   hooksecurefunc(NamePlateDriverFrame, "OnNamePlateAdded", function(_, unit)
     local nameplate = C_NamePlate.GetNamePlateForUnit(unit, issecure())
     if nameplate then
@@ -57,22 +57,26 @@ function addonTable.Display.ManagerMixin:OnLoad()
         nameplate.UnitFrame.HitTestFrame:ClearAllPoints()
         nameplate.UnitFrame.HitTestFrame:SetPoint("BOTTOMLEFT", self, "CENTER", addonTable.Rect.left, addonTable.Rect.bottom)
         nameplate.UnitFrame.HitTestFrame:SetSize(addonTable.Rect.width, addonTable.Rect.height)
-        self.HitRegions[unit] = nameplate.UnitFrame
 
         nameplate.UnitFrame.AurasFrame:SetIgnoreParentAlpha(true)
       else
         nameplate.UnitFrame:SetParent(addonTable.hiddenFrame)
         nameplate.UnitFrame:UnregisterAllEvents()
       end
+      nameplate.UnitFrame.WidgetContainer:SetParent(nameplate)
+      self.ModifiedUFs[unit] = nameplate.UnitFrame
     end
   end)
   hooksecurefunc(NamePlateDriverFrame, "OnNamePlateRemoved", function(_, unit)
-    if self.HitRegions[unit] then
-      local UF = self.HitRegions[unit]
-      UF.HitTestFrame:SetParent(UF)
-      UF.HitTestFrame:SetPoint("TOPLEFT", UF.HealthBarsContainer.healthBar)
-      UF.HitTestFrame:SetPoint("BOTTOMRIGHT", UF.HealthBarsContainer.healthBar)
-      self.HitRegions[unit] = nil
+    if self.ModifiedUFs[unit] then
+      local UF = self.ModifiedUFs[unit]
+      if UF.HitTestFrame then
+        UF.HitTestFrame:SetParent(UF)
+        UF.HitTestFrame:SetPoint("TOPLEFT", UF.HealthBarsContainer.healthBar)
+        UF.HitTestFrame:SetPoint("BOTTOMRIGHT", UF.HealthBarsContainer.healthBar)
+      end
+      UF.WidgetContainer:SetParent(UF)
+      self.ModifiedUFs[unit] = nil
     end
   end)
 

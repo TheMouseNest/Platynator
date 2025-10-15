@@ -20,9 +20,6 @@ function addonTable.Display.NameplateMixin:OnLoad()
 
   self:SetScript("OnEvent", self.OnEvent)
 
-  self.WidgetContainer = CreateFrame("Frame", nil, self, "UIWidgetContainerTemplate")
-  self.WidgetContainer:SetPoint("BOTTOM", self, "CENTER")
-
   self:SetSize(10, 10)
   self:SetPoint("CENTER")
 end
@@ -76,11 +73,6 @@ function addonTable.Display.NameplateMixin:SetUnit(unit)
     self:UnregisterEvent("PLAYER_SOFT_INTERACT_CHANGED")
   end
 
-  if unit then
-    local widgetSetID = UnitWidgetSet(unit)
-    self.WidgetContainer:RegisterForWidgetSet(widgetSetID, DefaultWidgetLayout, nil, unit)
-  end
-
   self:UpdateScale()
 end
 
@@ -96,9 +88,6 @@ function addonTable.Display.NameplateMixin:UpdateForTarget()
         w:ApplyTarget()
       end
     end
-
-    local widgetSetID = UnitWidgetSet(self.unit)
-    self.WidgetContainer:RegisterForWidgetSet(widgetSetID, DefaultWidgetLayout, nil, self.unit)
   end
 
   self:UpdateScale()
