@@ -129,9 +129,17 @@ local function GetBarSettings(parent)
     table.insert(allFrames, borderDropdown)
   end
 
+  local borderColorPicker = addonTable.CustomiseDialog.Components.GetColorPicker(container, addonTable.Locales.BORDER_COLOR, function(color)
+    currentBar.border.color = CopyTable(color)
+    Announce()
+  end)
+  borderColorPicker:SetPoint("TOP", allFrames[#allFrames], "BOTTOM")
+  table.insert(allFrames, borderColorPicker)
+
   function container:Set(details)
     currentBar = details
     scaleSlider:SetValue(Round(currentBar.scale * 100))
+    borderColorPicker:SetValue(CopyTable(currentBar.border.color))
 
     for _, f in ipairs(allFrames) do
       if f.DropDown then
@@ -151,6 +159,63 @@ local function GetBarSettings(parent)
   container:SetHeight(200)
   container:SetPoint("LEFT")
   container:SetPoint("RIGHT")
+
+  return container
+end
+
+local function GetHealthTextSpecificSettings(parent)
+  local container = CreateFrame("Frame", nil, parent)
+  local allFrames = {}
+  local currentText
+
+  local absoluteCheckbox = addonTable.CustomiseDialog.Components.GetCheckbox(container, addonTable.Locales.ABSOLUTE_VALUE, 28, function(value)
+    if value and tIndexOf(currentText.displayTypes, "absolute") == nil then
+      table.insert(currentText.displayTypes, 1, "absolute")
+      Announce()
+    elseif not value then
+      local index = tIndexOf(currentText.displayTypes, "absolute")
+      if index then
+        table.remove(currentText.displayTypes, index)
+      end
+      Announce()
+    end
+  end)
+  absoluteCheckbox:SetPoint("TOP")
+  table.insert(allFrames, absoluteCheckbox)
+
+  local percentageCheckbox = addonTable.CustomiseDialog.Components.GetCheckbox(container, addonTable.Locales.PERCENTAGE_VALUE, 28, function(value)
+    if value and tIndexOf(currentText.displayTypes, "percentage") == nil then
+      table.insert(currentText.displayTypes, "percentage")
+      Announce()
+    elseif not value then
+      local index = tIndexOf(currentText.displayTypes, "percentage")
+      if index then
+        table.remove(currentText.displayTypes, index)
+      end
+      Announce()
+    end
+  end)
+  percentageCheckbox:SetPoint("TOP", allFrames[#allFrames], "BOTTOM")
+  table.insert(allFrames, percentageCheckbox)
+
+  function container:Set(details)
+    currentText = details
+    absoluteCheckbox:SetValue(tIndexOf(currentText.displayTypes, "absolute") ~= nil)
+    percentageCheckbox:SetValue(tIndexOf(currentText.displayTypes, "percentage") ~= nil)
+  end
+
+  function container:IsFor(kind, details)
+    return kind == "texts" and details.kind == "health"
+  end
+
+  container:SetScript("OnHide", function()
+    currentText = nil
+  end)
+
+  container:SetHeight(200)
+  container:SetPoint("LEFT")
+  container:SetPoint("RIGHT")
+  container:Hide()
 
   return container
 end
@@ -179,10 +244,28 @@ local function GetTextSettings(parent)
   colorPicker:SetPoint("TOP", allFrames[#allFrames], "BOTTOM")
   table.insert(allFrames, colorPicker)
 
+  local settingsFrames = {}
+
+  local function Generate(func)
+    local settingsContainer = func(container)
+    settingsContainer:SetPoint("TOP", allFrames[#allFrames], "BOTTOM")
+    table.insert(settingsFrames, settingsContainer)
+  end
+  Generate(GetHealthTextSpecificSettings)
+
   function container:Set(details)
     currentText = details
     scaleSlider:SetValue(Round(currentText.scale * 100))
     colorPicker:SetValue(currentText.color)
+
+    for _, frame in ipairs(settingsFrames) do
+      if frame:IsFor("texts", details) then
+        frame:Show()
+        frame:Set(details)
+      else
+        frame:Hide()
+      end
+    end
 
     for _, f in ipairs(allFrames) do
       if f.DropDown then
@@ -522,19 +605,22 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
       elseif w.kind == "texts" then
         local display
         if w.details.kind == "health" then
-          if #w.details.displayTypes == 1 and w.details.displayTypes[1] == "percentage" then
-            display = "70%"
-          elseif #w.details.displayTypes == 1 and w.details.displayTypes[1] == "absolute" then
-            display = "70,000"
-          elseif #w.details.displayTypes == 2 and w.details.displayTypes[1] == "absolute" then
-            display = "70,000 (70%)"
-          elseif #w.details.displayTypes == 2 and w.details.displayTypes[1] == "percentage" then
-            display = "70% (70,000)"
+          local types = w.details.displayTypes
+          local values = {
+            absolute = AbbreviateNumbers(70000),
+            percentage = "70%",
+          }
+          if #types == 2 then
+            display = string.format("%s (%s)", values[types[1]], values[types[2]])
+          elseif #types == 1 then
+            display = string.format("%s", values[types[1]])
+          else
+            display = addonTable.Locales.NO_VALUE_UPPER
           end
         elseif w.details.kind == "creatureName" then
           display = "Cheesanator"
         elseif w.details.kind == "castSpellName" then
-          display = "Arcane Flurry"
+          display = addonTable.Locales.ARCANE_FLURRY
         end
         if display then
           w.text:SetText(display)
