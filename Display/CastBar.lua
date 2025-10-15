@@ -72,7 +72,7 @@ function addonTable.Display.CastBarMixin:ApplyCasting()
         self:ApplyColor()
       end
     end)
-    self.statusBar:SetValue(GetTime())
+    self.statusBar:SetValue(GetTime() * 1000)
   else
     self:SetScript("OnUpdate", nil)
     self:Hide()

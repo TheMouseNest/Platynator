@@ -27,7 +27,10 @@ end
 
 addonTable.Display.ManagerMixin = {}
 function addonTable.Display.ManagerMixin:OnLoad()
-  self.activeNameplates = {}
+  self.displayPool = CreateFramePool("Frame", UIParent, nil, nil, false, function(frame)
+    Mixin(frame, addonTable.Display.NameplateMixin)
+    frame:OnLoad()
+  end)
   self.nameplateDisplays = {}
   self.lastTarget = nil
   self:SetScript("OnEvent", self.OnEvent)
@@ -44,17 +47,32 @@ function addonTable.Display.ManagerMixin:OnLoad()
   self:RegisterUnitEvent("UNIT_POWER_UPDATE", "player")
   self:RegisterEvent("RUNE_POWER_UPDATE")
 
+  self.HitRegions = {}
   hooksecurefunc(NamePlateDriverFrame, "OnNamePlateAdded", function(_, unit)
     local nameplate = C_NamePlate.GetNamePlateForUnit(unit, issecure())
-    if self.nameplateDisplays[nameplate] then
-      self.nameplateDisplays[nameplate]:Install(nameplate)
+    if nameplate then
+      if addonTable.Constants.IsMidnight then
+        nameplate.UnitFrame:SetAlpha(0) --- XXX: Remove when unit health formatting available
+        nameplate.UnitFrame.HitTestFrame:SetParent(nameplate)
+        nameplate.UnitFrame.HitTestFrame:ClearAllPoints()
+        nameplate.UnitFrame.HitTestFrame:SetPoint("BOTTOMLEFT", self, "CENTER", addonTable.Rect.left, addonTable.Rect.bottom)
+        nameplate.UnitFrame.HitTestFrame:SetSize(addonTable.Rect.width, addonTable.Rect.height)
+        self.HitRegions[unit] = nameplate.UnitFrame
+
+        nameplate.UnitFrame.AurasFrame:SetIgnoreParentAlpha(true)
+      else
+        nameplate.UnitFrame:SetParent(addonTable.hiddenFrame)
+        nameplate.UnitFrame:UnregisterAllEvents()
+      end
     end
   end)
-
   hooksecurefunc(NamePlateDriverFrame, "OnNamePlateRemoved", function(_, unit)
-    local nameplate = C_NamePlate.GetNamePlateForUnit(unit, issecure())
-    if self.nameplateDisplays[nameplate] then
-      self.nameplateDisplays[nameplate]:SetUnit(nil)
+    if self.HitRegions[unit] then
+      local UF = self.HitRegions[unit]
+      UF.HitTestFrame:SetParent(UF)
+      UF.HitTestFrame:SetPoint("TOPLEFT", UF.HealthBarsContainer.healthBar)
+      UF.HitTestFrame:SetPoint("BOTTOMRIGHT", UF.HealthBarsContainer.healthBar)
+      self.HitRegions[unit] = nil
     end
   end)
 
@@ -62,7 +80,7 @@ function addonTable.Display.ManagerMixin:OnLoad()
     if state[addonTable.Constants.RefreshReason.Design] then
       self:SetScript("OnUpdate", function()
         self:SetScript("OnUpdate", nil)
-        for nameplate, display in pairs(self.nameplateDisplays) do
+        for _, display in pairs(self.nameplateDisplays) do
           display:InitializeWidgets()
           local unit = display.unit
           if unit then
@@ -75,7 +93,7 @@ function addonTable.Display.ManagerMixin:OnLoad()
         end
       end)
     elseif state[addonTable.Constants.RefreshReason.Scale] then
-      for nameplate, display in pairs(self.nameplateDisplays) do
+      for _, display in pairs(self.nameplateDisplays) do
         display:UpdateScale()
       end
     end
@@ -88,35 +106,40 @@ function addonTable.Display.ManagerMixin:OnEvent(eventName, ...)
   if eventName == "NAME_PLATE_UNIT_ADDED" then
     local unit = ...
     local nameplate = C_NamePlate.GetNamePlateForUnit(unit, issecure())
-    if self.nameplateDisplays[nameplate] then
-      self.nameplateDisplays[nameplate]:SetUnit(unit)
+    -- NOTE: the nameplate _name_ does not correspond to the unit
+    if nameplate and nameplate.UnitFrame then
+      self.nameplateDisplays[unit] = self.displayPool:Acquire()
+      self.nameplateDisplays[unit]:Install(nameplate)
+      self.nameplateDisplays[unit]:SetUnit(unit)
     end
-    self.activeNameplates[unit] = nameplate
-  elseif eventName == "NAME_PLATE_UNIT_REMOVED" then
-    self.activeNameplates[...] = nil
-  elseif eventName == "NAME_PLATE_CREATED" then
-    local nameplate = ...
-    self.nameplateDisplays[nameplate] = CreateFrame("Frame", nil, nameplate)
-    Mixin(self.nameplateDisplays[nameplate], addonTable.Display.NameplateMixin)
-    self.nameplateDisplays[nameplate]:OnLoad()
+  elseif  eventName == "NAME_PLATE_UNIT_REMOVED" then
+    local unit = ...
+    if self.nameplateDisplays[unit] then
+      self.nameplateDisplays[unit]:SetUnit(nil)
+      self.displayPool:Release(self.nameplateDisplays[unit])
+      self.nameplateDisplays[unit] = nil
+    end
   elseif eventName == "PLAYER_TARGET_CHANGED" then
+    local start = debugprofilestop()
     if self.lastTarget and (not self.lastTarget.unit or UnitExists(self.lastTarget.unit)) then
       self.lastTarget:UpdateForTarget()
     end
-    local new = C_NamePlate.GetNamePlateForUnit("target")
-    if new then
-      self.lastTarget = self.nameplateDisplays[new]
-      self.nameplateDisplays[new]:UpdateForTarget()
+    local unit
+    for i = 1, 40 do
+      unit = "nameplate" .. i
+      if UnitIsUnit(unit, "target") then
+        break
+      end
+    end
+    if self.nameplateDisplays[unit] then
+      self.lastTarget = self.nameplateDisplays[unit]
+      self.lastTarget:UpdateForTarget()
     else
       self.lastTarget = nil
     end
   elseif eventName == "UNIT_POWER_UPDATE" or eventName == "RUNE_POWER_UPDATE" then
-    local new = C_NamePlate.GetNamePlateForUnit("target")
-    if new then
-      self.lastTarget = self.nameplateDisplays[new]
-      self.nameplateDisplays[new]:UpdateForTarget()
-    else
-      self.lastTarget = nil
+    if self.lastTarget then
+      self.lastTarget:UpdateForTarget()
     end
   end
 end

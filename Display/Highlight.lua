@@ -5,9 +5,6 @@ addonTable.Display.HighlightMixin = {}
 
 function addonTable.Display.HighlightMixin:SetUnit(unit)
   self.unit = unit
-  if self.unit then
-    self:ApplyTarget()
-  end
 end
 
 function addonTable.Display.HighlightMixin:Strip()
