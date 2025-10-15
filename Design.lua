@@ -374,7 +374,7 @@ function addonTable.Design.GetDefaultDesignBlizzard()
       {
         kind = "castSpellName",
         scale = 0.8,
-        anchor = {"LEFT", -61, -20},
+        anchor = {"TOPLEFT", -61, -20},
         color = GetColor("FFFFFF"),
       }
     },
@@ -392,6 +392,13 @@ function addonTable.Design.GetDefaultDesignBlizzard()
         asset = "special/blizzard-elite",
         color = GetColor("ffffff"),
         anchor = {"LEFT", -61, 0}
+      },
+      {
+        kind = "cannotInterrupt",
+        scale = healthScale * 0.5,
+        asset = "normal/blizzard-shield",
+        color = GetColor("ffffff"),
+        anchor = {"TOPLEFT", -65, -9}
       },
       {
         kind = "raid",
