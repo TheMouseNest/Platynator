@@ -157,3 +157,99 @@ function addonTable.CustomiseDialog.Components.GetSlider(parent, label, min, max
 
   return holder
 end
+
+function addonTable.CustomiseDialog.Components.GetColorSwatch(parent, callback)
+  local colorSwatch
+  local colorPickerFrameMonitor = CreateFrame("Frame", nil, parent)
+  colorPickerFrameMonitor.OnUpdate = function()
+    if not ColorPickerFrame:IsVisible() then
+      colorPickerFrameMonitor:SetScript("OnUpdate", nil)
+    end
+    if colorPickerFrameMonitor.changed then
+      callback(colorSwatch.pendingColor)
+      colorSwatch.currentColor = colorSwatch.pendingColor
+      colorSwatch.pendingColor = nil
+    end
+    colorPickerFrameMonitor.changed = false
+  end
+  local cancelColor
+  colorPickerFrameMonitor:SetScript("OnHide", function() colorPickerFrameMonitor:SetScript("OnUpdate", nil) end)
+  colorSwatch = CreateFrame("Button", nil, parent, "ColorSwatchTemplate")
+  colorSwatch:RegisterForClicks("LeftButtonUp", "RightButtonUp")
+  colorSwatch:SetScript("OnClick", function(_, button)
+    if button == "LeftButton" then
+      local info = {}
+      info.r, info.g, info.b = colorSwatch.currentColor.r, colorSwatch.currentColor.g, colorSwatch.currentColor.b
+      cancelColor = colorSwatch.currentColor
+      info.swatchFunc = function()
+        colorPickerFrameMonitor.changed = true
+        local r, g, b = ColorPickerFrame:GetColorRGB()
+        colorSwatch.pendingColor = CreateColor(r, g, b)
+        colorSwatch:SetColorRGB(r, g, b)
+      end
+      info.cancelFunc = function()
+        colorSwatch.pendingColor = cancelColor
+        colorSwatch:SetColorRGB(cancelColor.r, cancelColor.g, cancelColor.b)
+        callback(colorSwatch.pendingColor)
+        colorSwatch.currentColor = cancelColor
+        colorSwatch.pendingColor = nil
+      end
+      colorPickerFrameMonitor:SetScript("OnUpdate", colorPickerFrameMonitor.OnUpdate)
+      ColorPickerFrame:SetupColorPickerAndShow(info);
+    else
+      colorSwatch.pendingColor = CreateColor(1, 1, 1)
+      colorSwatch.currentColor = colorSwatch.pendingColor
+      colorSwatch:SetColorRGB(1, 1, 1)
+      callback(colorSwatch.pendingColor)
+      -- Update tooltip to hide text about resetting the color
+      colorSwatch:GetScript("OnLeave")(colorSwatch)
+      colorSwatch:GetScript("OnEnter")(colorSwatch)
+      colorSwatch.pendingColor = nil
+    end
+  end)
+  colorSwatch:HookScript("OnEnter", function()
+    GameTooltip:SetOwner(colorSwatch, "ANCHOR_TOP")
+    GameTooltip:SetText(addonTable.Locales.CHANGE_COLOR)
+    local c = colorSwatch.currentColor
+    if c.r ~= 1 or c.g ~= 1 or c.b ~= 1 then
+      GameTooltip:AddLine(GREEN_FONT_COLOR:WrapTextInColorCode(addonTable.Locales.RIGHT_CLICK_TO_RESET))
+    end
+    GameTooltip:Show()
+  end)
+  colorSwatch:HookScript("OnLeave", function()
+    GameTooltip:Hide()
+  end)
+
+  return colorSwatch
+end
+
+function addonTable.CustomiseDialog.Components.GetColorPicker(parent, label, callback)
+  local holder = CreateFrame("Frame", nil, parent)
+  holder:SetHeight(40)
+  holder:SetPoint("LEFT", parent, "LEFT", 30, 0)
+  holder:SetPoint("RIGHT", parent, "RIGHT", -30, 0)
+  local swatch = addonTable.CustomiseDialog.Components.GetColorSwatch(holder, callback)
+
+  swatch:SetPoint("LEFT", holder, "CENTER", -32, 0)
+  local text = holder:CreateFontString(nil, nil, "GameFontHighlight")
+  text:SetPoint("RIGHT", holder, "CENTER", -50, 0)
+  text:SetText(label)
+
+  function holder:SetValue(color)
+    swatch.currentColor = CopyTable(color)
+  end
+
+  holder:SetScript("OnEnter", function()
+    swatch:GetScript("OnEnter")(swatch)
+  end)
+
+  holder:SetScript("OnLeave", function()
+    swatch:GetScript("OnLeave")(swatch)
+  end)
+
+  holder:SetScript("OnMouseUp", function(_, mouseButton)
+    swatch:Click(mouseButton)
+  end)
+
+  return holder
+end

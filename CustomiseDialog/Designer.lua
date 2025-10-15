@@ -169,9 +169,17 @@ local function GetTextSettings(parent)
   scaleSlider:SetPoint("TOP")
   table.insert(allFrames, scaleSlider)
 
+  local colorPicker = addonTable.CustomiseDialog.Components.GetColorPicker(container, addonTable.Locales.COLOR, function(color)
+    currentText.color = CopyTable(color)
+    Announce()
+  end)
+  colorPicker:SetPoint("TOP", allFrames[#allFrames], "BOTTOM")
+  table.insert(allFrames, colorPicker)
+
   function container:Set(details)
     currentText = details
     scaleSlider:SetValue(Round(currentText.scale * 100))
+    colorPicker:SetValue(currentText.color)
 
     for _, f in ipairs(allFrames) do
       if f.DropDown then
