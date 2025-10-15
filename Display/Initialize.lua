@@ -51,17 +51,16 @@ function addonTable.Display.ManagerMixin:OnLoad()
   hooksecurefunc(NamePlateDriverFrame, "OnNamePlateAdded", function(_, unit)
     local nameplate = C_NamePlate.GetNamePlateForUnit(unit, issecure())
     if nameplate then
+      nameplate.UnitFrame:SetParent(addonTable.hiddenFrame)
+      nameplate.UnitFrame:UnregisterAllEvents()
       if addonTable.Constants.IsMidnight then
-        nameplate.UnitFrame:SetAlpha(0) --- XXX: Remove when unit health formatting available
         nameplate.UnitFrame.HitTestFrame:SetParent(nameplate)
         nameplate.UnitFrame.HitTestFrame:ClearAllPoints()
         nameplate.UnitFrame.HitTestFrame:SetPoint("BOTTOMLEFT", self, "CENTER", addonTable.Rect.left, addonTable.Rect.bottom)
         nameplate.UnitFrame.HitTestFrame:SetSize(addonTable.Rect.width, addonTable.Rect.height)
 
-        nameplate.UnitFrame.AurasFrame:SetIgnoreParentAlpha(true)
-      else
-        nameplate.UnitFrame:SetParent(addonTable.hiddenFrame)
-        nameplate.UnitFrame:UnregisterAllEvents()
+        nameplate.UnitFrame.AurasFrame:SetParent(nameplate)
+        nameplate.UnitFrame:RegisterEvent("UNIT_AURA")
       end
       nameplate.UnitFrame.WidgetContainer:SetParent(nameplate)
       self.ModifiedUFs[unit] = nameplate.UnitFrame
@@ -74,6 +73,8 @@ function addonTable.Display.ManagerMixin:OnLoad()
         UF.HitTestFrame:SetParent(UF)
         UF.HitTestFrame:SetPoint("TOPLEFT", UF.HealthBarsContainer.healthBar)
         UF.HitTestFrame:SetPoint("BOTTOMRIGHT", UF.HealthBarsContainer.healthBar)
+        UF.AurasFrame:SetParent(UF)
+        UF.AurasFrame:SetIgnoreParentAlpha(false)
       end
       UF.WidgetContainer:SetParent(UF)
       self.ModifiedUFs[unit] = nil

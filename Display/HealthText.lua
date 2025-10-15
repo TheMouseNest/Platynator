@@ -32,13 +32,9 @@ function addonTable.Display.HealthTextMixin:UpdateText()
     local values = {percentage = "", absolute = ""}
     local types = self.details.displayTypes 
     if addonTable.Constants.IsMidnight then
-      --- XXX: Remove when unit health formatting available, currently hides non-target friends cause the value stops updating
-      values.absolute = self.healthSource.RightText:GetText()
-      values.percentage = self.healthSource.LeftText:GetText()
-      if type(values.absolute) == "nil" or UnitIsFriend("player", self.unit) and not UnitIsUnit("target", self.unit) then
-        self.text:SetText("")
-        return
-      end
+      --- XXX: Add in AbbreviateNumbers when Midnight alpha 4 comes out
+      values.absolute = UnitHealth(self.unit)
+      values.percentage = string.format("%d%%", UnitHealthPercent(self.unit, false, true))
     else
       local health = UnitHealth(self.unit)
       values.absolute = AbbreviateNumbers(health)
