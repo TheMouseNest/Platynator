@@ -588,6 +588,7 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
     local design = addonTable.Config.Get(addonTable.Config.Options.DESIGN)
     widgets = addonTable.Display.GetWidgets(design, preview, true)
     for _, w in ipairs(widgets) do
+      w:SetClampedToScreen(true)
       if w.kind == "bars" then
         local defaultColor
         if w.details.kind == "health" then
