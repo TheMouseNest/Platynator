@@ -61,18 +61,8 @@ function addonTable.Display.ManagerMixin:OnLoad()
         nameplate.UnitFrame.HitTestFrame:SetPoint("BOTTOMLEFT", self, "CENTER", addonTable.Rect.left, addonTable.Rect.bottom)
         nameplate.UnitFrame.HitTestFrame:SetSize(addonTable.Rect.width, addonTable.Rect.height)
 
+        nameplate.UnitFrame:RegisterUnitEvent("UNIT_AURA", unit)
         nameplate.UnitFrame.AurasFrame:SetParent(nameplate)
-        local auras = addonTable.Config.Get(addonTable.Config.Options.DESIGN).auras
-        local debuffs = auras[1]
-        nameplate.UnitFrame.AurasFrame.DebuffListFrame:ClearAllPoints()
-        nameplate.UnitFrame.AurasFrame.DebuffListFrame:SetPoint(debuffs.anchor[1] or "CENTER", nameplate, "CENTER", debuffs.anchor[2], debuffs.anchor[3])
-        local buffs = auras[2]
-        nameplate.UnitFrame.AurasFrame.BuffListFrame:ClearAllPoints()
-        nameplate.UnitFrame.AurasFrame.BuffListFrame:SetPoint(buffs.anchor[1] or "CENTER", nameplate, "CENTER", buffs.anchor[2], buffs.anchor[3])
-        local cc = auras[3]
-        nameplate.UnitFrame.AurasFrame.CrowdControlListFrame:ClearAllPoints()
-        nameplate.UnitFrame.AurasFrame.CrowdControlListFrame:SetPoint(cc.anchor[1] or "CENTER", nameplate, "CENTER", cc.anchor[2], cc.anchor[3])
-        nameplate.UnitFrame:RegisterEvent("UNIT_AURA", unit)
       end
       nameplate.UnitFrame.WidgetContainer:SetParent(nameplate)
       self.ModifiedUFs[unit] = nameplate.UnitFrame
@@ -101,6 +91,7 @@ function addonTable.Display.ManagerMixin:OnLoad()
         UF.AurasFrame.BuffListFrame:SetPoint("RIGHT", UF.HealthBarsContainer.healthBar, "LEFT", -5, 0);
         UF.AurasFrame.CrowdControlListFrame:ClearAllPoints()
         UF.AurasFrame.CrowdControlListFrame:SetPoint("LEFT", UF.HealthBarsContainer.healthBar, "RIGHT", 5, 0);
+        UF:UnregisterEvent("UNIT_AURA")
       end
       UF.WidgetContainer:SetParent(UF)
       self.ModifiedUFs[unit] = nil
@@ -114,6 +105,7 @@ function addonTable.Display.ManagerMixin:OnLoad()
         self:SetScript("OnUpdate", nil)
         for _, display in pairs(self.nameplateDisplays) do
           display:InitializeWidgets()
+          self:PositionBuffs(display)
           display.styleIndex = self.styleIndex
           local unit = display.unit
           if unit then
@@ -135,6 +127,22 @@ function addonTable.Display.ManagerMixin:OnLoad()
   NamePlateDriverFrame:UnregisterEvent("DISPLAY_SIZE_CHANGED")
 end
 
+function addonTable.Display.ManagerMixin:PositionBuffs(display)
+  if addonTable.Constants.IsMidnight and self.ModifiedUFs[display.unit] then
+    local unit = display.unit
+    local auras = addonTable.Config.Get(addonTable.Config.Options.DESIGN).auras
+    local debuffs = auras[1]
+    self.ModifiedUFs[unit].AurasFrame.DebuffListFrame:ClearAllPoints()
+    self.ModifiedUFs[unit].AurasFrame.DebuffListFrame:SetPoint(debuffs.anchor[1] or "CENTER", display.DebuffDisplay)
+    local buffs = auras[2]
+    self.ModifiedUFs[unit].AurasFrame.BuffListFrame:ClearAllPoints()
+    self.ModifiedUFs[unit].AurasFrame.BuffListFrame:SetPoint(buffs.anchor[1] or "CENTER", display.BuffDisplay)
+    local cc = auras[3]
+    self.ModifiedUFs[unit].AurasFrame.CrowdControlListFrame:ClearAllPoints()
+    self.ModifiedUFs[unit].AurasFrame.CrowdControlListFrame:SetPoint(cc.anchor[1] or "CENTER", display.CrowdControlDisplay)
+  end
+end
+
 function addonTable.Display.ManagerMixin:OnEvent(eventName, ...)
   if eventName == "NAME_PLATE_UNIT_ADDED" then
     local unit = ...
@@ -148,6 +156,7 @@ function addonTable.Display.ManagerMixin:OnEvent(eventName, ...)
       end
       newDisplay:Install(nameplate)
       newDisplay:SetUnit(unit)
+      self:PositionBuffs(newDisplay)
     end
   elseif  eventName == "NAME_PLATE_UNIT_REMOVED" then
     local unit = ...

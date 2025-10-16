@@ -9,14 +9,19 @@ function addonTable.Display.NameplateMixin:OnLoad()
 
   self:SetIgnoreParentScale(true)
 
-  self:InitializeWidgets()
-
-  self.AurasFrame = nil
-  self.UnitFrame = nil
   self.SoftTargetIcon = self:CreateTexture(nil, "OVERLAY")
   self.SoftTargetIcon:SetSize(24, 24)
   self.SoftTargetIcon:SetPoint("BOTTOM", self, "TOP", 0, -8)
   self.SoftTargetIcon:Hide()
+
+  self.BuffDisplay = CreateFrame("Frame", nil, self)
+  self.BuffDisplay:SetSize(1, 1)
+  self.DebuffDisplay = CreateFrame("Frame", nil, self)
+  self.DebuffDisplay:SetSize(1, 1)
+  self.CrowdControlDisplay = CreateFrame("Frame", nil, self)
+  self.CrowdControlDisplay:SetSize(1, 1)
+
+  self:InitializeWidgets()
 
   self:SetScript("OnEvent", self.OnEvent)
 
@@ -31,6 +36,14 @@ function addonTable.Display.NameplateMixin:InitializeWidgets()
   end
   local style = addonTable.Config.Get(addonTable.Config.Options.DESIGN)
   self.widgets = addonTable.Display.GetWidgets(style, self)
+
+  local auras = addonTable.Config.Get(addonTable.Config.Options.DESIGN).auras
+  local debuffs = auras[1]
+  self.DebuffDisplay:SetPoint(debuffs.anchor[1] or "CENTER", self, "CENTER", debuffs.anchor[2], debuffs.anchor[3])
+  local buffs = auras[2]
+  self.BuffDisplay:SetPoint(buffs.anchor[1] or "CENTER", self, "CENTER", debuffs.anchor[2], debuffs.anchor[3])
+  local cc = auras[3]
+  self.CrowdControlDisplay:SetPoint(cc.anchor[1] or "CENTER", self, "CENTER", cc.anchor[2], cc.anchor[3])
 end
 
 function addonTable.Display.NameplateMixin:Install(nameplate)

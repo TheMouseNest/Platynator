@@ -1,9 +1,6 @@
 ---@class addonTablePlatynator
 local addonTable = select(2, ...)
 
-local fs = UIParent:CreateFontString(nil, nil, "GameFontNormal")
-fs:Hide()
-
 addonTable.Display.HealthBarMixin = {}
 
 function addonTable.Display.HealthBarMixin:SetUnit(unit)
