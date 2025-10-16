@@ -28,7 +28,7 @@ local function GetLabelsValues(allAssets, filter)
         tail = " " .. addonTable.Locales.NARROW_BRACKETS
       end
 
-      table.insert(labels, "|T".. details.file .. ":" .. height .. ":" .. width .. "|t" .. tail)
+      table.insert(labels, "|T".. (details.preview or details.file) .. ":" .. height .. ":" .. width .. "|t" .. tail)
       table.insert(values, key)
     end
   end
@@ -707,6 +707,11 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
         w.main:GetStatusBarTexture():SetVertexColor(234/255, 61/255, 247/255)
         w.main:SetValue(4)
         w.background:SetValue(6)
+      elseif w.kind == "markers" then
+        local asset = addonTable.Assets.Markers[w.details.asset]
+        if asset.preview then
+          w.marker:SetTexture(asset.preview)
+        end
       end
 
       w:SetScript("OnEnter", function()
