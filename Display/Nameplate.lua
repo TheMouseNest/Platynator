@@ -15,11 +15,76 @@ function addonTable.Display.NameplateMixin:OnLoad()
   self.SoftTargetIcon:Hide()
 
   self.BuffDisplay = CreateFrame("Frame", nil, self)
-  self.BuffDisplay:SetSize(1, 1)
+  self.BuffDisplay:SetSize(10, 10)
   self.DebuffDisplay = CreateFrame("Frame", nil, self)
-  self.DebuffDisplay:SetSize(1, 1)
+  self.DebuffDisplay:SetSize(10, 10)
   self.CrowdControlDisplay = CreateFrame("Frame", nil, self)
-  self.CrowdControlDisplay:SetSize(1, 1)
+  self.CrowdControlDisplay:SetSize(10, 10)
+
+  if not addonTable.Constants.IsMidnight then
+    self.AurasManager = addonTable.Utilities.InitFrameWithMixin(self, addonTable.Display.AurasForNameplateMixin)
+    self.AurasPool = CreateFramePool("Frame", self, "NameplateBuffButtonTemplate", nil, false, function(frame)
+      frame:SetScript("OnEnter", nil)
+      frame:SetScript("OnLeave", nil)
+    end)
+
+    local function GetCallback(frame, index)
+      return function(data)
+        local keys = GetKeysArray(data)
+        table.sort(keys)
+        if frame.items then
+          for _, item in ipairs(frame.items) do
+            self.AurasPool:Release(item)
+          end
+          frame.items = nil
+        end
+        local currentX = 0
+        local currentY = 0
+        local xOffset = 0
+        local yOffset = 0
+        if frame.anchor:match("RIGHT") then
+          xOffset = -20
+        elseif frame.anchor:match("LEFT") then
+          xOffset = 20
+        else -- CENTER
+          xOffset = 20
+          currentX = #keys * 20 / 2
+        end
+
+        frame.items = {}
+        for _, auraInstanceID in ipairs(keys) do
+          print("inserting", auraInstanceID, index)
+          local aura = data[auraInstanceID]
+          local buff = self.AurasPool:Acquire()
+          table.insert(frame.items, buff)
+          buff:SetParent(frame)
+          buff.auraInstanceID = auraInstanceID
+          buff.isBuff = aura.isHelpful;
+
+          buff.layoutIndex = buffIndex;
+          buff.spellID = aura.spellId;
+
+          buff.Icon:SetTexture(aura.icon);
+          if (aura.applications > 1) then
+            buff.CountFrame.Count:SetText(aura.applications);
+            buff.CountFrame.Count:Show();
+          else
+            buff.CountFrame.Count:Hide();
+          end
+          CooldownFrame_Set(buff.Cooldown, aura.expirationTime - aura.duration, aura.duration, aura.duration > 0, true);
+
+          buff:Show();
+
+          buff:SetPoint(frame.anchor, currentX, currentY)
+          currentX = currentX + xOffset
+        end
+      end
+    end
+
+    self.AurasManager:SetDebuffsCallback(GetCallback(self.DebuffDisplay, 1))
+    self.AurasManager:SetBuffsCallback(GetCallback(self.BuffDisplay, 2))
+    self.AurasManager:SetCrowdControlCallback(GetCallback(self.CrowdControlDisplay, 3))
+  end
 
   self:InitializeWidgets()
 
@@ -39,11 +104,17 @@ function addonTable.Display.NameplateMixin:InitializeWidgets()
 
   local auras = addonTable.Config.Get(addonTable.Config.Options.DESIGN).auras
   local debuffs = auras[1]
-  self.DebuffDisplay:SetPoint(debuffs.anchor[1] or "CENTER", self, "CENTER", debuffs.anchor[2], debuffs.anchor[3])
+  self.DebuffDisplay:ClearAllPoints()
+  self.DebuffDisplay.anchor = debuffs.anchor[1]
+  addonTable.Display.ApplyAnchor(self.DebuffDisplay, debuffs.anchor)
   local buffs = auras[2]
-  self.BuffDisplay:SetPoint(buffs.anchor[1] or "CENTER", self, "CENTER", debuffs.anchor[2], debuffs.anchor[3])
+  self.BuffDisplay:ClearAllPoints()
+  self.BuffDisplay.anchor = buffs.anchor[1]
+  addonTable.Display.ApplyAnchor(self.BuffDisplay, buffs.anchor)
   local cc = auras[3]
-  self.CrowdControlDisplay:SetPoint(cc.anchor[1] or "CENTER", self, "CENTER", cc.anchor[2], cc.anchor[3])
+  self.CrowdControlDisplay:ClearAllPoints()
+  self.CrowdControlDisplay.anchor = cc.anchor[1]
+  addonTable.Display.ApplyAnchor(self.CrowdControlDisplay, cc.anchor)
 end
 
 function addonTable.Display.NameplateMixin:Install(nameplate)
@@ -67,6 +138,10 @@ function addonTable.Display.NameplateMixin:SetUnit(unit)
       if w.ApplyTarget then
         w:ApplyTarget()
       end
+    end
+
+    if self.AurasManager then
+      self.AurasManager:SetUnit(self.unit)
     end
   else
     self.unit = nil

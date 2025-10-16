@@ -1,7 +1,7 @@
 ---@class addonTablePlatynator
 local addonTable = select(2, ...)
 
-local function ApplyAnchor(frame, anchor)
+function addonTable.Display.ApplyAnchor(frame, anchor)
   if #anchor == 0 then
     frame:SetPoint("CENTER")
   elseif #anchor == 3 then
@@ -10,6 +10,8 @@ local function ApplyAnchor(frame, anchor)
     frame:SetPoint("CENTER", frame:GetParent(), "CENTER", anchor[1], anchor[2])
   end
 end
+
+local ApplyAnchor = addonTable.Display.ApplyAnchor
 
 function addonTable.Display.GetBar(frame, parent)
   frame = frame or CreateFrame("Frame", nil, parent or UIParent)

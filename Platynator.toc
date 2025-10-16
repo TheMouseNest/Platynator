@@ -31,6 +31,7 @@ Core/Initialize.lua
 
 Display/Initialize.lua
 Display/Nameplate.lua
+Display/Auras.lua
 Display/HealthBar.lua
 Display/CastBar.lua
 Display/PowerBar.lua
