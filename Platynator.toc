@@ -44,6 +44,7 @@ Display/CannotInterruptMarker.lua
 Display/EliteMarker.lua
 Display/RaidMarker.lua
 Display/Widgets.lua
+Display/LegacyBuffTemplate.xml
 
 Design.lua
 Assets.lua

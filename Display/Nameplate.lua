@@ -23,7 +23,7 @@ function addonTable.Display.NameplateMixin:OnLoad()
 
   if not addonTable.Constants.IsMidnight then
     self.AurasManager = addonTable.Utilities.InitFrameWithMixin(self, addonTable.Display.AurasForNameplateMixin)
-    self.AurasPool = CreateFramePool("Frame", self, "NameplateBuffButtonTemplate", nil, false, function(frame)
+    self.AurasPool = CreateFramePool("Frame", self, "PlatynatorNameplateBuffButtonTemplate", nil, false, function(frame)
       frame:SetScript("OnEnter", nil)
       frame:SetScript("OnLeave", nil)
     end)

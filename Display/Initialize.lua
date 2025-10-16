@@ -64,7 +64,9 @@ function addonTable.Display.ManagerMixin:OnLoad()
         nameplate.UnitFrame:RegisterUnitEvent("UNIT_AURA", unit)
         nameplate.UnitFrame.AurasFrame:SetParent(nameplate)
       end
-      nameplate.UnitFrame.WidgetContainer:SetParent(nameplate)
+      if nameplate.UnitFrame.WidgetContainer then
+        nameplate.UnitFrame.WidgetContainer:SetParent(nameplate)
+      end
       self.ModifiedUFs[unit] = nameplate.UnitFrame
     end
   end)
@@ -93,7 +95,9 @@ function addonTable.Display.ManagerMixin:OnLoad()
         UF.AurasFrame.CrowdControlListFrame:SetPoint("LEFT", UF.HealthBarsContainer.healthBar, "RIGHT", 5, 0);
         UF:UnregisterEvent("UNIT_AURA")
       end
-      UF.WidgetContainer:SetParent(UF)
+      if UF.WidgetContainer then
+        UF.WidgetContainer:SetParent(UF)
+      end
       self.ModifiedUFs[unit] = nil
     end
   end)

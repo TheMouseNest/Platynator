@@ -43,7 +43,7 @@ end
 function addonTable.Display.AurasForNameplateMixin:GetAuraKind(info)
   if info.isHelpful then
     return "buffs"
-  elseif info.isHarmful and info.isFromPlayerOrPlayerPet and info.nameplateShowPersonal and C_UnitAuras.IsAuraFilteredOutByInstanceID(self.unit, info.auraInstanceID, "PLAYER") then
+  elseif info.isHarmful and (info.nameplateShowPersonal or addonTable.Constants.IsEra) and info.sourceUnit == "player" then
     return "debuffs"
   end
 end
