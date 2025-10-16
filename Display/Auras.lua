@@ -28,6 +28,11 @@ function addonTable.Display.AurasForNameplateMixin:SetUnit(unit)
   if unit then
     if UnitCanAttack("player", self.unit) then
       self:ScanAllAuras()
+    else
+      self:Reset()
+      self.OnDebuffsUpdate(self.debuffs)
+      self.OnCrowdControlUpdate(self.crowdControl)
+      self.OnBuffsUpdate(self.buffs)
     end
     self:RegisterUnitEvent("UNIT_AURA", unit)
   else
@@ -52,11 +57,9 @@ function addonTable.Display.AurasForNameplateMixin:ScanAllAuras()
     if not info then
       break
     end
-    if info.auraInstanceID then
-      local kind = self:GetAuraKind(info)
-      if kind then
-        self[kind][auraInstanceID] = info
-      end
+    local kind = self:GetAuraKind(info)
+    if kind then
+      self[kind][info.auraInstanceID] = info
     end
     index = index + 1
   end
@@ -67,11 +70,9 @@ function addonTable.Display.AurasForNameplateMixin:ScanAllAuras()
     if not info then
       break
     end
-    if info.auraInstanceID then
-      local kind = self:GetAuraKind(info)
-      if kind then
-        self[kind][auraInstanceID] = info
-      end
+    local kind = self:GetAuraKind(info)
+    if kind then
+      self[kind][info.auraInstanceID] = info
     end
     index = index + 1
   end
@@ -98,7 +99,6 @@ function addonTable.Display.AurasForNameplateMixin:OnEvent(eventName, unit, data
       local kind = self:GetAuraKind(auraData)
       if kind then
         self[kind][auraData.auraInstanceID] = auraData
-        print("kind", kind,auraData.auraInstanceID, auraData.spellId)
         changes[kind] = true
       end
     end
