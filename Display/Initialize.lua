@@ -27,9 +27,11 @@ end
 
 addonTable.Display.ManagerMixin = {}
 function addonTable.Display.ManagerMixin:OnLoad()
+  self.styleIndex = 0
   self.displayPool = CreateFramePool("Frame", UIParent, nil, nil, false, function(frame)
     Mixin(frame, addonTable.Display.NameplateMixin)
     frame:OnLoad()
+    frame.styleIndex = self.styleIndex
   end)
   self.nameplateDisplays = {}
   self.lastTarget = nil
@@ -108,9 +110,11 @@ function addonTable.Display.ManagerMixin:OnLoad()
   addonTable.CallbackRegistry:RegisterCallback("RefreshStateChange", function(_, state)
     if state[addonTable.Constants.RefreshReason.Design] then
       self:SetScript("OnUpdate", function()
+        self.styleIndex = self.styleIndex + 1
         self:SetScript("OnUpdate", nil)
         for _, display in pairs(self.nameplateDisplays) do
           display:InitializeWidgets()
+          display.styleIndex = self.styleIndex
           local unit = display.unit
           if unit then
             local nameplate = C_NamePlate.GetNamePlateForUnit(display.unit)
@@ -137,9 +141,13 @@ function addonTable.Display.ManagerMixin:OnEvent(eventName, ...)
     local nameplate = C_NamePlate.GetNamePlateForUnit(unit, issecure())
     -- NOTE: the nameplate _name_ does not correspond to the unit
     if nameplate and nameplate.UnitFrame then
-      self.nameplateDisplays[unit] = self.displayPool:Acquire()
-      self.nameplateDisplays[unit]:Install(nameplate)
-      self.nameplateDisplays[unit]:SetUnit(unit)
+      local newDisplay = self.displayPool:Acquire()
+      self.nameplateDisplays[unit] = newDisplay
+      if newDisplay.styleIndex ~= self.styleIndex then
+        newDisplay:InitializeWidgets()
+      end
+      newDisplay:Install(nameplate)
+      newDisplay:SetUnit(unit)
     end
   elseif  eventName == "NAME_PLATE_UNIT_REMOVED" then
     local unit = ...
