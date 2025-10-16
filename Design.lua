@@ -15,6 +15,20 @@ function addonTable.Design.GetDefaultDesignRabbit()
       asset = "RobotoCondensed-Bold",
       flags = "",
     },
+    auras = {
+      {
+        kind = "debuffs",
+        anchor = {"BOTTOMLEFT", -63, 25}
+      },
+      {
+        kind = "buffs",
+        anchor = {"RIGHT", -68, 0}
+      },
+      {
+        kind = "crowdControl",
+        anchor = {"LEFT", 68, 0}
+      },
+    },
     highlights = {
       {
         anchor = {},
@@ -146,6 +160,20 @@ function addonTable.Design.GetDefaultDesignHedgehog()
     font = {
       asset = "RobotoCondensed-Bold",
       flags = "OUTLINE",
+    },
+    auras = {
+      {
+        kind = "debuffs",
+        anchor = {"BOTTOMLEFT", -63, 25}
+      },
+      {
+        kind = "buffs",
+        anchor = {"RIGHT", -68, 0}
+      },
+      {
+        kind = "crowdControl",
+        anchor = {"LEFT", 68, 0}
+      },
     },
     highlights = {
       {
@@ -286,6 +314,20 @@ function addonTable.Design.GetDefaultDesignBlizzard()
       asset = "FritzQuadrata",
       flags = "OUTLINE",
     },
+    auras = {
+      {
+        kind = "debuffs",
+        anchor = {"BOTTOMLEFT", -63, 25}
+      },
+      {
+        kind = "buffs",
+        anchor = {"RIGHT", -68, 0}
+      },
+      {
+        kind = "crowdControl",
+        anchor = {"LEFT", 68, 0}
+      },
+    },
     highlights = {
       --[[{
         anchor = {},
@@ -417,6 +459,20 @@ function addonTable.Design.GetDefaultDesignSquirrel()
     font = {
       asset = "RobotoCondensed-Bold",
       flags = "OUTLINE",
+    },
+    auras = {
+      {
+        kind = "debuffs",
+        anchor = {"BOTTOMLEFT", -63, 25}
+      },
+      {
+        kind = "buffs",
+        anchor = {"RIGHT", -68, 0}
+      },
+      {
+        kind = "crowdControl",
+        anchor = {"LEFT", 68, 0}
+      },
     },
     highlights = {
       {
@@ -556,6 +612,20 @@ function addonTable.Design.GetDefaultDesignHare()
     font = {
       asset = "RobotoCondensed-Bold",
       flags = "OUTLINE",
+    },
+    auras = {
+      {
+        kind = "debuffs",
+        anchor = {"BOTTOMLEFT", -63, 25}
+      },
+      {
+        kind = "buffs",
+        anchor = {"RIGHT", -68, 0}
+      },
+      {
+        kind = "crowdControl",
+        anchor = {"LEFT", 68, 0}
+      },
     },
     highlights = {
       {

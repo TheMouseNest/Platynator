@@ -60,6 +60,16 @@ function addonTable.Display.ManagerMixin:OnLoad()
         nameplate.UnitFrame.HitTestFrame:SetSize(addonTable.Rect.width, addonTable.Rect.height)
 
         nameplate.UnitFrame.AurasFrame:SetParent(nameplate)
+        local auras = addonTable.Config.Get(addonTable.Config.Options.DESIGN).auras
+        local debuffs = auras[1]
+        nameplate.UnitFrame.AurasFrame.DebuffListFrame:ClearAllPoints()
+        nameplate.UnitFrame.AurasFrame.DebuffListFrame:SetPoint(debuffs.anchor[1] or "CENTER", nameplate, "CENTER", debuffs.anchor[2], debuffs.anchor[3])
+        local buffs = auras[2]
+        nameplate.UnitFrame.AurasFrame.BuffListFrame:ClearAllPoints()
+        nameplate.UnitFrame.AurasFrame.BuffListFrame:SetPoint(buffs.anchor[1] or "CENTER", nameplate, "CENTER", buffs.anchor[2], buffs.anchor[3])
+        local cc = auras[3]
+        nameplate.UnitFrame.AurasFrame.CrowdControlListFrame:ClearAllPoints()
+        nameplate.UnitFrame.AurasFrame.CrowdControlListFrame:SetPoint(cc.anchor[1] or "CENTER", nameplate, "CENTER", cc.anchor[2], cc.anchor[3])
         nameplate.UnitFrame:RegisterEvent("UNIT_AURA", unit)
       end
       nameplate.UnitFrame.WidgetContainer:SetParent(nameplate)
@@ -69,12 +79,26 @@ function addonTable.Display.ManagerMixin:OnLoad()
   hooksecurefunc(NamePlateDriverFrame, "OnNamePlateRemoved", function(_, unit)
     if self.ModifiedUFs[unit] then
       local UF = self.ModifiedUFs[unit]
+      -- Restore original anchors and parents to various things we changed
       if UF.HitTestFrame then
         UF.HitTestFrame:SetParent(UF)
         UF.HitTestFrame:SetPoint("TOPLEFT", UF.HealthBarsContainer.healthBar)
         UF.HitTestFrame:SetPoint("BOTTOMRIGHT", UF.HealthBarsContainer.healthBar)
         UF.AurasFrame:SetParent(UF)
         UF.AurasFrame:SetIgnoreParentAlpha(false)
+        local debuffPadding = CVarCallbackRegistry:GetCVarNumberOrDefault(NamePlateConstants.DEBUFF_PADDING_CVAR);
+        local namePlateStyle = GetCVar(NamePlateConstants.STYLE_CVAR)
+        local unitNameInsideHealthBar = namePlateStyle == Enum.NamePlateStyle.Default or namePlateStyle == Enum.NamePlateStyle.Block
+        UF.AurasFrame.DebuffListFrame:ClearAllPoints()
+        if unitNameInsideHealthBar then
+          UF.AurasFrame.DebuffListFrame:SetPoint("BOTTOM", UF.HealthBarsContainer.healthBar, "TOP", 0, debuffPadding);
+        else
+          UF.AurasFrame.DebuffListFrame:SetPoint("BOTTOM", UF.name, "TOP", 0, debuffPadding);
+        end
+        UF.AurasFrame.BuffListFrame:ClearAllPoints()
+        UF.AurasFrame.BuffListFrame:SetPoint("RIGHT", UF.HealthBarsContainer.healthBar, "LEFT", -5, 0);
+        UF.AurasFrame.CrowdControlListFrame:ClearAllPoints()
+        UF.AurasFrame.CrowdControlListFrame:SetPoint("LEFT", UF.HealthBarsContainer.healthBar, "RIGHT", 5, 0);
       end
       UF.WidgetContainer:SetParent(UF)
       self.ModifiedUFs[unit] = nil

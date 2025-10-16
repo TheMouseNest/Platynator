@@ -25,6 +25,22 @@ function addonTable.Core.MigrateSettings()
       marker.color = {r = 1, g = 1, b = 1}
     end
   end
+  if not design.auras then
+    design.auras = {
+      {
+        kind = "debuffs",
+        anchor = {"BOTTOMLEFT", -63, 25}
+      },
+      {
+        kind = "buffs",
+        anchor = {"RIGHT", -68, 0}
+      },
+      {
+        kind = "crowdControl",
+        anchor = {"LEFT", 68, 0}
+      },
+    }
+  end
 end
 
 local function SetStyle()
