@@ -60,7 +60,7 @@ function addonTable.Display.ManagerMixin:OnLoad()
         nameplate.UnitFrame.HitTestFrame:SetSize(addonTable.Rect.width, addonTable.Rect.height)
 
         nameplate.UnitFrame.AurasFrame:SetParent(nameplate)
-        nameplate.UnitFrame:RegisterEvent("UNIT_AURA")
+        nameplate.UnitFrame:RegisterEvent("UNIT_AURA", unit)
       end
       nameplate.UnitFrame.WidgetContainer:SetParent(nameplate)
       self.ModifiedUFs[unit] = nameplate.UnitFrame
