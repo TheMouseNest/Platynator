@@ -4,6 +4,7 @@
 ## Author: plusmouse
 ## SavedVariables: PLATYNATOR_CONFIG
 ## SavedVariablesPerCharacter: PLATYNATOR_CURRENT_PROFILE
+## IconTexture: Interface\AddOns\Platynator\Assets\logo.tga
 
 ## Category: Unit Frames
 ## Category-deDE: Einheitenfenster

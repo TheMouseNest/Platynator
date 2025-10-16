@@ -17,7 +17,7 @@ local function SetupGeneral(parent)
     --addonTable.Skins.AddFrame("InsetFrame", infoInset)
 
     local logo = infoInset:CreateTexture(nil, "ARTWORK")
-    --logo:SetTexture("Interface\\AddOns\\Chattynator\\Assets\\Logo.png")
+    logo:SetTexture("Interface\\AddOns\\Platynator\\Assets\\logo.png")
     logo:SetSize(52, 52)
     logo:SetPoint("LEFT", 8, 0)
 
