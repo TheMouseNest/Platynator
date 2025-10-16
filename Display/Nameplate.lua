@@ -53,7 +53,6 @@ function addonTable.Display.NameplateMixin:OnLoad()
 
         frame.items = {}
         for _, auraInstanceID in ipairs(keys) do
-          print("inserting", auraInstanceID, index)
           local aura = data[auraInstanceID]
           local buff = self.AurasPool:Acquire()
           table.insert(frame.items, buff)

@@ -33,7 +33,7 @@ function addonTable.Display.HealthTextMixin:UpdateText()
     local types = self.details.displayTypes 
     if addonTable.Constants.IsMidnight then
       --- XXX: Add in AbbreviateNumbers when Midnight alpha 4 comes out
-      values.absolute = UnitHealth(self.unit)
+      values.absolute = BreakUpLargeNumbers(UnitHealth(self.unit))
       values.percentage = string.format("%d%%", UnitHealthPercent(self.unit, false, true))
     else
       local health = UnitHealth(self.unit)
