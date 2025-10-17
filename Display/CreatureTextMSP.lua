@@ -3,8 +3,10 @@ local addonTable = select(2, ...)
 
 local callbacks = {}
 function MSPCallback(name, field, value, ...)
-  if callbacks[name] and field == "name" then
-    callbacks[name]()
+  if callbacks[name] and field == "NA" then
+    for _, cb in ipairs(callbacks[name]) do
+      cb()
+    end
   end
 end
 local frame = CreateFrame("Frame")
@@ -24,6 +26,7 @@ addonTable.Display.CreatureTextMSPMixin = {}
 function addonTable.Display.CreatureTextMSPMixin:SetUnit(unit)
   self.unit = unit
   if self.unit then
+    self:UnregisterCallback()
     self:RegisterUnitEvent("UNIT_NAME_UPDATE", self.unit)
     self:UpdateName()
   else
@@ -39,14 +42,16 @@ function addonTable.Display.CreatureTextMSPMixin:UpdateName()
     end
     if not self.fullName then
       self.fullName = originalName .. "-" .. realm
-      callbacks[self.fullName] = function()
+      self.callback = function()
         self:UpdateName()
       end
+      callbacks[self.fullName] = callbacks[self.fullName] or {}
+      table.insert(callbacks[self.fullName], self.callback)
     end
     local rpDetails = msp.char[self.fullName]
-    local name = rpDetails and rpDetails.name
-    if rpName and rpName ~= "" then
-      self.text:SetText(rpName)
+    local name = rpDetails and rpDetails ~= "" and rpDetails.field.NA
+    if name and name ~= "" then
+      self.text:SetText(name)
     else
       self.text:SetText(originalName)
     end
@@ -55,9 +60,15 @@ function addonTable.Display.CreatureTextMSPMixin:UpdateName()
   end
 end
 
+function addonTable.Display.CreatureTextMSPMixin:UnregisterCallback()
+  if self.fullName then
+    table.remove(callbacks[self.fullName], tIndexOf(callbacks[self.fullName], self.callback))
+    self.callback = nil
+    self.fullName = nil
+  end
+end
+
 function addonTable.Display.CreatureTextMSPMixin:Strip()
-  callbacks[self.fullName] = nil
-  self.fullName = nil
   self:UnregisterAllEvents()
 end
 
