@@ -52,6 +52,11 @@ function addonTable.Display.ManagerMixin:OnLoad()
   self:RegisterUnitEvent("UNIT_POWER_UPDATE", "player")
   self:RegisterEvent("RUNE_POWER_UPDATE")
 
+  NamePlateDriverFrame:UnregisterEvent("DISPLAY_SIZE_CHANGED")
+  if not addonTable.Constants.IsMidnight then
+    NamePlateDriverFrame:UnregisterEvent("CVAR_UPDATE")
+  end
+
   self.ModifiedUFs = {}
   hooksecurefunc(NamePlateDriverFrame, "OnNamePlateAdded", function(_, unit)
     local nameplate = C_NamePlate.GetNamePlateForUnit(unit, issecure())
@@ -130,8 +135,6 @@ function addonTable.Display.ManagerMixin:OnLoad()
       end
     end
   end)
-
-  NamePlateDriverFrame:UnregisterEvent("DISPLAY_SIZE_CHANGED")
 end
 
 function addonTable.Display.ManagerMixin:PositionBuffs(display)
