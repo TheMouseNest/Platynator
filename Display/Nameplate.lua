@@ -42,12 +42,12 @@ function addonTable.Display.NameplateMixin:OnLoad()
         local xOffset = 0
         local yOffset = 0
         if frame.details.anchor[1]:match("RIGHT") then
-          xOffset = -20
+          xOffset = -22
         elseif frame.details.anchor[1]:match("LEFT") then
-          xOffset = 20
+          xOffset = 22
         else -- CENTER
-          xOffset = 20
-          currentX = #keys * 20 / 2
+          xOffset = 22
+          currentX = #keys * 22 / 2
         end
 
         frame.items = {}
