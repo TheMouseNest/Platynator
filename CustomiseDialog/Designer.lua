@@ -10,7 +10,21 @@ local function GetLabelsValues(allAssets, filter)
   local labels, values = {}, {}
 
   local allKeys = GetKeysArray(allAssets)
-  table.sort(allKeys)
+  table.sort(allKeys, function(a, b)
+    local aType, aMain = a:match("(.+)%/(.+)")
+    local bType, bMain = b:match("(.+)%/(.+)")
+    if not aType and bType then
+      return true
+    elseif not bType and aType then
+      return false
+    elseif not bType and not aType then
+      return a < b
+    elseif bMain == aMain then
+      return aType > bType
+    else
+      return aMain < bMain
+    end
+  end)
 
   for _, key in ipairs(allKeys) do
     if not filter or filter(allAssets[key]) then
