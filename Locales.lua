@@ -77,6 +77,28 @@ L["HEDGEHOG"] = "Hedgehog"
 L["BLIZZARD"] = "Blizzard"
 L["CUSTOM"] = "Custom"
 
+L["ADD_WIDGET"] = "Add Widget"
+L["DELETE_WIDGET"] = "Delete Widget"
+L["BARS"] = "Bars"
+L["HEALTH"] = "Health"
+L["CAST"] = "Cast"
+L["POWER"] = "Power"
+L["HIGHLIGHTS"] = "Highlights"
+L["TARGETED"] = "Targeted"
+L["AURAS"] = "Auras"
+L["BUFFS"] = "Buffs"
+L["DEBUFFS"] = "Debuffs"
+L["CROWD_CONTROL"] = "Crowd Control"
+L["TEXTS"] = "Texts"
+L["CREATURE_NAME"] = "Creature Name"
+L["HEALTH_VALUE"] = "Health Value"
+L["CAST_NAME"] = "Cast Name"
+L["ICONS"] = "Icons"
+L["QUEST_OBJECTIVE"] = "Quest Objective"
+L["CANNOT_INTERRUPT"] = "Cannot Interrupt"
+L["ELITE"] = "Elite"
+L["RAID_MARKER"] = "Raid Marker"
+
 local L = Locales.frFR
 --@localization(locale="frFR", format="lua_additive_table")@
 

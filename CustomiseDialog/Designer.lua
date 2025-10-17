@@ -623,9 +623,11 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
   end
 
   local SetSelection
+  local widgets
+  local selectionIndex = 0
+  local autoSelectedDetails
 
   local selector = CreateFrame("Frame", nil, container)
-  local selectionIndex = 0 
   local selectionTexture = selector:CreateTexture()
   selectionTexture:SetTexture("Interface/AddOns/Platynator/Assets/selection-outline.png")
   selectionTexture:SetTextureSliceMargins(45, 45, 45, 45)
@@ -643,10 +645,57 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
   hoverTexture:SetAllPoints()
 
   local previewInset = CreateFrame("Frame", nil, container, "InsetFrameTemplate")
-  previewInset:SetPoint("TOP", allFrames[#allFrames], "BOTTOM")
+  previewInset:SetPoint("TOP", allFrames[#allFrames], "BOTTOM", 0, -30)
   previewInset:SetPoint("LEFT", 20, 0)
   previewInset:SetPoint("RIGHT", -20, 0)
   previewInset:SetHeight(200)
+
+  local addButton = CreateFrame("DropdownButton", nil, previewInset, "UIPanelDynamicResizeButtonTemplate")
+  addButton:SetText(addonTable.Locales.ADD_WIDGET)
+  DynamicResizeButton_Resize(addButton)
+  addButton:SetPoint("TOPLEFT", 0, addButton:GetHeight() + 2)
+  addButton:SetupMenu(function(menu, rootDescription)
+    local design = addonTable.Config.Get(addonTable.Config.Options.DESIGN)
+    for _, details in ipairs(addonTable.CustomiseDialog.DesignWidgets) do
+      if details.special == "header" then
+        rootDescription:CreateTitle(details.name)
+      else
+        local skip = false
+        if details.noDuplicates then
+          for _, entry in ipairs(design[details.kind]) do
+            if entry.kind == details.kind then
+              rootDescription:CreateHeader(GRAY_FONT_COLOR:WrapTextInColorCode(details.name))
+              skip = true
+              break
+            end
+          end
+        end
+        if not skip then
+          rootDescription:CreateButton(details.name, function()
+            table.insert(design[details.kind], CopyTable(details.default))
+            autoSelectedDetails = design[details.kind][#design[details.kind]]
+            Announce()
+          end)
+        end
+      end
+    end
+  end)
+
+  local deleteButton = CreateFrame("Button", nil, previewInset, "UIPanelDynamicResizeButtonTemplate")
+  deleteButton:SetText(addonTable.Locales.DELETE_WIDGET)
+  DynamicResizeButton_Resize(deleteButton)
+  deleteButton:SetPoint("TOPRIGHT", 0, addButton:GetHeight() + 2)
+  deleteButton:SetScript("OnClick", function()
+    if selectionIndex > 0 then
+      local kind = widgets[selectionIndex].kind
+      local details = widgets[selectionIndex].details
+      local design = addonTable.Config.Get(addonTable.Config.Options.DESIGN)
+      local index = tIndexOf(design[kind], details)
+      table.remove(design[kind], index)
+      selectionIndex = 0
+      Announce()
+    end
+  end)
 
   local preview = CreateFrame("Frame", nil, previewInset)
 
@@ -655,8 +704,6 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
   preview:SetAllPoints()
   preview:SetFlattensRenderLayers(true)
   preview:SetScale(2)
-
-  local widgets
 
   local function GenerateWidgets()
     if widgets then
@@ -787,6 +834,15 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
   addonTable.CallbackRegistry:RegisterCallback("RefreshStateChange", function(_, state)
     if state[addonTable.Constants.RefreshReason.Design] then
       GenerateWidgets()
+      if autoSelectedDetails then
+        for index, w in ipairs(widgets) do
+          if w.details == autoSelectedDetails then
+            selectionIndex = index
+            break
+          end
+        end
+        autoSelectedDetails = nil
+      end
       SetSelection(widgets[selectionIndex])
     end
   end)
@@ -809,6 +865,7 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
 
   SetSelection = function(w)
     if not w then
+      deleteButton:Disable()
       for _, frame in ipairs(settingsFrames) do
         frame:Hide()
       end
@@ -816,6 +873,7 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
       selector:Hide()
       return
     end
+    deleteButton:Enable()
 
     local kind = w.kind
     for _, frame in ipairs(settingsFrames) do
