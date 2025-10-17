@@ -26,25 +26,27 @@ function addonTable.Display.CannotInterruptMarkerMixin:OnEvent(eventName, ...)
   self:ApplyCasting()
 end
 
-function addonTable.Display.CannotInterruptMarkerMixin:IsUninterruptible()
+function addonTable.Display.CannotInterruptMarkerMixin:IsUninterruptible(notInterruptible)
   local nameplate = C_NamePlate.GetNamePlateForUnit(self.unit, issecure())
-  if nameplate and nameplate.UnitFrame then
+  if nameplate and nameplate.UnitFrame and nameplate.UnitFrame.castBar then
     return nameplate.UnitFrame.castBar.barType == "uninterruptable"
+  else
+    return notInterruptible
   end
 end
 
 function addonTable.Display.CannotInterruptMarkerMixin:ApplyCasting()
-  local name = UnitCastingInfo(self.unit)
+  local name, _, _, _, _, _, _, notInterruptible, _ = UnitCastingInfo(self.unit)
 
   if type(name) == "nil" then
-    name = UnitChannelInfo(self.unit)
+    name, _, _, _, _, _, _, notInterruptible, _ = UnitChannelInfo(self.unit)
   end
 
   if type(name) ~= "nil"then
-    self.marker:SetShown(self:IsUninterruptible())
+    self.marker:SetShown(self:IsUninterruptible(notInterruptible))
     C_Timer.After(0, function()
       if self.unit then
-        self.marker:SetShown(self:IsUninterruptible())
+        self.marker:SetShown(self:IsUninterruptible(notInterruptible))
       end
     end)
   else

@@ -34,13 +34,15 @@ function addonTable.Display.CastBarMixin:OnEvent(eventName, ...)
   end
 end
 
-function addonTable.Display.CastBarMixin:ApplyColor()
+function addonTable.Display.CastBarMixin:ApplyColor(notInterruptible)
   local color = self.details.colors.normal
   local nameplate = C_NamePlate.GetNamePlateForUnit(self.unit, issecure())
-  if nameplate and nameplate.UnitFrame then
+  if nameplate and nameplate.UnitFrame and nameplate.UnitFrame.castBar then
     if nameplate.UnitFrame.castBar.barType == "uninterruptable" then
       color = self.details.colors.uninterruptable
     end
+  elseif notInterruptible then
+    color = self.details.colors.uninterruptable
   end
   self.statusBar:GetStatusBarTexture():SetVertexColor(color.r, color.g, color.b)
   self.reverseStatusTexture:SetVertexColor(color.r, color.g, color.b)
@@ -51,11 +53,11 @@ function addonTable.Display.CastBarMixin:ApplyColor()
 end
 
 function addonTable.Display.CastBarMixin:ApplyCasting()
-  local name, text, texture, startTime, endTime, _, _, _, _ = UnitCastingInfo(self.unit)
+  local name, text, texture, startTime, endTime, _, _, notInterruptible, _ = UnitCastingInfo(self.unit)
   local isChanneled = false
 
   if type(name) == "nil" then
-    name, text, texture, startTime, endTime, _, _, _, _ = UnitChannelInfo(self.unit)
+    name, text, texture, startTime, endTime, _, _, notInterruptible, _ = UnitChannelInfo(self.unit)
     isChanneled = true
   end
   self:SetReverseFill(isChanneled)
@@ -66,10 +68,10 @@ function addonTable.Display.CastBarMixin:ApplyCasting()
     self:SetScript("OnUpdate", function()
       self.statusBar:SetValue(GetTime() * 1000)
     end)
-    self:ApplyColor()
+    self:ApplyColor(notInterruptible)
     C_Timer.After(0, function()
       if self.unit then
-        self:ApplyColor()
+        self:ApplyColor(notInterruptible)
       end
     end)
     self.statusBar:SetValue(GetTime() * 1000)

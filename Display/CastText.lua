@@ -27,14 +27,14 @@ function addonTable.Display.CastTextMixin:OnEvent(eventName, ...)
 end
 
 function addonTable.Display.CastTextMixin:ApplyCasting()
-  local name = UnitCastingInfo(self.unit)
+  local name, text = UnitCastingInfo(self.unit)
   if type(name) == "nil" then
-    name = UnitChannelInfo(self.unit)
+    name, text = UnitChannelInfo(self.unit)
   end
 
   if type(name) ~= "nil" then
     self:Show()
-    self.text:SetText(name)
+    self.text:SetText(text)
   else
     self:Hide()
   end
