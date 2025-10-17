@@ -18,15 +18,20 @@ function addonTable.Design.GetDefaultDesignRabbit()
     auras = {
       {
         kind = "debuffs",
-        anchor = {"BOTTOMLEFT", -63, 25}
+        anchor = {"BOTTOMLEFT", -63, 25},
+        scale = 1,
       },
       {
         kind = "buffs",
-        anchor = {"RIGHT", -68, 0}
+        anchor = {"RIGHT", -68, 0},
+        scale = 1,
+        showCountdown = true,
       },
       {
         kind = "crowdControl",
-        anchor = {"LEFT", 68, 0}
+        anchor = {"LEFT", 68, 0},
+        scale = 1,
+        showCountdown = true,
       },
     },
     highlights = {
@@ -164,15 +169,20 @@ function addonTable.Design.GetDefaultDesignHedgehog()
     auras = {
       {
         kind = "debuffs",
-        anchor = {"BOTTOMLEFT", -63, 25}
+        anchor = {"BOTTOMLEFT", -63, 25},
+        scale = 1,
       },
       {
         kind = "buffs",
-        anchor = {"RIGHT", -68, 0}
+        anchor = {"RIGHT", -68, 0},
+        scale = 1,
+        showCountdown = true,
       },
       {
         kind = "crowdControl",
-        anchor = {"LEFT", 68, 0}
+        anchor = {"LEFT", 68, 0},
+        scale = 1,
+        showCountdown = true,
       },
     },
     highlights = {
@@ -317,15 +327,20 @@ function addonTable.Design.GetDefaultDesignBlizzard()
     auras = {
       {
         kind = "debuffs",
-        anchor = {"BOTTOMLEFT", -63, 25}
+        anchor = {"BOTTOMLEFT", -63, 25},
+        scale = 1,
       },
       {
         kind = "buffs",
-        anchor = {"RIGHT", -68, 0}
+        anchor = {"RIGHT", -68, 0},
+        scale = 1,
+        showCountdown = true,
       },
       {
         kind = "crowdControl",
-        anchor = {"LEFT", 68, 0}
+        anchor = {"LEFT", 68, 0},
+        scale = 1,
+        showCountdown = true,
       },
     },
     highlights = {
@@ -463,15 +478,20 @@ function addonTable.Design.GetDefaultDesignSquirrel()
     auras = {
       {
         kind = "debuffs",
-        anchor = {"BOTTOMLEFT", -63, 25}
+        anchor = {"BOTTOMLEFT", -63, 25},
+        scale = 1,
       },
       {
         kind = "buffs",
-        anchor = {"RIGHT", -68, 0}
+        anchor = {"RIGHT", -68, 0},
+        scale = 1,
+        showCountdown = true,
       },
       {
         kind = "crowdControl",
-        anchor = {"LEFT", 68, 0}
+        anchor = {"LEFT", 68, 0},
+        scale = 1,
+        showCountdown = true,
       },
     },
     highlights = {
@@ -616,15 +636,20 @@ function addonTable.Design.GetDefaultDesignHare()
     auras = {
       {
         kind = "debuffs",
-        anchor = {"BOTTOMLEFT", -63, 25}
+        anchor = {"BOTTOMLEFT", -63, 25},
+        scale = 1,
       },
       {
         kind = "buffs",
-        anchor = {"RIGHT", -68, 0}
+        anchor = {"RIGHT", -68, 0},
+        scale = 1,
+        showCountdown = true,
       },
       {
         kind = "crowdControl",
-        anchor = {"LEFT", 68, 0}
+        anchor = {"LEFT", 68, 0},
+        scale = 1,
+        showCountdown = true,
       },
     },
     highlights = {

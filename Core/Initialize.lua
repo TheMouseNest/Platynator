@@ -29,17 +29,31 @@ function addonTable.Core.MigrateSettings()
     design.auras = {
       {
         kind = "debuffs",
-        anchor = {"BOTTOMLEFT", -63, 25}
+        anchor = {"BOTTOMLEFT", -63, 25},
+        scale = 1,
       },
       {
         kind = "buffs",
-        anchor = {"RIGHT", -68, 0}
+        anchor = {"RIGHT", -68, 0},
+        scale = 1,
+        showCountdown = true,
       },
       {
         kind = "crowdControl",
-        anchor = {"LEFT", 68, 0}
+        anchor = {"LEFT", 68, 0},
+        scale = 1,
+        showCountdown = true,
       },
     }
+  else
+    for _, aura in ipairs(design.auras) do
+      if not aura.scale then
+        aura.scale = 1
+      end
+      if aura.showCountdown == nil then
+        aura.showCountdown = true
+      end
+    end
   end
 end
 

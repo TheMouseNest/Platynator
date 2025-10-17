@@ -20,6 +20,9 @@ function addonTable.Display.Initialize()
   end
   PlatynatorNameplateFont:SetShadowOffset(1, -1)
 
+  CreateFont("PlatynatorNameplateCooldownFont")
+  PlatynatorNameplateCooldownFont:SetFont(file, 13, "OUTLINE")
+
   local manager = CreateFrame("Frame")
   Mixin(manager, addonTable.Display.ManagerMixin)
   manager:OnLoad()

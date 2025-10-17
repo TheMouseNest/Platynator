@@ -23,9 +23,11 @@ function addonTable.Display.NameplateMixin:OnLoad()
 
   if not addonTable.Constants.IsMidnight then
     self.AurasManager = addonTable.Utilities.InitFrameWithMixin(self, addonTable.Display.AurasForNameplateMixin)
-    self.AurasPool = CreateFramePool("Frame", self, "PlatynatorNameplateBuffButtonTemplate", nil, false)
+    self.AurasPool = CreateFramePool("Frame", self, "PlatynatorNameplateBuffButtonTemplate", nil, false, function(frame)
+      frame.Cooldown:SetCountdownFont("PlatynatorNameplateCooldownFont")
+    end)
 
-    local function GetCallback(frame, index)
+    local function GetCallback(frame)
       return function(data)
         local keys = GetKeysArray(data)
         table.sort(keys)
@@ -39,9 +41,9 @@ function addonTable.Display.NameplateMixin:OnLoad()
         local currentY = 0
         local xOffset = 0
         local yOffset = 0
-        if frame.anchor:match("RIGHT") then
+        if frame.details.anchor[1]:match("RIGHT") then
           xOffset = -20
-        elseif frame.anchor:match("LEFT") then
+        elseif frame.details.anchor[1]:match("LEFT") then
           xOffset = 20
         else -- CENTER
           xOffset = 20
@@ -52,12 +54,11 @@ function addonTable.Display.NameplateMixin:OnLoad()
         for _, auraInstanceID in ipairs(keys) do
           local aura = data[auraInstanceID]
           local buff = self.AurasPool:Acquire()
+          buff:SetScale(frame.details.scale)
           table.insert(frame.items, buff)
           buff:SetParent(frame)
           buff.auraInstanceID = auraInstanceID
           buff.isBuff = aura.isHelpful;
-
-          buff.layoutIndex = buffIndex;
           buff.spellID = aura.spellId;
 
           buff.Icon:SetTexture(aura.icon);
@@ -67,19 +68,20 @@ function addonTable.Display.NameplateMixin:OnLoad()
           else
             buff.CountFrame.Count:Hide();
           end
+          buff.Cooldown:SetHideCountdownNumbers(not frame.details.showCountdown)
           CooldownFrame_Set(buff.Cooldown, aura.expirationTime - aura.duration, aura.duration, aura.duration > 0, true);
 
           buff:Show();
 
-          buff:SetPoint(frame.anchor, currentX, currentY)
+          buff:SetPoint(frame.details.anchor[1], currentX, currentY)
           currentX = currentX + xOffset
         end
       end
     end
 
-    self.AurasManager:SetDebuffsCallback(GetCallback(self.DebuffDisplay, 1))
-    self.AurasManager:SetBuffsCallback(GetCallback(self.BuffDisplay, 2))
-    self.AurasManager:SetCrowdControlCallback(GetCallback(self.CrowdControlDisplay, 3))
+    self.AurasManager:SetDebuffsCallback(GetCallback(self.DebuffDisplay))
+    self.AurasManager:SetBuffsCallback(GetCallback(self.BuffDisplay))
+    self.AurasManager:SetCrowdControlCallback(GetCallback(self.CrowdControlDisplay))
   end
 
   self:InitializeWidgets()
@@ -99,18 +101,32 @@ function addonTable.Display.NameplateMixin:InitializeWidgets()
   self.widgets = addonTable.Display.GetWidgets(style, self)
 
   local auras = addonTable.Config.Get(addonTable.Config.Options.DESIGN).auras
-  local debuffs = auras[1]
-  self.DebuffDisplay:ClearAllPoints()
-  self.DebuffDisplay.anchor = debuffs.anchor[1]
-  addonTable.Display.ApplyAnchor(self.DebuffDisplay, debuffs.anchor)
-  local buffs = auras[2]
-  self.BuffDisplay:ClearAllPoints()
-  self.BuffDisplay.anchor = buffs.anchor[1]
-  addonTable.Display.ApplyAnchor(self.BuffDisplay, buffs.anchor)
-  local cc = auras[3]
-  self.CrowdControlDisplay:ClearAllPoints()
-  self.CrowdControlDisplay.anchor = cc.anchor[1]
-  addonTable.Display.ApplyAnchor(self.CrowdControlDisplay, cc.anchor)
+  local designInfo = {}
+  for _, a in ipairs(auras) do
+    designInfo[a.kind] = a
+  end
+  local globalScale = 1
+  if designInfo.debuffs then
+    self.DebuffDisplay:ClearAllPoints()
+    self.DebuffDisplay.details = designInfo.debuffs
+    addonTable.Display.ApplyAnchor(self.DebuffDisplay, designInfo.debuffs.anchor)
+  else
+    self.DebuffDisplay:Hide()
+  end
+  if designInfo.buffs then
+    self.BuffDisplay:ClearAllPoints()
+    self.BuffDisplay.details = designInfo.buffs
+    addonTable.Display.ApplyAnchor(self.BuffDisplay, designInfo.buffs.anchor)
+  else
+    self.BuffDisplay:Hide()
+  end
+  if designInfo.crowdControl then
+    self.CrowdControlDisplay:ClearAllPoints()
+    self.CrowdControlDisplay.details = designInfo.crowdControl
+    addonTable.Display.ApplyAnchor(self.CrowdControlDisplay, designInfo.crowdControl.anchor)
+  else
+    self.CrowdControlDisplay:Hide()
+  end
 end
 
 function addonTable.Display.NameplateMixin:Install(nameplate)
