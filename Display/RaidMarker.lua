@@ -15,6 +15,7 @@ end
 
 function addonTable.Display.RaidMarkerMixin:Strip()
   self:UnregisterAllEvents()
+  self.marker:SetTexCoord(0, 1, 0, 1)
 end
 
 function addonTable.Display.RaidMarkerMixin:OnEvent()
