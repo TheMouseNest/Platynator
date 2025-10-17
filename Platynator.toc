@@ -36,6 +36,7 @@ Display/HealthBar.lua
 Display/CastBar.lua
 Display/PowerBar.lua
 Display/CreatureText.lua
+Display/CreatureTextMSP.lua
 Display/HealthText.lua
 Display/CastText.lua
 Display/Highlight.lua

@@ -316,7 +316,7 @@ function addonTable.Display.GetText(frame, parent)
     if details.kind == "health" then
       Mixin(frame, addonTable.Display.HealthTextMixin)
     elseif details.kind == "creatureName" then
-      Mixin(frame, addonTable.Display.CreatureTextMixin)
+      Mixin(frame, addonTable.Display.CreatureTextMSPMixin or addonTable.Display.CreatureTextMixin)
     elseif details.kind == "castSpellName" then
       Mixin(frame, addonTable.Display.CastTextMixin)
     else
