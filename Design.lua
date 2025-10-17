@@ -782,3 +782,272 @@ function addonTable.Design.GetDefaultDesignHare()
     }
   }
 end
+
+function addonTable.Design.GetDefaultDesignBeaver()
+  return {
+["appliesToAll"] = true,
+["font"] = {
+["asset"] = "RobotoCondensed-Bold",
+["flags"] = "OUTLINE",
+},
+["specialBars"] = {
+},
+["highlights"] = {
+{
+["scale"] = 1,
+["anchor"] = {
+},
+["kind"] = "target",
+["asset"] = "wide/soft-glow-narrow",
+["color"] = {
+["b"] = 0.6,
+["g"] = 0.6,
+["r"] = 0.6,
+},
+},
+},
+["texts"] = {
+{
+["displayTypes"] = {
+"percentage",
+},
+["scale"] = 0.93,
+["kind"] = "health",
+["color"] = {
+["b"] = 1,
+["g"] = 1,
+["r"] = 1,
+},
+["anchor"] = {
+},
+},
+{
+["widthLimit"] = 124,
+["scale"] = 1.05,
+["kind"] = "creatureName",
+["color"] = {
+["b"] = 1,
+["g"] = 1,
+["r"] = 1,
+},
+["anchor"] = {
+"BOTTOM",
+0,
+9,
+},
+},
+{
+["widthLimit"] = 0,
+["anchor"] = {
+"TOPLEFT",
+-61,
+-6,
+},
+["kind"] = "castSpellName",
+["scale"] = 0.88,
+["color"] = {
+["b"] = 1,
+["g"] = 1,
+["r"] = 1,
+},
+},
+},
+["bars"] = {
+{
+["relativeTo"] = 0,
+["scale"] = 1,
+["border"] = {
+["asset"] = "narrow/soft",
+["color"] = {
+["b"] = 0.5019607843137255,
+["g"] = 0.5019607843137255,
+["r"] = 0.5019607843137255,
+},
+},
+["colors"] = {
+["npc"] = {
+["neutral"] = {
+["b"] = 0,
+["g"] = 1,
+["r"] = 1,
+},
+["friendly"] = {
+["b"] = 0,
+["g"] = 1,
+["r"] = 0,
+},
+["hostile"] = {
+["b"] = 0,
+["g"] = 0,
+["r"] = 1,
+},
+},
+["threat"] = {
+["transition"] = {
+["b"] = 0,
+["g"] = 0.6274509803921569,
+["r"] = 1,
+},
+["safe"] = {
+["b"] = 0.9019607843137255,
+["g"] = 0.5882352941176471,
+["r"] = 0.05882352941176471,
+},
+["warning"] = {
+["b"] = 0,
+["g"] = 0,
+["r"] = 0.8,
+},
+},
+},
+["marker"] = {
+["asset"] = "wide/glow",
+},
+["anchor"] = {
+},
+["kind"] = "health",
+["foreground"] = {
+["asset"] = "wide/bevelled",
+},
+["background"] = {
+["applyColor"] = true,
+["asset"] = "wide/bevelled-grey",
+["alpha"] = 1,
+},
+},
+{
+["scale"] = 1,
+["background"] = {
+["applyColor"] = true,
+["asset"] = "wide/bevelled-grey",
+["alpha"] = 1,
+},
+["colors"] = {
+["normal"] = {
+["b"] = 0,
+["g"] = 0.5490196078431373,
+["r"] = 0.9882352941176471,
+},
+["uninterruptable"] = {
+["b"] = 0.7647058823529411,
+["g"] = 0.7529411764705882,
+["r"] = 0.5137254901960784,
+},
+},
+["foreground"] = {
+["asset"] = "wide/bevelled",
+},
+["anchor"] = {
+"TOP",
+0,
+-6,
+},
+["kind"] = "cast",
+["border"] = {
+["asset"] = "narrow/soft",
+["color"] = {
+["b"] = 0.6666666666666666,
+["g"] = 0.6666666666666666,
+["r"] = 0.6666666666666666,
+},
+},
+["marker"] = {
+["asset"] = "wide/glow",
+},
+},
+},
+["markers"] = {
+{
+["anchor"] = {
+"RIGHT",
+-64,
+0,
+},
+["scale"] = 0.8,
+["kind"] = "quest",
+["asset"] = "normal/quest-blizzard",
+["color"] = {
+["b"] = 1,
+["g"] = 1,
+["r"] = 1,
+},
+},
+{
+["anchor"] = {
+"TOPLEFT",
+-73,
+-4,
+},
+["scale"] = 0.6,
+["kind"] = "cannotInterrupt",
+["asset"] = "normal/shield-soft",
+["color"] = {
+["b"] = 0.4980392156862745,
+["g"] = 0.4823529411764706,
+["r"] = 0.392156862745098,
+},
+},
+{
+["anchor"] = {
+"BOTTOMLEFT",
+-64,
+-3,
+},
+["scale"] = 0.7,
+["kind"] = "elite",
+["asset"] = "special/blizzard-elite",
+["color"] = {
+["b"] = 1,
+["g"] = 1,
+["r"] = 1,
+},
+},
+{
+["anchor"] = {
+"BOTTOM",
+0,
+20,
+},
+["scale"] = 1,
+["kind"] = "raid",
+["asset"] = "normal/blizzard-raid",
+["color"] = {
+["b"] = 1,
+["g"] = 1,
+["r"] = 1,
+},
+},
+},
+["auras"] = {
+{
+["anchor"] = {
+"BOTTOMLEFT",
+-63,
+25,
+},
+["kind"] = "debuffs",
+["scale"] = 1,
+},
+{
+["anchor"] = {
+"RIGHT",
+-68,
+0,
+},
+["kind"] = "buffs",
+["showCountdown"] = true,
+["scale"] = 1,
+},
+{
+["anchor"] = {
+"LEFT",
+68,
+0,
+},
+["kind"] = "crowdControl",
+["showCountdown"] = true,
+["scale"] = 1,
+},
+},
+}
+end

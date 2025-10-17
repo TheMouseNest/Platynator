@@ -604,6 +604,7 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
       addonTable.Locales.RABBIT,
       addonTable.Locales.HARE,
       addonTable.Locales.HEDGEHOG,
+      addonTable.Locales.BEAVER,
       addonTable.Locales.BLIZZARD,
     }, {
       "custom",
@@ -611,6 +612,7 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
       "rabbit",
       "hare",
       "hedgehog",
+      "beaver",
       "blizzard",
     })
 
