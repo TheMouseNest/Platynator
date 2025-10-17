@@ -27,7 +27,7 @@ local function GenerateDialog()
   dialog.text:SetPoint("RIGHT", -20, 0)
   dialog.text:SetJustifyH("CENTER")
 
-  addonTable.Skins.AddFrame("Dialog", dialog)
+  --addonTable.Skins.AddFrame("Dialog", dialog)
 
   return dialog
 end
@@ -55,8 +55,8 @@ function addonTable.Dialogs.ShowCopy(text)
       dialog:Hide()
     end)
 
-    addonTable.Skins.AddFrame("EditBox", dialog.editBox)
-    addonTable.Skins.AddFrame("Button", okButton)
+    --addonTable.Skins.AddFrame("EditBox", dialog.editBox)
+    --addonTable.Skins.AddFrame("Button", okButton)
 
     copyDialogsBySkin[currentSkinKey] = dialog
   end
@@ -89,9 +89,9 @@ function addonTable.Dialogs.ShowEditBox(text, acceptText, cancelText, confirmCal
       dialog:Hide()
     end)
 
-    addonTable.Skins.AddFrame("EditBox", dialog.editBox)
-    addonTable.Skins.AddFrame("Button", dialog.acceptButton)
-    addonTable.Skins.AddFrame("Button", dialog.cancelButton)
+    --addonTable.Skins.AddFrame("EditBox", dialog.editBox)
+    --addonTable.Skins.AddFrame("Button", dialog.acceptButton)
+    --addonTable.Skins.AddFrame("Button", dialog.cancelButton)
 
     editBoxDialogsBySkin[currentSkinKey] = dialog
   end
@@ -129,8 +129,8 @@ function addonTable.Dialogs.ShowConfirm(text, yesText, noText, confirmCallback)
       dialog:Hide()
     end)
 
-    addonTable.Skins.AddFrame("Button", dialog.acceptButton)
-    addonTable.Skins.AddFrame("Button", dialog.cancelButton)
+    --addonTable.Skins.AddFrame("Button", dialog.acceptButton)
+    --addonTable.Skins.AddFrame("Button", dialog.cancelButton)
 
     confirmDialogsBySkin[currentSkinKey] = dialog
   end
@@ -163,7 +163,7 @@ function addonTable.Dialogs.ShowAcknowledge(text)
       dialog:Hide()
     end)
 
-    addonTable.Skins.AddFrame("Button", dialog.okButton)
+    --addonTable.Skins.AddFrame("Button", dialog.okButton)
 
     acknowledgeDialogsBySkin[currentSkinKey] = dialog
   end
