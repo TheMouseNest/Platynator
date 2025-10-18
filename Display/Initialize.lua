@@ -176,7 +176,6 @@ function addonTable.Display.ManagerMixin:OnEvent(eventName, ...)
       self.nameplateDisplays[unit] = nil
     end
   elseif eventName == "PLAYER_TARGET_CHANGED" then
-    local start = debugprofilestop()
     if self.lastTarget and (not self.lastTarget.unit or UnitExists(self.lastTarget.unit)) then
       self.lastTarget:UpdateForTarget()
     end
@@ -194,8 +193,18 @@ function addonTable.Display.ManagerMixin:OnEvent(eventName, ...)
       self.lastTarget = nil
     end
   elseif eventName == "UNIT_POWER_UPDATE" or eventName == "RUNE_POWER_UPDATE" then
-    if self.lastTarget then
+    local unit
+    for i = 1, 40 do
+      unit = "nameplate" .. i
+      if UnitIsUnit(unit, "target") then
+        break
+      end
+    end
+    if self.nameplateDisplays[unit] then
+      self.lastTarget = self.nameplateDisplays[unit]
       self.lastTarget:UpdateForTarget()
+    else
+      self.lastTarget = nil
     end
   end
 end
