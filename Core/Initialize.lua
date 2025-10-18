@@ -150,6 +150,8 @@ function addonTable.Core.Initialize()
   --  addonTable.Config.Set(addonTable.Config.Options.DESIGN, addonTable.Design.GetDefaultDesignSlight())
   --end
 
+  addonTable.Assets.ApplyScale()
+
   SetStyle()
   addonTable.CallbackRegistry:RegisterCallback("SettingChanged", function(_, name)
     if name == addonTable.Config.Options.STYLE then
@@ -158,8 +160,6 @@ function addonTable.Core.Initialize()
   end)
 
   addonTable.Core.MigrateSettings()
-
-  addonTable.Assets.ApplyScale()
 
   addonTable.CustomiseDialog.Initialize()
 
