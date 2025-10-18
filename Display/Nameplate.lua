@@ -129,6 +129,12 @@ function addonTable.Display.NameplateMixin:InitializeWidgets()
   end
 end
 
+function addonTable.Display.NameplateMixin:Install(nameplate)
+  self:SetParent(nameplate)
+  self:Show()
+  self:SetPoint("CENTER")
+end
+
 function addonTable.Display.NameplateMixin:SetUnit(unit)
   self.SoftTargetIcon:Hide()
   self.interactUnit = nil
