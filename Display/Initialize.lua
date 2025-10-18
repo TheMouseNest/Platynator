@@ -60,7 +60,7 @@ function addonTable.Display.ManagerMixin:OnLoad()
   self.ModifiedUFs = {}
   hooksecurefunc(NamePlateDriverFrame, "OnNamePlateAdded", function(_, unit)
     local nameplate = C_NamePlate.GetNamePlateForUnit(unit, issecure())
-    if nameplate then
+    if nameplate and not UnitIsUnit("player", unit) then
       nameplate.UnitFrame:SetParent(addonTable.hiddenFrame)
       nameplate.UnitFrame:UnregisterAllEvents()
       if addonTable.Constants.IsMidnight then
@@ -158,7 +158,7 @@ function addonTable.Display.ManagerMixin:OnEvent(eventName, ...)
     local unit = ...
     local nameplate = C_NamePlate.GetNamePlateForUnit(unit, issecure())
     -- NOTE: the nameplate _name_ does not correspond to the unit
-    if nameplate and nameplate.UnitFrame then
+    if nameplate and nameplate.UnitFrame and not UnitIsUnit("player", unit) then
       local newDisplay = self.displayPool:Acquire()
       self.nameplateDisplays[unit] = newDisplay
       if newDisplay.styleIndex ~= self.styleIndex then
