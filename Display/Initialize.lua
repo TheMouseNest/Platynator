@@ -66,7 +66,7 @@ function addonTable.Display.ManagerMixin:OnLoad()
       if addonTable.Constants.IsMidnight then
         nameplate.UnitFrame.HitTestFrame:SetParent(nameplate)
         nameplate.UnitFrame.HitTestFrame:ClearAllPoints()
-        nameplate.UnitFrame.HitTestFrame:SetPoint("BOTTOMLEFT", self, "CENTER", addonTable.Rect.left, addonTable.Rect.bottom)
+        nameplate.UnitFrame.HitTestFrame:SetPoint("BOTTOMLEFT", nameplate, "CENTER", addonTable.Rect.left, addonTable.Rect.bottom)
         nameplate.UnitFrame.HitTestFrame:SetSize(addonTable.Rect.width, addonTable.Rect.height)
 
         nameplate.UnitFrame:RegisterUnitEvent("UNIT_AURA", unit)
