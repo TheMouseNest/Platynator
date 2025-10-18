@@ -35,14 +35,17 @@ local function GetLabelsValues(allAssets, filter)
         height = 180/width * height
         width = 180
       end
-      local tail = ""
+      local text = "|T".. (details.preview or details.file) .. ":" .. height .. ":" .. width .. "|t"
+      if details.isTransparent then
+        text = addonTable.Locales.NONE
+      end
       if details.mode == addonTable.Assets.Mode.Special then
-        tail = " " .. addonTable.Locales.SPECIAL_BRACKETS
+        text = text .. " " .. addonTable.Locales.SPECIAL_BRACKETS
       elseif details.mode == addonTable.Assets.Mode.Narrow then
-        tail = " " .. addonTable.Locales.NARROW_BRACKETS
+        text = text .. " " .. addonTable.Locales.NARROW_BRACKETS
       end
 
-      table.insert(labels, "|T".. (details.preview or details.file) .. ":" .. height .. ":" .. width .. "|t" .. tail)
+      table.insert(labels, text)
       table.insert(values, key)
     end
   end
@@ -165,6 +168,27 @@ local function GetBarSettings(parent)
     table.insert(allFrames, backgroundDropdown)
   end
 
+  local backgroundTransparencySlider = addonTable.CustomiseDialog.Components.GetSlider(container, addonTable.Locales.BACKGROUND_TRANSPARENCY, 0, 100, "%s%%", function(value)
+    local oldbackgroundAlpha = currentBar.background.alpha or 1
+    currentBar.background.alpha = 1 - value / 100
+    if currentBar.background.alpha ~= oldbackgroundAlpha then
+      Announce()
+    end
+  end)
+
+  backgroundTransparencySlider:SetPoint("TOP", allFrames[#allFrames], "BOTTOM")
+  table.insert(allFrames, backgroundTransparencySlider)
+
+  local inheritColorCheckbox = addonTable.CustomiseDialog.Components.GetCheckbox(container, addonTable.Locales.APPLY_MAIN_COLOR_TO_BACKGROUND, 28, function(value)
+    local oldValue = currentBar.background.applyColor or false
+    currentBar.background.applyColor = value
+    if oldValue ~= currentBar.background.applyColor then
+      Announce()
+    end
+  end)
+  inheritColorCheckbox:SetPoint("TOP", allFrames[#allFrames], "BOTTOM")
+  table.insert(allFrames, inheritColorCheckbox)
+
   do
     local borderDropdown = addonTable.CustomiseDialog.Components.GetBasicDropdown(container, addonTable.Locales.BORDER_TEXTURE, function(value)
       return currentBar and currentBar.border.asset == value
@@ -206,6 +230,8 @@ local function GetBarSettings(parent)
   function container:Set(details)
     currentBar = details
     scaleSlider:SetValue(Round(currentBar.scale * 100))
+    backgroundTransparencySlider:SetValue(Round((1 - currentBar.background.alpha) * 100))
+    inheritColorCheckbox:SetValue(currentBar.background.applyColor)
     borderColorPicker:SetValue(CopyTable(currentBar.border.color))
 
     for _, frame in ipairs(settingsFrames) do

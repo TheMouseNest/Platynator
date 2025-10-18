@@ -16,8 +16,9 @@ addonTable.Assets.Fonts = {
 }
 
 addonTable.Assets.BarBackgrounds = {
-  ["transparent"] = {file = "Interface/AddOns/Platynator/Assets/Special/transparent.tga", width = 1000, height = 125},
+  ["transparent"] = {file = "Interface/AddOns/Platynator/Assets/Special/transparent.tga", width = 1000, height = 125, isTransparent = true},
   ["grey"] = {file = "Interface/AddOns/Platynator/Assets/Special/grey.tga", width = 1000, height = 125},
+  ["black"] = {file = "Interface/AddOns/Platynator/Assets/Special/black.tga", width = 1000, height = 125},
   ["white"] = {file = "Interface/AddOns/Platynator/Assets/Special/white.tga", width = 1000, height = 125},
   ["wide/bevelled"] = {file = "Interface/AddOns/Platynator/Assets/%s/BarBackgrounds/bevelled.tga", width = 1000, height = 125, has4k = true, mode = mode.Wide},
   ["wide/bevelled-grey"] = {file = "Interface/AddOns/Platynator/Assets/%s/BarBackgrounds/bevelled-grey.tga", width = 1000, height = 125, has4k = true, mode = mode.Wide},
@@ -28,8 +29,8 @@ addonTable.Assets.BarBackgrounds = {
 }
 
 addonTable.Assets.BarBorders = {
-  ["wide/transparent"] = {file = "Interface/AddOns/Platynator/Assets/Special/transparent.tga", width = 1000, height = 125, mode = mode.Wide},
-  ["narrow/transparent"] = {file = "Interface/AddOns/Platynator/Assets/Special/transparent.tga", width = 1000, height = 63, mode = mode.Narrow},
+  ["wide/transparent"] = {file = "Interface/AddOns/Platynator/Assets/Special/transparent.tga", width = 1000, height = 125, mode = mode.Wide, isTransparent = true},
+  ["narrow/transparent"] = {file = "Interface/AddOns/Platynator/Assets/Special/transparent.tga", width = 1000, height = 63, mode = mode.Narrow, isTransparent = true},
   ["wide/blizzard-health"] = {file = "Interface/AddOns/Platynator/Assets/%s/BarBorders/blizzard-health.tga", width = 1116, height = 248, has4k = true, masked = true, mode = mode.Wide},
   ["narrow/blizzard-health"] = {file = "Interface/AddOns/Platynator/Assets/%s/BarBorders/blizzard-health-narrow.tga", width = 1116, height = 180, has4k = true, masked = true, mode = mode.Narrow},
   ["wide/blizzard-classic"] = {file = "Interface/AddOns/Platynator/Assets/%s/BarBorders/blizzard-classic.tga", width = 1000, height = 125, has4k = true, masked = true, mode = mode.Wide},
