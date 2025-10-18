@@ -7,6 +7,7 @@ function addonTable.Display.UnitTargetTextMixin:SetUnit(unit)
   self.unit = unit
   if self.unit then
     self:RegisterUnitEvent("UNIT_TARGET", self.unit)
+    self:RegisterUnitEvent("UNIT_THREAT_LIST_UPDATE", self.unit)
     self:UpdateText()
   else
     self:Strip()
