@@ -1047,3 +1047,228 @@ function addonTable.Design.GetDefaultDesignBeaver()
     },
   }
 end
+
+function addonTable.Design.GetDefaultDesignBlizzardClassic()
+  return {
+    ["appliesToAll"] = true,
+    font = {
+      asset = "FritzQuadrata",
+      flags = "OUTLINE",
+    },
+    ["specialBars"] = {},
+    ["texts"] = {
+      {
+        ["widthLimit"] = 124,
+        ["scale"] = 1,
+        ["kind"] = "creatureName",
+        ["color"] = {
+          ["b"] = 1,
+          ["g"] = 1,
+          ["r"] = 1
+        },
+        ["anchor"] = {
+          "BOTTOM",
+          0,
+          9
+        }
+      },
+      {
+        ["scale"] = 0.95,
+        ["kind"] = "castSpellName",
+        ["color"] = {
+          ["b"] = 1,
+          ["g"] = 1,
+          ["r"] = 1
+        },
+        ["anchor"] = {
+          "TOP",
+          0,
+          -8
+        }
+      }
+    },
+    ["highlights"] = {},
+    ["bars"] = {
+      {
+        ["relativeTo"] = 0,
+        ["scale"] = 1,
+        ["border"] = {
+          ["asset"] = "wide/blizzard-classic",
+          ["color"] = {
+            ["a"] = 1,
+            ["b"] = 0.2117647230625153,
+            ["g"] = 0.760784387588501,
+            ["r"] = 1
+          }
+        },
+        ["colors"] = {
+          ["npc"] = {
+            ["neutral"] = GetColor("C9C610"),
+            ["friendly"] = GetColor("0ece02"),
+            ["hostile"] = GetColor("fd3132"),
+          },
+          ["threat"] = {
+            ["transition"] = {
+              ["b"] = 0,
+              ["g"] = 0.6274509803921569,
+              ["r"] = 1
+            },
+            ["safe"] = {
+              ["b"] = 0.9019607843137255,
+              ["g"] = 0.5882352941176471,
+              ["r"] = 0.05882352941176471
+            },
+            ["warning"] = GetColor("fd3132"),
+          }
+        },
+        ["marker"] = {
+          ["asset"] = "wide/glow"
+        },
+        ["anchor"] = {},
+        ["background"] = {
+          ["applyColor"] = true,
+          ["asset"] = "grey",
+          ["alpha"] = 1
+        },
+        ["foreground"] = {
+          ["asset"] = "wide/fade-bottom"
+        },
+        ["kind"] = "health"
+      },
+      {
+        ["foreground"] = {
+          ["asset"] = "wide/fade-bottom"
+        },
+        ["scale"] = 1,
+        ["colors"] = {
+          ["normal"] = {
+            ["b"] = 0,
+            ["g"] = 0.5490196078431373,
+            ["r"] = 0.9882352941176471
+          },
+          ["uninterruptable"] = {
+            ["b"] = 0.7647058823529411,
+            ["g"] = 0.7529411764705882,
+            ["r"] = 0.5137254901960784
+          }
+        },
+        ["background"] = {
+          ["applyColor"] = true,
+          ["asset"] = "grey",
+          ["alpha"] = 1
+        },
+        ["marker"] = {
+          ["asset"] = "wide/glow"
+        },
+        ["kind"] = "cast",
+        ["border"] = {
+          ["asset"] = "wide/blizzard-classic",
+          ["color"] = {
+            ["b"] = 0.6666666666666666,
+            ["g"] = 0.6666666666666666,
+            ["r"] = 0.6666666666666666
+          }
+        },
+        ["anchor"] = {
+          "TOP",
+          0,
+          -5
+        }
+      }
+    },
+    ["markers"] = {
+      {
+        ["scale"] = 0.9,
+        ["color"] = {
+          ["b"] = 1,
+          ["g"] = 1,
+          ["r"] = 1
+        },
+        ["kind"] = "quest",
+        ["asset"] = "normal/quest-blizzard",
+        ["anchor"] = {
+          "RIGHT",
+          -64,
+          0
+        }
+      },
+      {
+        ["scale"] = 0.53,
+        ["color"] = {
+          ["b"] = 0.4980392156862745,
+          ["g"] = 0.4823529411764706,
+          ["r"] = 0.392156862745098
+        },
+        ["kind"] = "cannotInterrupt",
+        ["asset"] = "normal/blizzard-shield",
+        ["anchor"] = {
+          "TOPLEFT",
+          -68,
+          -8
+        }
+      },
+      {
+        ["scale"] = 0.8,
+        ["color"] = {
+          ["b"] = 1,
+          ["g"] = 1,
+          ["r"] = 1
+        },
+        ["kind"] = "elite",
+        ["asset"] = "special/blizzard-elite",
+        ["anchor"] = {
+          "LEFT",
+          -61,
+          0
+        }
+      },
+      {
+        ["scale"] = 1,
+        ["color"] = {
+          ["b"] = 1,
+          ["g"] = 1,
+          ["r"] = 1
+        },
+        ["kind"] = "raid",
+        ["asset"] = "normal/blizzard-raid",
+        ["anchor"] = {
+          "BOTTOM",
+          0,
+          20
+        }
+      }
+    },
+    ["auras"] = {
+      {
+        ["anchor"] = {
+          "BOTTOMLEFT",
+          -63,
+          25
+        },
+        ["kind"] = "debuffs",
+        ["showCountdown"] = true,
+        ["scale"] = 1
+      },
+      {
+        ["anchor"] = {
+          "RIGHT",
+          -68,
+          0
+        },
+        ["kind"] = "buffs",
+        ["showCountdown"] = true,
+        ["scale"] = 1
+      },
+      {
+        ["anchor"] = {
+          "LEFT",
+          68,
+          0
+        },
+        ["kind"] = "crowdControl",
+        ["showCountdown"] = true,
+        ["scale"] = 1
+      }
+    }
+  }
+end

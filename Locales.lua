@@ -76,6 +76,7 @@ L["BEAVER"] = "Beaver"
 L["HARE"] = "Hare"
 L["HEDGEHOG"] = "Hedgehog"
 L["BLIZZARD"] = "Blizzard"
+L["BLIZZARD_CLASSIC"] = "Blizzard Classic"
 L["CUSTOM"] = "Custom"
 
 L["ADD_WIDGET"] = "Add Widget"

@@ -606,6 +606,7 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
       addonTable.Locales.HEDGEHOG,
       addonTable.Locales.BEAVER,
       addonTable.Locales.BLIZZARD,
+      addonTable.Locales.BLIZZARD_CLASSIC,
     }, {
       "custom",
       "squirrel",
@@ -614,6 +615,7 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
       "hedgehog",
       "beaver",
       "blizzard",
+      "blizzard-classic",
     })
 
     styleDropdown:SetPoint("TOP")

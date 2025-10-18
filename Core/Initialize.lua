@@ -70,6 +70,8 @@ local function SetStyle()
     design = addonTable.Design.GetDefaultDesignHare()
   elseif addonTable.Config.Get(addonTable.Config.Options.STYLE) == "blizzard" then
     design = addonTable.Design.GetDefaultDesignBlizzard()
+  elseif addonTable.Config.Get(addonTable.Config.Options.STYLE) == "blizzard-classic" then
+    design = addonTable.Design.GetDefaultDesignBlizzardClassic()
   elseif addonTable.Config.Get(addonTable.Config.Options.STYLE) ~= "custom" then
     design = addonTable.Design.GetDefaultDesignSquirrel()
   end
