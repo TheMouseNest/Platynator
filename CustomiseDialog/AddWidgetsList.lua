@@ -172,12 +172,20 @@ addonTable.CustomiseDialog.DesignWidgets = {
     name = addonTable.Locales.CAST_NAME,
     kind = "texts",
     default = {
-      {
-        kind = "castSpellName",
-        scale = 1,
-        anchor = {"TOPLEFT", -140, 50},
-        color = GetColor("FFFFFF"),
-      },
+      kind = "castSpellName",
+      scale = 1,
+      anchor = {"TOPLEFT", -140, 50},
+      color = GetColor("FFFFFF"),
+    },
+  },
+  {
+    name = addonTable.Locales.LEVEL,
+    kind = "texts",
+    default = {
+      kind = "level",
+      scale = 1,
+      anchor = {"TOPLEFT", -140, 50},
+      color = GetColor("FFFFFF"),
     },
   },
   {

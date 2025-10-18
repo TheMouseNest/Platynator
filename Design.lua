@@ -1085,7 +1085,22 @@ function addonTable.Design.GetDefaultDesignBlizzardClassic()
           0,
           -8
         }
-      }
+      },
+      {
+        ["widthLimit"] = 18,
+        ["color"] = {
+          ["b"] = 0,
+          ["g"] = 1,
+          ["r"] = 0.874509871006012,
+        },
+        ["kind"] = "level",
+        ["anchor"] = {
+          "RIGHT",
+          82,
+          0,
+        },
+        ["scale"] = 1,
+      },
     },
     ["highlights"] = {},
     ["bars"] = {
@@ -1093,7 +1108,7 @@ function addonTable.Design.GetDefaultDesignBlizzardClassic()
         ["relativeTo"] = 0,
         ["scale"] = 1,
         ["border"] = {
-          ["asset"] = "wide/blizzard-classic",
+          ["asset"] = "wide/blizzard-classic-level",
           ["color"] = {
             ["a"] = 1,
             ["b"] = 0.2117647230625153,
