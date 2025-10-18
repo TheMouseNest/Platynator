@@ -1051,208 +1051,11 @@ end
 function addonTable.Design.GetDefaultDesignBlizzardClassic()
   return {
     ["appliesToAll"] = true,
-    font = {
-      asset = "FritzQuadrata",
-      flags = "OUTLINE",
+    ["font"] = {
+      ["asset"] = "FritzQuadrata",
+      ["flags"] = "OUTLINE"
     },
     ["specialBars"] = {},
-    ["texts"] = {
-      {
-        ["widthLimit"] = 124,
-        ["scale"] = 1,
-        ["kind"] = "creatureName",
-        ["color"] = {
-          ["b"] = 1,
-          ["g"] = 1,
-          ["r"] = 1
-        },
-        ["anchor"] = {
-          "BOTTOM",
-          0,
-          9
-        }
-      },
-      {
-        ["scale"] = 0.95,
-        ["kind"] = "castSpellName",
-        ["color"] = {
-          ["b"] = 1,
-          ["g"] = 1,
-          ["r"] = 1
-        },
-        ["anchor"] = {
-          "TOP",
-          0,
-          -8
-        }
-      },
-      {
-        ["widthLimit"] = 18,
-        ["color"] = {
-          ["b"] = 0,
-          ["g"] = 1,
-          ["r"] = 0.874509871006012,
-        },
-        ["kind"] = "level",
-        ["anchor"] = {
-          "RIGHT",
-          82,
-          0,
-        },
-        ["scale"] = 1,
-      },
-    },
-    ["highlights"] = {},
-    ["bars"] = {
-      {
-        ["relativeTo"] = 0,
-        ["scale"] = 1,
-        ["border"] = {
-          ["asset"] = "wide/blizzard-classic-level",
-          ["color"] = {
-            ["a"] = 1,
-            ["b"] = 0.2117647230625153,
-            ["g"] = 0.760784387588501,
-            ["r"] = 1
-          }
-        },
-        ["colors"] = {
-          ["npc"] = {
-            ["neutral"] = GetColor("C9C610"),
-            ["friendly"] = GetColor("0ece02"),
-            ["hostile"] = GetColor("fd3132"),
-          },
-          ["threat"] = {
-            ["transition"] = {
-              ["b"] = 0,
-              ["g"] = 0.6274509803921569,
-              ["r"] = 1
-            },
-            ["safe"] = {
-              ["b"] = 0.9019607843137255,
-              ["g"] = 0.5882352941176471,
-              ["r"] = 0.05882352941176471
-            },
-            ["warning"] = GetColor("fd3132"),
-          }
-        },
-        ["marker"] = {
-          ["asset"] = "wide/glow"
-        },
-        ["anchor"] = {},
-        ["background"] = {
-          ["applyColor"] = true,
-          ["asset"] = "grey",
-          ["alpha"] = 1
-        },
-        ["foreground"] = {
-          ["asset"] = "wide/fade-bottom"
-        },
-        ["kind"] = "health"
-      },
-      {
-        ["foreground"] = {
-          ["asset"] = "wide/fade-bottom"
-        },
-        ["scale"] = 1,
-        ["colors"] = {
-          ["normal"] = {
-            ["b"] = 0,
-            ["g"] = 0.5490196078431373,
-            ["r"] = 0.9882352941176471
-          },
-          ["uninterruptable"] = {
-            ["b"] = 0.7647058823529411,
-            ["g"] = 0.7529411764705882,
-            ["r"] = 0.5137254901960784
-          }
-        },
-        ["background"] = {
-          ["applyColor"] = true,
-          ["asset"] = "grey",
-          ["alpha"] = 1
-        },
-        ["marker"] = {
-          ["asset"] = "wide/glow"
-        },
-        ["kind"] = "cast",
-        ["border"] = {
-          ["asset"] = "wide/blizzard-classic",
-          ["color"] = {
-            ["b"] = 0.6666666666666666,
-            ["g"] = 0.6666666666666666,
-            ["r"] = 0.6666666666666666
-          }
-        },
-        ["anchor"] = {
-          "TOP",
-          0,
-          -5
-        }
-      }
-    },
-    ["markers"] = {
-      {
-        ["scale"] = 0.9,
-        ["color"] = {
-          ["b"] = 1,
-          ["g"] = 1,
-          ["r"] = 1
-        },
-        ["kind"] = "quest",
-        ["asset"] = "normal/quest-blizzard",
-        ["anchor"] = {
-          "RIGHT",
-          -64,
-          0
-        }
-      },
-      {
-        ["scale"] = 0.53,
-        ["color"] = {
-          ["b"] = 0.4980392156862745,
-          ["g"] = 0.4823529411764706,
-          ["r"] = 0.392156862745098
-        },
-        ["kind"] = "cannotInterrupt",
-        ["asset"] = "normal/blizzard-shield",
-        ["anchor"] = {
-          "TOPLEFT",
-          -68,
-          -8
-        }
-      },
-      {
-        ["scale"] = 0.8,
-        ["color"] = {
-          ["b"] = 1,
-          ["g"] = 1,
-          ["r"] = 1
-        },
-        ["kind"] = "elite",
-        ["asset"] = "special/blizzard-elite",
-        ["anchor"] = {
-          "LEFT",
-          -61,
-          0
-        }
-      },
-      {
-        ["scale"] = 1,
-        ["color"] = {
-          ["b"] = 1,
-          ["g"] = 1,
-          ["r"] = 1
-        },
-        ["kind"] = "raid",
-        ["asset"] = "normal/blizzard-raid",
-        ["anchor"] = {
-          "BOTTOM",
-          0,
-          20
-        }
-      }
-    },
     ["auras"] = {
       {
         ["anchor"] = {
@@ -1283,6 +1086,219 @@ function addonTable.Design.GetDefaultDesignBlizzardClassic()
         ["kind"] = "crowdControl",
         ["showCountdown"] = true,
         ["scale"] = 1
+      }
+    },
+    ["highlights"] = {},
+    ["bars"] = {
+      {
+        ["relativeTo"] = 0,
+        ["scale"] = 1,
+        ["border"] = {
+          ["asset"] = "wide/blizzard-classic-level",
+          ["color"] = {
+            ["a"] = 1,
+            ["r"] = 1,
+            ["g"] = 0.760784387588501,
+            ["b"] = 0.2117647230625153
+          }
+        },
+        ["colors"] = {
+          ["npc"] = {
+            ["neutral"] = {
+              ["b"] = 0.06274509803921569,
+              ["g"] = 0.7764705882352941,
+              ["r"] = 0.788235294117647
+            },
+            ["friendly"] = {
+              ["b"] = 0.00784313725490196,
+              ["g"] = 0.807843137254902,
+              ["r"] = 0.05490196078431373
+            },
+            ["hostile"] = {
+              ["b"] = 0.196078431372549,
+              ["g"] = 0.1921568627450981,
+              ["r"] = 0.9921568627450981
+            }
+          },
+          ["threat"] = {
+            ["transition"] = {
+              ["r"] = 1,
+              ["g"] = 0.6274509803921569,
+              ["b"] = 0
+            },
+            ["safe"] = {
+              ["r"] = 0.05882352941176471,
+              ["g"] = 0.5882352941176471,
+              ["b"] = 0.9019607843137255
+            },
+            ["warning"] = {
+              ["b"] = 0.196078431372549,
+              ["g"] = 0.1921568627450981,
+              ["r"] = 0.9921568627450981
+            }
+          }
+        },
+        ["kind"] = "health",
+        ["anchor"] = {},
+        ["background"] = {
+          ["applyColor"] = true,
+          ["asset"] = "grey",
+          ["alpha"] = 1
+        },
+        ["foreground"] = {
+          ["asset"] = "wide/fade-bottom"
+        },
+        ["marker"] = {
+          ["asset"] = "wide/glow"
+        }
+      },
+      {
+        ["anchor"] = {
+          "TOP",
+          0,
+          -8
+        },
+        ["marker"] = {
+          ["asset"] = "wide/glow"
+        },
+        ["colors"] = {
+          ["normal"] = {
+            ["r"] = 0.9882352941176471,
+            ["g"] = 0.5490196078431373,
+            ["b"] = 0
+          },
+          ["uninterruptable"] = {
+            ["r"] = 0.5137254901960784,
+            ["g"] = 0.7529411764705882,
+            ["b"] = 0.7647058823529411
+          }
+        },
+        ["kind"] = "cast",
+        ["foreground"] = {
+          ["asset"] = "wide/fade-bottom"
+        },
+        ["background"] = {
+          ["applyColor"] = true,
+          ["asset"] = "grey",
+          ["alpha"] = 1
+        },
+        ["border"] = {
+          ["asset"] = "wide/blizzard-classic",
+          ["color"] = {
+            ["r"] = 0.6666666666666666,
+            ["g"] = 0.6666666666666666,
+            ["b"] = 0.6666666666666666
+          }
+        },
+        ["scale"] = 1
+      }
+    },
+    ["markers"] = {
+      {
+        ["anchor"] = {
+          "RIGHT",
+          -64,
+          0
+        },
+        ["scale"] = 0.9,
+        ["kind"] = "quest",
+        ["asset"] = "normal/quest-blizzard",
+        ["color"] = {
+          ["r"] = 1,
+          ["g"] = 1,
+          ["b"] = 1
+        }
+      },
+      {
+        ["anchor"] = {
+          "TOPLEFT",
+          -68,
+          -10
+        },
+        ["scale"] = 0.53,
+        ["kind"] = "cannotInterrupt",
+        ["asset"] = "normal/blizzard-shield",
+        ["color"] = {
+          ["r"] = 0.392156862745098,
+          ["g"] = 0.4823529411764706,
+          ["b"] = 0.4980392156862745
+        }
+      },
+      {
+        ["anchor"] = {
+          "LEFT",
+          -61,
+          0
+        },
+        ["scale"] = 0.8,
+        ["kind"] = "elite",
+        ["asset"] = "special/blizzard-elite",
+        ["color"] = {
+          ["r"] = 1,
+          ["g"] = 1,
+          ["b"] = 1
+        }
+      },
+      {
+        ["anchor"] = {
+          "BOTTOM",
+          0,
+          20
+        },
+        ["scale"] = 1,
+        ["kind"] = "raid",
+        ["asset"] = "normal/blizzard-raid",
+        ["color"] = {
+          ["r"] = 1,
+          ["g"] = 1,
+          ["b"] = 1
+        }
+      }
+    },
+    ["texts"] = {
+      {
+        ["widthLimit"] = 124,
+        ["scale"] = 1,
+        ["kind"] = "creatureName",
+        ["anchor"] = {
+          "BOTTOM",
+          0,
+          9
+        },
+        ["color"] = {
+          ["r"] = 1,
+          ["g"] = 1,
+          ["b"] = 1
+        }
+      },
+      {
+        ["scale"] = 0.95,
+        ["kind"] = "castSpellName",
+        ["anchor"] = {
+          "TOP",
+          0,
+          -11
+        },
+        ["color"] = {
+          ["r"] = 1,
+          ["g"] = 1,
+          ["b"] = 1
+        }
+      },
+      {
+        ["widthLimit"] = 18,
+        ["color"] = {
+          ["r"] = 0.874509871006012,
+          ["g"] = 1,
+          ["b"] = 0
+        },
+        ["kind"] = "level",
+        ["scale"] = 1,
+        ["anchor"] = {
+          "RIGHT",
+          82,
+          0
+        }
       }
     }
   }
