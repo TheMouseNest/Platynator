@@ -189,6 +189,16 @@ addonTable.CustomiseDialog.DesignWidgets = {
     },
   },
   {
+    name = addonTable.Locales.TARGET,
+    kind = "texts",
+    default = {
+      kind = "target",
+      scale = 1,
+      anchor = {"TOPLEFT", -140, 50},
+      color = GetColor("FFFFFF"),
+    },
+  },
+  {
     name = addonTable.Locales.ICONS,
     special = "header",
   },

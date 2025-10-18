@@ -40,6 +40,7 @@ Display/CreatureTextMSP.lua
 Display/HealthText.lua
 Display/CastText.lua
 Display/LevelText.lua
+Display/UnitTargetText.lua
 Display/Highlight.lua
 Display/QuestMarker.lua
 Display/CannotInterruptMarker.lua

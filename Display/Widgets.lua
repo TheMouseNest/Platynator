@@ -321,6 +321,8 @@ function addonTable.Display.GetText(frame, parent)
       Mixin(frame, addonTable.Display.CastTextMixin)
     elseif details.kind == "level" then
       Mixin(frame, addonTable.Display.LevelTextMixin)
+    elseif details.kind == "target" then
+      Mixin(frame, addonTable.Display.UnitTargetTextMixin)
     else
       assert(false)
     end
