@@ -364,8 +364,8 @@ function addonTable.Display.GetWidgets(design, parent, isEditor)
     local w = pools.bars:Acquire()
     poolType[w] = "bars"
     w:SetParent(parent)
-    w:Init(barDetails)
     w:Show()
+    w:Init(barDetails)
     w:SetFrameStrata("MEDIUM")
     w:SetFrameLevel(500)
     w.kind = "bars"
@@ -377,8 +377,8 @@ function addonTable.Display.GetWidgets(design, parent, isEditor)
     local w = pools.texts:Acquire()
     poolType[w] = "texts"
     w:SetParent(parent)
-    w:Init(textDetails)
     w:Show()
+    w:Init(textDetails)
     w:SetFrameStrata("MEDIUM")
     w:SetFrameLevel(1000)
     w.kind = "texts"
@@ -390,8 +390,8 @@ function addonTable.Display.GetWidgets(design, parent, isEditor)
     local w = pools.highlights:Acquire()
     poolType[w] = "highlights"
     w:SetParent(parent)
-    w:Init(highlightDetails)
     w:Show()
+    w:Init(highlightDetails)
     w:SetFrameStrata("MEDIUM")
     w:SetFrameLevel(200 + index)
     w.kind = "highlights"
@@ -404,8 +404,8 @@ function addonTable.Display.GetWidgets(design, parent, isEditor)
     local w = pools.powers:Acquire()
     poolType[w] = "powers"
     w:SetParent(parent)
-    w:Init(specialDetails)
     w:Show()
+    w:Init(specialDetails)
     w:SetFrameStrata("HIGH")
     w.kind = "specialBars"
     w.kindIndex = index
@@ -416,8 +416,8 @@ function addonTable.Display.GetWidgets(design, parent, isEditor)
     local w = pools.markers:Acquire()
     poolType[w] = "markers"
     w:SetParent(parent)
-    w:Init(markerDetails)
     w:Show()
+    w:Init(markerDetails)
     w:SetFrameStrata("HIGH")
     w.kind = "markers"
     w.kindIndex = index

@@ -161,10 +161,12 @@ function addonTable.Display.ManagerMixin:OnEvent(eventName, ...)
     if nameplate and nameplate.UnitFrame and not UnitIsUnit("player", unit) then
       local newDisplay = self.displayPool:Acquire()
       self.nameplateDisplays[unit] = newDisplay
+      newDisplay:SetParent(nameplate)
+      newDisplay:Show()
       if newDisplay.styleIndex ~= self.styleIndex then
         newDisplay:InitializeWidgets()
       end
-      newDisplay:Install(nameplate)
+      newDisplay:SetPoint("CENTER")
       newDisplay:SetUnit(unit)
       self:PositionBuffs(newDisplay)
     end
