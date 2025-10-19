@@ -12,6 +12,9 @@ function addonTable.Display.CastIconMarkerMixin:SetUnit(unit)
     self:RegisterUnitEvent("UNIT_SPELLCAST_CHANNEL_START", self.unit)
     self:RegisterUnitEvent("UNIT_SPELLCAST_CHANNEL_STOP", self.unit)
 
+    self:RegisterUnitEvent("UNIT_SPELLCAST_INTERRUPTED", self.unit)
+    self:RegisterUnitEvent("UNIT_SPELLCAST_FAILED", self.unit)
+
     self:ApplyCasting()
   else
     self:Strip()

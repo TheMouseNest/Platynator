@@ -13,6 +13,7 @@ function addonTable.Display.CastBarMixin:SetUnit(unit)
     self:RegisterUnitEvent("UNIT_SPELLCAST_CHANNEL_STOP", self.unit)
 
     self:RegisterUnitEvent("UNIT_SPELLCAST_INTERRUPTED", self.unit)
+    self:RegisterUnitEvent("UNIT_SPELLCAST_FAILED", self.unit)
 
     self:ApplyCasting()
   else
