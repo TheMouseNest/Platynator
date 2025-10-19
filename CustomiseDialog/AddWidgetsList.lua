@@ -214,6 +214,17 @@ addonTable.CustomiseDialog.DesignWidgets = {
     name = addonTable.Locales.CANNOT_INTERRUPT,
     kind = "markers",
     default = {
+      kind = "castIcon",
+      scale = 1,
+      asset = "normal/cast-icon",
+      color = GetColor("ffffff"),
+      anchor = {"TOPLEFT", -140, 50},
+    },
+  },
+  {
+    name = addonTable.Locales.CANNOT_INTERRUPT,
+    kind = "markers",
+    default = {
       kind = "cannotInterrupt",
       scale = 1 * 0.5,
       asset = "normal/shield-soft",

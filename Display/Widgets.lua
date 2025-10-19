@@ -267,6 +267,8 @@ function addonTable.Display.GetMarker(frame, parent)
       Mixin(frame, addonTable.Display.EliteMarkerMixin)
     elseif details.kind == "raid" then
       Mixin(frame, addonTable.Display.RaidMarkerMixin)
+    elseif details.kind == "castIcon" then
+      Mixin(frame, addonTable.Display.CastIconMarkerMixin)
     else
       assert(false)
     end

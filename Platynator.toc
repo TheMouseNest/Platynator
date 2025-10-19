@@ -44,6 +44,7 @@ Display/UnitTargetText.lua
 Display/Highlight.lua
 Display/QuestMarker.lua
 Display/CannotInterruptMarker.lua
+Display/CastIconMarker.lua
 Display/EliteMarker.lua
 Display/RaidMarker.lua
 Display/Widgets.lua
