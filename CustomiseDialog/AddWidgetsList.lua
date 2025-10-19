@@ -211,7 +211,7 @@ addonTable.CustomiseDialog.DesignWidgets = {
     },
   },
   {
-    name = addonTable.Locales.CANNOT_INTERRUPT,
+    name = addonTable.Locales.CAST_ICON,
     kind = "markers",
     default = {
       kind = "castIcon",
