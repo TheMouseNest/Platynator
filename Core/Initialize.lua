@@ -79,6 +79,8 @@ local function SetStyle()
     design = addonTable.Design.GetDefaultDesignSquirrel()
   end
 
+  addonTable.Core.MigrateSettings(design) -- Saves me updating the designs every time there's a new parameter
+
   local function GetRect(asset, scale, anchor)
     local width = asset.width * scale
     local height = asset.height * scale
@@ -141,8 +143,6 @@ local function SetStyle()
   end
 
   addonTable.Rect = {left = left, bottom = bottom, width = right - left, height = top - bottom}
-
-  addonTable.Core.MigrateSettings(design)
 
   addonTable.Config.Set(addonTable.Config.Options.DESIGN, design)
 end
