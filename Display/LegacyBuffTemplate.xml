@@ -1,5 +1,5 @@
 <Ui>
-  <Frame name="PlatynatorNameplateBuffButtonTemplate" virtual="true" enableMouse="true" hidden="true">
+  <Frame name="PlatynatorNameplateBuffButtonTemplate" virtual="true" hidden="true">
     <Size x="20" y="20"/>
     <Layers>
       <Layer level="BACKGROUND">
