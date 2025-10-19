@@ -29,7 +29,7 @@ function addonTable.Display.NameplateMixin:OnLoad()
 
     local function GetCallback(frame)
       return function(data)
-        if not frame:IsVisible() then
+        if not frame:IsShown() then
           return
         end
         local keys = GetKeysArray(data)
