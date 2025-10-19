@@ -13,11 +13,14 @@ local offscreen = CreateFrame("Frame")
 offscreen:SetPoint("TOPLEFT", UIParent, "TOPRIGHT")
 addonTable.offscreenFrame = hidden
 
-function addonTable.Core.MigrateSettings()
-  local design = addonTable.Config.Get(addonTable.Config.Options.DESIGN)
+function addonTable.Core.MigrateSettings(design)
+  local design = design or addonTable.Config.Get(addonTable.Config.Options.DESIGN)
   for _, text in ipairs(design.texts) do
     if not text.color then
       text.color = {r = 1, g = 1, b = 1}
+    end
+    if not text.align then
+      text.align = "CENTER"
     end
   end
   for _, marker in ipairs(design.markers) do
@@ -139,6 +142,8 @@ local function SetStyle()
 
   addonTable.Rect = {left = left, bottom = bottom, width = right - left, height = top - bottom}
 
+  addonTable.Core.MigrateSettings(design)
+
   addonTable.Config.Set(addonTable.Config.Options.DESIGN, design)
 end
 
@@ -159,7 +164,7 @@ function addonTable.Core.Initialize()
     end
   end)
 
-  addonTable.Core.MigrateSettings()
+  addonTable.Core.MigrateSettings(design)
 
   addonTable.CustomiseDialog.Initialize()
 

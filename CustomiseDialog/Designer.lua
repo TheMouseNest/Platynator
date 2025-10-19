@@ -401,6 +401,29 @@ local function GetTextSettings(parent)
   colorPicker:SetPoint("TOP", allFrames[#allFrames], "BOTTOM")
   table.insert(allFrames, colorPicker)
 
+  do
+    local alignDropdown = addonTable.CustomiseDialog.Components.GetBasicDropdown(container, addonTable.Locales.ALIGNMENT, function(value)
+      return currentText and currentText.align == value
+    end, function(value)
+      currentText.align = value
+      Announce()
+    end)
+    alignDropdown.option = addonTable.Config.Options.align
+
+    alignDropdown:Init({
+      addonTable.Locales.CENTER,
+      addonTable.Locales.LEFT,
+      addonTable.Locales.RIGHT,
+    }, {
+      "CENTER",
+      "LEFT",
+      "RIGHT",
+    })
+
+    alignDropdown:SetPoint("TOP", allFrames[#allFrames], "BOTTOM")
+    table.insert(allFrames, alignDropdown)
+  end
+
   local settingsFrames = {}
 
   local function Generate(func)

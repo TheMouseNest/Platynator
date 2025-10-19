@@ -311,6 +311,7 @@ function addonTable.Display.GetText(frame, parent)
 
     frame.text:SetText("TEST")
     frame.text:SetTextScale(details.scale)
+    frame.text:SetJustifyH(details.align)
     frame.details = details
 
     if details.kind == "health" then
