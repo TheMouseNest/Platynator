@@ -734,11 +734,26 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
   end
 
   local SetSelection
+  local UpdateWidgetPoints
   local widgets
   local selectionIndex = 0
   local autoSelectedDetails
 
+  local function DeleteCurrentWidget()
+    if selectionIndex > 0 then
+      local kind = widgets[selectionIndex].kind
+      local details = widgets[selectionIndex].details
+      local design = addonTable.Config.Get(addonTable.Config.Options.DESIGN)
+      local index = tIndexOf(design[kind], details)
+      table.remove(design[kind], index)
+      selectionIndex = 0
+      Announce()
+    end
+  end
+
   local selector = CreateFrame("Frame", nil, container)
+  local keyboardTrap = CreateFrame("Frame", nil, container)
+  keyboardTrap:Hide()
   local selectionTexture = selector:CreateTexture()
   selectionTexture:SetTexture("Interface/AddOns/Platynator/Assets/selection-outline.png")
   selectionTexture:SetTextureSliceMargins(45, 45, 45, 45)
@@ -760,6 +775,32 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
   previewInset:SetPoint("LEFT", 20, 0)
   previewInset:SetPoint("RIGHT", -20, 0)
   previewInset:SetHeight(220)
+
+  keyboardTrap:SetScript("OnKeyDown", function(_, key)
+    local amount = 1
+    if key == "LEFT" then
+      widgets[selectionIndex]:AdjustPointsOffset(-amount, 0)
+      UpdateWidgetPoints(widgets[selectionIndex], 0)
+    elseif key == "RIGHT" then
+      widgets[selectionIndex]:AdjustPointsOffset(amount, 0)
+      UpdateWidgetPoints(widgets[selectionIndex], 0)
+    elseif key == "UP" then
+      widgets[selectionIndex]:AdjustPointsOffset(0, amount)
+      UpdateWidgetPoints(widgets[selectionIndex], 0)
+    elseif key == "DOWN" then
+      widgets[selectionIndex]:AdjustPointsOffset(0, -amount)
+      UpdateWidgetPoints(widgets[selectionIndex], 0)
+    elseif key == "DELETE" then
+      DeleteCurrentWidget()
+    else
+      keyboardTrap:SetPropagateKeyboardInput(true)
+    end
+  end)
+  keyboardTrap:RegisterEvent("PLAYER_REGEN_ENABLED")
+  keyboardTrap:RegisterEvent("PLAYER_REGEN_DISABLED")
+  keyboardTrap:SetScript("OnEvent", function(_, event)
+    keyboardTrap:SetShown(event == "PLAYER_REGEN_ENABLED" and selectionIndex ~= 0)
+  end)
 
   local addButton = CreateFrame("DropdownButton", nil, previewInset, "UIPanelDynamicResizeButtonTemplate")
   addButton:SetText(addonTable.Locales.ADD_WIDGET)
@@ -798,15 +839,7 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
   DynamicResizeButton_Resize(deleteButton)
   deleteButton:SetPoint("TOPRIGHT", 0, addButton:GetHeight() + 2)
   deleteButton:SetScript("OnClick", function()
-    if selectionIndex > 0 then
-      local kind = widgets[selectionIndex].kind
-      local details = widgets[selectionIndex].details
-      local design = addonTable.Config.Get(addonTable.Config.Options.DESIGN)
-      local index = tIndexOf(design[kind], details)
-      table.remove(design[kind], index)
-      selectionIndex = 0
-      Announce()
-    end
+    DeleteCurrentWidget()
   end)
 
   local preview = CreateFrame("Frame", nil, previewInset)
@@ -860,45 +893,7 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
       end)
       w:SetScript("OnDragStop", function()
         w:StopMovingOrSizing()
-        local left, bottom, width, height = w:GetRect()
-        local widgetRect = {left = left, bottom = bottom, width = width, height = height}
-        left, bottom, width, height = preview:GetRect()
-        local previewRect = {left = left, bottom = bottom, width = width, height = height}
-        local widgetCenter = {x = widgetRect.left + widgetRect.width / 2, y = widgetRect.bottom + widgetRect.height / 2}
-        local previewCenter = {x = previewRect.left + previewRect.width / 2, y = previewRect.bottom + previewRect.height / 2}
-
-        local point, x, y = "", 0, 0
-
-        if math.floor((math.abs(widgetCenter.y - previewCenter.y))) <= 4 then
-          point = point
-        elseif widgetCenter.y < previewCenter.y then
-          point = "TOP" .. point
-          y = widgetRect.bottom + widgetRect.height - previewCenter.y
-        else
-          point = "BOTTOM" .. point
-          y = widgetRect.bottom - previewCenter.y
-        end
-
-        if math.floor(math.abs(widgetCenter.x - previewCenter.x)) <= 4 then
-          point = point
-        elseif widgetCenter.x < previewCenter.x and point == "" or widgetCenter.x > previewCenter.x and point ~= "" then
-          point = point .. "RIGHT"
-          x = widgetRect.left + widgetRect.width - previewCenter.x
-        else
-          point = point .. "LEFT"
-          x = widgetRect.left - previewCenter.x
-        end
-
-        if point == "" then
-          w.details.anchor = {}
-        elseif x == 0 and y == 0 then
-          w.details.anchor = {point}
-        else
-          w.details.anchor = {point, Round(x), Round(y)}
-        end
-        C_Timer.After(0, function()
-          Announce()
-        end)
+        UpdateWidgetPoints(w, 4)
       end)
       w:SetScript("OnMouseUp", function()
         if selectionIndex == tIndexOf(widgets, w) then
@@ -908,6 +903,61 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
         end
       end)
     end
+  end
+
+  UpdateWidgetPoints = function(w, snapping)
+    snapping = snapping or 2
+    local left, bottom, width, height = w:GetRect()
+    local widgetRect = {left = left, bottom = bottom, width = width, height = height}
+    left, bottom, width, height = preview:GetRect()
+    local previewRect = {left = left, bottom = bottom, width = width, height = height}
+    local widgetCenter = {x = widgetRect.left + widgetRect.width / 2, y = widgetRect.bottom + widgetRect.height / 2}
+    local previewCenter = {x = previewRect.left + previewRect.width / 2, y = previewRect.bottom + previewRect.height / 2}
+
+    local point, x, y = "", 0, 0
+
+    if math.ceil(math.abs(widgetCenter.y - previewCenter.y)) <= snapping then
+      point = point
+    elseif widgetCenter.y < previewCenter.y then
+      point = "TOP" .. point
+      y = widgetRect.bottom + widgetRect.height - previewCenter.y
+    else
+      point = "BOTTOM" .. point
+      y = widgetRect.bottom - previewCenter.y
+    end
+
+    if w.kind ~= "auras" then
+      if math.floor(math.abs(widgetCenter.x - previewCenter.x)) <= snapping then
+        point = point
+      elseif widgetCenter.x < previewCenter.x then
+        point = point .. "LEFT"
+        x = widgetRect.left - previewCenter.x
+      else
+        point = point .. "RIGHT"
+        x = widgetRect.left + widgetRect.width - previewCenter.x
+      end
+    else
+      if math.ceil(math.abs(widgetCenter.x - previewCenter.x)) <= snapping then
+        point = point
+      elseif widgetCenter.x < previewCenter.x and point == "" or widgetCenter.x > previewCenter.x and point ~= "" then
+        point = point .. "RIGHT"
+        x = widgetRect.left + widgetRect.width - previewCenter.x
+      else
+        point = point .. "LEFT"
+        x = widgetRect.left - previewCenter.x
+      end
+    end
+
+    if point == "" then
+      w.details.anchor = {}
+    elseif x == 0 and y == 0 then
+      w.details.anchor = {point}
+    else
+      w.details.anchor = {point, Round(x), Round(y)}
+    end
+    C_Timer.After(0, function()
+      Announce()
+    end)
   end
 
   local function GenerateWidgets()
@@ -987,44 +1037,7 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
       end)
       w:SetScript("OnDragStop", function()
         w:StopMovingOrSizing()
-        local left, bottom, width, height = w:GetRect()
-        local widgetRect = {left = left, bottom = bottom, width = width, height = height}
-        left, bottom, width, height = preview:GetRect()
-        local previewRect = {left = left, bottom = bottom, width = width, height = height}
-        local widgetCenter = {x = widgetRect.left + widgetRect.width / 2, y = widgetRect.bottom + widgetRect.height / 2}
-        local previewCenter = {x = previewRect.left + previewRect.width / 2, y = previewRect.bottom + previewRect.height / 2}
-
-        local point, x, y = "", 0, 0
-        if math.floor(math.abs(widgetCenter.x - previewCenter.x)) <= 1 then
-          point = point
-        elseif widgetCenter.x < previewCenter.x then
-          point = "LEFT"
-          x = widgetRect.left - previewCenter.x
-        else
-          point = "RIGHT"
-          x = widgetRect.left + widgetRect.width - previewCenter.x
-        end
-
-        if math.floor((math.abs(widgetCenter.y - previewCenter.y))) <= 1 then
-          point = point
-        elseif widgetCenter.y < previewCenter.y then
-          point = "TOP" .. point
-          y = widgetRect.bottom + widgetRect.height - previewCenter.y
-        else
-          point = "BOTTOM" .. point
-          y = widgetRect.bottom - previewCenter.y
-        end
-
-        if point == "" then
-          w.details.anchor = {}
-        elseif x == 0 and y == 0 then
-          w.details.anchor = {point}
-        else
-          w.details.anchor = {point, Round(x), Round(y)}
-        end
-        C_Timer.After(0, function()
-          Announce()
-        end)
+        UpdateWidgetPoints(w)
       end)
       w:SetScript("OnMouseUp", function()
         if selectionIndex == tIndexOf(widgets, w) then
@@ -1086,6 +1099,7 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
 
   SetSelection = function(w)
     if not w then
+      keyboardTrap:Hide()
       deleteButton:Disable()
       for _, frame in ipairs(settingsFrames) do
         frame:Hide()
@@ -1110,6 +1124,7 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
     selectionIndex = tIndexOf(widgets, w)
 
     selector:Show()
+    keyboardTrap:SetShown(not InCombatLockdown())
     selector:SetFrameStrata("HIGH")
     selector:SetPoint("TOPLEFT", w, "TOPLEFT", -2, 2)
     selector:SetPoint("BOTTOMRIGHT", w, "BOTTOMRIGHT", 2, -2)
