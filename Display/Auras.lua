@@ -25,7 +25,7 @@ end
 function addonTable.Display.AurasForNameplateMixin:SetUnit(unit)
   self.unit = unit
   if unit then
-    if UnitCanAttack("player", self.unit) then
+    if UnitCanAttack("player", self.unit) and not UnitIsPlayer(self.unit) then
       self:ScanAllAuras()
     else
       self:Reset()
