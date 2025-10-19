@@ -198,6 +198,10 @@ function addonTable.CustomiseDialog.Toggle()
   frame:SetPoint("CENTER")
   frame:Raise()
 
+  frame.CloseButton:SetScript("OnClick", function()
+    frame:Hide()
+  end)
+
   frame:SetMovable(true)
   frame:SetClampedToScreen(true)
   frame:RegisterForDrag("LeftButton")
