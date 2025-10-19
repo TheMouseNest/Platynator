@@ -370,7 +370,7 @@ function addonTable.Display.GetWidgets(design, parent, isEditor)
     w:Show()
     w:Init(barDetails)
     w:SetFrameStrata("MEDIUM")
-    w:SetFrameLevel(500)
+    w:SetFrameLevel(500 + index)
     w.kind = "bars"
     w.kindIndex = index
     table.insert(widgets, w)
@@ -383,7 +383,7 @@ function addonTable.Display.GetWidgets(design, parent, isEditor)
     w:Show()
     w:Init(textDetails)
     w:SetFrameStrata("MEDIUM")
-    w:SetFrameLevel(1000)
+    w:SetFrameLevel(1000 + index)
     w.kind = "texts"
     w.kindIndex = index
     table.insert(widgets, w)

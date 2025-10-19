@@ -1053,6 +1053,13 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
     for _, details in ipairs(design.auras) do
       local container = auraContainers[details.kind]
       container:Show()
+      if details.kind == "debuffs" then
+        container:SetFrameLevel(801)
+      elseif details.kind == "buffs" then
+        container:SetFrameLevel(802)
+      else
+        container:SetFrameLevel(803)
+      end
       container:SetSize(22 * container.count * details.scale, 20 * details.scale)
       container.Wrapper:SetScale(details.scale)
       container.details = details

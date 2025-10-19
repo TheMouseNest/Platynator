@@ -117,7 +117,9 @@ function addonTable.Display.NameplateMixin:InitializeWidgets()
   end
   local globalScale = 1
   if designInfo.debuffs then
+    self.DebuffDisplay:Show()
     self.DebuffDisplay:ClearAllPoints()
+    self.BuffDisplay:SetFrameLevel(800 + 1)
     self.DebuffDisplay.details = designInfo.debuffs
     if self.DebuffDisplay.Wrapped then
       self.DebuffDisplay.Wrapped:ClearAllPoints()
@@ -129,7 +131,9 @@ function addonTable.Display.NameplateMixin:InitializeWidgets()
     self.DebuffDisplay:Hide()
   end
   if designInfo.buffs then
+    self.BuffDisplay:Show()
     self.BuffDisplay:ClearAllPoints()
+    self.BuffDisplay:SetFrameLevel(800 + 2)
     self.BuffDisplay.details = designInfo.buffs
     if self.BuffDisplay.Wrapped then
       self.BuffDisplay.Wrapped:ClearAllPoints()
@@ -141,7 +145,9 @@ function addonTable.Display.NameplateMixin:InitializeWidgets()
     self.BuffDisplay:Hide()
   end
   if designInfo.crowdControl then
+    self.CrowdControlDisplay:Show()
     self.CrowdControlDisplay:ClearAllPoints()
+    self.CrowdControlDisplay:SetFrameLevel(800 + 3)
     self.CrowdControlDisplay.details = designInfo.crowdControl
     if self.CrowdControlDisplay.Wrapped then
       self.CrowdControlDisplay.Wrapped:ClearAllPoints()
