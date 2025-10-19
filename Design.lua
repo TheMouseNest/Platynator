@@ -1080,7 +1080,7 @@ function addonTable.Design.GetDefaultDesignBlizzardClassic()
       {
         ["anchor"] = {
           "LEFT",
-          68,
+          91,
           0
         },
         ["kind"] = "crowdControl",

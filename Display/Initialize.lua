@@ -71,6 +71,7 @@ function addonTable.Display.ManagerMixin:OnLoad()
 
         nameplate.UnitFrame:RegisterUnitEvent("UNIT_AURA", unit)
         nameplate.UnitFrame.AurasFrame:SetParent(nameplate)
+        nameplate.UnitFrame.AurasFrame:SetIgnoreParentScale(true)
       end
       if nameplate.UnitFrame.WidgetContainer then
         nameplate.UnitFrame.WidgetContainer:SetParent(nameplate)
@@ -92,6 +93,7 @@ function addonTable.Display.ManagerMixin:OnLoad()
         local namePlateStyle = GetCVar(NamePlateConstants.STYLE_CVAR)
         local unitNameInsideHealthBar = namePlateStyle == Enum.NamePlateStyle.Default or namePlateStyle == Enum.NamePlateStyle.Block
         UF.AurasFrame.DebuffListFrame:ClearAllPoints()
+        UF.AurasFrame:SetIgnoreParentScale(false)
         if unitNameInsideHealthBar then
           UF.AurasFrame.DebuffListFrame:SetPoint("BOTTOM", UF.HealthBarsContainer.healthBar, "TOP", 0, debuffPadding);
         else
@@ -143,12 +145,15 @@ function addonTable.Display.ManagerMixin:PositionBuffs(display)
     local auras = addonTable.Config.Get(addonTable.Config.Options.DESIGN).auras
     local debuffs = auras[1]
     self.ModifiedUFs[unit].AurasFrame.DebuffListFrame:ClearAllPoints()
+    self.ModifiedUFs[unit].AurasFrame.DebuffListFrame:SetScale(debuffs.scale)
     self.ModifiedUFs[unit].AurasFrame.DebuffListFrame:SetPoint(debuffs.anchor[1] or "CENTER", display.DebuffDisplay)
     local buffs = auras[2]
     self.ModifiedUFs[unit].AurasFrame.BuffListFrame:ClearAllPoints()
+    self.ModifiedUFs[unit].AurasFrame.BuffListFrame:SetScale(buffs.scale)
     self.ModifiedUFs[unit].AurasFrame.BuffListFrame:SetPoint(buffs.anchor[1] or "CENTER", display.BuffDisplay)
     local cc = auras[3]
     self.ModifiedUFs[unit].AurasFrame.CrowdControlListFrame:ClearAllPoints()
+    self.ModifiedUFs[unit].AurasFrame.CrowdControlListFrame:SetScale(cc.scale)
     self.ModifiedUFs[unit].AurasFrame.CrowdControlListFrame:SetPoint(cc.anchor[1] or "CENTER", display.CrowdControlDisplay)
   end
 end

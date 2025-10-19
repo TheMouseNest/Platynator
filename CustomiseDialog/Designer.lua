@@ -322,6 +322,50 @@ local function GetHealthTextSpecificSettings(parent)
   return container
 end
 
+local function GetAuraSettings(parent)
+  local container = CreateFrame("Frame", nil, parent)
+  local allFrames = {}
+
+  local currentAuras
+
+  local scaleSlider = addonTable.CustomiseDialog.Components.GetSlider(container, addonTable.Locales.AURA_SCALE, 1, 300, "%s%%", function(value)
+    local oldScale = currentAuras.scale
+    currentAuras.scale = value / 100
+    if currentAuras.scale ~= oldScale then
+      Announce()
+    end
+  end)
+
+  scaleSlider:SetPoint("TOP")
+  table.insert(allFrames, scaleSlider)
+
+  function container:Set(details)
+    currentAuras = details
+    scaleSlider:SetValue(Round(currentAuras.scale * 100))
+
+    for _, f in ipairs(allFrames) do
+      if f.DropDown then
+        f:SetValue()
+      end
+    end
+  end
+
+  function container:IsFor(kind, details)
+    return kind == "auras"
+  end
+
+  container:SetScript("OnHide", function()
+    currentAuras = nil
+  end)
+
+  container:SetHeight(200)
+  container:SetPoint("LEFT")
+  container:SetPoint("RIGHT")
+  container:Hide()
+
+  return container
+end
+
 local function GetTextSettings(parent)
   local container = CreateFrame("Frame", nil, parent)
   local allFrames = {}
@@ -692,7 +736,7 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
   previewInset:SetPoint("TOP", allFrames[#allFrames], "BOTTOM", 0, -30)
   previewInset:SetPoint("LEFT", 20, 0)
   previewInset:SetPoint("RIGHT", -20, 0)
-  previewInset:SetHeight(200)
+  previewInset:SetHeight(220)
 
   local addButton = CreateFrame("DropdownButton", nil, previewInset, "UIPanelDynamicResizeButtonTemplate")
   addButton:SetText(addonTable.Locales.ADD_WIDGET)
@@ -707,8 +751,7 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
         local skip = false
         if details.noDuplicates then
           for _, entry in ipairs(design[details.kind]) do
-            if entry.kind == details.kind then
-              rootDescription:CreateHeader(GRAY_FONT_COLOR:WrapTextInColorCode(details.name))
+            if entry.kind == details.default.kind then
               skip = true
               break
             end
@@ -720,6 +763,8 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
             autoSelectedDetails = design[details.kind][#design[details.kind]]
             Announce()
           end)
+        else
+          rootDescription:CreateTitle(GRAY_FONT_COLOR:WrapTextInColorCode(details.name))
         end
       end
     end
@@ -749,9 +794,102 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
   preview:SetFlattensRenderLayers(true)
   preview:SetScale(2)
 
+  local auraContainers = {
+    buffs = CreateFrame("Frame", nil, preview),
+    debuffs = CreateFrame("Frame", nil, preview),
+    crowdControl = CreateFrame("Frame", nil, preview),
+  }
+  do
+    local textures = {
+      buffs = {132117},
+      debuffs = {135959, 136096},
+      crowdControl = {135860},
+    }
+    for kind, w in pairs(auraContainers) do
+      w:SetSize(10, 10)
+      w.Wrapper = CreateFrame("Frame", nil, w)
+      w.Wrapper:SetSize(10, 20)
+      w.Wrapper:SetPoint("BOTTOMLEFT")
+      w.count = #textures[kind]
+      for index, tex in ipairs(textures[kind]) do
+        local buff = CreateFrame("Frame", nil, w.Wrapper, "PlatynatorNameplateBuffButtonTemplate")
+        buff:Show()
+        buff.Icon:SetTexture(tex)
+        buff:SetPoint("LEFT", (index - 1) * 22, 0)
+      end
+      w.kind = "auras"
+      w:SetScript("OnEnter", function()
+        hoverMarker:Show()
+        hoverMarker:SetFrameStrata("HIGH")
+        hoverMarker:ClearAllPoints()
+        hoverMarker:SetPoint("TOPLEFT", w, "TOPLEFT", -2, 2)
+        hoverMarker:SetPoint("BOTTOMRIGHT", w, "BOTTOMRIGHT", 2, -2)
+      end)
+      w:SetScript("OnLeave", function()
+        hoverMarker:Hide()
+      end)
+
+      w:SetMovable(true)
+      w:EnableMouse(true)
+      w:RegisterForDrag("LeftButton")
+      w:SetScript("OnDragStart", function()
+        w:StartMoving()
+      end)
+      w:SetScript("OnDragStop", function()
+        w:StopMovingOrSizing()
+        local left, bottom, width, height = w:GetRect()
+        local widgetRect = {left = left, bottom = bottom, width = width, height = height}
+        left, bottom, width, height = preview:GetRect()
+        local previewRect = {left = left, bottom = bottom, width = width, height = height}
+        local widgetCenter = {x = widgetRect.left + widgetRect.width / 2, y = widgetRect.bottom + widgetRect.height / 2}
+        local previewCenter = {x = previewRect.left + previewRect.width / 2, y = previewRect.bottom + previewRect.height / 2}
+
+        local point, x, y = "", 0, 0
+
+        if math.floor((math.abs(widgetCenter.y - previewCenter.y))) <= 4 then
+          point = point
+        elseif widgetCenter.y < previewCenter.y then
+          point = "TOP" .. point
+          y = widgetRect.bottom + widgetRect.height - previewCenter.y
+        else
+          point = "BOTTOM" .. point
+          y = widgetRect.bottom - previewCenter.y
+        end
+
+        if math.floor(math.abs(widgetCenter.x - previewCenter.x)) <= 4 then
+          point = point
+        elseif widgetCenter.x < previewCenter.x and point == "" or widgetCenter.x > previewCenter.x and point ~= "" then
+          point = point .. "RIGHT"
+          x = widgetRect.left + widgetRect.width - previewCenter.x
+        else
+          point = point .. "LEFT"
+          x = widgetRect.left - previewCenter.x
+        end
+
+        if point == "" then
+          w.details.anchor = {}
+        elseif x == 0 and y == 0 then
+          w.details.anchor = {point}
+        else
+          w.details.anchor = {point, Round(x), Round(y)}
+        end
+        C_Timer.After(0, function()
+          Announce()
+        end)
+      end)
+      w:SetScript("OnMouseUp", function()
+        if selectionIndex == tIndexOf(widgets, w) then
+          SetSelection()
+        else
+          SetSelection(w)
+        end
+      end)
+    end
+  end
+
   local function GenerateWidgets()
     if widgets then
-      addonTable.Display.ReleaseWidgets(widgets, true)
+      addonTable.Display.ReleaseWidgets(tFilter(widgets, function(w) return w.Strip end, true), true)
     end
     local design = addonTable.Config.Get(addonTable.Config.Options.DESIGN)
     widgets = addonTable.Display.GetWidgets(design, preview, true)
@@ -873,6 +1011,19 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
         end
       end)
     end
+    for _, container in pairs(auraContainers) do
+      container:Hide()
+    end
+    for _, details in ipairs(design.auras) do
+      local container = auraContainers[details.kind]
+      container:Show()
+      container:SetSize(22 * container.count * details.scale, 20 * details.scale)
+      container.Wrapper:SetScale(details.scale)
+      container.details = details
+      table.insert(widgets, container)
+      container:ClearAllPoints()
+      addonTable.Display.ApplyAnchor(container, details.anchor)
+    end
   end
 
   GenerateWidgets()
@@ -908,6 +1059,7 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
   Generate(GetHighlightSettings)
   Generate(GetMarkerSettings)
   Generate(GetPowerSettings)
+  Generate(GetAuraSettings)
 
   SetSelection = function(w)
     if not w then

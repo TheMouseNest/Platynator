@@ -9,7 +9,7 @@
       </Layer>
       <Layer level="ARTWORK">
         <Texture parentKey="Icon">
-          <Size x="20" y="20"/>
+          <Size x="19" y="19"/>
           <Anchors>
             <Anchor point="CENTER"/>
           </Anchors>

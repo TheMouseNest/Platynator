@@ -102,7 +102,7 @@ addonTable.CustomiseDialog.DesignWidgets = {
       scale = 1,
     },
   },
-  --[[{
+  {
     name = addonTable.Locales.AURAS,
     special = "header",
   },
@@ -111,11 +111,10 @@ addonTable.CustomiseDialog.DesignWidgets = {
     kind = "auras",
     noDuplicates = true,
     default = {
-      {
-        kind = "debuffs",
-        anchor = {"TOPLEFT", -140, 50},
-        scale = 1,
-      },
+      kind = "debuffs",
+      anchor = {"TOPLEFT", -140, 50},
+      scale = 1,
+      showCountdown = true,
     },
   },
   {
@@ -123,12 +122,10 @@ addonTable.CustomiseDialog.DesignWidgets = {
     kind = "auras",
     noDuplicates = true,
     default = {
-      {
-        kind = "buffs",
-        anchor = {"TOPLEFT", -140, 50},
-        scale = 1,
-        showCountdown = true,
-      },
+      kind = "buffs",
+      anchor = {"TOPLEFT", -140, 50},
+      scale = 1,
+      showCountdown = true,
     },
   },
   {
@@ -141,7 +138,7 @@ addonTable.CustomiseDialog.DesignWidgets = {
       scale = 1,
       showCountdown = true,
     },
-  },]]
+  },
   {
     name = addonTable.Locales.TEXTS,
     special = "header",

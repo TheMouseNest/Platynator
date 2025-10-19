@@ -29,6 +29,9 @@ function addonTable.Display.NameplateMixin:OnLoad()
 
     local function GetCallback(frame)
       return function(data)
+        if not frame:IsVisible() then
+          return
+        end
         local keys = GetKeysArray(data)
         table.sort(keys)
         if frame.items then
@@ -41,9 +44,10 @@ function addonTable.Display.NameplateMixin:OnLoad()
         local currentY = 0
         local xOffset = 0
         local yOffset = 0
-        if frame.details.anchor[1]:match("RIGHT") then
+        local details = frame:GetParent().details
+        if details.anchor[1]:match("RIGHT") then
           xOffset = -22
-        elseif frame.details.anchor[1]:match("LEFT") then
+        elseif details.anchor[1]:match("LEFT") then
           xOffset = 22
         else -- CENTER
           xOffset = 22
@@ -54,7 +58,6 @@ function addonTable.Display.NameplateMixin:OnLoad()
         for _, auraInstanceID in ipairs(keys) do
           local aura = data[auraInstanceID]
           local buff = self.AurasPool:Acquire()
-          buff:SetScale(frame.details.scale)
           table.insert(frame.items, buff)
           buff:SetParent(frame)
           buff.auraInstanceID = auraInstanceID
@@ -68,20 +71,27 @@ function addonTable.Display.NameplateMixin:OnLoad()
           else
             buff.CountFrame.Count:Hide();
           end
-          buff.Cooldown:SetHideCountdownNumbers(not frame.details.showCountdown)
+          buff.Cooldown:SetHideCountdownNumbers(not details.showCountdown)
           CooldownFrame_Set(buff.Cooldown, aura.expirationTime - aura.duration, aura.duration, aura.duration > 0, true);
 
           buff:Show();
 
-          buff:SetPoint(frame.details.anchor[1], currentX, currentY)
+          buff:SetPoint(details.anchor[1], currentX, currentY)
           currentX = currentX + xOffset
         end
       end
     end
 
-    self.AurasManager:SetDebuffsCallback(GetCallback(self.DebuffDisplay))
-    self.AurasManager:SetBuffsCallback(GetCallback(self.BuffDisplay))
-    self.AurasManager:SetCrowdControlCallback(GetCallback(self.CrowdControlDisplay))
+    self.BuffDisplay.Wrapped = CreateFrame("Frame", nil, self.BuffDisplay)
+    self.BuffDisplay.Wrapped:SetSize(10, 10)
+    self.DebuffDisplay.Wrapped = CreateFrame("Frame", nil, self.DebuffDisplay)
+    self.DebuffDisplay.Wrapped:SetSize(10, 10)
+    self.CrowdControlDisplay.Wrapped = CreateFrame("Frame", nil, self.CrowdControlDisplay)
+    self.CrowdControlDisplay.Wrapped:SetSize(10, 10)
+
+    self.AurasManager:SetDebuffsCallback(GetCallback(self.DebuffDisplay.Wrapped))
+    self.AurasManager:SetBuffsCallback(GetCallback(self.BuffDisplay.Wrapped))
+    self.AurasManager:SetCrowdControlCallback(GetCallback(self.CrowdControlDisplay.Wrapped))
   end
 
   self:InitializeWidgets()
@@ -109,6 +119,11 @@ function addonTable.Display.NameplateMixin:InitializeWidgets()
   if designInfo.debuffs then
     self.DebuffDisplay:ClearAllPoints()
     self.DebuffDisplay.details = designInfo.debuffs
+    if self.DebuffDisplay.Wrapped then
+      self.DebuffDisplay.Wrapped:ClearAllPoints()
+      self.DebuffDisplay.Wrapped:SetPoint(designInfo.debuffs.anchor[1])
+      self.DebuffDisplay.Wrapped:SetScale(designInfo.debuffs.scale)
+    end
     addonTable.Display.ApplyAnchor(self.DebuffDisplay, designInfo.debuffs.anchor)
   else
     self.DebuffDisplay:Hide()
@@ -116,6 +131,11 @@ function addonTable.Display.NameplateMixin:InitializeWidgets()
   if designInfo.buffs then
     self.BuffDisplay:ClearAllPoints()
     self.BuffDisplay.details = designInfo.buffs
+    if self.BuffDisplay.Wrapped then
+      self.BuffDisplay.Wrapped:ClearAllPoints()
+      self.BuffDisplay.Wrapped:SetScale(designInfo.buffs.scale)
+      self.BuffDisplay.Wrapped:SetPoint(designInfo.buffs.anchor[1])
+    end
     addonTable.Display.ApplyAnchor(self.BuffDisplay, designInfo.buffs.anchor)
   else
     self.BuffDisplay:Hide()
@@ -123,6 +143,11 @@ function addonTable.Display.NameplateMixin:InitializeWidgets()
   if designInfo.crowdControl then
     self.CrowdControlDisplay:ClearAllPoints()
     self.CrowdControlDisplay.details = designInfo.crowdControl
+    if self.CrowdControlDisplay.Wrapped then
+      self.CrowdControlDisplay.Wrapped:ClearAllPoints()
+      self.CrowdControlDisplay.Wrapped:SetScale(designInfo.crowdControl.scale)
+      self.CrowdControlDisplay.Wrapped:SetPoint(designInfo.crowdControl.anchor[1])
+    end
     addonTable.Display.ApplyAnchor(self.CrowdControlDisplay, designInfo.crowdControl.anchor)
   else
     self.CrowdControlDisplay:Hide()
