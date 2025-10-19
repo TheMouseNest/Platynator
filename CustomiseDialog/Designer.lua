@@ -777,6 +777,7 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
   previewInset:SetHeight(220)
 
   keyboardTrap:SetScript("OnKeyDown", function(_, key)
+    keyboardTrap:SetPropagateKeyboardInput(false)
     local amount = 1
     if key == "LEFT" then
       widgets[selectionIndex]:AdjustPointsOffset(-amount, 0)
@@ -916,7 +917,7 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
 
     local point, x, y = "", 0, 0
 
-    if math.ceil(math.abs(widgetCenter.y - previewCenter.y)) <= snapping then
+    if math.ceil(math.abs(widgetCenter.y - previewCenter.y)) < snapping then
       point = point
     elseif widgetCenter.y < previewCenter.y then
       point = "TOP" .. point
@@ -927,7 +928,7 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
     end
 
     if w.kind ~= "auras" then
-      if math.floor(math.abs(widgetCenter.x - previewCenter.x)) <= snapping then
+      if math.floor(math.abs(widgetCenter.x - previewCenter.x)) < snapping then
         point = point
       elseif widgetCenter.x < previewCenter.x then
         point = point .. "LEFT"
