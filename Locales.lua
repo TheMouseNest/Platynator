@@ -108,7 +108,7 @@ L["ICONS"] = "Icons"
 L["TARGET"] = "Target"
 L["QUEST_OBJECTIVE"] = "Quest Objective"
 L["CANNOT_INTERRUPT"] = "Cannot Interrupt"
-L["CAST_ICON"] = "Cast Icon"
+L["CAST"] = "Cast"
 L["ELITE"] = "Elite"
 L["RAID_MARKER"] = "Raid Marker"
 
