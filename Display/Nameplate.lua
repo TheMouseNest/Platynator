@@ -29,7 +29,7 @@ function addonTable.Display.NameplateMixin:OnLoad()
 
     local function GetCallback(frame)
       return function(data)
-        if not frame:IsShown() then
+        if not frame:GetParent():IsShown() then
           return
         end
         local keys = GetKeysArray(data)
@@ -89,6 +89,10 @@ function addonTable.Display.NameplateMixin:OnLoad()
     self.CrowdControlDisplay.Wrapped = CreateFrame("Frame", nil, self.CrowdControlDisplay)
     self.CrowdControlDisplay.Wrapped:SetSize(10, 10)
 
+    self.DebuffDisplay:Hide()
+    self.BuffDisplay:Hide()
+    self.CrowdControlDisplay:Hide()
+
     self.AurasManager:SetDebuffsCallback(GetCallback(self.DebuffDisplay.Wrapped))
     self.AurasManager:SetBuffsCallback(GetCallback(self.BuffDisplay.Wrapped))
     self.AurasManager:SetCrowdControlCallback(GetCallback(self.CrowdControlDisplay.Wrapped))
@@ -115,7 +119,9 @@ function addonTable.Display.NameplateMixin:InitializeWidgets()
   for _, a in ipairs(auras) do
     designInfo[a.kind] = a
   end
-  local globalScale = 1
+  self.DebuffDisplay:Hide()
+  self.BuffDisplay:Hide()
+  self.CrowdControlDisplay:Hide()
   if designInfo.debuffs then
     self.DebuffDisplay:Show()
     self.DebuffDisplay:ClearAllPoints()
@@ -127,8 +133,6 @@ function addonTable.Display.NameplateMixin:InitializeWidgets()
       self.DebuffDisplay.Wrapped:SetScale(designInfo.debuffs.scale)
     end
     addonTable.Display.ApplyAnchor(self.DebuffDisplay, designInfo.debuffs.anchor)
-  else
-    self.DebuffDisplay:Hide()
   end
   if designInfo.buffs then
     self.BuffDisplay:Show()
@@ -141,8 +145,6 @@ function addonTable.Display.NameplateMixin:InitializeWidgets()
       self.BuffDisplay.Wrapped:SetPoint(designInfo.buffs.anchor[1])
     end
     addonTable.Display.ApplyAnchor(self.BuffDisplay, designInfo.buffs.anchor)
-  else
-    self.BuffDisplay:Hide()
   end
   if designInfo.crowdControl then
     self.CrowdControlDisplay:Show()
@@ -155,8 +157,6 @@ function addonTable.Display.NameplateMixin:InitializeWidgets()
       self.CrowdControlDisplay.Wrapped:SetPoint(designInfo.crowdControl.anchor[1])
     end
     addonTable.Display.ApplyAnchor(self.CrowdControlDisplay, designInfo.crowdControl.anchor)
-  else
-    self.CrowdControlDisplay:Hide()
   end
 end
 
