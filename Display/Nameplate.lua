@@ -29,9 +29,6 @@ function addonTable.Display.NameplateMixin:OnLoad()
 
     local function GetCallback(frame)
       return function(data)
-        if not frame:GetParent():IsShown() then
-          return
-        end
         local keys = GetKeysArray(data)
         table.sort(keys)
         if frame.items then
@@ -40,6 +37,11 @@ function addonTable.Display.NameplateMixin:OnLoad()
           end
           frame.items = nil
         end
+
+        if not frame:GetParent():IsShown() then
+          return
+        end
+
         local currentX = 0
         local currentY = 0
         local xOffset = 0
@@ -197,9 +199,12 @@ function addonTable.Display.NameplateMixin:SetUnit(unit)
       w:SetUnit(nil)
       w:Hide()
     end
+
     self.BuffDisplay:Hide()
     self.DebuffDisplay:Hide()
     self.CrowdControlDisplay:Hide()
+
+    self.AurasManager:SetUnit()
 
     self:UnregisterAllEvents()
   end
