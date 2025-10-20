@@ -45,8 +45,6 @@ function addonTable.Display.ManagerMixin:OnLoad()
   self:RegisterEvent("NAME_PLATE_UNIT_REMOVED")
   self:RegisterEvent("PLAYER_TARGET_CHANGED")
   self:RegisterEvent("PLAYER_SOFT_INTERACT_CHANGED")
-  self:RegisterEvent("PLAYER_SOFT_FRIEND_CHANGED")
-  self:RegisterEvent("PLAYER_SOFT_ENEMY_CHANGED")
   self:RegisterEvent("UPDATE_MOUSEOVER_UNIT")
 
   self:RegisterUnitEvent("UNIT_POWER_UPDATE", "player")
@@ -60,7 +58,7 @@ function addonTable.Display.ManagerMixin:OnLoad()
   self.ModifiedUFs = {}
   hooksecurefunc(NamePlateDriverFrame, "OnNamePlateAdded", function(_, unit)
     local nameplate = C_NamePlate.GetNamePlateForUnit(unit, issecure())
-    if nameplate and not UnitIsUnit("player", unit) and UnitExists(unit) then
+    if nameplate and not UnitIsUnit("player", unit) then
       nameplate.UnitFrame:SetParent(addonTable.hiddenFrame)
       nameplate.UnitFrame:UnregisterAllEvents()
       if addonTable.Constants.IsMidnight then

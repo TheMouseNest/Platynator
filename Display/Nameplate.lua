@@ -10,8 +10,8 @@ function addonTable.Display.NameplateMixin:OnLoad()
   self:SetIgnoreParentScale(true)
 
   self.SoftTargetIcon = self:CreateTexture(nil, "OVERLAY")
-  self.SoftTargetIcon:SetSize(24, 24)
-  self.SoftTargetIcon:SetPoint("BOTTOM", self, "TOP", 0, -8)
+  self.SoftTargetIcon:SetSize(34, 34)
+  self.SoftTargetIcon:SetPoint("BOTTOM", self, "TOP", 0, 24)
   self.SoftTargetIcon:Hide()
 
   self.BuffDisplay = CreateFrame("Frame", nil, self)
