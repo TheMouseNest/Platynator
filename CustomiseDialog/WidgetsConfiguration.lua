@@ -73,7 +73,39 @@ addonTable.CustomiseDialog.WidgetsConfig = {
             end,
           },
           {
-            label = addonTable.Locales.MAIN_TEXTURE,
+            label = addonTable.Locales.BORDER,
+            kind = "dropdown",
+            getInitData = function()
+              return GetLabelsValues(addonTable.Assets.BarBorders)
+            end,
+            setter = function(details, value)
+              if addonTable.Assets.BarBackgrounds[details.background.asset].mode == addonTable.Assets.Mode.Special then
+                local design = addonTable.Design.GetDefaultDesignSquirrel()
+                details.background.asset = design.bars[1].background.asset
+                details.foreground.asset = design.bars[1].foreground.asset
+              end
+              if addonTable.Assets.BarBorders[value].mode == addonTable.Assets.Mode.Special then
+                ApplySpecial(details, value)
+              else
+                details.border.asset = value
+              end
+            end,
+            getter = function(details)
+              return details.border.asset
+            end
+          },
+          {
+            label = addonTable.Locales.BORDER_COLOR,
+            kind = "colorPicker",
+            setter = function(details, value)
+              details.border.color = value
+            end,
+            getter = function(details)
+              return details.border.color
+            end,
+          },
+          {
+            label = addonTable.Locales.FOREGROUND,
             kind = "dropdown",
             getInitData = function()
               return GetLabelsValues(addonTable.Assets.BarBackgrounds)
@@ -95,7 +127,7 @@ addonTable.CustomiseDialog.WidgetsConfig = {
             end
           },
           {
-            label = addonTable.Locales.BACKGROUND_TEXTURE,
+            label = addonTable.Locales.BACKGROUND,
             kind = "dropdown",
             getInitData = function()
               return GetLabelsValues(addonTable.Assets.BarBackgrounds)
@@ -126,37 +158,6 @@ addonTable.CustomiseDialog.WidgetsConfig = {
             end,
             getter = function(details)
               return (1 - details.background.alpha) * 100
-            end,
-          },
-          {
-            label = addonTable.Locales.BORDER_TEXTURE,
-            kind = "dropdown",
-            getInitData = function()
-              return GetLabelsValues(addonTable.Assets.BarBorders)
-            end,
-            setter = function(details, value)
-              if addonTable.Assets.BarBackgrounds[details.background.asset].mode == addonTable.Assets.Mode.Special then
-                local design = addonTable.Design.GetDefaultDesignSquirrel()
-                details.background.asset = design.bars[1].background.asset
-                details.foreground.asset = design.bars[1].foreground.asset
-              end
-              if addonTable.Assets.BarBorders[value].mode == addonTable.Assets.Mode.Special then
-                ApplySpecial(details, value)
-              else
-                details.border.asset = value
-              end
-            end,
-            getter = function(details)
-              return details.border.asset
-            end
-          },
-          { label = addonTable.Locales.BORDER_COLOR,
-            kind = "colorPicker",
-            setter = function(details, value)
-              details.border.color = value
-            end,
-            getter = function(details)
-              return details.border.color
             end,
           },
           { kind = "spacer" },
@@ -412,7 +413,7 @@ addonTable.CustomiseDialog.WidgetsConfig = {
             end,
           },
           {
-            label = addonTable.Locales.MAIN_TEXTURE,
+            label = addonTable.Locales.VISUAL,
             kind = "dropdown",
             getInitData = function(details)
               return GetLabelsValues(addonTable.Assets.Markers, function(a) return a.tag == details.kind end)
@@ -477,7 +478,7 @@ addonTable.CustomiseDialog.WidgetsConfig = {
             end,
           },
           {
-            label = addonTable.Locales.MAIN_TEXTURE,
+            label = addonTable.Locales.VISUAL,
             kind = "dropdown",
             getInitData = function()
               return GetLabelsValues(addonTable.Assets.Highlights)
@@ -521,7 +522,7 @@ addonTable.CustomiseDialog.WidgetsConfig = {
             end,
           },
           {
-            label = addonTable.Locales.FILLED_TEXTURE,
+            label = addonTable.Locales.FILLED,
             kind = "dropdown",
             getInitData = function()
               return GetLabelsValues(addonTable.Assets.PowerBars)
@@ -534,7 +535,7 @@ addonTable.CustomiseDialog.WidgetsConfig = {
             end
           },
           {
-            label = addonTable.Locales.EMPTY_TEXTURE,
+            label = addonTable.Locales.EMPTY,
             kind = "dropdown",
             getInitData = function()
               return GetLabelsValues(addonTable.Assets.PowerBars)
