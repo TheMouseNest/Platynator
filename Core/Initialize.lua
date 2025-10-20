@@ -58,6 +58,13 @@ function addonTable.Core.MigrateSettings(design)
       end
     end
   end
+
+  for _, bar in ipairs(design.bars) do
+    if bar.kind == "health" and bar.aggroColoursOnHostiles == nil then
+      print("write")
+      bar.aggroColoursOnHostiles = true
+    end
+  end
 end
 
 local function SetStyle()

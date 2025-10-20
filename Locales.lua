@@ -64,6 +64,7 @@ L["AGGRO_WARNING"] = "Aggro warning"
 L["FRIENDLY"] = "Friendly"
 L["NEUTRAL"] = "Neutral"
 L["HOSTILE"] = "Hostile"
+L["AGGRO_COLORS_ON_HOSTILES"] = "Aggro colors on hostiles"
 
 L["MAIN_TEXTURE"] = "Main texture"
 L["BACKGROUND_TEXTURE"] = "Background texture"

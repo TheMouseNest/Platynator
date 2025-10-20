@@ -49,7 +49,7 @@ function addonTable.Display.HealthBarMixin:UpdateColor()
   elseif UnitIsFriend("player", self.unit) then
     local c = self.details.colors.npc.friendly
     self:SetHealthColor(c)
-  elseif not UnitCanAttack("player", self.unit) and UnitIsEnemy("player", self.unit) then
+  elseif (not UnitCanAttack("player", self.unit) or (not self.details.aggroColoursOnHostiles and not UnitAffectingCombat(self.unit))) and UnitIsEnemy("player", self.unit) then
     local c = self.details.colors.npc.hostile
     self:SetHealthColor(c)
   else

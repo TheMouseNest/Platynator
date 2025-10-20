@@ -158,7 +158,18 @@ addonTable.CustomiseDialog.WidgetsConfig = {
             getter = function(details)
               return details.border.color
             end,
-          }
+          },
+          { kind = "spacer" },
+          {
+            label = addonTable.Locales.APPLY_MAIN_COLOR_TO_BACKGROUND,
+            kind = "checkbox",
+            setter = function(details, value)
+              details.background.applyColor = value
+            end,
+            getter = function(details)
+              return details.background.applyColor or false
+            end,
+          },
         }
       },
     },
@@ -196,9 +207,7 @@ addonTable.CustomiseDialog.WidgetsConfig = {
               return details.colors.threat.warning
             end,
           },
-          {
-            kind = "spacer",
-          },
+          { kind = "spacer" },
           {
             label = addonTable.Locales.FRIENDLY,
             kind = "colorPicker",
@@ -231,13 +240,13 @@ addonTable.CustomiseDialog.WidgetsConfig = {
           },
           { kind = "spacer" },
           {
-            label = addonTable.Locales.APPLY_MAIN_COLOR_TO_BACKGROUND,
+            label = addonTable.Locales.AGGRO_COLORS_ON_HOSTILES,
             kind = "checkbox",
             setter = function(details, value)
-              details.background.applyColor = value
+              details.aggroColoursOnHostiles = value
             end,
             getter = function(details)
-              return details.background.applyColor or false
+              return details.aggroColoursOnHostiles
             end,
           },
         },

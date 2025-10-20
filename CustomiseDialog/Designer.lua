@@ -301,8 +301,10 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
       w:SetClampedToScreen(true)
       if w.kind == "bars" then
         local defaultColor
-        if w.details.kind == "health" then
+        if w.details.kind == "health" and w.details.aggroColoursOnHostiles then
           defaultColor = w.details.colors.threat.warning
+        elseif w.details.kind == "health" then
+          defaultColor = w.details.colors.npc.hostile
         else
           defaultColor = w.details.colors.normal
         end

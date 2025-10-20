@@ -19,6 +19,7 @@ addonTable.CustomiseDialog.DesignWidgets = {
       anchor = {"TOPLEFT", -140, 50},
       relativeTo = 0,
       scale = 1,
+      aggroColoursOnHostiles = true,
       background = {
         asset = "wide/fade-bottom",
         alpha = 0.5,
