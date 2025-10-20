@@ -119,11 +119,11 @@ function addonTable.Display.NameplateMixin:InitializeWidgets()
   for _, a in ipairs(auras) do
     designInfo[a.kind] = a
   end
-  self.DebuffDisplay:Hide()
-  self.BuffDisplay:Hide()
-  self.CrowdControlDisplay:Hide()
+  self.DebuffDisplay.enabled = false
+  self.BuffDisplay.enabled = false
+  self.CrowdControlDisplay.enabled = false
   if designInfo.debuffs then
-    self.DebuffDisplay:Show()
+    self.DebuffDisplay.enabled = true
     self.DebuffDisplay:ClearAllPoints()
     self.BuffDisplay:SetFrameLevel(800 + 1)
     self.DebuffDisplay.details = designInfo.debuffs
@@ -135,7 +135,7 @@ function addonTable.Display.NameplateMixin:InitializeWidgets()
     addonTable.Display.ApplyAnchor(self.DebuffDisplay, designInfo.debuffs.anchor)
   end
   if designInfo.buffs then
-    self.BuffDisplay:Show()
+    self.BuffDisplay.enabled = true
     self.BuffDisplay:ClearAllPoints()
     self.BuffDisplay:SetFrameLevel(800 + 2)
     self.BuffDisplay.details = designInfo.buffs
@@ -147,7 +147,7 @@ function addonTable.Display.NameplateMixin:InitializeWidgets()
     addonTable.Display.ApplyAnchor(self.BuffDisplay, designInfo.buffs.anchor)
   end
   if designInfo.crowdControl then
-    self.CrowdControlDisplay:Show()
+    self.CrowdControlDisplay.enabled = true
     self.CrowdControlDisplay:ClearAllPoints()
     self.CrowdControlDisplay:SetFrameLevel(800 + 3)
     self.CrowdControlDisplay.details = designInfo.crowdControl
@@ -184,6 +184,10 @@ function addonTable.Display.NameplateMixin:SetUnit(unit)
       end
     end
 
+    self.BuffDisplay:SetShown(self.BuffDisplay.enabled)
+    self.DebuffDisplay:SetShown(self.DebuffDisplay.enabled)
+    self.CrowdControlDisplay:SetShown(self.CrowdControlDisplay.enabled)
+
     if self.AurasManager then
       self.AurasManager:SetUnit(self.unit)
     end
@@ -193,6 +197,9 @@ function addonTable.Display.NameplateMixin:SetUnit(unit)
       w:SetUnit(nil)
       w:Hide()
     end
+    self.BuffDisplay:Hide()
+    self.DebuffDisplay:Hide()
+    self.CrowdControlDisplay:Hide()
 
     self:UnregisterAllEvents()
   end
