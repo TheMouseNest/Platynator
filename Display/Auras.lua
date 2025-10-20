@@ -25,7 +25,8 @@ end
 function addonTable.Display.AurasForNameplateMixin:SetUnit(unit)
   self.unit = unit
   if unit then
-    if UnitCanAttack("player", self.unit) and not UnitIsPlayer(self.unit) then
+    self.isPlayer = UnitIsPlayer(self.unit)
+    if UnitCanAttack("player", self.unit) then
       self:ScanAllAuras()
     else
       self:Reset()
@@ -40,7 +41,7 @@ function addonTable.Display.AurasForNameplateMixin:SetUnit(unit)
 end
 
 function addonTable.Display.AurasForNameplateMixin:GetAuraKind(info)
-  if info.isHelpful then
+  if info.isHelpful and not self.isPlayer then
     return "buffs"
   elseif crowdControlSpells[info.spellId] then
     return "crowdControl"
