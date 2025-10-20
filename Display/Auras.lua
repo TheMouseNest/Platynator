@@ -44,7 +44,7 @@ function addonTable.Display.AurasForNameplateMixin:GetAuraKind(info)
     return "buffs"
   elseif crowdControlSpells[info.spellId] then
     return "crowdControl"
-  elseif info.isHarmful and (info.nameplateShowPersonal or addonTable.Constants.IsEra) and info.sourceUnit == "player" then
+  elseif info.isHarmful and (info.nameplateShowPersonal or addonTable.Constants.IsClassic) and info.sourceUnit == "player" then
     return "debuffs"
   end
 end
