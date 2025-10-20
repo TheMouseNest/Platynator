@@ -120,6 +120,7 @@ L["QUEST_OBJECTIVE"] = "Quest Objective"
 L["CANNOT_INTERRUPT"] = "Cannot Interrupt"
 L["CAST"] = "Cast"
 L["ELITE"] = "Elite"
+L["RARE"] = "Rare"
 L["RAID_MARKER"] = "Raid Marker"
 
 local L = Locales.frFR

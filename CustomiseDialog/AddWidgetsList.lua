@@ -250,6 +250,17 @@ addonTable.CustomiseDialog.DesignWidgets = {
     },
   },
   {
+    name = addonTable.Locales.RARE,
+    kind = "markers",
+    default = {
+      kind = "rare",
+      scale = 1,
+      asset = "normal/blizzard-rare",
+      color = GetColor("ffffff"),
+      anchor = {"TOPLEFT", -140, 50},
+    },
+  },
+  {
     name = addonTable.Locales.RAID_MARKER,
     kind = "markers",
     default = {

@@ -46,6 +46,7 @@ Display/QuestMarker.lua
 Display/CannotInterruptMarker.lua
 Display/CastIconMarker.lua
 Display/EliteMarker.lua
+Display/RareMarker.lua
 Display/RaidMarker.lua
 Display/Widgets.lua
 Display/LegacyBuffTemplate.xml
