@@ -1226,13 +1226,13 @@ function addonTable.Design.GetDefaultDesignBlizzardClassic()
       },
       {
         ["anchor"] = {
-          "LEFT",
-          -61,
-          0
+          "RIGHT",
+          91,
+          0,
         },
-        ["scale"] = 0.8,
+        ["scale"] = 1.25,
         ["kind"] = "elite",
-        ["asset"] = "special/blizzard-elite",
+        ["asset"] = "special/blizzard-elite-around",
         ["color"] = {
           ["r"] = 1,
           ["g"] = 1,
