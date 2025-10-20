@@ -188,6 +188,16 @@ addonTable.CustomiseDialog.WidgetsConfig = {
             end,
           },
           {
+            label = addonTable.Locales.AGGRO_OFFTANK,
+            kind = "colorPicker",
+            setter = function(details, value)
+              details.colors.threat.offtank = value
+            end,
+            getter = function(details)
+              return details.colors.threat.offtank
+            end,
+          },
+          {
             label = addonTable.Locales.AGGRO_TRANSITION,
             kind = "colorPicker",
             setter = function(details, value)
@@ -238,7 +248,6 @@ addonTable.CustomiseDialog.WidgetsConfig = {
               return details.colors.npc.hostile
             end,
           },
-          { kind = "spacer" },
           {
             label = addonTable.Locales.AGGRO_COLORS_ON_HOSTILES,
             kind = "checkbox",

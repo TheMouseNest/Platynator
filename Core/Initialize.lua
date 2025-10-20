@@ -63,6 +63,12 @@ function addonTable.Core.MigrateSettings(design)
     if bar.kind == "health" and bar.aggroColoursOnHostiles == nil then
       bar.aggroColoursOnHostiles = true
     end
+    if bar.kind == "health" and (bar.colors.threat.offtank == nil or bar.colors.npc.tapped == nil) then
+      local newColor = CreateColorFromRGBHexString("0FAAC8")
+      bar.colors.threat.offtank = {r = newColor.r, g = newColor.g, b = newColor.b}
+      newColor = CreateColorFromRGBHexString("6E6E6E")
+      bar.colors.npc.tapped = {r = newColor.r, g = newColor.g, b = newColor.b}
+    end
   end
 end
 

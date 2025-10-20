@@ -40,11 +40,13 @@ addonTable.CustomiseDialog.DesignWidgets = {
           safe = GetColor("0F96E6"),
           transition = GetColor("FFA000"),
           warning = GetColor("CC0000"),
+          offtank = GetColor("0FAAC8"),
         },
         npc = {
           friendly = GetColor("00FF00"),
           neutral = GetColor("FFFF00"),
           hostile = GetColor("FF0000"),
+          tapped = GetColor("6E6E6E"),
         },
       },
     },

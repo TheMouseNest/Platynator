@@ -49,6 +49,9 @@ function addonTable.Display.HealthBarMixin:UpdateColor()
   elseif UnitIsFriend("player", self.unit) then
     local c = self.details.colors.npc.friendly
     self:SetHealthColor(c)
+  elseif UnitIsTapDenied(self.unit) and UnitCanAttack("player", self.unit) and not UnitAffectingCombat(self.unit) then
+    local c = self.details.colors.npc.tapped
+    self:SetHealthColor(c)
   elseif (not UnitCanAttack("player", self.unit) or (not self.details.aggroColoursOnHostiles and not UnitAffectingCombat(self.unit))) and UnitIsEnemy("player", self.unit) then
     local c = self.details.colors.npc.hostile
     self:SetHealthColor(c)
@@ -79,15 +82,21 @@ function addonTable.Display.HealthBarMixin:GetRole()
   return roleMap[role]
 end
 
+function addonTable.Display.HealthBarMixin:DoesOtherTankHaveAggro()
+  return IsInRaid() and UnitGroupRolesAssigned(self.unit .. "target") == "TANK"
+end
+
 function addonTable.Display.HealthBarMixin:ApplyThreat()
   local status = UnitThreatSituation("player", self.unit)
   local role = self:GetRole()
-  if (role == roleType.Tank and (status == 0 or status == nil)) or (role ~= roleType.Tank and status == 3) then
+  if (role == roleType.Tank and (status == 0 or status == nil) and not self:DoesOtherTankHaveAggro()) or (role ~= roleType.Tank and status == 3) then
     self:SetHealthColor(self.details.colors.threat.warning)
   elseif status == 1 or status == 2 then
     self:SetHealthColor(self.details.colors.threat.transition)
   elseif (role == roleType.Tank and status == 3) or (role ~= roleType.Tank and (status == 0 or status == nil)) then
     self:SetHealthColor(self.details.colors.threat.safe)
+  elseif role == roleType.Tank and (status == 0 or status == nil) and self:DoesOtherTankHaveAggro() then
+    self:SetHealthColor(self.details.colors.threat.offtank)
   end
 end
 
