@@ -124,6 +124,7 @@ L["CAST"] = "Cast"
 L["ELITE"] = "Elite"
 L["RARE"] = "Rare"
 L["RAID_MARKER"] = "Raid Marker"
+L["CAST_TARGET"] = "Cast Target"
 
 local L = Locales.frFR
 --@localization(locale="frFR", format="lua_additive_table")@

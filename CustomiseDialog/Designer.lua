@@ -334,6 +334,8 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
           display = "Cheesanator"
         elseif w.details.kind == "castSpellName" then
           display = addonTable.Locales.ARCANE_FLURRY
+        elseif w.details.kind == "castTarget" then
+          display = addonTable.Locales.CAST_TARGET
         elseif w.details.kind == "level" then
           display = "60"
         end

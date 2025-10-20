@@ -324,6 +324,8 @@ function addonTable.Display.GetText(frame, parent)
       Mixin(frame, addonTable.Display.CreatureTextMSPMixin or addonTable.Display.CreatureTextMixin)
     elseif details.kind == "castSpellName" then
       Mixin(frame, addonTable.Display.CastTextMixin)
+    elseif details.kind == "castTarget" then  
+      Mixin(frame, addonTable.Display.CastTargetMixin)
     elseif details.kind == "level" then
       Mixin(frame, addonTable.Display.LevelTextMixin)
     elseif details.kind == "target" then
