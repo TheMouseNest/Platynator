@@ -6,678 +6,6 @@ local function Announce()
   addonTable.CallbackRegistry:TriggerEvent("RefreshStateChange", {[addonTable.Constants.RefreshReason.Design] = true})
 end
 
-local function GetLabelsValues(allAssets, filter)
-  local labels, values = {}, {}
-
-  local allKeys = GetKeysArray(allAssets)
-  table.sort(allKeys, function(a, b)
-    local aType, aMain = a:match("(.+)%/(.+)")
-    local bType, bMain = b:match("(.+)%/(.+)")
-    if not aType and bType then
-      return true
-    elseif not bType and aType then
-      return false
-    elseif not bType and not aType then
-      return a < b
-    elseif bMain == aMain then
-      return aType > bType
-    else
-      return aMain < bMain
-    end
-  end)
-
-  for _, key in ipairs(allKeys) do
-    if not filter or filter(allAssets[key]) then
-      local details = allAssets[key]
-      local height = 20
-      local width = details.width * height/details.height
-      if width > 180 then
-        height = 180/width * height
-        width = 180
-      end
-      local text = "|T".. (details.preview or details.file) .. ":" .. height .. ":" .. width .. "|t"
-      if details.isTransparent then
-        text = addonTable.Locales.NONE
-      end
-      if details.mode == addonTable.Assets.Mode.Special then
-        text = text .. " " .. addonTable.Locales.SPECIAL_BRACKETS
-      elseif details.mode == addonTable.Assets.Mode.Narrow then
-        text = text .. " " .. addonTable.Locales.NARROW_BRACKETS
-      end
-
-      table.insert(labels, text)
-      table.insert(values, key)
-    end
-  end
-
-  return labels, values
-end
-
-local function GetCastBarSpecificSettings(parent)
-  local container = CreateFrame("Frame", nil, parent)
-  local allFrames = {}
-
-  local normalCastColorPicker = addonTable.CustomiseDialog.Components.GetColorPicker(container, addonTable.Locales.NORMAL_CAST_COLOR, function(color)
-    currentBar.colors.normal = CopyTable(color)
-    Announce()
-  end)
-  normalCastColorPicker:SetPoint("TOP")
-  table.insert(allFrames, normalCastColorPicker)
-
-  local uninterruptableCastColorPicker = addonTable.CustomiseDialog.Components.GetColorPicker(container, addonTable.Locales.UNINTERRUPTABLE_CAST_COLOR, function(color)
-    currentBar.colors.uninterruptable = CopyTable(color)
-    Announce()
-  end)
-  uninterruptableCastColorPicker:SetPoint("TOP", allFrames[#allFrames], "BOTTOM")
-  table.insert(allFrames, uninterruptableCastColorPicker)
-
-  function container:Set(details)
-    currentBar = details
-    normalCastColorPicker:SetValue(CopyTable(currentBar.colors.normal))
-    uninterruptableCastColorPicker:SetValue(CopyTable(currentBar.colors.uninterruptable))
-
-    for _, f in ipairs(allFrames) do
-      if f.DropDown then
-        f:SetValue()
-      end
-    end
-  end
-
-  function container:IsFor(kind, details)
-    return kind == "bars" and details.kind == "cast"
-  end
-
-  container:SetScript("OnHide", function()
-    currentBar = nil
-  end)
-
-  container:SetHeight(200)
-  container:SetPoint("LEFT")
-  container:SetPoint("RIGHT")
-
-  return container
-end
-
-local function GetBarSettings(parent)
-  local container = CreateFrame("Frame", nil, parent)
-  local allFrames = {}
-
-  local currentBar
-
-  local scaleSlider = addonTable.CustomiseDialog.Components.GetSlider(container, addonTable.Locales.BAR_SCALE, 1, 300, "%s%%", function(value)
-    local oldScale = currentBar.scale
-    currentBar.scale = value / 100
-    if currentBar.scale ~= oldScale then
-      Announce()
-    end
-  end)
-
-  scaleSlider:SetPoint("TOP")
-  table.insert(allFrames, scaleSlider)
-
-  local function ApplySpecial(value)
-    local group = addonTable.Assets.SpecialBars[value]
-    currentBar.foreground.asset = group.foreground
-    currentBar.background.asset = group.background
-    currentBar.border.asset = group.border
-  end
-
-  do
-    local foregroundDropdown = addonTable.CustomiseDialog.Components.GetBasicDropdown(container, addonTable.Locales.MAIN_TEXTURE, function(value)
-      return currentBar and currentBar.foreground.asset == value
-    end, function(value)
-      if addonTable.Assets.BarBackgrounds[value].mode == addonTable.Assets.Mode.Special then
-          ApplySpecial(value)
-      else
-        if addonTable.Assets.BarBackgrounds[currentBar.foreground.asset].mode == addonTable.Assets.Mode.Special then
-          local design = addonTable.Design.GetDefaultDesignSquirrel()
-          currentBar.background.asset = design.bars[1].background.asset
-          currentBar.border.asset = design.bars[1].border.asset
-        end
-        currentBar.foreground.asset = value
-      end
-      Announce()
-    end)
-
-    foregroundDropdown:Init(GetLabelsValues(addonTable.Assets.BarBackgrounds))
-
-    foregroundDropdown:SetPoint("TOP", allFrames[#allFrames], "BOTTOM")
-    table.insert(allFrames, foregroundDropdown)
-  end
-
-  do
-    local backgroundDropdown = addonTable.CustomiseDialog.Components.GetBasicDropdown(container, addonTable.Locales.BACKGROUND_TEXTURE, function(value)
-      return currentBar and currentBar.background.asset == value
-    end, function(value)
-      if addonTable.Assets.BarBackgrounds[value].mode == addonTable.Assets.Mode.Special then
-        ApplySpecial(value)
-      else
-        if addonTable.Assets.BarBackgrounds[currentBar.background.asset].mode == addonTable.Assets.Mode.Special then
-          local design = addonTable.Design.GetDefaultDesignSquirrel()
-          currentBar.foreground.asset = design.bars[1].foreground.asset
-          currentBar.border.asset = design.bars[1].border.asset
-        end
-        currentBar.background.asset = value
-      end
-      Announce()
-    end)
-
-    backgroundDropdown:Init(GetLabelsValues(addonTable.Assets.BarBackgrounds))
-
-    backgroundDropdown:SetPoint("TOP", allFrames[#allFrames], "BOTTOM")
-    table.insert(allFrames, backgroundDropdown)
-  end
-
-  local backgroundTransparencySlider = addonTable.CustomiseDialog.Components.GetSlider(container, addonTable.Locales.BACKGROUND_TRANSPARENCY, 0, 100, "%s%%", function(value)
-    local oldbackgroundAlpha = currentBar.background.alpha or 1
-    currentBar.background.alpha = 1 - value / 100
-    if currentBar.background.alpha ~= oldbackgroundAlpha then
-      Announce()
-    end
-  end)
-
-  backgroundTransparencySlider:SetPoint("TOP", allFrames[#allFrames], "BOTTOM")
-  table.insert(allFrames, backgroundTransparencySlider)
-
-  local inheritColorCheckbox = addonTable.CustomiseDialog.Components.GetCheckbox(container, addonTable.Locales.APPLY_MAIN_COLOR_TO_BACKGROUND, 28, function(value)
-    local oldValue = currentBar.background.applyColor or false
-    currentBar.background.applyColor = value
-    if oldValue ~= currentBar.background.applyColor then
-      Announce()
-    end
-  end)
-  inheritColorCheckbox:SetPoint("TOP", allFrames[#allFrames], "BOTTOM")
-  table.insert(allFrames, inheritColorCheckbox)
-
-  do
-    local borderDropdown = addonTable.CustomiseDialog.Components.GetBasicDropdown(container, addonTable.Locales.BORDER_TEXTURE, function(value)
-      return currentBar and currentBar.border.asset == value
-    end, function(value)
-      if addonTable.Assets.BarBorders[value].mode == addonTable.Assets.Mode.Special then
-        ApplySpecial(value)
-      else
-        if addonTable.Assets.BarBorders[currentBar.border.asset].mode == addonTable.Assets.Mode.Special then
-          local design = addonTable.Design.GetDefaultDesignSquirrel()
-          currentBar.foreground.asset = design.bars[1].foreground.asset
-          currentBar.background.asset = design.bars[1].background.asset
-        end
-        currentBar.border.asset = value
-      end
-      Announce()
-    end)
-
-    borderDropdown:Init(GetLabelsValues(addonTable.Assets.BarBorders))
-
-    borderDropdown:SetPoint("TOP", allFrames[#allFrames], "BOTTOM")
-    table.insert(allFrames, borderDropdown)
-  end
-
-  local borderColorPicker = addonTable.CustomiseDialog.Components.GetColorPicker(container, addonTable.Locales.BORDER_COLOR, function(color)
-    currentBar.border.color = CopyTable(color)
-    Announce()
-  end)
-  borderColorPicker:SetPoint("TOP", allFrames[#allFrames], "BOTTOM")
-  table.insert(allFrames, borderColorPicker)
-
-  local settingsFrames = {}
-  local function Generate(func)
-    local settingsContainer = func(container)
-    settingsContainer:SetPoint("TOP", allFrames[#allFrames], "BOTTOM", 0, -30)
-    table.insert(settingsFrames, settingsContainer)
-  end
-  Generate(GetCastBarSpecificSettings)
-
-  function container:Set(details)
-    currentBar = details
-    scaleSlider:SetValue(Round(currentBar.scale * 100))
-    backgroundTransparencySlider:SetValue(Round((1 - currentBar.background.alpha) * 100))
-    inheritColorCheckbox:SetValue(currentBar.background.applyColor)
-    borderColorPicker:SetValue(CopyTable(currentBar.border.color))
-
-    for _, frame in ipairs(settingsFrames) do
-      if frame:IsFor("bars", details) then
-        frame:Show()
-        frame:Set(details)
-      else
-        frame:Hide()
-      end
-    end
-
-    for _, f in ipairs(allFrames) do
-      if f.DropDown then
-        f:SetValue()
-      end
-    end
-  end
-
-  function container:IsFor(kind, details)
-    return kind == "bars"
-  end
-
-  container:SetScript("OnHide", function()
-    currentBar = nil
-  end)
-
-  container:SetHeight(200)
-  container:SetPoint("LEFT")
-  container:SetPoint("RIGHT")
-
-  return container
-end
-
-local function GetHealthTextSpecificSettings(parent)
-  local container = CreateFrame("Frame", nil, parent)
-  local allFrames = {}
-  local currentText
-
-  local absoluteCheckbox = addonTable.CustomiseDialog.Components.GetCheckbox(container, addonTable.Locales.ABSOLUTE_VALUE, 28, function(value)
-    if value and tIndexOf(currentText.displayTypes, "absolute") == nil then
-      table.insert(currentText.displayTypes, 1, "absolute")
-      Announce()
-    elseif not value then
-      local index = tIndexOf(currentText.displayTypes, "absolute")
-      if index then
-        table.remove(currentText.displayTypes, index)
-      end
-      Announce()
-    end
-  end)
-  absoluteCheckbox:SetPoint("TOP")
-  table.insert(allFrames, absoluteCheckbox)
-
-  local percentageCheckbox = addonTable.CustomiseDialog.Components.GetCheckbox(container, addonTable.Locales.PERCENTAGE_VALUE, 28, function(value)
-    if value and tIndexOf(currentText.displayTypes, "percentage") == nil then
-      table.insert(currentText.displayTypes, "percentage")
-      Announce()
-    elseif not value then
-      local index = tIndexOf(currentText.displayTypes, "percentage")
-      if index then
-        table.remove(currentText.displayTypes, index)
-      end
-      Announce()
-    end
-  end)
-  percentageCheckbox:SetPoint("TOP", allFrames[#allFrames], "BOTTOM")
-  table.insert(allFrames, percentageCheckbox)
-
-  function container:Set(details)
-    currentText = details
-    absoluteCheckbox:SetValue(tIndexOf(currentText.displayTypes, "absolute") ~= nil)
-    percentageCheckbox:SetValue(tIndexOf(currentText.displayTypes, "percentage") ~= nil)
-  end
-
-  function container:IsFor(kind, details)
-    return kind == "texts" and details.kind == "health"
-  end
-
-  container:SetScript("OnHide", function()
-    currentText = nil
-  end)
-
-  container:SetHeight(200)
-  container:SetPoint("LEFT")
-  container:SetPoint("RIGHT")
-  container:Hide()
-
-  return container
-end
-
-local function GetAuraSettings(parent)
-  local container = CreateFrame("Frame", nil, parent)
-  local allFrames = {}
-
-  local currentAuras
-
-  local scaleSlider = addonTable.CustomiseDialog.Components.GetSlider(container, addonTable.Locales.AURA_SCALE, 1, 300, "%s%%", function(value)
-    local oldScale = currentAuras.scale
-    currentAuras.scale = value / 100
-    if currentAuras.scale ~= oldScale then
-      Announce()
-    end
-  end)
-
-  scaleSlider:SetPoint("TOP")
-  table.insert(allFrames, scaleSlider)
-
-  function container:Set(details)
-    currentAuras = details
-    scaleSlider:SetValue(Round(currentAuras.scale * 100))
-
-    for _, f in ipairs(allFrames) do
-      if f.DropDown then
-        f:SetValue()
-      end
-    end
-  end
-
-  function container:IsFor(kind, details)
-    return kind == "auras"
-  end
-
-  container:SetScript("OnHide", function()
-    currentAuras = nil
-  end)
-
-  container:SetHeight(200)
-  container:SetPoint("LEFT")
-  container:SetPoint("RIGHT")
-  container:Hide()
-
-  return container
-end
-
-local function GetTextSettings(parent)
-  local container = CreateFrame("Frame", nil, parent)
-  local allFrames = {}
-
-  local currentText
-
-  local scaleSlider = addonTable.CustomiseDialog.Components.GetSlider(container, addonTable.Locales.TEXT_SCALE, 1, 300, "%s%%", function(value)
-    local oldScale = currentText.scale
-    currentText.scale = value / 100
-    if currentText.scale ~= oldScale then
-      Announce()
-    end
-  end)
-
-  scaleSlider:SetPoint("TOP")
-  table.insert(allFrames, scaleSlider)
-
-  local widthSlider = addonTable.CustomiseDialog.Components.GetSlider(container, addonTable.Locales.WIDTH_RESTRICTION, 0, 300, "%spx", function(value)
-    local oldWidth = currentText.widthLimit or 0
-    currentText.widthLimit = value
-    if currentText.widthLimit ~= oldWidth then
-      Announce()
-    end
-  end)
-
-  widthSlider:SetPoint("TOP", allFrames[#allFrames], "BOTTOM")
-  table.insert(allFrames, widthSlider)
-
-  local colorPicker = addonTable.CustomiseDialog.Components.GetColorPicker(container, addonTable.Locales.COLOR, function(color)
-    currentText.color = CopyTable(color)
-    Announce()
-  end)
-  colorPicker:SetPoint("TOP", allFrames[#allFrames], "BOTTOM")
-  table.insert(allFrames, colorPicker)
-
-  do
-    local alignDropdown = addonTable.CustomiseDialog.Components.GetBasicDropdown(container, addonTable.Locales.ALIGNMENT, function(value)
-      return currentText and currentText.align == value
-    end, function(value)
-      currentText.align = value
-      Announce()
-    end)
-    alignDropdown.option = addonTable.Config.Options.align
-
-    alignDropdown:Init({
-      addonTable.Locales.CENTER,
-      addonTable.Locales.LEFT,
-      addonTable.Locales.RIGHT,
-    }, {
-      "CENTER",
-      "LEFT",
-      "RIGHT",
-    })
-
-    alignDropdown:SetPoint("TOP", allFrames[#allFrames], "BOTTOM")
-    table.insert(allFrames, alignDropdown)
-  end
-
-  local settingsFrames = {}
-
-  local function Generate(func)
-    local settingsContainer = func(container)
-    settingsContainer:SetPoint("TOP", allFrames[#allFrames], "BOTTOM", 0, -30)
-    table.insert(settingsFrames, settingsContainer)
-  end
-  Generate(GetHealthTextSpecificSettings)
-
-  function container:Set(details)
-    currentText = details
-    scaleSlider:SetValue(Round(currentText.scale * 100))
-    widthSlider:SetValue(currentText.widthLimit and currentText.widthLimit or 0)
-    colorPicker:SetValue(currentText.color)
-
-    for _, frame in ipairs(settingsFrames) do
-      if frame:IsFor("texts", details) then
-        frame:Show()
-        frame:Set(details)
-      else
-        frame:Hide()
-      end
-    end
-
-    for _, f in ipairs(allFrames) do
-      if f.DropDown then
-        f:SetValue()
-      end
-    end
-  end
-
-  function container:IsFor(kind, details)
-    return kind == "texts"
-  end
-
-  container:SetScript("OnHide", function()
-    currentText = nil
-  end)
-
-  container:SetHeight(200)
-  container:SetPoint("LEFT")
-  container:SetPoint("RIGHT")
-  container:Hide()
-
-  return container
-end
-
-local function GetHighlightSettings(parent)
-  local container = CreateFrame("Frame", nil, parent)
-  local allFrames = {}
-
-  local currentHighlight
-
-  local scaleSlider = addonTable.CustomiseDialog.Components.GetSlider(container, addonTable.Locales.HIGHLIGHT_SCALE, 1, 300, "%s%%", function(value)
-    local oldScale = currentHighlight.scale
-    currentHighlight.scale = value / 100
-    if currentHighlight.scale ~= oldScale then
-      Announce()
-    end
-  end)
-
-  scaleSlider:SetPoint("TOP")
-  table.insert(allFrames, scaleSlider)
-
-  do
-    local assetDropdown = addonTable.CustomiseDialog.Components.GetBasicDropdown(container, addonTable.Locales.MAIN_TEXTURE, function(value)
-      return currentHighlight and currentHighlight.asset == value
-    end, function(value)
-      currentHighlight.asset = value
-      Announce()
-    end)
-
-    assetDropdown:Init(GetLabelsValues(addonTable.Assets.Highlights))
-
-    assetDropdown:SetPoint("TOP", allFrames[#allFrames], "BOTTOM")
-    table.insert(allFrames, assetDropdown)
-  end
-
-  local colorPicker = addonTable.CustomiseDialog.Components.GetColorPicker(container, addonTable.Locales.COLOR, function(color)
-    currentHighlight.color = CopyTable(color)
-    Announce()
-  end)
-  colorPicker:SetPoint("TOP", allFrames[#allFrames], "BOTTOM")
-  table.insert(allFrames, colorPicker)
-
-  function container:Set(details)
-    currentHighlight = details
-    scaleSlider:SetValue(Round(currentHighlight.scale * 100))
-    colorPicker:SetValue(currentHighlight.color)
-
-    for _, f in ipairs(allFrames) do
-      if f.DropDown then
-        f:SetValue()
-      end
-    end
-  end
-
-  function container:IsFor(kind, details)
-    return kind == "highlights"
-  end
-
-  container:SetScript("OnHide", function()
-    currentHighlight = nil
-  end)
-
-  container:SetHeight(200)
-  container:SetPoint("LEFT")
-  container:SetPoint("RIGHT")
-  container:Hide()
-
-  return container
-end
-
-local function GetMarkerSettings(parent)
-  local container = CreateFrame("Frame", nil, parent)
-  local allFrames = {}
-
-  local currentMarker
-
-  local scaleSlider = addonTable.CustomiseDialog.Components.GetSlider(container, addonTable.Locales.MARKER_SCALE, 1, 300, "%s%%", function(value)
-    local oldScale = currentMarker.scale
-    currentMarker.scale = value / 100
-    if currentMarker.scale ~= oldScale then
-      Announce()
-    end
-  end)
-
-  scaleSlider:SetPoint("TOP")
-  table.insert(allFrames, scaleSlider)
-
-  local assetDropdown
-  do
-    assetDropdown = addonTable.CustomiseDialog.Components.GetBasicDropdown(container, addonTable.Locales.MAIN_TEXTURE, function(value)
-      return currentMarker and currentMarker.asset == value
-    end, function(value)
-      currentMarker.asset = value
-      Announce()
-    end)
-
-    assetDropdown:SetPoint("TOP", allFrames[#allFrames], "BOTTOM")
-    table.insert(allFrames, assetDropdown)
-  end
-
-  local colorPicker = addonTable.CustomiseDialog.Components.GetColorPicker(container, addonTable.Locales.COLOR, function(color)
-    currentMarker.color = CopyTable(color)
-    Announce()
-  end)
-  colorPicker:SetPoint("TOP", allFrames[#allFrames], "BOTTOM")
-  table.insert(allFrames, colorPicker)
-
-  function container:Set(details)
-    currentMarker = details
-    scaleSlider:SetValue(Round(currentMarker.scale * 100))
-    colorPicker:SetValue(currentMarker.color)
-
-    assetDropdown:Init(GetLabelsValues(addonTable.Assets.Markers, function(asset)
-      return asset.tag == details.kind
-    end))
-
-    for _, f in ipairs(allFrames) do
-      if f.DropDown then
-        f:SetValue()
-      end
-    end
-  end
-
-  function container:IsFor(kind, details)
-    return kind == "markers"
-  end
-
-  container:SetScript("OnHide", function()
-    currentHighlight = nil
-  end)
-
-  container:SetHeight(200)
-  container:SetPoint("LEFT")
-  container:SetPoint("RIGHT")
-  container:Hide()
-
-  return container
-end
-
-local function GetPowerSettings(parent)
-  local container = CreateFrame("Frame", nil, parent)
-  local allFrames = {}
-
-  local currentPower
-
-  local scaleSlider = addonTable.CustomiseDialog.Components.GetSlider(container, addonTable.Locales.POWER_SCALE, 1, 300, "%s%%", function(value)
-    local oldScale = currentPower.scale
-    currentPower.scale = value / 100
-    if currentPower.scale ~= oldScale then
-      Announce()
-    end
-  end)
-
-  scaleSlider:SetPoint("TOP")
-  table.insert(allFrames, scaleSlider)
-
-  do
-    local assetDropdown = addonTable.CustomiseDialog.Components.GetBasicDropdown(container, addonTable.Locales.FILLED_TEXTURE, function(value)
-      return currentPower and currentPower.filled == value
-    end, function(value)
-      currentPower.filled = value
-      Announce()
-    end)
-
-    assetDropdown:Init(GetLabelsValues(addonTable.Assets.PowerBars))
-
-    assetDropdown:SetPoint("TOP", allFrames[#allFrames], "BOTTOM")
-    table.insert(allFrames, assetDropdown)
-  end
-
-  do
-    local assetDropdown = addonTable.CustomiseDialog.Components.GetBasicDropdown(container, addonTable.Locales.EMPTY_TEXTURE, function(value)
-      return currentPower and currentPower.blank == value
-    end, function(value)
-      currentPower.blank = value
-      Announce()
-    end)
-
-    assetDropdown:Init(GetLabelsValues(addonTable.Assets.PowerBars))
-
-    assetDropdown:SetPoint("TOP", allFrames[#allFrames], "BOTTOM")
-    table.insert(allFrames, assetDropdown)
-  end
-
-  function container:Set(details)
-    currentPower = details
-    scaleSlider:SetValue(Round(currentPower.scale * 100))
-
-    for _, f in ipairs(allFrames) do
-      if f.DropDown then
-        f:SetValue()
-      end
-    end
-  end
-
-  function container:IsFor(kind, details)
-    return kind == "specialBars" and details.kind == "power"
-  end
-
-  container:SetScript("OnHide", function()
-    currentPower = nil
-  end)
-
-  container:SetHeight(200)
-  container:SetPoint("LEFT")
-  container:SetPoint("RIGHT")
-  container:Hide()
-
-  return container
-end
-
 function addonTable.CustomiseDialog.GetMainDesigner(parent)
   local container = CreateFrame("Frame", nil, parent)
 
@@ -1095,18 +423,196 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
 
   local settingsFrames = {}
 
-  local function Generate(func)
-    local settingsContainer = func(container)
-    settingsContainer:SetPoint("TOP", allFrames[#allFrames], "BOTTOM")
-    table.insert(settingsFrames, settingsContainer)
+  local function Generate()
+    local function AddToTab(tab, entries, kind)
+      local parent, yOffset = nil, -40
+      if kind == "*" then
+        parent = tab
+      else
+        parent = CreateFrame("Frame", nil, tab)
+        if tab.lastOption then
+          parent:SetPoint("TOP", tab.lastOption, "BOTTOM", 0, -30)
+        else
+          parent:SetPoint("TOP", 0, yOffset)
+        end
+        yOffset = 0
+        parent:SetPoint("LEFT")
+        parent:SetPoint("RIGHT")
+        parent:SetHeight(300)
+        parent:Hide()
+        tab.kindSpecificSettings[kind] = parent
+      end
+
+      local allFrames = {}
+
+      for _, e in ipairs(entries) do
+        local frame
+        local function Setter(value)
+          if not parent.details then
+            return
+          end
+          local oldValue = e.getter(parent.details)
+          e.setter(parent.details, value)
+          if oldValue ~= e.getter(parent.details) then
+            Announce()
+          end
+        end
+        local function Getter(value)
+          if not parent.details then
+            return
+          end
+          return e.getter(parent.details)
+        end
+        if e.kind == "slider" then
+          frame = addonTable.CustomiseDialog.Components.GetSlider(parent, e.label, e.min, e.max, e.valuePattern, Setter)
+        elseif e.kind == "dropdown" then
+          frame = addonTable.CustomiseDialog.Components.GetBasicDropdown(parent, e.label, function(value)
+            if not parent.details then
+              return false
+            end
+            return value == e.getter(parent.details)
+          end, Setter)
+        elseif e.kind == "checkbox" then
+          frame = addonTable.CustomiseDialog.Components.GetCheckbox(parent, e.label, 28, Setter)
+        elseif e.kind == "colorPicker" then
+          frame = addonTable.CustomiseDialog.Components.GetColorPicker(parent, e.label, Setter)
+        end
+
+        if frame then
+          frame.kind = e.kind
+          frame.getInitData = e.getInitData
+          frame.Getter = Getter
+          if #allFrames == 0 then
+            frame:SetPoint("TOP", 0, yOffset)
+          else
+            frame:SetPoint("TOP", allFrames[#allFrames], "BOTTOM", 0, yOffset)
+          end
+          table.insert(allFrames, frame)
+          yOffset = 0
+        elseif e.kind == "spacer" then
+          yOffset = -30
+        end
+
+        if parent == tab then
+          tab.lastOption = allFrames[#allFrames]
+        end
+      end
+
+      function parent:UpdateOptions(details)
+        parent.details = details
+        for _, f in ipairs(allFrames) do
+          if f.getInitData then
+            f:Init(f.getInitData(details))
+          end
+          f:SetValue(f.Getter())
+        end
+      end
+    end
+    for kind, details in pairs(addonTable.CustomiseDialog.WidgetsConfig) do
+      local settingsContainer = CreateFrame("Frame", nil, container)
+      settingsContainer:SetPoint("TOP", previewInset, "BOTTOM")
+      settingsContainer:SetPoint("LEFT")
+      settingsContainer:SetPoint("RIGHT")
+      settingsContainer:SetHeight(300)
+      settingsContainer:Hide()
+      table.insert(settingsFrames, settingsContainer)
+
+      local tabs = {}
+      local tabMap = {}
+      local function InitTab(tab, tabButton, label)
+        tab:SetPoint("LEFT")
+        tab:SetPoint("RIGHT")
+        tab:SetHeight(300)
+        tab.button = tabButton
+        if #tabs == 0 then
+          tabButton:SetPoint("TOPLEFT", 20, 0)
+        else
+          tabButton:SetPoint("TOPLEFT", tabs[#tabs].button, "TOPRIGHT", 5, 0)
+        end
+        tabButton.kind = label
+        tabButton.label = label
+        tabButton:SetScript("OnClick", function()
+          tabButton:GetParent():SetTab(tabButton.label)
+        end)
+        tab.kindSpecificSettings = {}
+
+        tabMap[label] = tab
+        table.insert(tabs, tab)
+        function tab:Set(details)
+          if tab.UpdateOptions then
+            tab:UpdateOptions(details)
+          end
+          for subKind, nestedContainer in pairs(self.kindSpecificSettings) do
+            if subKind == details.kind then
+              nestedContainer.details = nil
+              nestedContainer:Show()
+              nestedContainer:UpdateOptions(details)
+            else
+              nestedContainer:Hide()
+            end
+          end
+        end
+      end
+
+      function settingsContainer:IsFor(newKind, details)
+        return newKind == kind
+      end
+
+      settingsContainer.tabIndex = 1
+      local tabManager = CreateFrame("Frame", nil, settingsContainer)
+      tabManager:SetPoint("TOP", 0, -5)
+      tabManager:SetPoint("LEFT")
+      tabManager:SetPoint("RIGHT")
+      tabManager:SetHeight(30)
+      function tabManager:SetTab(label)
+        local currentTab
+        for index, t in ipairs(tabs) do
+          if t.button.label ~= label then
+            PanelTemplates_DeselectTab(t.button)
+            t:Hide()
+          else
+            currentTab = t
+            settingsContainer.tabIndex = index
+          end
+        end
+        PanelTemplates_SelectTab(currentTab.button)
+        currentTab.details = nil
+        currentTab:Show()
+        currentTab:Set(settingsContainer.details)
+      end
+      function settingsContainer:Set(details)
+        settingsContainer.details = details
+        tabManager:SetTab(tabs[settingsContainer.tabIndex].button.label)
+      end
+      if details["*"] then
+        for _, tabDetails in ipairs(details["*"]) do
+          local tabContainer = CreateFrame("Frame", nil, settingsContainer)
+          local tabButton = addonTable.CustomiseDialog.Components.GetTab(tabManager, tabDetails.label)
+          InitTab(tabContainer, tabButton, tabDetails.label)
+          AddToTab(tabContainer, tabDetails.entries, "*")
+        end
+      end
+      for key in pairs(details) do
+        if key ~= "*" then
+          for _, tabDetails in ipairs(details[key]) do
+            if not tabMap[tabDetails.label] then
+              local tabContainer = CreateFrame("Frame", nil, settingsContainer)
+              local tabButton = addonTable.CustomiseDialog.Components.GetTab(tabManager, tabDetails.label)
+              InitTab(tabContainer, tabButton, tabDetails.label)
+            end
+            AddToTab(tabMap[tabDetails.label], tabDetails.entries, key)
+          end
+        end
+      end
+
+      tabManager.Tabs = {}
+      for _, tabContainer in ipairs(tabs) do
+        table.insert(tabManager.Tabs, tabContainer.button)
+      end
+    end
   end
 
-  Generate(GetBarSettings)
-  Generate(GetTextSettings)
-  Generate(GetHighlightSettings)
-  Generate(GetMarkerSettings)
-  Generate(GetPowerSettings)
-  Generate(GetAuraSettings)
+  Generate()
 
   SetSelection = function(w)
     if not w then
@@ -1121,17 +627,6 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
     end
     deleteButton:Enable()
 
-    local kind = w.kind
-    for _, frame in ipairs(settingsFrames) do
-      if frame:IsFor(kind, w.details) then
-        frame:Show()
-        frame:Set(w.details)
-      else
-        frame:Hide()
-      end
-    end
-
-
     selectionIndex = tIndexOf(widgets, w)
 
     selector:Show()
@@ -1140,6 +635,20 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
     selector:SetFrameStrata("HIGH")
     selector:SetPoint("TOPLEFT", w, "TOPLEFT", -2, 2)
     selector:SetPoint("BOTTOMRIGHT", w, "BOTTOMRIGHT", 2, -2)
+
+    for _, frame in ipairs(settingsFrames) do
+      if not frame:IsFor(w.kind, w.details) then
+        frame:Hide()
+      end
+    end
+
+    for _, frame in ipairs(settingsFrames) do
+      if frame:IsFor(w.kind, w.details) then
+        frame.details = nil
+        frame:Show()
+        frame:Set(w.details)
+      end
+    end
   end
 
   container:SetScript("OnShow", function()
