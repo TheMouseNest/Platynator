@@ -61,7 +61,7 @@ addonTable.CustomiseDialog.WidgetsConfig = {
         label = addonTable.Locales.TEXTURES,
         entries = {
           {
-            label = addonTable.Locales.BAR_SCALE,
+            label = addonTable.Locales.SCALE,
             kind = "slider",
             min = 1, max = 300,
             valuePattern = "%d%%",
@@ -296,7 +296,7 @@ addonTable.CustomiseDialog.WidgetsConfig = {
         label = addonTable.Locales.GENERAL,
         entries = {
           {
-            label = addonTable.Locales.TEXT_SCALE,
+            label = addonTable.Locales.SCALE,
             kind = "slider",
             min = 1, max = 300,
             valuePattern = "%d%%",
@@ -401,7 +401,7 @@ addonTable.CustomiseDialog.WidgetsConfig = {
         label = addonTable.Locales.TEXTURES,
         entries = {
           {
-            label = addonTable.Locales.MARKER_SCALE,
+            label = addonTable.Locales.SCALE,
             kind = "slider",
             min = 1, max = 300,
             valuePattern = "%d%%",
@@ -445,7 +445,7 @@ addonTable.CustomiseDialog.WidgetsConfig = {
         label = addonTable.Locales.GENERAL,
         entries = {
           {
-            label = addonTable.Locales.AURA_SCALE,
+            label = addonTable.Locales.SCALE,
             kind = "slider",
             min = 1, max = 300,
             valuePattern = "%d%%",
@@ -466,7 +466,7 @@ addonTable.CustomiseDialog.WidgetsConfig = {
         label = addonTable.Locales.TEXTURES,
         entries = {
           {
-            label = addonTable.Locales.HIGHLIGHT_SCALE,
+            label = addonTable.Locales.SCALE,
             kind = "slider",
             min = 1, max = 300,
             valuePattern = "%d%%",
@@ -510,7 +510,7 @@ addonTable.CustomiseDialog.WidgetsConfig = {
         label = addonTable.Locales.TEXTURES,
         entries = {
           {
-            label = addonTable.Locales.POWER_SCALE,
+            label = addonTable.Locales.SCALE,
             kind = "slider",
             min = 1, max = 300,
             valuePattern = "%d%%",
