@@ -204,7 +204,9 @@ function addonTable.Display.NameplateMixin:SetUnit(unit)
     self.DebuffDisplay:Hide()
     self.CrowdControlDisplay:Hide()
 
-    self.AurasManager:SetUnit()
+    if self.AurasManager then
+      self.AurasManager:SetUnit()
+    end
 
     self:UnregisterAllEvents()
   end
