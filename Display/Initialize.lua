@@ -2,26 +2,11 @@
 local addonTable = select(2, ...)
 
 function addonTable.Display.Initialize()
-  local style = addonTable.Config.Get(addonTable.Config.Options.DESIGN)
+  local design = addonTable.Config.Get(addonTable.Config.Options.DESIGN)
 
-  local flags = style.font.flags
-  local file = addonTable.Assets.Fonts[style.font.asset].file
-  local size = addonTable.Assets.Fonts[style.font.asset].size
-  do
-    local members = {
-      {alphabet = "roman", file = file, height = size, flags = flags},
-    }
-    for _, alphabet in ipairs({"simplifiedchinese", "traditionalchinese", "korean", "russian"}) do
-      local fontObject = ChatFontNormal:GetFontObjectForAlphabet(alphabet)
-      local file = fontObject:GetFont()
-      table.insert(members, {alphabet = alphabet, file = file, height = size, flags = flags})
-    end
-    CreateFontFamily("PlatynatorNameplateFont", members)
-  end
-  PlatynatorNameplateFont:SetShadowOffset(1, -1)
-
+  addonTable.CurrentFont = addonTable.Core.GetFontByID(design.font.asset)
   CreateFont("PlatynatorNameplateCooldownFont")
-  PlatynatorNameplateCooldownFont:SetFont(file, 13, "OUTLINE")
+  PlatynatorNameplateCooldownFont:SetFont(design.font.asset, 13, design.font.outline and "OUTLINE" or "")
 
   local manager = CreateFrame("Frame")
   Mixin(manager, addonTable.Display.ManagerMixin)
@@ -113,6 +98,9 @@ function addonTable.Display.ManagerMixin:OnLoad()
   addonTable.CallbackRegistry:RegisterCallback("RefreshStateChange", function(_, state)
     if state[addonTable.Constants.RefreshReason.Design] then
       self:SetScript("OnUpdate", function()
+        local design = addonTable.Config.Get(addonTable.Config.Options.DESIGN)
+        addonTable.CurrentFont = addonTable.Core.GetFontByID(design.font.asset)
+        PlatynatorNameplateCooldownFont:SetFont(design.font.asset, 13, design.font.outline and "OUTLINE" or "")
         self.styleIndex = self.styleIndex + 1
         self:SetScript("OnUpdate", nil)
         for _, display in pairs(self.nameplateDisplays) do

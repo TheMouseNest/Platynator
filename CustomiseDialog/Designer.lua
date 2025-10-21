@@ -407,6 +407,8 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
 
   addonTable.CallbackRegistry:RegisterCallback("RefreshStateChange", function(_, state)
     if state[addonTable.Constants.RefreshReason.Design] then
+      local design = addonTable.Config.Get(addonTable.Config.Options.DESIGN)
+      addonTable.CurrentFont = addonTable.Core.GetFontByID(design.font.asset)
       GenerateWidgets()
       if autoSelectedDetails then
         for index, w in ipairs(widgets) do

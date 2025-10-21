@@ -70,6 +70,12 @@ function addonTable.Core.MigrateSettings(design)
       bar.colors.npc.tapped = {r = newColor.r, g = newColor.g, b = newColor.b}
     end
   end
+
+  if design.font.shadow == nil or design.font.flags ~= nil then
+    design.font.shadow = true
+    design.font.outline = design.font.flags == "OUTLINE"
+    design.font.flags = nil
+  end
 end
 
 local function SetStyle()

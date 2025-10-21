@@ -27,6 +27,7 @@ Core/Config.lua
 Core/Utilities.lua
 Core/Dialogs.lua
 Core/SlashCmd.lua
+Core/Fonts.lua
 Core/Initialize.lua
 
 Display/Initialize.lua

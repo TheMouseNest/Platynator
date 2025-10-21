@@ -288,7 +288,7 @@ end
 function addonTable.Display.GetText(frame, parent)
   frame = frame or CreateFrame("Frame", nil, parent or UIParent)
 
-  frame.text = frame:CreateFontString(nil, nil, "PlatynatorNameplateFont") --XXX: Change this later
+  frame.text = frame:CreateFontString()
   frame.text:SetPoint("CENTER")
   hooksecurefunc(frame.text, "SetText", function()
     frame:SetSize(frame.text:GetSize())
@@ -303,6 +303,7 @@ function addonTable.Display.GetText(frame, parent)
     end
 
     ApplyAnchor(frame, details.anchor)
+    frame.text:SetFontObject(addonTable.CurrentFont)
     frame.text:ClearAllPoints()
     frame.text:SetPoint(details.anchor[1] or "CENTER")
     frame.text:SetTextColor(details.color.r, details.color.g, details.color.b)

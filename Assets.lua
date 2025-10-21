@@ -10,9 +10,11 @@ addonTable.Assets.Mode = {
 local mode = addonTable.Assets.Mode
 
 addonTable.Assets.Fonts = {
-  ["ArialNarrow"] = {file = "Fonts\\ARIALN.TTF", size = 10},
-  ["FritzQuadrata"] = {file = "Fonts\\FRIZQT__.TTF", size = 10},
-  ["RobotoCondensed-Bold"] = {file = "Interface/AddOns/Platynator/Assets/RobotoCondensed-Bold.ttf", size = 10},
+  ["ArialNarrow"] = {file = "Fonts\\ARIALN.TTF", size = 10, preview = "Arial Narrow"},
+  ["FritzQuadrata"] = {file = "Fonts\\FRIZQT__.TTF", size = 10, preview = "Fritz Quadrata"},
+  ["RobotoCondensed-Bold"] = {file = "Interface/AddOns/Platynator/Assets/Fonts/RobotoCondensed-Bold.ttf", size = 10, preview = "Roboto Condensed Bold"},
+  ["DiabloHeavy"] = {file = "Interface/AddOns/Platynator/Assets/Fonts/DiabloHeavy.ttf", size = 10, preview = "Diablo Heavy"},
+  ["2002"] = {file = "Fonts\\2002.TTF", size = 10, preview = "2002"},
 }
 
 addonTable.Assets.BarBackgrounds = {

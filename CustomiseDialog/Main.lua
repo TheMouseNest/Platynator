@@ -207,10 +207,86 @@ local function SetupBehaviour(parent)
   return container
 end
 
+local function SetupFont(parent)
+  local container = CreateFrame("Frame", nil, parent)
+
+  local allFrames = {}
+
+  local fontDropdown = addonTable.CustomiseDialog.Components.GetBasicDropdown(container, addonTable.Locales.FONT)
+  fontDropdown:SetPoint("TOP")
+  table.insert(allFrames, fontDropdown)
+
+  local fonts = {}
+  for key, value in pairs(addonTable.Assets.Fonts) do
+    table.insert(fonts, {label = value.preview, id = key})
+  end
+  table.sort(fonts, function(a, b) return a.label < b.label end)
+
+  fontDropdown.DropDown:SetupMenu(function(_, rootDescription)
+    for _, details in ipairs(fonts) do
+      local radio = rootDescription:CreateRadio(details.label,
+        function()
+          return addonTable.Config.Get(addonTable.Config.Options.DESIGN).font.asset == details.id
+        end,
+        function()
+          local design = addonTable.Config.Get(addonTable.Config.Options.DESIGN)
+          local oldAsset = design.font.asset
+          if details.id ~= oldAsset then
+            design.font.asset = details.id
+            addonTable.Config.Set(addonTable.Config.Options.STYLE, "custom")
+            addonTable.CallbackRegistry:TriggerEvent("RefreshStateChange", {[addonTable.Constants.RefreshReason.Design] = true})
+          end
+        end
+      )
+      radio:AddInitializer(function(button, elementDescription, menu)
+        button.fontString:SetFontObject(addonTable.Core.GetFontByID(details.id, 13))
+      end)
+    end
+    rootDescription:SetScrollMode(20 * 20)
+  end)
+
+  local outlineCheckbox = addonTable.CustomiseDialog.Components.GetCheckbox(container, addonTable.Locales.SHOW_OUTLINE, 28, function(value)
+    local design = addonTable.Config.Get(addonTable.Config.Options.DESIGN)
+    if value ~= design.font.outline then
+      design.font.outline = value
+      addonTable.Config.Set(addonTable.Config.Options.STYLE, "custom")
+      addonTable.CallbackRegistry:TriggerEvent("RefreshStateChange", {[addonTable.Constants.RefreshReason.Design] = true})
+    end
+  end)
+  outlineCheckbox:SetPoint("TOP", allFrames[#allFrames], "BOTTOM")
+  table.insert(allFrames, outlineCheckbox)
+
+  local shadowCheckbox = addonTable.CustomiseDialog.Components.GetCheckbox(container, addonTable.Locales.SHOW_SHADOW, 28, function(value)
+    local design = addonTable.Config.Get(addonTable.Config.Options.DESIGN)
+    if value ~= design.font.shadow then
+      design.font.shadow = value
+      addonTable.Config.Set(addonTable.Config.Options.STYLE, "custom")
+      addonTable.CallbackRegistry:TriggerEvent("RefreshStateChange", {[addonTable.Constants.RefreshReason.Design] = true})
+    end
+  end)
+  shadowCheckbox:SetPoint("TOP", allFrames[#allFrames], "BOTTOM")
+  table.insert(allFrames, shadowCheckbox)
+
+  container:SetScript("OnShow", function()
+    local design = addonTable.Config.Get(addonTable.Config.Options.DESIGN)
+    outlineCheckbox:SetValue(design.font.outline)
+    shadowCheckbox:SetValue(design.font.shadow)
+
+    for _, f in ipairs(allFrames) do
+      if f.DropDown then
+        f:SetValue()
+      end
+    end
+  end)
+
+  return container
+end
+
 local TabSetups = {
   {callback = SetupGeneral, name = addonTable.Locales.GENERAL},
   {callback = addonTable.CustomiseDialog.GetMainDesigner, name = addonTable.Locales.DESIGNER},
   {callback = SetupBehaviour, name = addonTable.Locales.BEHAVIOUR},
+  {callback = SetupFont, name = addonTable.Locales.FONT},
 }
 
 function addonTable.CustomiseDialog.Toggle()
