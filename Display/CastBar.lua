@@ -58,7 +58,7 @@ function addonTable.Display.CastBarMixin:ApplyCasting()
   local isChanneled = false
 
   if type(name) == "nil" then
-    name, text, texture, startTime, endTime, _, _, notInterruptible, _ = UnitChannelInfo(self.unit)
+    name, text, texture, startTime, endTime, _, notInterruptible, _ = UnitChannelInfo(self.unit)
     isChanneled = true
   end
   self:SetReverseFill(isChanneled)
