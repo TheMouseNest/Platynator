@@ -166,7 +166,7 @@ function addonTable.CustomiseDialog.Components.GetColorSwatch(parent, callback)
       colorPickerFrameMonitor:SetScript("OnUpdate", nil)
     end
     if colorPickerFrameMonitor.changed then
-      callback(colorSwatch.pendingColor)
+      callback({r = colorSwatch.pendingColor.r, g = colorSwatch.pendingColor.g, b = colorSwatch.pendingColor.b})
       colorSwatch.currentColor = colorSwatch.pendingColor
       colorSwatch.pendingColor = nil
     end
@@ -190,7 +190,7 @@ function addonTable.CustomiseDialog.Components.GetColorSwatch(parent, callback)
       info.cancelFunc = function()
         colorSwatch.pendingColor = cancelColor
         colorSwatch:SetColorRGB(cancelColor.r, cancelColor.g, cancelColor.b)
-        callback(colorSwatch.pendingColor)
+        callback({r = colorSwatch.pendingColor.r, g = colorSwatch.pendingColor.g, b = colorSwatch.pendingColor.b})
         colorSwatch.currentColor = cancelColor
         colorSwatch.pendingColor = nil
       end
@@ -200,7 +200,7 @@ function addonTable.CustomiseDialog.Components.GetColorSwatch(parent, callback)
       colorSwatch.pendingColor = CreateColor(1, 1, 1)
       colorSwatch.currentColor = colorSwatch.pendingColor
       colorSwatch:SetColorRGB(1, 1, 1)
-      callback(colorSwatch.pendingColor)
+      callback({r = colorSwatch.pendingColor.r, g = colorSwatch.pendingColor.g, b = colorSwatch.pendingColor.b})
       -- Update tooltip to hide text about resetting the color
       colorSwatch:GetScript("OnLeave")(colorSwatch)
       colorSwatch:GetScript("OnEnter")(colorSwatch)

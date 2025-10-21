@@ -90,6 +90,10 @@ L["NEW_PROFILE_CLONE"] = "New Profile (clone current)"
 L["NEW_PROFILE_BLANK"] = "New Profile (blank)"
 L["CONFIRM_DELETE_PROFILE_X"] = "Are you sure you want to delete profile \"%s\"?"
 
+L["EXPORT"] = "Export"
+L["IMPORT"] = "Import"
+L["PASTE_YOUR_IMPORT_STRING_HERE"] = "Paste your import string here"
+
 L["SQUIRREL"] = "Squirrel"
 L["RABBIT"] = "Rabbit"
 L["BEAVER"] = "Beaver"

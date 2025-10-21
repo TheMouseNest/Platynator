@@ -127,6 +127,36 @@ local function SetupGeneral(parent)
   end
   table.insert(allFrames, profileDropdown)
 
+  if C_EncodingUtil then
+    local exportButton = CreateFrame("Button", nil, container, "UIPanelDynamicResizeButtonTemplate")
+    exportButton:SetPoint("TOPLEFT", allFrames[#allFrames], "BOTTOM", -33, -10)
+    exportButton:SetText(addonTable.Locales.EXPORT)
+    DynamicResizeButton_Resize(exportButton)
+    exportButton:SetScript("OnClick", function()
+      local design = CopyTable(addonTable.Config.Get(addonTable.Config.Options.DESIGN))
+      design.addon = "Platynator"
+      design.version = 1
+      addonTable.Dialogs.ShowCopy(C_EncodingUtil.SerializeJSON(design):gsub("%|%|", "|"):gsub("%|", "||"))
+    end)
+    --addonTable.Skins.AddFrame("Button", exportButton)
+
+    local importButton = CreateFrame("Button", nil, container, "UIPanelDynamicResizeButtonTemplate")
+    importButton:SetPoint("TOPRIGHT", allFrames[#allFrames], "BOTTOM", -45, -10)
+    importButton:SetText(addonTable.Locales.IMPORT)
+    DynamicResizeButton_Resize(importButton)
+    importButton:SetScript("OnClick", function()
+      addonTable.CustomiseDialog.ShowImportDialog(function(text)
+        local newDesign = C_EncodingUtil.DeserializeJSON(text)
+        addonTable.Core.MigrateSettings(newDesign)
+        newDesign.version = nil
+        newDesign.addon = nil
+        addonTable.Config.Set(addonTable.Config.Options.DESIGN, newDesign)
+        addonTable.Config.Set(addonTable.Config.Options.STYLE, "custom")
+      end)
+    end)
+    --addonTable.Skins.AddFrame("Button", importButton)
+  end
+
   container:SetScript("OnShow", function()
     for _, f in ipairs(allFrames) do
       if f.SetValue then

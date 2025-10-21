@@ -60,5 +60,6 @@ CustomiseDialog/Components.lua
 CustomiseDialog/AddWidgetsList.lua
 CustomiseDialog/WidgetsConfiguration.lua
 CustomiseDialog/Designer.lua
+CustomiseDialog/ImportDialog.lua
 CustomiseDialog/Main.lua
 CustomiseDialog/Initialize.lua
