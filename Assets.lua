@@ -41,9 +41,11 @@ addonTable.Assets.BarBorders = {
   ["wide/bold"] = {file = "Interface/AddOns/Platynator/Assets/%s/BarBorders/bold.png", width = 1000, height = 125, has4k = true, masked = true, mode = mode.Wide},
   ["wide/soft"] = {file = "Interface/AddOns/Platynator/Assets/%s/BarBorders/soft.png", width = 1023, height = 149, has4k = true, masked = true, mode = mode.Wide},
   ["narrow/soft"] = {file = "Interface/AddOns/Platynator/Assets/%s/BarBorders/soft-narrow.png", width = 1023, height = 88, has4k = true, masked = true, mode = mode.Narrow},
-  ["wide/slight"] = {file = "Interface/AddOns/Platynator/Assets/%s/BarBorders/slight.png", width = 1000, height = 125, has4k = true, mode = mode.Wide},
-  ["narrow/slight"] = {file = "Interface/AddOns/Platynator/Assets/%s/BarBorders/slight-narrow.png", width = 1000, height = 63, has4k = true, mode = mode.Narrow},
-  ["special/blizzard-cast-bar"] = {file = "Interface/AddOns/Platynator/Assets/Special/BarBorders/blizzard-cast-bar.png", width = 1000, height = 57, mode = mode.Special},
+  ["wide/slight"] = {file = "Interface/AddOns/Platynator/Assets/%s/BarBorders/slight.png", width = 1000, height = 125, has4k = true, masked = true, mode = mode.Wide},
+  ["narrow/slight"] = {file = "Interface/AddOns/Platynator/Assets/%s/BarBorders/slight-narrow.png", width = 1000, height = 63, has4k = true, masked = true, mode = mode.Narrow},
+  ["wide/thin"] = {file = "Interface/AddOns/Platynator/Assets/%s/BarBorders/thin.png", width = 1000, height = 125, has4k = true, masked = true, mode = mode.Wide},
+  ["narrow/thin"] = {file = "Interface/AddOns/Platynator/Assets/%s/BarBorders/thin-narrow.png", width = 1000, height = 63, has4k = true, masked = true, mode = mode.Narrow},
+  ["special/blizzard-cast-bar"] = {file = "Interface/AddOns/Platynator/Assets/Special/BarBorders/blizzard-cast-bar.png", width = 1000, height = 57, masked = true, mode = mode.Special},
 }
 
 addonTable.Assets.BarMasks = {
@@ -56,6 +58,8 @@ addonTable.Assets.BarMasks = {
   ["narrow/soft"] = {file = "Interface/AddOns/Platynator/Assets/%s/BarBorders/soft-narrow-mask.png", width = 1000, height = 63, has4k = true, mode = mode.Narrow},
   ["wide/slight"] = {file = "Interface/AddOns/Platynator/Assets/%s/BarBorders/slight-mask.png", width = 1000, height = 125, has4k = true, mode = mode.Wide},
   ["narrow/slight"] = {file = "Interface/AddOns/Platynator/Assets/%s/BarBorders/slight-narrow-mask.png", width = 1000, height = 63, has4k = true, mode = mode.Narrow},
+  ["wide/thin"] = {file = "Interface/AddOns/Platynator/Assets/%s/BarBorders/thin-mask.png", width = 1000, height = 125, has4k = true, mode = mode.Wide},
+  ["narrow/thin"] = {file = "Interface/AddOns/Platynator/Assets/%s/BarBorders/thin-narrow-mask.png", width = 1000, height = 63, has4k = true, mode = mode.Narrow},
   ["special/blizzard-cast-bar"] = {file = "Interface/AddOns/Platynator/Assets/Special/BarBorders/blizzard-cast-bar-mask.png", width = 1000, height = 63, has4k = true, mode = mode.Special},
 }
 
