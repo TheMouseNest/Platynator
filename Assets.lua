@@ -13,6 +13,7 @@ addonTable.Assets.Fonts = {
   ["ArialNarrow"] = {file = "Fonts\\ARIALN.TTF", size = 10, preview = "Arial Narrow"},
   ["FritzQuadrata"] = {file = "Fonts\\FRIZQT__.TTF", size = 10, preview = "Fritz Quadrata"},
   ["RobotoCondensed-Bold"] = {file = "Interface/AddOns/Platynator/Assets/Fonts/RobotoCondensed-Bold.ttf", size = 10, preview = "Roboto Condensed Bold"},
+  ["Lato-Regular"] = {file = "Interface/AddOns/Platynator/Assets/Fonts/Lato-Regular.ttf", size = 10, preview = "Lato Regular"},
   ["DiabloHeavy"] = {file = "Interface/AddOns/Platynator/Assets/Fonts/DiabloHeavy.ttf", size = 10, preview = "Diablo Heavy"},
   ["2002"] = {file = "Fonts\\2002.TTF", size = 10, preview = "2002"},
 }

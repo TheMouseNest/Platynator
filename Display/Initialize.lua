@@ -7,6 +7,11 @@ function addonTable.Display.Initialize()
   addonTable.CurrentFont = addonTable.Core.GetFontByID(design.font.asset)
   CreateFont("PlatynatorNameplateCooldownFont")
   PlatynatorNameplateCooldownFont:SetFont(addonTable.Assets.Fonts[design.font.asset].file, 13, design.font.outline and "OUTLINE" or "")
+  if design.font.shadow then
+    PlatynatorNameplateCooldownFont:SetShadowOffset(1, -1)
+  else
+    PlatynatorNameplateCooldownFont:SetShadowOffset(0, 0)
+  end
 
   local manager = CreateFrame("Frame")
   Mixin(manager, addonTable.Display.ManagerMixin)
@@ -101,6 +106,11 @@ function addonTable.Display.ManagerMixin:OnLoad()
         local design = addonTable.Config.Get(addonTable.Config.Options.DESIGN)
         addonTable.CurrentFont = addonTable.Core.GetFontByID(design.font.asset)
         PlatynatorNameplateCooldownFont:SetFont(design.font.asset, 13, design.font.outline and "OUTLINE" or "")
+        if design.font.shadow then
+          PlatynatorNameplateCooldownFont:SetShadowOffset(1, -1)
+        else
+          PlatynatorNameplateCooldownFont:SetShadowOffset(0, 0)
+        end
         self.styleIndex = self.styleIndex + 1
         self:SetScript("OnUpdate", nil)
         for _, display in pairs(self.nameplateDisplays) do
