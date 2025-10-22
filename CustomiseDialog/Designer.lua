@@ -105,6 +105,13 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
   previewInset:SetPoint("RIGHT", -20, 0)
   previewInset:SetHeight(220)
 
+  local titleText = container:CreateFontString(nil, nil, "GameFontHighlightLarge")
+  titleText:SetPoint("TOP", previewInset, "BOTTOM", 0, -15)
+  titleText:SetPoint("LEFT", 40, 0)
+  titleText:SetJustifyH("CENTER")
+  titleText:SetPoint("RIGHT", -20, 0)
+  titleText:SetShadowOffset(1, -1)
+
   keyboardTrap:SetScript("OnKeyDown", function(_, key)
     keyboardTrap:SetPropagateKeyboardInput(false)
     local amount = 1
@@ -163,6 +170,20 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
       end
     end
   end)
+
+  local titleMap = {}
+
+  local lastHeader
+  for _, entry in ipairs(addonTable.CustomiseDialog.DesignWidgets) do
+    if entry.special == "header" then
+      lastHeader = entry.name
+    else
+      if not titleMap[entry.kind] then
+        titleMap[entry.kind] = {}
+      end
+      titleMap[entry.kind][entry.default.kind] = lastHeader .. ": " .. entry.name
+    end
+  end
 
   local deleteButton = CreateFrame("Button", nil, previewInset, "UIPanelDynamicResizeButtonTemplate")
   deleteButton:SetText(addonTable.Locales.DELETE_WIDGET)
@@ -627,9 +648,12 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
       end
       selectionIndex = 0
       selector:Hide()
+      titleText:SetText("")
       return
     end
     deleteButton:Enable()
+
+    titleText:SetText(titleMap[w.kind] and titleMap[w.kind][w.details.kind] or UNKNOWN)
 
     selectionIndex = tIndexOf(widgets, w)
 
