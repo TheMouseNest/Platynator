@@ -25,6 +25,7 @@ function addonTable.Display.NameplateMixin:OnLoad()
     self.AurasManager = addonTable.Utilities.InitFrameWithMixin(self, addonTable.Display.AurasForNameplateMixin)
     self.AurasPool = CreateFramePool("Frame", self, "PlatynatorNameplateBuffButtonTemplate", nil, false, function(frame)
       frame.Cooldown:SetCountdownFont("PlatynatorNameplateCooldownFont")
+      frame.Cooldown:SetCountdownAbbrevThreshold(20)
     end)
 
     local function GetCallback(frame)

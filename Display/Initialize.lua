@@ -6,7 +6,7 @@ function addonTable.Display.Initialize()
 
   addonTable.CurrentFont = addonTable.Core.GetFontByID(design.font.asset)
   CreateFont("PlatynatorNameplateCooldownFont")
-  PlatynatorNameplateCooldownFont:SetFont(design.font.asset, 13, design.font.outline and "OUTLINE" or "")
+  PlatynatorNameplateCooldownFont:SetFont(addonTable.Assets.Fonts[design.font.asset].file, 13, design.font.outline and "OUTLINE" or "")
 
   local manager = CreateFrame("Frame")
   Mixin(manager, addonTable.Display.ManagerMixin)
