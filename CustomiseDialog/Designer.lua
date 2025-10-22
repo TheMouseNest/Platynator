@@ -61,34 +61,230 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
     table.insert(allFrames, globalScale)
   end
 
-  local SetSelection
+  local UpdateSelection
   local UpdateWidgetPoints
   local widgets
-  local selectionIndex = 0
+  local selectionIndexes = {}
   local autoSelectedDetails
 
-  local function DeleteCurrentWidget()
-    if selectionIndex > 0 then
-      local kind = widgets[selectionIndex].kind
-      local details = widgets[selectionIndex].details
-      local design = addonTable.Config.Get(addonTable.Config.Options.DESIGN)
-      local index = tIndexOf(design[kind], details)
-      table.remove(design[kind], index)
-      selectionIndex = 0
-      Announce()
+  local previewInset = CreateFrame("Frame", nil, container, "InsetFrameTemplate")
+  previewInset:SetPoint("TOP", allFrames[#allFrames], "BOTTOM", 0, -30)
+  previewInset:SetPoint("LEFT", 20, 0)
+  previewInset:SetPoint("RIGHT", -20, 0)
+  previewInset:SetHeight(220)
+
+  local preview = CreateFrame("Frame", nil, previewInset)
+
+  preview:SetPoint("TOP")
+
+  preview:SetAllPoints()
+  preview:SetFlattensRenderLayers(true)
+  preview:SetScale(2)
+
+  local function ToggleSelection(w)
+    local index = tIndexOf(widgets, w)
+    if IsShiftKeyDown() then
+      local selectionIndex = tIndexOf(selectionIndexes, index)
+      if selectionIndex ~= nil then
+        table.remove(selectionIndexes, selectionIndex)
+      else
+        table.insert(selectionIndexes, index)
+      end
+    elseif #selectionIndexes > 1 or #selectionIndexes == 0 or selectionIndexes[1] ~= index then
+      selectionIndexes = {index}
+    else
+      selectionIndexes = {}
+    end
+    UpdateSelection()
+  end
+  local function ForceSelection(w)
+    local index = tIndexOf(widgets, w)
+    if tIndexOf(selectionIndexes, index) == nil then
+      selectionIndexes = {index}
+    end
+    UpdateSelection()
+  end
+
+  UpdateWidgetPoints = function(w, snapping, offsetX, offsetY)
+    snapping = snapping or 2
+    offsetX = offsetX or 0
+    offsetY = offsetY or 0
+    local left, bottom, width, height = w:GetRect()
+    local widgetRect = {left = left + offsetX, bottom = bottom + offsetY, width = width, height = height}
+    left, bottom, width, height = preview:GetRect()
+    local previewRect = {left = left, bottom = bottom, width = width, height = height}
+    local widgetCenter = {x = widgetRect.left + widgetRect.width / 2, y = widgetRect.bottom + widgetRect.height / 2}
+    local previewCenter = {x = previewRect.left + previewRect.width / 2, y = previewRect.bottom + previewRect.height / 2}
+
+    local point, x, y = "", 0, 0
+
+    local snapX, snapY, xLock, yLock = 0, 0, false, false
+    if math.abs(widgetCenter.y - previewCenter.y) < snapping then
+      snapY = previewCenter.y - widgetCenter.y
+      point = point
+      yLock = true
+    elseif widgetCenter.y < previewCenter.y then
+      point = "TOP" .. point
+      y = widgetRect.bottom + widgetRect.height - previewCenter.y
+    else
+      point = "BOTTOM" .. point
+      y = widgetRect.bottom - previewCenter.y
+    end
+
+    if w.kind ~= "auras" then
+      if math.abs(widgetCenter.x - previewCenter.x) < snapping then
+        snapX = previewCenter.x - widgetCenter.x
+        xLock = true
+        point = point
+      elseif widgetCenter.x < previewCenter.x then
+        point = point .. "LEFT"
+        x = widgetRect.left - previewCenter.x
+      else
+        point = point .. "RIGHT"
+        x = widgetRect.left + widgetRect.width - previewCenter.x
+      end
+    else
+      if math.abs(widgetCenter.x - previewCenter.x) <= snapping then
+        snapX = previewCenter.x - widgetCenter.x
+        xLock = true
+        point = point
+      elseif widgetCenter.x < previewCenter.x and point == "" or widgetCenter.x > previewCenter.x and point ~= "" then
+        point = point .. "RIGHT"
+        x = widgetRect.left + widgetRect.width - previewCenter.x
+      else
+        point = point .. "LEFT"
+        x = widgetRect.left - previewCenter.x
+      end
+    end
+
+    if point == "" then
+      w.details.anchor = {}
+    elseif x == 0 and y == 0 then
+      w.details.anchor = {point}
+    else
+      w.details.anchor = {point, Round(x), Round(y)}
+    end
+
+    if x ~= 0 then
+      snapX = Round(x) - x
+    end
+    if y ~= 0 then
+      snapY = Round(y) - y
+    end
+
+    -- snapX, snapY used to offset other widgets to keep them all consistent to each other
+    -- xLock, yLock used to prevent a widget shifting because its been centered on an axis
+    -- (this prevents infinite loops from the shifts bouncing around)
+    return snapX, snapY, xLock, yLock
+  end
+
+  local function AlignForRelativePoints(offsets, snappingAmount)
+    snappingAmount = snappingAmount or 4
+    local snapped = true
+    local iteration = 0
+    -- Shift items around until we reach a happy medium where everything is approximately in the same
+    -- relative place to the other items as it was before moving, complext because of allowing widgets to snap to center points
+    while snapped and
+      -- Capped iterations to a reasonably high number that it isn't expected to reach (unless dozens of items are selected)
+      iteration < 200
+      do
+
+      iteration = iteration + 1
+      snapped = false
+      local snapX, snapY, xLock, yLock = 0, 0
+      local endIndex = #selectionIndexes
+      for indexIndex, index in ipairs(selectionIndexes) do
+        local w = widgets[index]
+        snapX, snapY, xLock, yLock = UpdateWidgetPoints(w, snappingAmount, offsets[indexIndex].x, offsets[indexIndex].y)
+        local o = offsets[indexIndex]
+        if math.abs(snapX) >= 0.5 and not o.xLock or math.abs(snapY) >= 0.5 and not o.yLock then
+          -- See UpdateWidgetPoints for usage of xLock/yLock
+          o.xLock = o.xLock or xLock
+          o.yLock = o.yLock or yLock
+          if o.xLock then
+            o.x = o.x + snapX
+          end
+          if o.yLock then
+            o.y = o.y + snapY
+          end
+          endIndex = indexIndex
+          snapped = true
+          break
+        else
+          offsets[indexIndex] = {x = offsets[indexIndex].x + snapX, y = offsets[indexIndex].y + snapY}
+        end
+      end
+
+      if snapped then
+        for indexIndex, index in ipairs(selectionIndexes) do
+          local o = offsets[indexIndex]
+          if not o.xLock then
+            o.x = o.x + snapX
+          end
+          if not o.yLock then
+            o.y = o.y + snapY
+          end
+        end
+      end
     end
   end
 
-  local selector = CreateFrame("Frame", nil, container)
+  local movingMonitor = CreateFrame("Frame")
+  movingMonitor:RegisterEvent("GLOBAL_MOUSE_UP")
+  local function StartMovingSelection()
+    local backupSelectionIndexes = CopyTable(selectionIndexes)
+
+    local cursorX, cursorY = GetCursorPosition()
+    cursorX = cursorX / preview:GetEffectiveScale()
+    cursorY = cursorY / preview:GetEffectiveScale()
+    movingMonitor:SetScript("OnUpdate", function()
+      local newCursorX, newCursorY = GetCursorPosition()
+      newCursorX = newCursorX / preview:GetEffectiveScale()
+      newCursorY = newCursorY / preview:GetEffectiveScale()
+      for _, index in ipairs(backupSelectionIndexes) do
+        local w = widgets[index]
+        w:AdjustPointsOffset(newCursorX - cursorX, newCursorY - cursorY)
+      end
+      cursorX = newCursorX
+      cursorY = newCursorY
+    end)
+    movingMonitor:SetScript("OnEvent", function()
+      movingMonitor:SetScript("OnUpdate", nil)
+      movingMonitor:SetScript("OnEvent", nil)
+      selectionIndexes = backupSelectionIndexes
+      local offsets = {}
+      for _, index in ipairs(selectionIndexes) do
+        table.insert(offsets, {x = 0, y = 0, xLock = false, yLock = false})
+      end
+      AlignForRelativePoints(offsets)
+      Announce()
+    end)
+  end
+
+  local function DeleteCurrentWidget()
+    table.sort(selectionIndexes, function(a, b) return a > b end)
+    for _, index in ipairs(selectionIndexes) do
+      local kind = widgets[index].kind
+      local details = widgets[index].details
+      local design = addonTable.Config.Get(addonTable.Config.Options.DESIGN)
+      local index = tIndexOf(design[kind], details)
+      table.remove(design[kind], index)
+    end
+    selectionIndexes = {}
+    Announce()
+  end
+
+  local selectorPool = CreateFramePool("Frame", container, nil, nil, false, function(selector)
+    local selectionTexture = selector:CreateTexture()
+    selectionTexture:SetTexture("Interface/AddOns/Platynator/Assets/selection-outline.png")
+    selectionTexture:SetTextureSliceMargins(45, 45, 45, 45)
+    selectionTexture:SetTextureSliceMode(Enum.UITextureSliceMode.Tiled)
+    selectionTexture:SetVertexColor(78/255, 165/255, 252/255, 0.9)
+    selectionTexture:SetScale(0.25)
+    selectionTexture:SetAllPoints()
+  end)
   local keyboardTrap = CreateFrame("Frame", nil, container)
   keyboardTrap:Hide()
-  local selectionTexture = selector:CreateTexture()
-  selectionTexture:SetTexture("Interface/AddOns/Platynator/Assets/selection-outline.png")
-  selectionTexture:SetTextureSliceMargins(45, 45, 45, 45)
-  selectionTexture:SetTextureSliceMode(Enum.UITextureSliceMode.Tiled)
-  selectionTexture:SetVertexColor(78/255, 165/255, 252/255, 0.9)
-  selectionTexture:SetScale(0.25)
-  selectionTexture:SetAllPoints()
 
   local hoverMarker = CreateFrame("Frame", nil, container)
   local hoverTexture = hoverMarker:CreateTexture()
@@ -99,12 +295,6 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
   hoverTexture:SetScale(0.25)
   hoverTexture:SetAllPoints()
 
-  local previewInset = CreateFrame("Frame", nil, container, "InsetFrameTemplate")
-  previewInset:SetPoint("TOP", allFrames[#allFrames], "BOTTOM", 0, -30)
-  previewInset:SetPoint("LEFT", 20, 0)
-  previewInset:SetPoint("RIGHT", -20, 0)
-  previewInset:SetHeight(220)
-
   local titleText = container:CreateFontString(nil, nil, "GameFontHighlightLarge")
   titleText:SetPoint("TOP", previewInset, "BOTTOM", 0, -15)
   titleText:SetPoint("LEFT", 40, 0)
@@ -112,21 +302,26 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
   titleText:SetPoint("RIGHT", -20, 0)
   titleText:SetShadowOffset(1, -1)
 
+  local function OffsetWidgets(x, y)
+    local offsets = {}
+    for _, index in ipairs(selectionIndexes) do
+      table.insert(offsets, {x = x, y = y, xLock = x == 0, yLock = y == 0})
+    end
+    AlignForRelativePoints(offsets, 0.6)
+    Announce()
+  end
+
   keyboardTrap:SetScript("OnKeyDown", function(_, key)
     keyboardTrap:SetPropagateKeyboardInput(false)
     local amount = 1
     if key == "LEFT" then
-      widgets[selectionIndex]:AdjustPointsOffset(-amount, 0)
-      UpdateWidgetPoints(widgets[selectionIndex], 0)
+      OffsetWidgets(-amount, 0)
     elseif key == "RIGHT" then
-      widgets[selectionIndex]:AdjustPointsOffset(amount, 0)
-      UpdateWidgetPoints(widgets[selectionIndex], 0)
+      OffsetWidgets(amount, 0)
     elseif key == "UP" then
-      widgets[selectionIndex]:AdjustPointsOffset(0, amount)
-      UpdateWidgetPoints(widgets[selectionIndex], 0)
+      OffsetWidgets(0, amount)
     elseif key == "DOWN" then
-      widgets[selectionIndex]:AdjustPointsOffset(0, -amount)
-      UpdateWidgetPoints(widgets[selectionIndex], 0)
+      OffsetWidgets(0, -amount)
     elseif key == "DELETE" then
       DeleteCurrentWidget()
     else
@@ -193,14 +388,6 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
     DeleteCurrentWidget()
   end)
 
-  local preview = CreateFrame("Frame", nil, previewInset)
-
-  preview:SetPoint("TOP")
-
-  preview:SetAllPoints()
-  preview:SetFlattensRenderLayers(true)
-  preview:SetScale(2)
-
   local auraContainers = {
     buffs = CreateFrame("Frame", nil, preview),
     debuffs = CreateFrame("Frame", nil, preview),
@@ -240,76 +427,13 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
       w:EnableMouse(true)
       w:RegisterForDrag("LeftButton")
       w:SetScript("OnDragStart", function()
-        w:StartMoving()
-      end)
-      w:SetScript("OnDragStop", function()
-        w:StopMovingOrSizing()
-        SetSelection(w)
-        UpdateWidgetPoints(w, 4)
+        ForceSelection(w)
+        StartMovingSelection()
       end)
       w:SetScript("OnMouseUp", function()
-        if selectionIndex == tIndexOf(widgets, w) then
-          SetSelection()
-        else
-          SetSelection(w)
-        end
+        ToggleSelection(w)
       end)
     end
-  end
-
-  UpdateWidgetPoints = function(w, snapping)
-    snapping = snapping or 2
-    local left, bottom, width, height = w:GetRect()
-    local widgetRect = {left = left, bottom = bottom, width = width, height = height}
-    left, bottom, width, height = preview:GetRect()
-    local previewRect = {left = left, bottom = bottom, width = width, height = height}
-    local widgetCenter = {x = widgetRect.left + widgetRect.width / 2, y = widgetRect.bottom + widgetRect.height / 2}
-    local previewCenter = {x = previewRect.left + previewRect.width / 2, y = previewRect.bottom + previewRect.height / 2}
-
-    local point, x, y = "", 0, 0
-
-    if math.ceil(math.abs(widgetCenter.y - previewCenter.y)) < snapping then
-      point = point
-    elseif widgetCenter.y < previewCenter.y then
-      point = "TOP" .. point
-      y = widgetRect.bottom + widgetRect.height - previewCenter.y
-    else
-      point = "BOTTOM" .. point
-      y = widgetRect.bottom - previewCenter.y
-    end
-
-    if w.kind ~= "auras" then
-      if math.floor(math.abs(widgetCenter.x - previewCenter.x)) < snapping then
-        point = point
-      elseif widgetCenter.x < previewCenter.x then
-        point = point .. "LEFT"
-        x = widgetRect.left - previewCenter.x
-      else
-        point = point .. "RIGHT"
-        x = widgetRect.left + widgetRect.width - previewCenter.x
-      end
-    else
-      if math.ceil(math.abs(widgetCenter.x - previewCenter.x)) <= snapping then
-        point = point
-      elseif widgetCenter.x < previewCenter.x and point == "" or widgetCenter.x > previewCenter.x and point ~= "" then
-        point = point .. "RIGHT"
-        x = widgetRect.left + widgetRect.width - previewCenter.x
-      else
-        point = point .. "LEFT"
-        x = widgetRect.left - previewCenter.x
-      end
-    end
-
-    if point == "" then
-      w.details.anchor = {}
-    elseif x == 0 and y == 0 then
-      w.details.anchor = {point}
-    else
-      w.details.anchor = {point, Round(x), Round(y)}
-    end
-    C_Timer.After(0, function()
-      Announce()
-    end)
   end
 
   local function GenerateWidgets()
@@ -387,19 +511,11 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
       w:EnableMouse(true)
       w:RegisterForDrag("LeftButton")
       w:SetScript("OnDragStart", function()
-        w:StartMoving()
-      end)
-      w:SetScript("OnDragStop", function()
-        w:StopMovingOrSizing()
-        SetSelection(w)
-        UpdateWidgetPoints(w)
+        ForceSelection(w)
+        StartMovingSelection()
       end)
       w:SetScript("OnMouseUp", function()
-        if selectionIndex == tIndexOf(widgets, w) then
-          SetSelection()
-        else
-          SetSelection(w)
-        end
+        ToggleSelection(w)
       end)
     end
     for _, container in pairs(auraContainers) do
@@ -440,7 +556,7 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
         end
         autoSelectedDetails = nil
       end
-      SetSelection(widgets[selectionIndex])
+      UpdateSelection()
     end
   end)
 
@@ -639,44 +755,56 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
 
   Generate()
 
-  SetSelection = function(w)
-    if not w then
+  UpdateSelection = function()
+    selectionIndexes = tFilter(selectionIndexes, function(i) return i <= #widgets end, true)
+    if #selectionIndexes == 0 then
       keyboardTrap:Hide()
       deleteButton:Disable()
       for _, frame in ipairs(settingsFrames) do
         frame:Hide()
       end
-      selectionIndex = 0
-      selector:Hide()
+      selectorPool:ReleaseAll()
       titleText:SetText("")
       return
     end
     deleteButton:Enable()
 
-    titleText:SetText(titleMap[w.kind] and titleMap[w.kind][w.details.kind] or UNKNOWN)
+    if #selectionIndexes > 1 then
+      titleText:SetText(addonTable.Locales.MULTIPLE_SELECTED)
 
-    selectionIndex = tIndexOf(widgets, w)
-
-    selector:Show()
-    keyboardTrap:SetShown(not InCombatLockdown())
-    selector:ClearAllPoints()
-    selector:SetFrameStrata("HIGH")
-    selector:SetPoint("TOPLEFT", w, "TOPLEFT", -2, 2)
-    selector:SetPoint("BOTTOMRIGHT", w, "BOTTOMRIGHT", 2, -2)
-
-    for _, frame in ipairs(settingsFrames) do
-      if not frame:IsFor(w.kind, w.details) then
+      for _, frame in ipairs(settingsFrames) do
         frame:Hide()
       end
-    end
+    else
+      local w = widgets[selectionIndexes[1]]
+      titleText:SetText(titleMap[w.kind] and titleMap[w.kind][w.details.kind] or UNKNOWN)
 
-    for _, frame in ipairs(settingsFrames) do
-      if frame:IsFor(w.kind, w.details) then
-        frame.details = nil
-        frame:Show()
-        frame:Set(w.details)
+      for _, frame in ipairs(settingsFrames) do
+        if not frame:IsFor(w.kind, w.details) then
+          frame:Hide()
+        end
+      end
+
+      for _, frame in ipairs(settingsFrames) do
+        if frame:IsFor(w.kind, w.details) then
+          frame.details = nil
+          frame:Show()
+          frame:Set(w.details)
+        end
       end
     end
+
+    selectorPool:ReleaseAll()
+    for _, index in ipairs(selectionIndexes) do
+      local w = widgets[index]
+      local selector = selectorPool:Acquire()
+      selector:Show()
+      selector:SetFrameStrata("HIGH")
+      selector:SetPoint("TOPLEFT", w, "TOPLEFT", -2, 2)
+      selector:SetPoint("BOTTOMRIGHT", w, "BOTTOMRIGHT", 2, -2)
+    end
+
+    keyboardTrap:SetShown(not InCombatLockdown())
   end
 
   container:SetScript("OnShow", function()
@@ -690,7 +818,8 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
       end
     end
 
-    SetSelection(nil)
+    selectionIndexes = {}
+    UpdateSelection()
   end)
 
   return container

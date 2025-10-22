@@ -64,6 +64,7 @@ L["FRIENDLY"] = "Friendly"
 L["NEUTRAL"] = "Neutral"
 L["HOSTILE"] = "Hostile"
 L["AGGRO_COLORS_ON_HOSTILES"] = "Aggro colors on hostiles"
+L["MULTIPLE_SELECTED"] = "Multiple Selected"
 
 L["FOREGROUND"] = "Foreground"
 L["VISUAL"] = "Visual"
