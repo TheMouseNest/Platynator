@@ -34,18 +34,22 @@ function addonTable.Core.MigrateSettings(design)
         kind = "debuffs",
         anchor = {"BOTTOMLEFT", -63, 25},
         scale = 1,
+        showCountdown = true,
+        direction = "RIGHT",
       },
       {
         kind = "buffs",
         anchor = {"RIGHT", -68, 0},
         scale = 1,
         showCountdown = true,
+        direction = "LEFT",
       },
       {
         kind = "crowdControl",
         anchor = {"LEFT", 68, 0},
         scale = 1,
         showCountdown = true,
+        direction = "RIGHT",
       },
     }
   else
@@ -55,6 +59,13 @@ function addonTable.Core.MigrateSettings(design)
       end
       if aura.showCountdown == nil then
         aura.showCountdown = true
+      end
+      if aura.direction == nil then
+        if aura.anchor[1] and aura.anchor[1]:match("RIGHT") then
+          aura.direction = "LEFT"
+        else
+          aura.direction = "RIGHT"
+        end
       end
     end
   end

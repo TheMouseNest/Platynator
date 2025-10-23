@@ -69,6 +69,7 @@ L["AGGRO_COLORS_ON_HOSTILES"] = "Aggro colors on hostiles"
 L["MULTIPLE_SELECTED"] = "Multiple Selected"
 L["ON_NOT_TARGETING"] = "On not targeting"
 L["FADE"] = "Fade"
+L["DIRECTION"] = "Direction"
 
 L["FOREGROUND"] = "Foreground"
 L["VISUAL"] = "Visual"

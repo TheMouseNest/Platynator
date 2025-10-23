@@ -48,9 +48,9 @@ function addonTable.Display.NameplateMixin:OnLoad()
         local xOffset = 0
         local yOffset = 0
         local details = frame:GetParent().details
-        if details.anchor[1]:match("RIGHT") then
+        if details.direction == "LEFT" then
           xOffset = -22
-        elseif details.anchor[1]:match("LEFT") then
+        elseif details.direction == "RIGHT" then
           xOffset = 22
         else -- CENTER
           xOffset = 22

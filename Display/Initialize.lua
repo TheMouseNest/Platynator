@@ -46,6 +46,7 @@ function addonTable.Display.ManagerMixin:OnLoad()
   end
 
   self.ModifiedUFs = {}
+  self.HookedUFs = {}
   hooksecurefunc(NamePlateDriverFrame, "OnNamePlateAdded", function(_, unit)
     local nameplate = C_NamePlate.GetNamePlateForUnit(unit, issecure())
     if nameplate and not UnitIsUnit("player", unit) then
@@ -142,15 +143,15 @@ function addonTable.Display.ManagerMixin:PositionBuffs(display)
     local debuffs = auras[1]
     self.ModifiedUFs[unit].AurasFrame.DebuffListFrame:ClearAllPoints()
     self.ModifiedUFs[unit].AurasFrame.DebuffListFrame:SetScale(debuffs.scale)
-    self.ModifiedUFs[unit].AurasFrame.DebuffListFrame:SetPoint(debuffs.anchor[1] or "CENTER", display.DebuffDisplay)
+    self.ModifiedUFs[unit].AurasFrame.DebuffListFrame:SetPoint(debuffs.direction == "LEFT" and "RIGHT" or "LEFT", display.DebuffDisplay)
     local buffs = auras[2]
     self.ModifiedUFs[unit].AurasFrame.BuffListFrame:ClearAllPoints()
     self.ModifiedUFs[unit].AurasFrame.BuffListFrame:SetScale(buffs.scale)
-    self.ModifiedUFs[unit].AurasFrame.BuffListFrame:SetPoint(buffs.anchor[1] or "CENTER", display.BuffDisplay)
+    self.ModifiedUFs[unit].AurasFrame.BuffListFrame:SetPoint(buffs.direction == "LEFT" and "RIGHT" or "LEFT", display.BuffDisplay)
     local cc = auras[3]
     self.ModifiedUFs[unit].AurasFrame.CrowdControlListFrame:ClearAllPoints()
     self.ModifiedUFs[unit].AurasFrame.CrowdControlListFrame:SetScale(cc.scale)
-    self.ModifiedUFs[unit].AurasFrame.CrowdControlListFrame:SetPoint(cc.anchor[1] or "CENTER", display.CrowdControlDisplay)
+    self.ModifiedUFs[unit].AurasFrame.CrowdControlListFrame:SetPoint(cc.direction == "LEFT" and "RIGHT" or "LEFT", display.CrowdControlDisplay)
   end
 end
 

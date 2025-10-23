@@ -118,6 +118,7 @@ addonTable.CustomiseDialog.DesignWidgets = {
       anchor = {"TOPLEFT", -140, 50},
       scale = 1,
       showCountdown = true,
+      direction = "RIGHT",
     },
   },
   {
@@ -129,6 +130,7 @@ addonTable.CustomiseDialog.DesignWidgets = {
       anchor = {"TOPLEFT", -140, 50},
       scale = 1,
       showCountdown = true,
+      direction = "LEFT",
     },
   },
   {
@@ -140,6 +142,7 @@ addonTable.CustomiseDialog.DesignWidgets = {
       anchor = {"TOPLEFT", -140, 50},
       scale = 1,
       showCountdown = true,
+      direction = "RIGHT",
     },
   },
   {

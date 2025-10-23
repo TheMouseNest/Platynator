@@ -131,30 +131,16 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
       y = widgetRect.bottom - previewCenter.y
     end
 
-    if w.kind ~= "auras" then
-      if math.abs(widgetCenter.x - previewCenter.x) < snapping then
-        snapX = previewCenter.x - widgetCenter.x
-        xLock = true
-        point = point
-      elseif widgetCenter.x < previewCenter.x then
-        point = point .. "LEFT"
-        x = widgetRect.left - previewCenter.x
-      else
-        point = point .. "RIGHT"
-        x = widgetRect.left + widgetRect.width - previewCenter.x
-      end
+    if math.abs(widgetCenter.x - previewCenter.x) < snapping then
+      snapX = previewCenter.x - widgetCenter.x
+      xLock = true
+      point = point
+    elseif widgetCenter.x < previewCenter.x then
+      point = point .. "LEFT"
+      x = widgetRect.left - previewCenter.x
     else
-      if math.abs(widgetCenter.x - previewCenter.x) <= snapping then
-        snapX = previewCenter.x - widgetCenter.x
-        xLock = true
-        point = point
-      elseif widgetCenter.x < previewCenter.x and point == "" or widgetCenter.x > previewCenter.x and point ~= "" then
-        point = point .. "RIGHT"
-        x = widgetRect.left + widgetRect.width - previewCenter.x
-      else
-        point = point .. "LEFT"
-        x = widgetRect.left - previewCenter.x
-      end
+      point = point .. "RIGHT"
+      x = widgetRect.left + widgetRect.width - previewCenter.x
     end
 
     if point == "" then
@@ -396,7 +382,7 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
   do
     local textures = {
       buffs = {132117},
-      debuffs = {135959, 136096},
+      debuffs = {135959},
       crowdControl = {135860},
     }
     for kind, w in pairs(auraContainers) do

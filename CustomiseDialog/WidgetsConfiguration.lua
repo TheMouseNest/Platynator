@@ -466,6 +466,25 @@ addonTable.CustomiseDialog.WidgetsConfig = {
               return details.scale * 100
             end,
           },
+          {
+            label = addonTable.Locales.DIRECTION,
+            kind = "dropdown",
+            getInitData = function()
+              return {
+                addonTable.Locales.LEFT,
+                addonTable.Locales.RIGHT,
+              }, {
+                "LEFT",
+                "RIGHT",
+              }
+            end,
+            setter = function(details, value)
+              details.direction = value
+            end,
+            getter = function(details)
+              return details.direction
+            end
+          },
         },
       },
     },
