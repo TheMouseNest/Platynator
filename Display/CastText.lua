@@ -6,6 +6,7 @@ addonTable.Display.CastTextMixin = {}
 function addonTable.Display.CastTextMixin:SetUnit(unit)
   self.unit = unit
   if self.unit then
+    self.interrupted = nil
     self:RegisterUnitEvent("UNIT_SPELLCAST_START", self.unit)
     self:RegisterUnitEvent("UNIT_SPELLCAST_STOP", self.unit)
 

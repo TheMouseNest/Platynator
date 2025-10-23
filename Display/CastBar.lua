@@ -6,6 +6,7 @@ addonTable.Display.CastBarMixin = {}
 function addonTable.Display.CastBarMixin:SetUnit(unit)
   self.unit = unit
   if self.unit then
+    self.interrupted = nil
     self:RegisterUnitEvent("UNIT_SPELLCAST_START", self.unit)
     self:RegisterUnitEvent("UNIT_SPELLCAST_STOP", self.unit)
 
