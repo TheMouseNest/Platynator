@@ -56,6 +56,10 @@ function addonTable.Display.NameplateMixin:OnLoad()
           xOffset = 22
           currentX = #keys * 22 / 2
         end
+        local anchor = details.anchor[1]
+        if type(anchor) ~= "string" then
+          anchor = "CENTER"
+        end
 
         frame.items = {}
         for _, auraInstanceID in ipairs(keys) do
@@ -79,7 +83,7 @@ function addonTable.Display.NameplateMixin:OnLoad()
 
           buff:Show();
 
-          buff:SetPoint(details.anchor[1], currentX, currentY)
+          buff:SetPoint(anchor, currentX, currentY)
           currentX = currentX + xOffset
         end
       end
@@ -125,16 +129,18 @@ function addonTable.Display.NameplateMixin:InitializeWidgets()
   self.DebuffDisplay.enabled = false
   self.BuffDisplay.enabled = false
   self.CrowdControlDisplay.enabled = false
+  local defaultSize = 20
   if designInfo.debuffs then
     self.DebuffDisplay.enabled = true
     self.DebuffDisplay:ClearAllPoints()
-    self.BuffDisplay:SetFrameLevel(800 + 1)
+    self.DebuffDisplay:SetFrameLevel(800 + 1)
     self.DebuffDisplay.details = designInfo.debuffs
     if self.DebuffDisplay.Wrapped then
       self.DebuffDisplay.Wrapped:ClearAllPoints()
       self.DebuffDisplay.Wrapped:SetPoint(designInfo.debuffs.anchor[1])
       self.DebuffDisplay.Wrapped:SetScale(designInfo.debuffs.scale)
     end
+    self.DebuffDisplay:SetSize(defaultSize * designInfo.debuffs.scale, defaultSize * designInfo.debuffs.scale)
     addonTable.Display.ApplyAnchor(self.DebuffDisplay, designInfo.debuffs.anchor)
   end
   if designInfo.buffs then
@@ -147,6 +153,7 @@ function addonTable.Display.NameplateMixin:InitializeWidgets()
       self.BuffDisplay.Wrapped:SetScale(designInfo.buffs.scale)
       self.BuffDisplay.Wrapped:SetPoint(designInfo.buffs.anchor[1])
     end
+    self.BuffDisplay:SetSize(defaultSize * designInfo.buffs.scale, defaultSize * designInfo.buffs.scale)
     addonTable.Display.ApplyAnchor(self.BuffDisplay, designInfo.buffs.anchor)
   end
   if designInfo.crowdControl then
@@ -159,6 +166,7 @@ function addonTable.Display.NameplateMixin:InitializeWidgets()
       self.CrowdControlDisplay.Wrapped:SetScale(designInfo.crowdControl.scale)
       self.CrowdControlDisplay.Wrapped:SetPoint(designInfo.crowdControl.anchor[1])
     end
+    self.CrowdControlDisplay:SetSize(defaultSize * designInfo.crowdControl.scale, defaultSize * designInfo.crowdControl.scale)
     addonTable.Display.ApplyAnchor(self.CrowdControlDisplay, designInfo.crowdControl.anchor)
   end
 end

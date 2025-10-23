@@ -47,6 +47,32 @@ function addonTable.Display.ManagerMixin:OnLoad()
 
   self.ModifiedUFs = {}
   self.HookedUFs = {}
+  -- Apply Platynator settings to aura layout
+  local function RelayoutAuras(list)
+    if list:IsForbidden() then
+      return
+    end
+    local details = list:GetParent().details
+    if not details then
+      return
+    end
+    local dir = -1
+    if details.direction == "RIGHT" then
+      dir = 1
+    end
+    local padding = 2
+    local children = list:GetLayoutChildren()
+    if #children == 0 then
+      return
+    end
+    list:ClearAllPoints()
+    local anchor = details.direction == "LEFT" and "RIGHT" or "LEFT"
+    list:SetPoint(anchor)
+    for index, child in ipairs(children) do
+      child:ClearAllPoints()
+      child:SetPoint(anchor, (index - 1) * (child:GetWidth() + padding) * dir, 0)
+    end
+  end
   hooksecurefunc(NamePlateDriverFrame, "OnNamePlateAdded", function(_, unit)
     local nameplate = C_NamePlate.GetNamePlateForUnit(unit, issecure())
     if nameplate and not UnitIsUnit("player", unit) then
@@ -61,6 +87,13 @@ function addonTable.Display.ManagerMixin:OnLoad()
         nameplate.UnitFrame:RegisterUnitEvent("UNIT_AURA", unit)
         nameplate.UnitFrame.AurasFrame:SetParent(nameplate)
         nameplate.UnitFrame.AurasFrame:SetIgnoreParentScale(true)
+        if not self.HookedUFs[nameplate.UnitFrame] then
+          self.HookedUFs[nameplate.UnitFrame] = true
+          local af = nameplate.UnitFrame.AurasFrame
+          hooksecurefunc(af.BuffListFrame, "Layout", RelayoutAuras)
+          hooksecurefunc(af.DebuffListFrame, "Layout", RelayoutAuras)
+          hooksecurefunc(af.CrowdControlListFrame, "Layout", RelayoutAuras)
+        end
       end
       if nameplate.UnitFrame.WidgetContainer then
         nameplate.UnitFrame.WidgetContainer:SetParent(nameplate)
@@ -88,10 +121,13 @@ function addonTable.Display.ManagerMixin:OnLoad()
         else
           UF.AurasFrame.DebuffListFrame:SetPoint("BOTTOM", UF.name, "TOP", 0, debuffPadding);
         end
+        UF.AurasFrame.DebuffListFrame:SetParent(UF.AurasFrame)
         UF.AurasFrame.BuffListFrame:ClearAllPoints()
         UF.AurasFrame.BuffListFrame:SetPoint("RIGHT", UF.HealthBarsContainer.healthBar, "LEFT", -5, 0);
+        UF.AurasFrame.BuffListFrame:SetParent(UF.AurasFrame)
         UF.AurasFrame.CrowdControlListFrame:ClearAllPoints()
         UF.AurasFrame.CrowdControlListFrame:SetPoint("LEFT", UF.HealthBarsContainer.healthBar, "RIGHT", 5, 0);
+        UF.AurasFrame.CrowdControlListFrame:SetParent(UF.AurasFrame)
         UF:UnregisterEvent("UNIT_AURA")
       end
       if UF.WidgetContainer then
@@ -140,18 +176,22 @@ function addonTable.Display.ManagerMixin:PositionBuffs(display)
   if addonTable.Constants.IsMidnight and self.ModifiedUFs[display.unit] then
     local unit = display.unit
     local auras = addonTable.Config.Get(addonTable.Config.Options.DESIGN).auras
-    local debuffs = auras[1]
-    self.ModifiedUFs[unit].AurasFrame.DebuffListFrame:ClearAllPoints()
-    self.ModifiedUFs[unit].AurasFrame.DebuffListFrame:SetScale(debuffs.scale)
-    self.ModifiedUFs[unit].AurasFrame.DebuffListFrame:SetPoint(debuffs.direction == "LEFT" and "RIGHT" or "LEFT", display.DebuffDisplay)
-    local buffs = auras[2]
-    self.ModifiedUFs[unit].AurasFrame.BuffListFrame:ClearAllPoints()
-    self.ModifiedUFs[unit].AurasFrame.BuffListFrame:SetScale(buffs.scale)
-    self.ModifiedUFs[unit].AurasFrame.BuffListFrame:SetPoint(buffs.direction == "LEFT" and "RIGHT" or "LEFT", display.BuffDisplay)
-    local cc = auras[3]
-    self.ModifiedUFs[unit].AurasFrame.CrowdControlListFrame:ClearAllPoints()
-    self.ModifiedUFs[unit].AurasFrame.CrowdControlListFrame:SetScale(cc.scale)
-    self.ModifiedUFs[unit].AurasFrame.CrowdControlListFrame:SetPoint(cc.direction == "LEFT" and "RIGHT" or "LEFT", display.CrowdControlDisplay)
+    local designInfo = {}
+    for _, a in ipairs(auras) do
+      designInfo[a.kind] = a
+    end
+    if designInfo.debuffs then
+      self.ModifiedUFs[unit].AurasFrame.DebuffListFrame:SetParent(display.DebuffDisplay)
+      self.ModifiedUFs[unit].AurasFrame.DebuffListFrame:SetScale(designInfo.debuffs.scale * 4/5)
+    end
+    if designInfo.buffs then
+      self.ModifiedUFs[unit].AurasFrame.BuffListFrame:SetParent(display.BuffDisplay)
+      self.ModifiedUFs[unit].AurasFrame.BuffListFrame:SetScale(designInfo.buffs.scale * 4/5)
+    end
+    if designInfo.crowdControl then
+      self.ModifiedUFs[unit].AurasFrame.CrowdControlListFrame:SetParent(display.CrowdControlDisplay)
+      self.ModifiedUFs[unit].AurasFrame.CrowdControlListFrame:SetScale(designInfo.crowdControl.scale * 4/5)
+    end
   end
 end
 
