@@ -74,9 +74,14 @@ specializationMonitor:RegisterEvent("PLAYER_LOGIN")
 if C_EventUtils.IsEventValid("PLAYER_SPECIALIZATION_CHANGED") then
   specializationMonitor:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
 end
+specializationMonitor:RegisterEvent("UPDATE_SHAPESHIFT_FORM")
 specializationMonitor:SetScript("OnEvent", function()
   local specID
-  if C_SpecializationInfo.GetSpecialization then
+  if UnitClassBase("player") == "DRUID" then
+    if GetShapeshiftForm() == 2 then
+      specID = classToSpec["DRUID"]
+    end
+  elseif C_SpecializationInfo.GetSpecialization then
     local specIndex = C_SpecializationInfo.GetSpecialization()
     specID = C_SpecializationInfo.GetSpecializationInfo(specIndex)
   else
