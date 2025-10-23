@@ -27,6 +27,7 @@ function addonTable.Display.CastBarMixin:Strip()
     self.timer:Cancel()
     self.timer = nil
   end
+  self.interrupted = nil
 
   self:UnregisterAllEvents()
   self:SetScript("OnUpdate", nil)

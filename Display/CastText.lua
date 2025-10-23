@@ -26,6 +26,7 @@ function addonTable.Display.CastTextMixin:Strip()
     self.timer:Cancel()
     self.timer = nil
   end
+  self.interrupted = nil
   self:UnregisterAllEvents()
 end
 
