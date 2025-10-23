@@ -9,7 +9,8 @@ local settings = {
   GLOBAL_SCALE = {key = "global_scale", default = 1, refresh = {addonTable.Constants.RefreshReason.Scale}},
   DESIGN = {key = "design_all", default = {}, refresh = {addonTable.Constants.RefreshReason.Design}},
 
-  TARGET_BEHAVIOUR = {key = "target_behaviour", default = "enlarge"},
+  TARGET_BEHAVIOUR = {key = "target_behaviour", default = "enlarge", refresh = {addonTable.Constants.RefreshReason.TargetBehaviour}},
+  NOT_TARGET_BEHAVIOUR = {key = "not_target_behaviour", default = "none", refresh = {addonTable.Constants.RefreshReason.TargetBehaviour}},
 }
 
 addonTable.Config.RefreshType = {}

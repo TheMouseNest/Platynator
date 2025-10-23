@@ -220,7 +220,7 @@ function addonTable.Display.NameplateMixin:SetUnit(unit)
     self:UnregisterEvent("PLAYER_SOFT_INTERACT_CHANGED")
   end
 
-  self:UpdateScale()
+  self:UpdateVisual()
 end
 
 function addonTable.Display.NameplateMixin:UpdateForTarget()
@@ -237,10 +237,10 @@ function addonTable.Display.NameplateMixin:UpdateForTarget()
     end
   end
 
-  self:UpdateScale()
+  self:UpdateVisual()
 end
 
-function addonTable.Display.NameplateMixin:UpdateScale()
+function addonTable.Display.NameplateMixin:UpdateVisual()
   self:SetScale(addonTable.Config.Get(addonTable.Config.Options.GLOBAL_SCALE) * UIParent:GetEffectiveScale())
 
   if not self.unit then
@@ -252,7 +252,14 @@ function addonTable.Display.NameplateMixin:UpdateScale()
     if change == "enlarge" then
       self:SetScale(1.25 * addonTable.Config.Get(addonTable.Config.Options.GLOBAL_SCALE) * UIParent:GetEffectiveScale())
     end
+    self:SetAlpha(1)
   else
+    local change = addonTable.Config.Get(addonTable.Config.Options.NOT_TARGET_BEHAVIOUR)
+    if change == "fade" then
+      self:SetAlpha(0.5)
+    else
+      self:SetAlpha(1)
+    end
     self:SetScale(addonTable.Config.Get(addonTable.Config.Options.GLOBAL_SCALE) * UIParent:GetEffectiveScale())
   end
 end

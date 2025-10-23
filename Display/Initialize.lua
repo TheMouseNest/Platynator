@@ -127,9 +127,9 @@ function addonTable.Display.ManagerMixin:OnLoad()
           display:SetUnit(unit)
         end
       end)
-    elseif state[addonTable.Constants.RefreshReason.Scale] then
+    elseif state[addonTable.Constants.RefreshReason.Scale] or state[addonTable.Constants.RefreshReason.TargetBehaviour] then
       for _, display in pairs(self.nameplateDisplays) do
-        display:UpdateScale()
+        display:UpdateVisual()
       end
     end
   end)
