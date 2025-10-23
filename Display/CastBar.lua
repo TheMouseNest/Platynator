@@ -23,6 +23,10 @@ end
 
 function addonTable.Display.CastBarMixin:Strip()
   self:SetReverseFill(false)
+  if self.timer then
+    self.timer:Cancel()
+    self.timer = nil
+  end
 
   self:UnregisterAllEvents()
   self:SetScript("OnUpdate", nil)
@@ -30,12 +34,30 @@ end
 
 function addonTable.Display.CastBarMixin:OnEvent(eventName, ...)
   if eventName == "UNIT_SPELLCAST_INTERRUPTED" then
+    self.interrupted = true
+    self:Show()
+    self:ApplyColor(self.details.colors.interrupted)
+    self.timer = C_Timer.NewTimer(0.8, function()
+      if self.interrupted then
+        self.interrupted = nil
+        self:Hide()
+      end
+    end)
   else
     self:ApplyCasting()
   end
 end
 
-function addonTable.Display.CastBarMixin:ApplyColor(notInterruptible)
+function addonTable.Display.CastBarMixin:ApplyColor(color)
+  self.statusBar:GetStatusBarTexture():SetVertexColor(color.r, color.g, color.b)
+  self.reverseStatusTexture:SetVertexColor(color.r, color.g, color.b)
+  self.marker:SetVertexColor(color.r, color.g, color.b)
+  if self.details.background.applyColor then
+    self.background:SetVertexColor(color.r, color.g, color.b)
+  end
+end
+
+function addonTable.Display.CastBarMixin:UpdateColorForInterruptible(notInterruptible)
   local color = self.details.colors.normal
   local nameplate = C_NamePlate.GetNamePlateForUnit(self.unit, issecure())
   if nameplate and nameplate.UnitFrame and nameplate.UnitFrame.castBar then
@@ -45,12 +67,7 @@ function addonTable.Display.CastBarMixin:ApplyColor(notInterruptible)
   elseif notInterruptible then
     color = self.details.colors.uninterruptable
   end
-  self.statusBar:GetStatusBarTexture():SetVertexColor(color.r, color.g, color.b)
-  self.reverseStatusTexture:SetVertexColor(color.r, color.g, color.b)
-  self.marker:SetVertexColor(color.r, color.g, color.b)
-  if self.details.background.applyColor then
-    self.background:SetVertexColor(color.r, color.g, color.b)
-  end
+  self:ApplyColor(color)
 end
 
 function addonTable.Display.CastBarMixin:ApplyCasting()
@@ -64,6 +81,7 @@ function addonTable.Display.CastBarMixin:ApplyCasting()
   self:SetReverseFill(isChanneled)
 
   if type(startTime) ~= "nil" and type(endTime) ~= "nil" then
+    self.interrupted = nil
     self:Show()
     if issecretvalue and issecretvalue(startTime) then
       self.statusBar:SetMinMaxValues(startTime, endTime)
@@ -78,15 +96,17 @@ function addonTable.Display.CastBarMixin:ApplyCasting()
       end)
       self.statusBar:SetValue(GetTime())
     end
-    self:ApplyColor(notInterruptible)
+    self:UpdateColorForInterruptible(notInterruptible)
     C_Timer.After(0, function()
       if self.unit then
-        self:ApplyColor(notInterruptible)
+        self:UpdateColorForInterruptible(notInterruptible)
       end
     end)
     self.statusBar:SetValue(GetTime() * 1000)
   else
     self:SetScript("OnUpdate", nil)
-    self:Hide()
+    if not self.interrupted then
+      self:Hide()
+    end
   end
 end

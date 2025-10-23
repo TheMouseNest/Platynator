@@ -69,6 +69,10 @@ function addonTable.Core.MigrateSettings(design)
       newColor = CreateColorFromRGBHexString("6E6E6E")
       bar.colors.npc.tapped = {r = newColor.r, g = newColor.g, b = newColor.b}
     end
+    if bar.kind == "cast" and bar.colors.interrupted == nil then
+      local newColor = CreateColorFromRGBHexString("FC36E0")
+      bar.colors.interrupted = {r = newColor.r, g = newColor.g, b = newColor.b}
+    end
   end
 
   if design.font.shadow == nil or design.font.flags ~= nil then

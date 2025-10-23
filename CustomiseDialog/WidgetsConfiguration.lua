@@ -286,6 +286,16 @@ addonTable.CustomiseDialog.WidgetsConfig = {
               return details.colors.uninterruptable
             end,
           },
+          {
+            label = addonTable.Locales.INTERRUPTED_CAST_COLOR,
+            kind = "colorPicker",
+            setter = function(details, value)
+              details.colors.interrupted = value
+            end,
+            getter = function(details)
+              return details.colors.interrupted
+            end,
+          },
         },
       },
     },

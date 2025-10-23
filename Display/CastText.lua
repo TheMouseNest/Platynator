@@ -22,11 +22,27 @@ function addonTable.Display.CastTextMixin:SetUnit(unit)
 end
 
 function addonTable.Display.CastTextMixin:Strip()
+  if self.timer then
+    self.timer:Cancel()
+    self.timer = nil
+  end
   self:UnregisterAllEvents()
 end
 
 function addonTable.Display.CastTextMixin:OnEvent(eventName, ...)
-  self:ApplyCasting()
+  if eventName == "UNIT_SPELLCAST_INTERRUPTED" then
+    self.interrupted = true
+    self:Show()
+    self.text:SetText(addonTable.Locales.INTERRUPTED)
+    self.timer = C_Timer.NewTimer(0.8, function()
+      if self.interrupted then
+        self.interrupted = nil
+        self:Hide()
+      end
+    end)
+  else
+    self:ApplyCasting()
+  end
 end
 
 function addonTable.Display.CastTextMixin:ApplyCasting()
@@ -36,9 +52,12 @@ function addonTable.Display.CastTextMixin:ApplyCasting()
   end
 
   if type(name) ~= "nil" then
+    self.interrupted = nil
     self:Show()
     self.text:SetText(text)
   else
-    self:Hide()
+    if not self.interrupted then
+      self:Hide()
+    end
   end
 end
