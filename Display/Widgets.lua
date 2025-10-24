@@ -20,6 +20,13 @@ function addonTable.Display.GetBar(frame, parent)
   frame.statusBar:SetAllPoints()
   frame.statusBar:SetClipsChildren(true)
 
+  frame.statusBar2 = CreateFrame("StatusBar", nil, frame)
+  frame.statusBar2:SetAllPoints()
+  frame.statusBar2:SetStatusBarTexture(addonTable.Assets.BarBackgrounds["transparent"].file)
+
+  frame.statusBarAnim = CreateFrame("StatusBar", nil, frame)
+  frame.statusBarAnim:SetMinMaxValues(0, 1)
+
   frame.reverseStatusTexture = frame.statusBar:CreateTexture()
   frame.reverseStatusTexture:SetPoint("LEFT", frame)
   frame.reverseStatusTexture:SetDrawLayer("ARTWORK", -1)
@@ -87,6 +94,11 @@ function addonTable.Display.GetBar(frame, parent)
     frame.reverseStatusTexture:SetHeight(height)
     frame.reverseStatusTexture:SetPoint("RIGHT", frame.statusBar:GetStatusBarTexture(), "LEFT")
     frame.reverseStatusTexture:SetHorizTile(true)
+
+    frame.statusBarAnim:SetHeight(height)
+    frame.statusBarAnim:SetPoint("LEFT", frame.statusBar:GetStatusBarTexture(), "RIGHT")
+    frame.statusBarAnim:SetPoint("RIGHT", frame.statusBar2:GetStatusBarTexture(), "RIGHT")
+    frame.statusBarAnim:SetStatusBarTexture(foregroundDetails.file)
 
     local backgroundDetails = addonTable.Assets.BarBackgrounds[details.background.asset]
     frame.background:SetTexture(backgroundDetails.file)

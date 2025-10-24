@@ -10,7 +10,9 @@ function addonTable.Display.HealthBarMixin:SetUnit(unit)
     self:RegisterUnitEvent("UNIT_MAXHEALTH", self.unit)
     self:RegisterUnitEvent("UNIT_THREAT_LIST_UPDATE", self.unit)
     self.statusBar:SetMinMaxValues(0, UnitHealthMax(self.unit))
+    self.statusBar2:SetMinMaxValues(0, UnitHealthMax(self.unit))
     self.statusBar:SetValue(UnitHealth(self.unit))
+    self.statusBar2:SetValue(UnitHealth(self.unit))
     self:UpdateColor()
     self:UpdateHealth()
   else
@@ -24,6 +26,7 @@ end
 
 function addonTable.Display.HealthBarMixin:SetHealthColor(c)
   self.statusBar:GetStatusBarTexture():SetVertexColor(c.r, c.g, c.b)
+  self.statusBarAnim:GetStatusBarTexture():SetVertexColor(c.r, c.g, c.b)
   if self.details.background.applyColor then
     self.background:SetVertexColor(c.r, c.g, c.b)
   end
@@ -103,8 +106,17 @@ end
 function addonTable.Display.HealthBarMixin:UpdateHealth()
   if UnitIsDeadOrGhost(self.unit) then
     self.statusBar:SetValue(0)
+    self.statusBar2:SetValue(0)
   else
+    self.statusBar2:SetValue(self.statusBar:GetValue())
     self.statusBar:SetValue(UnitHealth(self.unit))
+    self.statusBarAnim:SetValue(1)
+    self:SetScript("OnUpdate", function(_, elapsed)
+      self.statusBarAnim:SetValue(self.statusBarAnim:GetValue() - elapsed * 5)
+      if self.statusBarAnim:GetValue() <= 0 then
+        self:SetScript("OnUpdate", nil)
+      end
+    end)
   end
 end
 
@@ -113,6 +125,7 @@ function addonTable.Display.HealthBarMixin:OnEvent(eventName)
     self:UpdateHealth()
   elseif eventName == "UNIT_MAXHEALTH" then
     self.statusBar:SetMinMaxValues(0, UnitHealthMax(self.unit))
+    self.statusBar2:SetMinMaxValues(0, UnitHealthMax(self.unit))
   elseif eventName == "UNIT_THREAT_LIST_UPDATE" then
     self:UpdateColor()
   end
