@@ -70,6 +70,7 @@ L["MULTIPLE_SELECTED"] = "Multiple Selected"
 L["ON_NOT_TARGETING"] = "On not targeting"
 L["FADE"] = "Fade"
 L["DIRECTION"] = "Direction"
+L["TRUNCATE"] = "Truncate"
 
 L["FOREGROUND"] = "Foreground"
 L["VISUAL"] = "Visual"

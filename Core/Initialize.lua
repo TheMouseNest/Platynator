@@ -22,6 +22,9 @@ function addonTable.Core.MigrateSettings(design)
     if not text.align then
       text.align = "CENTER"
     end
+    if text.truncate == nil then
+      text.truncate = "NONE"
+    end
   end
   for _, marker in ipairs(design.markers) do
     if not marker.color then

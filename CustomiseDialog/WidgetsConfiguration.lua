@@ -351,6 +351,27 @@ addonTable.CustomiseDialog.WidgetsConfig = {
             end
           },
           {
+            label = addonTable.Locales.TRUNCATE,
+            kind = "dropdown",
+            getInitData = function()
+              return {
+                addonTable.Locales.NONE,
+                addonTable.Locales.LEFT,
+                addonTable.Locales.RIGHT,
+              }, {
+                "NONE",
+                "LEFT",
+                "RIGHT",
+              }
+            end,
+            setter = function(details, value)
+              details.truncate = value
+            end,
+            getter = function(details)
+              return details.truncate
+            end
+          },
+          {
             label = addonTable.Locales.COLOR,
             kind = "colorPicker",
             setter = function(details, value)

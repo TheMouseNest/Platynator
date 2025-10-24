@@ -291,7 +291,17 @@ function addonTable.Display.GetText(frame, parent)
   frame.text = frame:CreateFontString()
   frame.text:SetPoint("CENTER")
   hooksecurefunc(frame.text, "SetText", function()
-    frame:SetSize(frame.text:GetSize())
+    if frame.details.truncate ~= "NONE" then
+      frame.text:SetWidth(40)
+      while frame.text:IsTruncated() and frame.text:GetWidth() < frame.details.widthLimit do
+        frame.text:SetWidth(frame.text:GetWidth() + 40)
+      end
+      local width = frame.details.widthLimit or frame.text:GetWidth()
+      frame.textWrapper:SetSize(width, frame.text:GetLineHeight() * 1.01)
+      frame:SetSize(width, frame.text:GetLineHeight())
+    else
+      frame:SetSize(frame.text:GetSize())
+    end
   end)
   frame:SetSize(1, 1)
 
@@ -304,9 +314,14 @@ function addonTable.Display.GetText(frame, parent)
 
     ApplyAnchor(frame, details.anchor)
     frame.text:SetFontObject(addonTable.CurrentFont)
+    frame.text:SetParent(frame)
     frame.text:ClearAllPoints()
     frame.text:SetPoint(details.anchor[1] or "CENTER")
     frame.text:SetTextColor(details.color.r, details.color.g, details.color.b)
+    frame.text:SetWordWrap(true)
+    frame.text:SetNonSpaceWrap(false)
+    frame.text:SetJustifyV("BOTTOM")
+    frame.text:SetSpacing(0)
 
     if details.widthLimit then
       frame.text:SetWidth(details.widthLimit)
@@ -314,10 +329,24 @@ function addonTable.Display.GetText(frame, parent)
       frame.text:SetWidth(0)
     end
 
-    frame.text:SetText("TEST")
+    if details.truncate ~= "NONE" then
+      if not frame.textWrapper then
+        frame.textWrapper = CreateFrame("Frame", nil, frame)
+        frame.textWrapper:SetClipsChildren(true)
+        frame.textWrapper:SetPoint(details.align)
+      end
+      frame.text:SetParent(frame.textWrapper)
+      frame.text:SetSpacing(10)
+
+      frame.text:ClearAllPoints()
+      local cropPoint = details.truncate == "LEFT" and "BOTTOM" or "TOP"
+      frame.text:SetPoint(details.align == "CENTER" and cropPoint or cropPoint ..  details.align)
+    end
+
+    frame.details = details
+    --frame.text:SetText("TEST")
     frame.text:SetTextScale(details.scale)
     frame.text:SetJustifyH(details.align)
-    frame.details = details
 
     if details.kind == "health" then
       Mixin(frame, addonTable.Display.HealthTextMixin)

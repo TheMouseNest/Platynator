@@ -159,6 +159,7 @@ addonTable.CustomiseDialog.DesignWidgets = {
       widthLimit = 124,
       color = GetColor("FFFFFF"),
       align = "CENTER",
+      truncate = "NONE",
     },
   },
   {
@@ -171,6 +172,7 @@ addonTable.CustomiseDialog.DesignWidgets = {
       displayTypes = {"percentage"}, -- or "absolute", or both
       color = GetColor("FFFFFF"),
       align = "CENTER",
+      truncate = "NONE",
     },
   },
   {
@@ -182,6 +184,7 @@ addonTable.CustomiseDialog.DesignWidgets = {
       anchor = {"TOPLEFT", -140, 50},
       color = GetColor("FFFFFF"),
       align = "CENTER",
+      truncate = "NONE",
     },
   },
   {
@@ -193,6 +196,7 @@ addonTable.CustomiseDialog.DesignWidgets = {
       anchor = {"TOPLEFT", -140, 50},
       color = GetColor("FFFFFF"),
       align = "CENTER",
+      truncate = "NONE",
     },
   },
   {
@@ -204,6 +208,7 @@ addonTable.CustomiseDialog.DesignWidgets = {
       anchor = {"TOPLEFT", -140, 50},
       color = GetColor("FFFFFF"),
       align = "CENTER",
+      truncate = "NONE",
     },
   },
   {
