@@ -293,7 +293,7 @@ function addonTable.Display.GetText(frame, parent)
   hooksecurefunc(frame.text, "SetText", function()
     if frame.details.truncate ~= "NONE" then
       frame.text:SetWidth(30 * frame.details.scale)
-      while frame.text:IsTruncated() and frame.text:GetWidth() < frame.details.widthLimit do
+      while frame.text:IsTruncated() and (frame.details.widthLimit == nil or frame.text:GetWidth() < frame.details.widthLimit) do
         frame.text:SetWidth(frame.text:GetWidth() + 30 * frame.details.scale)
       end
       local width = frame.details.widthLimit or frame.text:GetWidth()
@@ -312,6 +312,8 @@ function addonTable.Display.GetText(frame, parent)
       frame:Strip()
     end
 
+    frame.details = details
+
     ApplyAnchor(frame, details.anchor)
     frame.text:SetFontObject(addonTable.CurrentFont)
     frame.text:SetParent(frame)
@@ -320,7 +322,6 @@ function addonTable.Display.GetText(frame, parent)
     frame.text:SetTextColor(details.color.r, details.color.g, details.color.b)
     frame.text:SetWordWrap(true)
     frame.text:SetNonSpaceWrap(false)
-    frame.text:SetJustifyV("BOTTOM")
     frame.text:SetSpacing(0)
 
     if details.widthLimit then
@@ -343,10 +344,10 @@ function addonTable.Display.GetText(frame, parent)
       frame.text:SetPoint(details.align == "CENTER" and cropPoint or cropPoint ..  details.align)
     end
 
-    frame.details = details
-    --frame.text:SetText("TEST")
-    frame.text:SetTextScale(details.scale)
+    frame.text:SetText(" ")
+    frame.text:SetJustifyV("BOTTOM")
     frame.text:SetJustifyH(details.align)
+    frame.text:SetTextScale(details.scale)
 
     if details.kind == "health" then
       Mixin(frame, addonTable.Display.HealthTextMixin)
