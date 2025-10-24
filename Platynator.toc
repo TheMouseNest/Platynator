@@ -23,6 +23,10 @@ Locales.lua
 Core/Objects.lua
 Core/Locales.lua
 Core/Constants.lua
+
+Design.lua
+Assets.lua
+
 Core/Config.lua
 Core/Utilities.lua
 Core/Dialogs.lua
@@ -51,9 +55,6 @@ Display/RareMarker.lua
 Display/RaidMarker.lua
 Display/Widgets.lua
 Display/LegacyBuffTemplate.xml
-
-Design.lua
-Assets.lua
 
 API/Main.lua
 
