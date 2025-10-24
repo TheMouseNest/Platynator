@@ -165,7 +165,7 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
   end
 
   local function AlignForRelativePoints(offsets, snappingAmount)
-    snappingAmount = snappingAmount or 4
+    snappingAmount = snappingAmount or 3
     local snapped = true
     local iteration = 0
     -- Shift items around until we reach a happy medium where everything is approximately in the same
