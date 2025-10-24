@@ -71,6 +71,7 @@ function addonTable.Display.ManagerMixin:OnLoad()
     for index, child in ipairs(children) do
       child:ClearAllPoints()
       child:SetPoint(anchor, (index - 1) * (child:GetWidth() + padding) * dir, 0)
+      child.Cooldown:SetCountdownFont("PlatynatorNameplateCooldownFont")
     end
   end
   hooksecurefunc(NamePlateDriverFrame, "OnNamePlateAdded", function(_, unit)
