@@ -292,9 +292,9 @@ function addonTable.Display.GetText(frame, parent)
   frame.text:SetPoint("CENTER")
   hooksecurefunc(frame.text, "SetText", function()
     if frame.details.truncate ~= "NONE" then
-      frame.text:SetWidth(40)
+      frame.text:SetWidth(30)
       while frame.text:IsTruncated() and frame.text:GetWidth() < frame.details.widthLimit do
-        frame.text:SetWidth(frame.text:GetWidth() + 40)
+        frame.text:SetWidth(frame.text:GetWidth() + 30)
       end
       local width = frame.details.widthLimit or frame.text:GetWidth()
       frame.textWrapper:SetSize(width, frame.text:GetLineHeight() * 1.01)
