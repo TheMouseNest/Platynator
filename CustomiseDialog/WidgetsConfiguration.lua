@@ -347,7 +347,7 @@ addonTable.CustomiseDialog.WidgetsConfig = {
               details.align = value
             end,
             getter = function(details)
-              return details.align or "CENTER"
+              return details.align
             end
           },
           {

@@ -16,6 +16,7 @@ function addonTable.CustomiseDialog.Components.GetCheckbox(parent, label, spacin
   checkBox:SetNormalFontObject(GameFontHighlight)
   checkBox:GetFontString():SetPoint("RIGHT", holder, "CENTER", -30 - spacing, 0)
   checkBox:GetFontString():SetPoint("LEFT", holder)
+  checkBox:GetFontString():SetJustifyH("RIGHT")
 
   --addonTable.Skins.AddFrame("CheckBox", checkBox)
 
