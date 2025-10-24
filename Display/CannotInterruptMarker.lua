@@ -39,7 +39,7 @@ function addonTable.Display.CannotInterruptMarkerMixin:ApplyCasting()
   local name, _, _, _, _, _, _, notInterruptible, _ = UnitCastingInfo(self.unit)
 
   if type(name) == "nil" then
-    name, _, _, _, _, _, _, notInterruptible, _ = UnitChannelInfo(self.unit)
+    name, _, _, _, _, _, notInterruptible, _ = UnitChannelInfo(self.unit)
   end
 
   if type(name) ~= "nil"then
