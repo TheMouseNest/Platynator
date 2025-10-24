@@ -75,7 +75,7 @@ function addonTable.Display.ManagerMixin:OnLoad()
   end
   hooksecurefunc(NamePlateDriverFrame, "OnNamePlateAdded", function(_, unit)
     local nameplate = C_NamePlate.GetNamePlateForUnit(unit, issecure())
-    if nameplate and not UnitIsUnit("player", unit) then
+    if nameplate and unit and not UnitIsUnit("player", unit) then
       nameplate.UnitFrame:SetParent(addonTable.hiddenFrame)
       nameplate.UnitFrame:UnregisterAllEvents()
       if addonTable.Constants.IsMidnight then
