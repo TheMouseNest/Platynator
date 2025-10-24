@@ -42,6 +42,10 @@ function addonTable.Core.CreateFont(assetKey, size, outline, shadow)
   end
   local globalName = "PlatynatorFont" .. key
 
+  if addonTable.Constants.IsMidnight then
+    outline = outline .. " SLUG"
+  end
+
   local font = CreateFontFamily(globalName, GetDefaultMembers(size, outline))
   local path = addonTable.Assets.Fonts[assetKey].file
   font:SetFont(path, size, outline)
