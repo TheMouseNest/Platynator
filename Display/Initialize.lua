@@ -24,7 +24,6 @@ function addonTable.Display.ManagerMixin:OnLoad()
   self.displayPool = CreateFramePool("Frame", UIParent, nil, nil, false, function(frame)
     Mixin(frame, addonTable.Display.NameplateMixin)
     frame:OnLoad()
-    frame.styleIndex = self.styleIndex
   end)
   self.nameplateDisplays = {}
   self.lastTarget = nil
@@ -207,6 +206,7 @@ function addonTable.Display.ManagerMixin:OnEvent(eventName, ...)
       newDisplay:Install(nameplate)
       if newDisplay.styleIndex ~= self.styleIndex then
         newDisplay:InitializeWidgets()
+        newDisplay.styleIndex = self.styleIndex
       end
       newDisplay:SetUnit(unit)
       self:PositionBuffs(newDisplay)

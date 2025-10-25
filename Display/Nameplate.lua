@@ -105,8 +105,6 @@ function addonTable.Display.NameplateMixin:OnLoad()
     self.AurasManager:SetCrowdControlCallback(GetCallback(self.CrowdControlDisplay.Wrapped))
   end
 
-  self:InitializeWidgets()
-
   self:SetScript("OnEvent", self.OnEvent)
 
   self:SetSize(10, 10)
