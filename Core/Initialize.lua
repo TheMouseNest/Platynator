@@ -13,8 +13,9 @@ local offscreen = CreateFrame("Frame")
 offscreen:SetPoint("TOPLEFT", UIParent, "TOPRIGHT")
 addonTable.offscreenFrame = hidden
 
-function addonTable.Core.MigrateSettings(design)
-  local design = design or addonTable.Config.Get(addonTable.Config.Options.DESIGN)
+function addonTable.Core.UpgradeDesign(design)
+  design.appliesToAll = nil
+
   for _, text in ipairs(design.texts) do
     if not text.color then
       text.color = {r = 1, g = 1, b = 1}
@@ -96,27 +97,46 @@ function addonTable.Core.MigrateSettings(design)
   end
 end
 
-local function SetStyle()
-  local design = addonTable.Config.Get(addonTable.Config.Options.DESIGN)
+function addonTable.Core.MigrateSettings()
+  local legacyDesign = addonTable.Config.Get(addonTable.Config.Options.LEGACY_DESIGN)
 
-  if addonTable.Config.Get(addonTable.Config.Options.STYLE) == "hedgehog" then
-    design = addonTable.Design.GetDefaultDesignHedgehog()
-  elseif addonTable.Config.Get(addonTable.Config.Options.STYLE) == "rabbit" then
-    design = addonTable.Design.GetDefaultDesignRabbit()
-  elseif addonTable.Config.Get(addonTable.Config.Options.STYLE) == "beaver" then
-    design = addonTable.Design.GetDefaultDesignBeaver()
-  elseif addonTable.Config.Get(addonTable.Config.Options.STYLE) == "hare" then
-    design = addonTable.Design.GetDefaultDesignHare()
-  elseif addonTable.Config.Get(addonTable.Config.Options.STYLE) == "blizzard" then
-    design = addonTable.Design.GetDefaultDesignBlizzard()
-  elseif addonTable.Config.Get(addonTable.Config.Options.STYLE) == "blizzard-classic" then
-    design = addonTable.Design.GetDefaultDesignBlizzardClassic()
-  elseif addonTable.Config.Get(addonTable.Config.Options.STYLE) ~= "custom" then
-    design = addonTable.Design.GetDefaultDesignSquirrel()
+  if legacyDesign.appliesToAll then
+    local mapping = addonTable.Config.Get(addonTable.Config.Options.DESIGNS_ASSIGNED)
+    local styleName = addonTable.Config.Get(addonTable.Config.Options.STYLE)
+    if styleName == "custom" then
+      mapping["friend"] = "_custom"
+      mapping["enemy"] = "_custom"
+      addonTable.Config.Get(addonTable.Config.Options.DESIGNS)["_custom"] = legacyDesign
+    else
+      mapping["friend"] = "_" .. styleName
+      mapping["enemy"] = "_" .. styleName
+    end
+    addonTable.Config.Set(addonTable.Config.Options.LEGACY_DESIGN, {})
   end
 
-  addonTable.Core.MigrateSettings(design) -- Saves me updating the designs every time there's a new parameter
+  for _, design in ipairs(addonTable.Config.Get(addonTable.Config.Options.DESIGNS)) do
+    addonTable.Core.UpgradeDesign(design)
+  end
+end
 
+local function SetStyle()
+  local mapping = addonTable.Config.Get(addonTable.Config.Options.DESIGNS_ASSIGNED)
+
+  local styleName = addonTable.Config.Get(addonTable.Config.Options.STYLE)
+  if mapping["friend"] == mapping["enemy"] and styleName ~= "_custom" and styleName:match("^_") then
+    local designs = addonTable.Config.Get(addonTable.Config.Options.DESIGNS)
+    designs["_custom"] = CopyTable(addonTable.Core.GetDesign("enemy"))
+    mapping["friend"] = styleName
+    mapping["enemy"] = styleName
+    addonTable.CallbackRegistry:TriggerEvent("RefreshStateChange", {[addonTable.Constants.RefreshReason.Design] = true})
+  elseif styleName ~= "_custom" and styleName:match("^_") then
+    local designs = addonTable.Config.Get(addonTable.Config.Options.DESIGNS)
+    designs["_custom"] = CopyTable(addonTable.Core.GetDesign("enemy"))
+    addonTable.CallbackRegistry:TriggerEvent("RefreshStateChange", {[addonTable.Constants.RefreshReason.Design] = true})
+  end
+end
+
+local function UpdateRect(design)
   local function GetRect(asset, scale, anchor)
     local width = asset.width * scale
     local height = asset.height * scale
@@ -179,8 +199,20 @@ local function SetStyle()
   end
 
   addonTable.Rect = {left = left, bottom = bottom, width = right - left, height = top - bottom}
+end
 
-  addonTable.Config.Set(addonTable.Config.Options.DESIGN, design)
+function addonTable.Core.GetDesign(kind)
+  local name = addonTable.Config.Get(addonTable.Config.Options.DESIGNS_ASSIGNED)[kind]
+  if addonTable.Design.Defaults[name] then
+    if not addonTable.Design.ParsedDefaults[name] then
+      local design = C_EncodingUtil.DeserializeJSON(addonTable.Design.Defaults[name])
+      addonTable.Core.UpgradeDesign(design)
+      addonTable.Design.ParsedDefaults[name] = design
+    end
+    return addonTable.Design.ParsedDefaults[name]
+  else
+    return addonTable.Config.Get(addonTable.Config.Options.DESIGNS)[name]
+  end
 end
 
 function addonTable.Core.Initialize()
@@ -193,14 +225,14 @@ function addonTable.Core.Initialize()
 
   addonTable.Assets.ApplyScale()
 
+  addonTable.Core.MigrateSettings()
+
   SetStyle()
   addonTable.CallbackRegistry:RegisterCallback("SettingChanged", function(_, name)
     if name == addonTable.Config.Options.STYLE then
       SetStyle()
     end
   end)
-
-  addonTable.Core.MigrateSettings(design)
 
   addonTable.CustomiseDialog.Initialize()
 

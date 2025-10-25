@@ -106,6 +106,10 @@ L["BLIZZARD"] = "Blizzard"
 L["BLIZZARD_CLASSIC"] = "Blizzard Classic"
 L["CUSTOM"] = "Custom"
 
+L["FRIENDLY_STYLE"] = "Friendly Style"
+L["ENEMY_STYLE"] = "Enemy Style"
+L["DEFAULT_BRACKETS"] = "(Default)"
+
 L["ADD_WIDGET"] = "Add Widget"
 L["DELETE_WIDGET"] = "Delete Widget"
 L["BARS"] = "Bars"

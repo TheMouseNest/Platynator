@@ -151,7 +151,7 @@ local function SetupGeneral(parent)
         newDesign.version = nil
         newDesign.addon = nil
         addonTable.Config.Set(addonTable.Config.Options.DESIGN, newDesign)
-        addonTable.Config.Set(addonTable.Config.Options.STYLE, "custom")
+        addonTable.Config.Set(addonTable.Config.Options.STYLE, "_custom")
       end)
     end)
     --addonTable.Skins.AddFrame("Button", importButton)
@@ -173,12 +173,30 @@ local function SetupBehaviour(parent)
 
   local allFrames = {}
 
+  local friendlyStyleDropdown = addonTable.CustomiseDialog.Components.GetBasicDropdown(container, addonTable.Locales.FRIENDLY_STYLE, function(value)
+    return addonTable.Config.Get(addonTable.Config.Options.DESIGNS_ASSIGNED)["friend"] == value
+  end, function(value)
+    addonTable.Config.Get(addonTable.Config.Options.DESIGNS_ASSIGNED)["friend"] = value
+    addonTable.CallbackRegistry:TriggerEvent("RefreshStateChange", {[addonTable.Constants.RefreshReason.Design] = true})
+  end)
+  friendlyStyleDropdown:SetPoint("TOP")
+  table.insert(allFrames, friendlyStyleDropdown)
+
+  local enemyStyleDropdown = addonTable.CustomiseDialog.Components.GetBasicDropdown(container, addonTable.Locales.ENEMY_STYLE, function(value)
+    return addonTable.Config.Get(addonTable.Config.Options.DESIGNS_ASSIGNED)["enemy"] == value
+  end, function(value)
+    addonTable.Config.Get(addonTable.Config.Options.DESIGNS_ASSIGNED)["enemy"] = value
+    addonTable.CallbackRegistry:TriggerEvent("RefreshStateChange", {[addonTable.Constants.RefreshReason.Design] = true})
+  end)
+  enemyStyleDropdown:SetPoint("TOP", allFrames[#allFrames], "BOTTOM")
+  table.insert(allFrames, enemyStyleDropdown)
+
   local targetDropdown = addonTable.CustomiseDialog.Components.GetBasicDropdown(container, addonTable.Locales.ON_TARGETING, function(value)
     return addonTable.Config.Get(addonTable.Config.Options.TARGET_BEHAVIOUR) == value
   end, function(value)
     addonTable.Config.Set(addonTable.Config.Options.TARGET_BEHAVIOUR, value)
   end)
-  targetDropdown:SetPoint("TOP")
+  targetDropdown:SetPoint("TOP", allFrames[#allFrames], "BOTTOM", 0, -30)
   do
     local entries = {
       addonTable.Locales.DO_NOTHING,
@@ -212,6 +230,28 @@ local function SetupBehaviour(parent)
   table.insert(allFrames, notTargetDropdown)
 
   container:SetScript("OnShow", function()
+    local styles = {}
+    for key, value in pairs(addonTable.Config.Get(addonTable.Config.Options.DESIGNS)) do
+      table.insert(styles, {label = key ~= "_custom" and key or addonTable.Locales.CUSTOM, value = key})
+    end
+    table.sort(styles, function(a, b) return a.label < b.label end)
+    local stylesBuiltIn = {}
+    for key, label in pairs(addonTable.Design.NameMap) do
+      if key ~= "_custom" then
+        table.insert(stylesBuiltIn, {label = label .. " " .. addonTable.Locales.DEFAULT_BRACKETS, value = key})
+      end
+    end
+    table.sort(stylesBuiltIn, function(a, b) return a.label < b.label end)
+    tAppendAll(styles, stylesBuiltIn)
+    local labels, values = {}, {}
+    for _, entry in ipairs(styles) do
+      table.insert(labels, entry.label)
+      table.insert(values, entry.value)
+    end
+
+    friendlyStyleDropdown:Init(labels, values)
+    enemyStyleDropdown:Init(labels, values)
+
     for _, f in ipairs(allFrames) do
       if f.SetValue then
         if f.option then
@@ -245,14 +285,14 @@ local function SetupFont(parent)
     for _, details in ipairs(fonts) do
       local radio = rootDescription:CreateRadio(details.label,
         function()
-          return addonTable.Config.Get(addonTable.Config.Options.DESIGN).font.asset == details.id
+          return addonTable.Core.GetDesign("enemy").font.asset == details.id
         end,
         function()
-          local design = addonTable.Config.Get(addonTable.Config.Options.DESIGN)
+          local design = addonTable.Core.GetDesign("enemy")
           local oldAsset = design.font.asset
           if details.id ~= oldAsset then
             design.font.asset = details.id
-            addonTable.Config.Set(addonTable.Config.Options.STYLE, "custom")
+            addonTable.Config.Set(addonTable.Config.Options.STYLE, "_custom")
             addonTable.CallbackRegistry:TriggerEvent("RefreshStateChange", {[addonTable.Constants.RefreshReason.Design] = true})
           end
         end
@@ -265,10 +305,10 @@ local function SetupFont(parent)
   end)
 
   local outlineCheckbox = addonTable.CustomiseDialog.Components.GetCheckbox(container, addonTable.Locales.SHOW_OUTLINE, 28, function(value)
-    local design = addonTable.Config.Get(addonTable.Config.Options.DESIGN)
+    local design = addonTable.Core.GetDesign("enemy")
     if value ~= design.font.outline then
       design.font.outline = value
-      addonTable.Config.Set(addonTable.Config.Options.STYLE, "custom")
+      addonTable.Config.Set(addonTable.Config.Options.STYLE, "_custom")
       addonTable.CallbackRegistry:TriggerEvent("RefreshStateChange", {[addonTable.Constants.RefreshReason.Design] = true})
     end
   end)
@@ -276,10 +316,10 @@ local function SetupFont(parent)
   table.insert(allFrames, outlineCheckbox)
 
   local shadowCheckbox = addonTable.CustomiseDialog.Components.GetCheckbox(container, addonTable.Locales.SHOW_SHADOW, 28, function(value)
-    local design = addonTable.Config.Get(addonTable.Config.Options.DESIGN)
+    local design = addonTable.Core.GetDesign("enemy")
     if value ~= design.font.shadow then
       design.font.shadow = value
-      addonTable.Config.Set(addonTable.Config.Options.STYLE, "custom")
+      addonTable.Config.Set(addonTable.Config.Options.STYLE, "_custom")
       addonTable.CallbackRegistry:TriggerEvent("RefreshStateChange", {[addonTable.Constants.RefreshReason.Design] = true})
     end
   end)
@@ -287,7 +327,7 @@ local function SetupFont(parent)
   table.insert(allFrames, shadowCheckbox)
 
   container:SetScript("OnShow", function()
-    local design = addonTable.Config.Get(addonTable.Config.Options.DESIGN)
+    local design = addonTable.Core.GetDesign("enemy")
     outlineCheckbox:SetValue(design.font.outline)
     shadowCheckbox:SetValue(design.font.shadow)
 
