@@ -351,13 +351,13 @@ addonTable.CustomiseDialog.WidgetsConfig = {
             end
           },
           {
-            label = addonTable.Locales.TRUNCATE,
+            label = addonTable.Locales.SHORTEN,
             kind = "dropdown",
             getInitData = function()
               return {
-                addonTable.Locales.NONE,
-                addonTable.Locales.LEFT,
-                addonTable.Locales.RIGHT,
+                addonTable.Locales.SHOW_ALL,
+                addonTable.Locales.LAST_WORD,
+                addonTable.Locales.FIRST_WORD,
               }, {
                 "NONE",
                 "LEFT",
