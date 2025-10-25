@@ -80,11 +80,13 @@ function addonTable.Display.CastBarMixin:ApplyCasting()
     name, text, texture, startTime, endTime, _, notInterruptible, _ = UnitChannelInfo(self.unit)
     isChanneled = true
   end
-  self:SetReverseFill(isChanneled)
 
   if type(startTime) ~= "nil" and type(endTime) ~= "nil" then
     self.interrupted = nil
+
+    self:SetReverseFill(isChanneled)
     self:Show()
+
     if issecretvalue and issecretvalue(startTime) then
       self.statusBar:SetMinMaxValues(startTime, endTime)
       self:SetScript("OnUpdate", function()
