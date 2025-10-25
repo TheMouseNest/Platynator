@@ -55,6 +55,7 @@ Display/RareMarker.lua
 Display/RaidMarker.lua
 Display/Widgets.lua
 Display/LegacyBuffTemplate.xml
+Display/CastTarget.lua
 
 API/Main.lua
 
