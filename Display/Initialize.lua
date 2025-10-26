@@ -121,6 +121,7 @@ function addonTable.Display.ManagerMixin:OnLoad()
         else
           UF.AurasFrame.DebuffListFrame:SetPoint("BOTTOM", UF.name, "TOP", 0, debuffPadding);
         end
+        UF.AurasFrame.DebuffListFrame:SetPoint("LEFT", UF.HealthBarsContainer)
         UF.AurasFrame.DebuffListFrame:SetParent(UF.AurasFrame)
         UF.AurasFrame.BuffListFrame:ClearAllPoints()
         UF.AurasFrame.BuffListFrame:SetPoint("RIGHT", UF.HealthBarsContainer.healthBar, "LEFT", -5, 0);
