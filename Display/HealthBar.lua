@@ -13,7 +13,6 @@ function addonTable.Display.HealthBarMixin:SetUnit(unit)
     self.statusBar:SetMinMaxValues(0, UnitHealthMax(self.unit))
     self.statusBarAbsorb:SetMinMaxValues(self.statusBar:GetMinMaxValues())
     self.statusBarAbsorb:SetValue(UnitGetTotalAbsorbs(self.unit))
-    self.statusBar:SetValue(UnitHealth(self.unit))
     self:UpdateColor()
     self:UpdateHealth()
   else
