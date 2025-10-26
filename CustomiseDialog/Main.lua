@@ -173,10 +173,10 @@ local function SetupBehaviour(parent)
 
   local allFrames = {}
 
-  local targetDropdown = addonTable.CustomiseDialog.Components.GetBasicDropdown(container, addonTable.Locales.ON_TARGETING, function(value)
+  local targetDropdown = addonTable.CustomiseDialog.Components.GetBasicDropdown(container, addonTable.Locales.ON_TARGET_OR_CASTING, function(value)
     return addonTable.Config.Get(addonTable.Config.Options.TARGET_BEHAVIOUR) == value
   end, function(value)
-    addonTable.Config.Set(addonTable.Config.Options.TARGET_BEHAVIOUR, value)
+    addonTable.Config.Set(addonTable.Config.Options.NON_TARGET_BEHAVIOUR, value)
   end)
   targetDropdown:SetPoint("TOP")
   do
@@ -192,7 +192,7 @@ local function SetupBehaviour(parent)
   end
   table.insert(allFrames, targetDropdown)
 
-  local notTargetDropdown = addonTable.CustomiseDialog.Components.GetBasicDropdown(container, addonTable.Locales.ON_NOT_TARGETING, function(value)
+  local notTargetDropdown = addonTable.CustomiseDialog.Components.GetBasicDropdown(container, addonTable.Locales.ON_NON_TARGET_AND_NON_CASTING, function(value)
     return addonTable.Config.Get(addonTable.Config.Options.NOT_TARGET_BEHAVIOUR) == value
   end, function(value)
     addonTable.Config.Set(addonTable.Config.Options.NOT_TARGET_BEHAVIOUR, value)

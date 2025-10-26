@@ -109,6 +109,8 @@ function addonTable.Display.NameplateMixin:OnLoad()
 
   self:SetSize(10, 10)
   self:SetPoint("CENTER")
+
+  self.casting = false
 end
 
 function addonTable.Display.NameplateMixin:InitializeWidgets()
@@ -200,6 +202,14 @@ function addonTable.Display.NameplateMixin:SetUnit(unit)
     if self.AurasManager then
       self.AurasManager:SetUnit(self.unit)
     end
+
+    if UnitCanAttack("player", self.unit) then
+      self:RegisterUnitEvent("UNIT_SPELLCAST_START", self.unit)
+      self:RegisterUnitEvent("UNIT_SPELLCAST_CHANNEL_START", self.unit)
+      self:RegisterUnitEvent("UNIT_SPELLCAST_STOP", self.unit)
+      self:RegisterUnitEvent("UNIT_SPELLCAST_CHANNEL_STOP", self.unit)
+      self.casting = type((UnitCastingInfo(self.unit))) ~= "nil" or type((UnitChannelInfo(self.unit))) ~= "nil"
+    end
   else
     self.unit = nil
     for _, w in ipairs(self.widgets) do
@@ -216,6 +226,7 @@ function addonTable.Display.NameplateMixin:SetUnit(unit)
     end
 
     self:UnregisterAllEvents()
+    self.casting = false
   end
 
   if unit and UnitIsInteractable(unit) then
@@ -259,6 +270,12 @@ function addonTable.Display.NameplateMixin:UpdateVisual()
       self:SetScale(1.25 * addonTable.Config.Get(addonTable.Config.Options.GLOBAL_SCALE) * UIParent:GetEffectiveScale())
     end
     self:SetAlpha(1)
+  elseif self.casting then
+    self:SetAlpha(1)
+    local change = addonTable.Config.Get(addonTable.Config.Options.TARGET_BEHAVIOUR)
+    if change == "enlarge" then
+      self:SetScale(1.1 * addonTable.Config.Get(addonTable.Config.Options.GLOBAL_SCALE) * UIParent:GetEffectiveScale())
+    end
   else
     local change = addonTable.Config.Get(addonTable.Config.Options.NOT_TARGET_BEHAVIOUR)
     if change == "fade" then
@@ -287,5 +304,8 @@ end
 function addonTable.Display.NameplateMixin:OnEvent(eventName)
   if eventName == "PLAYER_SOFT_INTERACT_CHANGED" then
     self:UpdateSoftInteract()
+  else
+    self.casting = type((UnitCastingInfo(self.unit))) ~= "nil" or type((UnitChannelInfo(self.unit))) ~= "nil"
+    self:UpdateVisual()
   end
 end
