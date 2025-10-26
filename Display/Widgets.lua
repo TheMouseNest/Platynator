@@ -13,7 +13,138 @@ end
 
 local ApplyAnchor = addonTable.Display.ApplyAnchor
 
-function addonTable.Display.GetBar(frame, parent)
+local function InitBar(frame, details)
+  if frame.Strip then
+    frame:Strip()
+  end
+
+  ApplyAnchor(frame, details.anchor)
+
+  local foregroundDetails = addonTable.Assets.BarBackgrounds[details.foreground.asset]
+  local borderDetails = addonTable.Assets.BarBorders[details.border.asset]
+  local borderMaskDetails = addonTable.Assets.BarMasks[details.border.asset]
+  local width, height = foregroundDetails.width, foregroundDetails.height
+  if borderDetails.mode and borderDetails.mode ~= foregroundDetails.mode then
+    if borderMaskDetails then
+      width, height = math.min(borderMaskDetails.width, width), math.min(borderMaskDetails.height, height)
+    else
+      width, height = math.min(borderDetails.width, width), math.min(borderDetails.height, height)
+    end
+  end
+  frame:SetSize(width * details.scale, height * details.scale)
+
+  frame.statusBar:SetMinMaxValues(0, 1)
+  frame.statusBar:SetValue(1)
+  frame.statusBar:SetStatusBarTexture(foregroundDetails.file)
+  frame.statusBar:GetStatusBarTexture():SetDrawLayer("ARTWORK")
+  frame.statusBar:GetStatusBarTexture():SetSnapToPixelGrid(false)
+  frame.statusBar:GetStatusBarTexture():SetTexelSnappingBias(0)
+
+  local backgroundDetails = addonTable.Assets.BarBackgrounds[details.background.asset]
+  frame.background:SetTexture(backgroundDetails.file)
+  frame.background:SetSize(backgroundDetails.width * details.scale, backgroundDetails.height * details.scale)
+  frame.background:SetAlpha(details.background.alpha)
+  frame.background:SetVertexColor(1, 1, 1)
+  local borderDetails = addonTable.Assets.BarBorders[details.border.asset]
+  frame.border:SetTexture(borderDetails.file)
+  frame.border:SetSize(borderDetails.width * details.scale, borderDetails.height * details.scale)
+  frame.border:SetVertexColor(details.border.color.r, details.border.color.g, details.border.color.b)
+  if details.marker.asset ~= "none" then
+    frame.marker:Show()
+    local markerDetails = addonTable.Assets.BarPositionHighlights[details.marker.asset]
+    frame.marker:SetTexture(markerDetails.file)
+    frame.marker:SetSize(markerDetails.width * details.scale, frame:GetHeight())
+    frame.marker:SetPoint("CENTER", frame.statusBar:GetStatusBarTexture(), "RIGHT")
+  else
+    frame.marker:Hide()
+  end
+
+  frame.statusBar:GetStatusBarTexture():RemoveMaskTexture(frame.mask)
+  frame.background:RemoveMaskTexture(frame.mask)
+  frame.marker:RemoveMaskTexture(frame.mask)
+
+  local maskInfo = addonTable.Assets.BarMasks[details.border.asset]
+  if maskInfo then
+    frame.mask:SetTexture(maskInfo.file, "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
+    frame.mask:SetSize(maskInfo.width * details.scale, maskInfo.height * details.scale)
+    frame.mask:SetSnapToPixelGrid(false)
+    frame.mask:SetTexelSnappingBias(0)
+
+    frame.statusBar:GetStatusBarTexture():AddMaskTexture(frame.mask)
+    frame.background:AddMaskTexture(frame.mask)
+    frame.marker:AddMaskTexture(frame.mask)
+  end
+
+  frame.details = details
+
+  frame.marker:SetTexelSnappingBias(0)
+  frame.marker:SetDrawLayer("ARTWORK", 2)
+  frame.border:SetSnapToPixelGrid(false)
+  frame.border:SetTexelSnappingBias(0)
+  frame.background:SetSnapToPixelGrid(false)
+  frame.background:SetTexelSnappingBias(0)
+end
+
+function addonTable.Display.GetHealthBar(frame, parent)
+  frame = frame or CreateFrame("Frame", nil, parent or UIParent)
+
+  frame.statusBar = CreateFrame("StatusBar", nil, frame)
+  frame.statusBar:SetAllPoints()
+  frame.statusBar:SetClipsChildren(true)
+
+  frame.statusBarAbsorb = CreateFrame("StatusBar", nil, frame)
+  frame.statusBarAbsorb:SetClipsChildren(true)
+
+  frame.marker = frame.statusBar:CreateTexture()
+  frame.marker:SetSnapToPixelGrid(false)
+
+  local borderHolder = CreateFrame("Frame", nil, frame)
+  frame.border = borderHolder:CreateTexture()
+  frame.border:SetDrawLayer("OVERLAY")
+  frame.border:SetPoint("CENTER", frame)
+
+  frame.mask = frame:CreateMaskTexture()
+  frame.mask:SetPoint("CENTER")
+
+  frame.background = frame.statusBar:CreateTexture()
+  frame.background:SetAllPoints()
+  frame.background:SetDrawLayer("BACKGROUND")
+
+  function frame:Init(details)
+    InitBar(frame, details)
+
+    frame.statusBarAbsorb:SetMinMaxValues(0, 1)
+    frame.statusBarAbsorb:SetValue(1)
+    frame.statusBarAbsorb:SetStatusBarTexture(addonTable.Assets.BarBackgrounds[details.absorb.asset].file)
+    frame.statusBarAbsorb:SetPoint("LEFT", frame.statusBar:GetStatusBarTexture(), "RIGHT")
+    frame.statusBarAbsorb:SetHeight(frame:GetHeight())
+    frame.statusBarAbsorb:SetWidth(frame:GetWidth())
+    frame.statusBarAbsorb:GetStatusBarTexture():RemoveMaskTexture(frame.mask)
+    frame.statusBarAbsorb:GetStatusBarTexture():SetSnapToPixelGrid(false)
+    frame.statusBarAbsorb:GetStatusBarTexture():SetTexelSnappingBias(0)
+
+    local maskInfo = addonTable.Assets.BarMasks[details.border.asset]
+    if maskInfo then
+      frame.statusBarAbsorb:GetStatusBarTexture():AddMaskTexture(frame.mask)
+    end
+
+    if details.kind == "health" then
+      Mixin(frame, addonTable.Display.HealthBarMixin)
+    else
+      assert(false)
+    end
+
+    frame:SetScript("OnEvent", frame.OnEvent)
+
+    if frame.PostInit then
+      frame:PostInit()
+    end
+  end
+
+  return frame
+end
+
+function addonTable.Display.GetCastBar(frame, parent)
   frame = frame or CreateFrame("Frame", nil, parent or UIParent)
 
   frame.statusBar = CreateFrame("StatusBar", nil, frame)
@@ -53,92 +184,31 @@ function addonTable.Display.GetBar(frame, parent)
   frame.background:SetAllPoints()
   frame.background:SetDrawLayer("BACKGROUND")
 
-  local knownKeys = {"statusBar", "marker", "border", "background"}
-
   function frame:Init(details)
-    if frame.Strip then
-      frame:Strip()
-    end
-
-    ApplyAnchor(frame, details.anchor)
+    InitBar(frame, details)
 
     local foregroundDetails = addonTable.Assets.BarBackgrounds[details.foreground.asset]
-    local borderDetails = addonTable.Assets.BarBorders[details.border.asset]
-    local borderMaskDetails = addonTable.Assets.BarMasks[details.border.asset]
-    local width, height = foregroundDetails.width, foregroundDetails.height
-    if borderDetails.mode and borderDetails.mode ~= foregroundDetails.mode then
-      if borderMaskDetails then
-        width, height = math.min(borderMaskDetails.width, width), math.min(borderMaskDetails.height, height)
-      else
-        width, height = math.min(borderDetails.width, width), math.min(borderDetails.height, height)
-      end
-    end
-    frame:SetSize(width * details.scale, height * details.scale)
-
-    frame.statusBar:SetStatusBarTexture(foregroundDetails.file)
-    frame.statusBar:GetStatusBarTexture():SetDrawLayer("ARTWORK")
-    frame.statusBar:GetStatusBarTexture():SetSnapToPixelGrid(false)
-    frame.statusBar:GetStatusBarTexture():SetTexelSnappingBias(0)
-
     frame.reverseStatusTexture:Hide()
     -- Scaling to avoid zooming in on the texture at the current size
-    frame.reverseStatusTexture:SetScale(frame:GetWidth() / foregroundDetails.width)
+    frame.reverseStatusTexture:SetScale(details.scale)
     frame.reverseStatusTexture:SetTexture(foregroundDetails.file)
-    frame.reverseStatusTexture:SetHeight(height)
+    frame.reverseStatusTexture:SetHeight(foregroundDetails.height)
     frame.reverseStatusTexture:SetPoint("RIGHT", frame.statusBar:GetStatusBarTexture(), "LEFT")
     frame.reverseStatusTexture:SetHorizTile(true)
 
-    local backgroundDetails = addonTable.Assets.BarBackgrounds[details.background.asset]
-    frame.background:SetTexture(backgroundDetails.file)
-    frame.background:SetSize(backgroundDetails.width * details.scale, backgroundDetails.height * details.scale)
-    frame.background:SetAlpha(details.background.alpha)
-    frame.background:SetVertexColor(1, 1, 1)
-    local borderDetails = addonTable.Assets.BarBorders[details.border.asset]
-    frame.border:SetTexture(borderDetails.file)
-    frame.border:SetSize(borderDetails.width * details.scale, borderDetails.height * details.scale)
-    frame.border:SetVertexColor(details.border.color.r, details.border.color.g, details.border.color.b)
-    if details.marker.asset ~= "none" then
-      frame.marker:Show()
-      local markerDetails = addonTable.Assets.BarPositionHighlights[details.marker.asset]
-      frame.marker:SetTexture(markerDetails.file)
-      frame.marker:SetSize(markerDetails.width * details.scale, frame:GetHeight())
-      frame.marker:SetPoint("CENTER", frame.statusBar:GetStatusBarTexture(), "RIGHT")
-    else
-      frame.marker:Hide()
-    end
-
-    frame.statusBar:GetStatusBarTexture():RemoveMaskTexture(frame.mask)
     frame.reverseStatusTexture:RemoveMaskTexture(frame.mask)
-    frame.background:RemoveMaskTexture(frame.mask)
-    frame.marker:RemoveMaskTexture(frame.mask)
 
     local maskInfo = addonTable.Assets.BarMasks[details.border.asset]
     if maskInfo then
-      frame.mask:SetTexture(maskInfo.file, "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
-      frame.mask:SetSize(maskInfo.width * details.scale, maskInfo.height * details.scale)
-      frame.mask:SetSnapToPixelGrid(false)
-      frame.mask:SetTexelSnappingBias(0)
-
-      frame.statusBar:GetStatusBarTexture():AddMaskTexture(frame.mask)
       frame.reverseStatusTexture:AddMaskTexture(frame.mask)
-      frame.background:AddMaskTexture(frame.mask)
-      frame.marker:AddMaskTexture(frame.mask)
     end
 
     frame.details = details
 
     frame.reverseStatusTexture:SetSnapToPixelGrid(false)
     frame.reverseStatusTexture:SetTexelSnappingBias(0)
-    frame.marker:SetTexelSnappingBias(0)
-    frame.marker:SetDrawLayer("ARTWORK", 2)
-    frame.border:SetSnapToPixelGrid(false)
-    frame.border:SetTexelSnappingBias(0)
-    frame.background:SetSnapToPixelGrid(false)
-    frame.background:SetTexelSnappingBias(0)
 
-    if details.kind == "health" then
-      Mixin(frame, addonTable.Display.HealthBarMixin)
-    elseif details.kind == "cast" then
+    if details.kind == "cast" then
       Mixin(frame, addonTable.Display.CastBarMixin)
     else
       assert(false)
@@ -164,8 +234,6 @@ function addonTable.Display.GetPower(frame, parent)
 
   frame.main = CreateFrame("StatusBar", nil, frame)
   frame.main:SetMinMaxValues(0, 7)
-
-  local knownKeys = {"main", "background"}
 
   frame:SetScript("OnSizeChanged", function()
     frame.main:SetSize(frame:GetSize())
@@ -305,8 +373,6 @@ function addonTable.Display.GetText(frame, parent)
   end)
   frame:SetSize(1, 1)
 
-  local knownKeys = {"text"}
-
   function frame:Init(details)
     if frame.Strip then
       frame:Strip()
@@ -374,7 +440,8 @@ function addonTable.Display.GetText(frame, parent)
 end
 
 local livePools = {
-  bars = CreateFramePool("Frame", UIParent, nil, nil, false, addonTable.Display.GetBar),
+  healthBars = CreateFramePool("Frame", UIParent, nil, nil, false, addonTable.Display.GetHealthBar),
+  castBars = CreateFramePool("Frame", UIParent, nil, nil, false, addonTable.Display.GetCastBar),
   texts = CreateFramePool("Frame", UIParent, nil, nil, false, addonTable.Display.GetText),
   powers = CreateFramePool("Frame", UIParent, nil, nil, false, addonTable.Display.GetPower),
   highlights = CreateFramePool("Frame", UIParent, nil, nil, false, addonTable.Display.GetHighlight),
@@ -382,7 +449,8 @@ local livePools = {
 }
 
 local editorPools = {
-  bars = CreateFramePool("Frame", UIParent, nil, nil, false, addonTable.Display.GetBar),
+  healthBars = CreateFramePool("Frame", UIParent, nil, nil, false, addonTable.Display.GetHealthBar),
+  castBars = CreateFramePool("Frame", UIParent, nil, nil, false, addonTable.Display.GetCastBar),
   texts = CreateFramePool("Frame", UIParent, nil, nil, false, addonTable.Display.GetText),
   powers = CreateFramePool("Frame", UIParent, nil, nil, false, addonTable.Display.GetPower),
   highlights = CreateFramePool("Frame", UIParent, nil, nil, false, addonTable.Display.GetHighlight),
@@ -397,8 +465,8 @@ function addonTable.Display.GetWidgets(design, parent, isEditor)
   local pools = isEditor and editorPools or livePools
 
   for index, barDetails in ipairs(design.bars) do
-    local w = pools.bars:Acquire()
-    poolType[w] = "bars"
+    local w = pools[barDetails.kind .. "Bars"]:Acquire()
+    poolType[w] = barDetails.kind .. "Bars"
     w:SetParent(parent)
     w:Show()
     w:Init(barDetails)

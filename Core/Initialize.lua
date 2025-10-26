@@ -83,6 +83,11 @@ function addonTable.Core.MigrateSettings(design)
       newColor = CreateColorFromRGBHexString("6E6E6E")
       bar.colors.npc.tapped = {r = newColor.r, g = newColor.g, b = newColor.b}
     end
+    if bar.kind == "health" and not bar.absorb then
+      local mode = addonTable.Assets.BarBorders[bar.border.asset].mode
+      local isNarrow = mode == addonTable.Assets.Mode.Narrow or mode == addonTable.Assets.Mode.Wide
+      bar.absorb = {asset = isNarrow and "narrow/blizzard-absorb" or "wide/blizzard-absorb", color = {r = 1, g = 1, b = 1}}
+    end
     if bar.kind == "cast" and bar.colors.interrupted == nil then
       local newColor = CreateColorFromRGBHexString("FC36E0")
       bar.colors.interrupted = {r = newColor.r, g = newColor.g, b = newColor.b}

@@ -451,6 +451,10 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
         if w.details.background.applyColor then
           w.background:SetVertexColor(defaultColor.r, defaultColor.g, defaultColor.b)
         end
+        if w.details.kind == "health" then
+          w.statusBarAbsorb:SetMinMaxValues(0, 100)
+          w.statusBarAbsorb:SetValue(10)
+        end
         w.marker:SetVertexColor(defaultColor.r, defaultColor.g, defaultColor.b)
       elseif w.kind == "texts" then
         local display
