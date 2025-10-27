@@ -135,6 +135,8 @@ L["ELITE"] = "Elite"
 L["RARE"] = "Rare"
 L["RAID_MARKER"] = "Raid Marker"
 
+L["THIS_WILL_OVERWRITE_YOUR_DESIGN"] = "This will overwrite your design. Continue?"
+
 local L = Locales.frFR
 --@localization(locale="frFR", format="lua_additive_table")@
 

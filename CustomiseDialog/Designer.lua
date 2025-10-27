@@ -15,7 +15,13 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
     local styleDropdown = addonTable.CustomiseDialog.Components.GetBasicDropdown(container, addonTable.Locales.STYLE, function(value)
       return addonTable.Config.Get(addonTable.Config.Options.STYLE) == value
     end, function(value)
-      addonTable.Config.Set(addonTable.Config.Options.STYLE, value)
+      if addonTable.Config.Get(addonTable.Config.Options.STYLE, value) == "custom" then
+        addonTable.Dialogs.ShowConfirm(addonTable.Locales.THIS_WILL_OVERWRITE_YOUR_DESIGN, OKAY, CANCEL, function()
+          addonTable.Config.Set(addonTable.Config.Options.STYLE, value)
+        end)
+      else
+        addonTable.Config.Set(addonTable.Config.Options.STYLE, value)
+      end
     end)
     styleDropdown.option = addonTable.Config.Options.STYLE
 
