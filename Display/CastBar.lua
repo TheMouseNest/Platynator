@@ -16,6 +16,9 @@ function addonTable.Display.CastBarMixin:SetUnit(unit)
     self:RegisterUnitEvent("UNIT_SPELLCAST_INTERRUPTED", self.unit)
     self:RegisterUnitEvent("UNIT_SPELLCAST_FAILED", self.unit)
 
+    self:RegisterUnitEvent("UNIT_SPELLCAST_INTERRUPTIBLE", self.unit)
+    self:RegisterUnitEvent("UNIT_SPELLCAST_NOT_INTERRUPTIBLE", self.unit)
+
     self:ApplyCasting()
   else
     self:Strip()
@@ -43,6 +46,13 @@ function addonTable.Display.CastBarMixin:OnEvent(eventName, ...)
       if self.interrupted then
         self.interrupted = nil
         self:Hide()
+      end
+    end)
+  elseif eventName == "UNIT_SPELLCAST_NOT_INTERRUPTIBLE" or eventName == "UNIT_SPELLCAST_INTERRUPTIBLE" then
+    self:UpdateColorForInterruptible()
+    C_Timer.After(0, function()
+      if self.unit then
+        self:UpdateColorForInterruptible()
       end
     end)
   else
