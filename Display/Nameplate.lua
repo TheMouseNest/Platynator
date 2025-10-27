@@ -268,20 +268,15 @@ function addonTable.Display.NameplateMixin:UpdateVisual()
 
   local scale = 1
   local alpha = 1
-  local ignoreParentAlpha = false
   if UnitIsUnit("target", self.unit) then
     local change = addonTable.Config.Get(addonTable.Config.Options.TARGET_BEHAVIOUR)
     if change == "enlarge" then
       scale = 1.25
     end
   elseif self.casting then
-    local targetChange = addonTable.Config.Get(addonTable.Config.Options.TARGET_BEHAVIOUR)
-    if targetChange == "enlarge" then
+    local change = addonTable.Config.Get(addonTable.Config.Options.TARGET_BEHAVIOUR)
+    if change == "enlarge" then
       scale = 1.1
-    end
-    local nonTargetChange = addonTable.Config.Get(addonTable.Config.Options.NOT_TARGET_BEHAVIOUR)
-    if nonTargetChange == "fade" and addonTable.Constants.IsClassic then
-      ignoreParentAlpha = true
     end
   else
     local change = addonTable.Config.Get(addonTable.Config.Options.NOT_TARGET_BEHAVIOUR)
@@ -291,7 +286,6 @@ function addonTable.Display.NameplateMixin:UpdateVisual()
   end
   self:SetScale(scale * addonTable.Config.Get(addonTable.Config.Options.GLOBAL_SCALE) * UIParent:GetEffectiveScale())
   self:SetAlpha(alpha)
-  self:SetIgnoreParentAlpha(ignoreParentAlpha)
 end
 
 function addonTable.Display.NameplateMixin:UpdateSoftInteract()
