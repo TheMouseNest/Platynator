@@ -14,6 +14,8 @@ addonTable.Constants = {
   DeathKnightMaxRunes = 6,
 
   ButtonFrameOffset = 5,
+
+  CustomName = "_custom",
 }
 addonTable.Constants.Events = {
   "SettingChanged",

@@ -3,11 +3,20 @@ local addonTable = select(2, ...)
 
 local fonts = {}
 
-function addonTable.Core.GetFontByID(id, size)
-  local design = addonTable.Config.Get(addonTable.Config.Options.DESIGN)
+function addonTable.Core.GetFontByDesign(design)
+  local id = design.font.asset
   local outline = design.font.outline and "OUTLINE" or ""
   local shadow = design.font.shadow and "SHADOW" or ""
   size = size or addonTable.Assets.Fonts[design.font.asset].size
+  if not fonts[id .. outline .. shadow .. size] then
+    addonTable.Core.CreateFont(id, size, outline, shadow)
+  end
+  return fonts[id .. outline .. shadow .. size]
+end
+
+function addonTable.Core.GetFontByID(id, size)
+  local outline = ""
+  local shadow = ""
   if not fonts[id .. outline .. shadow .. size] then
     addonTable.Core.CreateFont(id, size, outline, shadow)
   end

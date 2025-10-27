@@ -3,11 +3,15 @@ local addonTable = select(2, ...)
 addonTable.Config = {}
 
 local settings = {
-  STYLE = {key = "style", default = "squirrel", refresh = {addonTable.Constants.RefreshReason.Design}},
+  STYLE = {key = "style", default = "_squirrel"},
   CURRENT_SKIN = {key = "current_skin", default = "blizzard", refresh = {addonTable.Constants.RefreshReason.Skin}},
 
   GLOBAL_SCALE = {key = "global_scale", default = 1, refresh = {addonTable.Constants.RefreshReason.Scale}},
-  DESIGN = {key = "design_all", default = addonTable.Design.GetDefaultDesignSquirrel(), refresh = {addonTable.Constants.RefreshReason.Design}},
+
+  LEGACY_DESIGN = {key = "design_all", default = {}},
+
+  DESIGNS = {key = "designs", default = {}, refresh = {addonTable.Constants.RefreshReason.Design}},
+  DESIGNS_ASSIGNED = {key = "designs_assigned", default = {["friend"] = "_squirrel", ["enemy"] = "_squirrel"}},
 
   TARGET_BEHAVIOUR = {key = "target_behaviour", default = "enlarge", refresh = {addonTable.Constants.RefreshReason.TargetBehaviour}},
   NOT_TARGET_BEHAVIOUR = {key = "not_target_behaviour", default = "none", refresh = {addonTable.Constants.RefreshReason.TargetBehaviour}},

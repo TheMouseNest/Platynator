@@ -2,9 +2,9 @@
 local addonTable = select(2, ...)
 
 function addonTable.Display.Initialize()
-  local design = addonTable.Config.Get(addonTable.Config.Options.DESIGN)
+  local design = addonTable.Core.GetDesign("enemy")
 
-  addonTable.CurrentFont = addonTable.Core.GetFontByID(design.font.asset)
+  addonTable.CurrentFont = addonTable.Core.GetFontByDesign(design)
   CreateFont("PlatynatorNameplateCooldownFont")
   PlatynatorNameplateCooldownFont:SetFont(addonTable.Assets.Fonts[design.font.asset].file, 13, design.font.outline and "OUTLINE" or "")
   if design.font.shadow then
@@ -21,8 +21,14 @@ end
 addonTable.Display.ManagerMixin = {}
 function addonTable.Display.ManagerMixin:OnLoad()
   self.styleIndex = 0
-  self.displayPool = CreateFramePool("Frame", UIParent, nil, nil, false, function(frame)
+  self.friendDisplayPool = CreateFramePool("Frame", UIParent, nil, nil, false, function(frame)
     Mixin(frame, addonTable.Display.NameplateMixin)
+    frame.kind = "friend"
+    frame:OnLoad()
+  end)
+  self.enemyDisplayPool = CreateFramePool("Frame", UIParent, nil, nil, false, function(frame)
+    Mixin(frame, addonTable.Display.NameplateMixin)
+    frame.kind = "enemy"
     frame:OnLoad()
   end)
   self.nameplateDisplays = {}
@@ -141,8 +147,8 @@ function addonTable.Display.ManagerMixin:OnLoad()
   addonTable.CallbackRegistry:RegisterCallback("RefreshStateChange", function(_, state)
     if state[addonTable.Constants.RefreshReason.Design] then
       self:SetScript("OnUpdate", function()
-        local design = addonTable.Config.Get(addonTable.Config.Options.DESIGN)
-        addonTable.CurrentFont = addonTable.Core.GetFontByID(design.font.asset)
+        local design = addonTable.Core.GetDesign("enemy")
+        addonTable.CurrentFont = addonTable.Core.GetFontByDesign(design)
         PlatynatorNameplateCooldownFont:SetFont(design.font.asset, 13, design.font.outline and "OUTLINE" or "")
         if design.font.shadow then
           PlatynatorNameplateCooldownFont:SetShadowOffset(1, -1)
@@ -152,8 +158,6 @@ function addonTable.Display.ManagerMixin:OnLoad()
         self.styleIndex = self.styleIndex + 1
         self:SetScript("OnUpdate", nil)
         for _, display in pairs(self.nameplateDisplays) do
-          display:InitializeWidgets()
-          self:PositionBuffs(display)
           display.styleIndex = self.styleIndex
           local unit = display.unit
           if unit then
@@ -162,6 +166,8 @@ function addonTable.Display.ManagerMixin:OnLoad()
               display:Install(nameplate)
             end
           end
+          display:InitializeWidgets(addonTable.Core.GetDesign(display.kind))
+          self:PositionBuffs(display)
           display:SetUnit(unit)
         end
       end)
@@ -176,7 +182,7 @@ end
 function addonTable.Display.ManagerMixin:PositionBuffs(display)
   if addonTable.Constants.IsMidnight and self.ModifiedUFs[display.unit] then
     local unit = display.unit
-    local auras = addonTable.Config.Get(addonTable.Config.Options.DESIGN).auras
+    local auras = addonTable.Core.GetDesign(display.kind).auras
     local designInfo = {}
     for _, a in ipairs(auras) do
       designInfo[a.kind] = a
@@ -202,11 +208,16 @@ function addonTable.Display.ManagerMixin:OnEvent(eventName, ...)
     local nameplate = C_NamePlate.GetNamePlateForUnit(unit, issecure())
     -- NOTE: the nameplate _name_ does not correspond to the unit
     if nameplate and nameplate.UnitFrame and not UnitIsUnit("player", unit) then
-      local newDisplay = self.displayPool:Acquire()
+      local newDisplay
+      if UnitIsFriend("player", unit) or not UnitCanAttack("player", unit) then
+        newDisplay = self.friendDisplayPool:Acquire()
+      else
+        newDisplay = self.enemyDisplayPool:Acquire()
+      end
       self.nameplateDisplays[unit] = newDisplay
       newDisplay:Install(nameplate)
       if newDisplay.styleIndex ~= self.styleIndex then
-        newDisplay:InitializeWidgets()
+        newDisplay:InitializeWidgets(addonTable.Core.GetDesign(newDisplay.kind))
         newDisplay.styleIndex = self.styleIndex
       end
       newDisplay:SetUnit(unit)
@@ -214,9 +225,14 @@ function addonTable.Display.ManagerMixin:OnEvent(eventName, ...)
     end
   elseif  eventName == "NAME_PLATE_UNIT_REMOVED" then
     local unit = ...
-    if self.nameplateDisplays[unit] then
-      self.nameplateDisplays[unit]:SetUnit(nil)
-      self.displayPool:Release(self.nameplateDisplays[unit])
+    local display = self.nameplateDisplays[unit]
+    if display then
+      display:SetUnit(nil)
+      if display.kind == "friend" then
+        self.friendDisplayPool:Release(display)
+      else
+        self.enemyDisplayPool:Release(display)
+      end
       self.nameplateDisplays[unit] = nil
     end
   elseif eventName == "PLAYER_TARGET_CHANGED" then

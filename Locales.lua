@@ -95,6 +95,8 @@ L["PROFILES"] = "Profiles"
 L["NEW_PROFILE_CLONE"] = "New Profile (clone current)"
 L["NEW_PROFILE_BLANK"] = "New Profile (blank)"
 L["CONFIRM_DELETE_PROFILE_X"] = "Are you sure you want to delete profile \"%s\"?"
+L["CONFIRM_DELETE_STYLE_X"] = "Are you sure you want to delete style \"%s\"?"
+L["IMPORT_DEFAULT_STYLE"] = "Import Default Style"
 
 L["EXPORT"] = "Export"
 L["IMPORT"] = "Import"
@@ -108,6 +110,11 @@ L["HEDGEHOG"] = "Hedgehog"
 L["BLIZZARD"] = "Blizzard"
 L["BLIZZARD_CLASSIC"] = "Blizzard Classic"
 L["CUSTOM"] = "Custom"
+L["SAVE_AS"] = "Save as"
+
+L["FRIENDLY_STYLE"] = "Friendly Style"
+L["ENEMY_STYLE"] = "Enemy Style"
+L["DEFAULT_BRACKETS"] = "(Default)"
 
 L["ADD_WIDGET"] = "Add Widget"
 L["DELETE_WIDGET"] = "Delete Widget"
@@ -135,7 +142,9 @@ L["ELITE"] = "Elite"
 L["RARE"] = "Rare"
 L["RAID_MARKER"] = "Raid Marker"
 
-L["THIS_WILL_OVERWRITE_YOUR_DESIGN"] = "This will overwrite your design. Continue?"
+L["THIS_WILL_OVERWRITE_STYLE_CUSTOM"] = "This will overwrite style \"Custom\". Continue?"
+L["ENTER_THE_NEW_STYLE_NAME"] = "Enter the new style name"
+L["THAT_STYLE_NAME_ALREADY_EXISTS"] = "That style name already exists"
 
 local L = Locales.frFR
 --@localization(locale="frFR", format="lua_additive_table")@

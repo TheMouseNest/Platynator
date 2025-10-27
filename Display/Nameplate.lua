@@ -5,8 +5,6 @@ addonTable.Display.NameplateMixin = {}
 function addonTable.Display.NameplateMixin:OnLoad()
   self:SetFlattensRenderLayers(true)
 
-  local style = addonTable.Config.Get(addonTable.Config.Options.DESIGN)
-
   self:SetIgnoreParentScale(true)
 
   self.SoftTargetIcon = self:CreateTexture(nil, "OVERLAY")
@@ -113,15 +111,14 @@ function addonTable.Display.NameplateMixin:OnLoad()
   self.casting = false
 end
 
-function addonTable.Display.NameplateMixin:InitializeWidgets()
+function addonTable.Display.NameplateMixin:InitializeWidgets(design)
   if self.widgets then
     addonTable.Display.ReleaseWidgets(self.widgets)
     self.widgets = nil
   end
-  local style = addonTable.Config.Get(addonTable.Config.Options.DESIGN)
-  self.widgets = addonTable.Display.GetWidgets(style, self)
+  self.widgets = addonTable.Display.GetWidgets(design, self)
 
-  local auras = addonTable.Config.Get(addonTable.Config.Options.DESIGN).auras
+  local auras = design.auras
   local designInfo = {}
   for _, a in ipairs(auras) do
     designInfo[a.kind] = a

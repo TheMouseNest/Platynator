@@ -68,6 +68,10 @@ local function SetupGeneral(parent)
     table.insert(allFrames, donateFrame)
   end
 
+  local styleDropdown = addonTable.CustomiseDialog.GetStyleDropdown(container)
+  styleDropdown:SetPoint("TOP", allFrames[#allFrames], "BOTTOM", 0, -30)
+  table.insert(allFrames, styleDropdown)
+
   local profileDropdown = addonTable.CustomiseDialog.Components.GetBasicDropdown(container, addonTable.Locales.PROFILES)
   do
     profileDropdown.SetValue = nil
@@ -83,7 +87,7 @@ local function SetupGeneral(parent)
         end
       end
     end
-    profileDropdown:SetPoint("TOP", allFrames[#allFrames], "BOTTOM", 0, -30)
+    profileDropdown:SetPoint("TOP", allFrames[#allFrames], "BOTTOM", 0, 0)
     profileDropdown.DropDown:SetupMenu(function(menu, rootDescription)
       local profiles = addonTable.Config.GetProfileNames()
       table.sort(profiles, function(a, b) return a:lower() < b:lower() end)
@@ -133,9 +137,10 @@ local function SetupGeneral(parent)
     exportButton:SetText(addonTable.Locales.EXPORT)
     DynamicResizeButton_Resize(exportButton)
     exportButton:SetScript("OnClick", function()
-      local design = CopyTable(addonTable.Config.Get(addonTable.Config.Options.DESIGN))
+      local design = CopyTable(addonTable.Core.GetDesignByName(addonTable.Config.Get(addonTable.Config.Options.STYLE)))
       design.addon = "Platynator"
       design.version = 1
+      design.kind = "style"
       addonTable.Dialogs.ShowCopy(C_EncodingUtil.SerializeJSON(design):gsub("%|%|", "|"):gsub("%|", "||"))
     end)
     --addonTable.Skins.AddFrame("Button", exportButton)
@@ -146,12 +151,21 @@ local function SetupGeneral(parent)
     DynamicResizeButton_Resize(importButton)
     importButton:SetScript("OnClick", function()
       addonTable.CustomiseDialog.ShowImportDialog(function(text)
-        local newDesign = C_EncodingUtil.DeserializeJSON(text)
-        addonTable.Core.MigrateSettings(newDesign)
-        newDesign.version = nil
-        newDesign.addon = nil
-        addonTable.Config.Set(addonTable.Config.Options.DESIGN, newDesign)
-        addonTable.Config.Set(addonTable.Config.Options.STYLE, "custom")
+        local import = C_EncodingUtil.DeserializeJSON(text)
+        import.version = nil
+        import.addon = nil
+        if import.kind == nil or import.kind == "style" then
+          addonTable.Core.UpgradeDesign(import)
+          addonTable.Dialogs.ShowEditBox(addonTable.Locales.ENTER_THE_NEW_STYLE_NAME, OKAY, CANCEL, function(value)
+            local designs = addonTable.Config.Get(addonTable.Config.Options.DESIGNS)
+            if designs[value] or value:match("^_") then
+              addonTable.Dialogs.ShowAcknowledge(addonTable.Locales.THAT_STYLE_NAME_ALREADY_EXISTS)
+            else
+              addonTable.Config.Get(addonTable.Config.Options.DESIGNS)[value] = import
+              addonTable.Config.Set(addonTable.Config.Options.STYLE, value)
+            end
+          end)
+        end
       end)
     end)
     --addonTable.Skins.AddFrame("Button", importButton)
@@ -173,12 +187,30 @@ local function SetupBehaviour(parent)
 
   local allFrames = {}
 
+  local friendlyStyleDropdown = addonTable.CustomiseDialog.Components.GetBasicDropdown(container, addonTable.Locales.FRIENDLY_STYLE, function(value)
+    return addonTable.Config.Get(addonTable.Config.Options.DESIGNS_ASSIGNED)["friend"] == value
+  end, function(value)
+    addonTable.Config.Get(addonTable.Config.Options.DESIGNS_ASSIGNED)["friend"] = value
+    addonTable.CallbackRegistry:TriggerEvent("RefreshStateChange", {[addonTable.Constants.RefreshReason.Design] = true})
+  end)
+  friendlyStyleDropdown:SetPoint("TOP")
+  table.insert(allFrames, friendlyStyleDropdown)
+
+  local enemyStyleDropdown = addonTable.CustomiseDialog.Components.GetBasicDropdown(container, addonTable.Locales.ENEMY_STYLE, function(value)
+    return addonTable.Config.Get(addonTable.Config.Options.DESIGNS_ASSIGNED)["enemy"] == value
+  end, function(value)
+    addonTable.Config.Get(addonTable.Config.Options.DESIGNS_ASSIGNED)["enemy"] = value
+    addonTable.CallbackRegistry:TriggerEvent("RefreshStateChange", {[addonTable.Constants.RefreshReason.Design] = true})
+  end)
+  enemyStyleDropdown:SetPoint("TOP", allFrames[#allFrames], "BOTTOM")
+  table.insert(allFrames, enemyStyleDropdown)
+
   local targetDropdown = addonTable.CustomiseDialog.Components.GetBasicDropdown(container, addonTable.Locales.ON_TARGET_OR_CASTING, function(value)
     return addonTable.Config.Get(addonTable.Config.Options.TARGET_BEHAVIOUR) == value
   end, function(value)
     addonTable.Config.Set(addonTable.Config.Options.NON_TARGET_BEHAVIOUR, value)
   end)
-  targetDropdown:SetPoint("TOP")
+  targetDropdown:SetPoint("TOP", allFrames[#allFrames], "BOTTOM", 0, -30)
   do
     local entries = {
       addonTable.Locales.DO_NOTHING,
@@ -212,6 +244,28 @@ local function SetupBehaviour(parent)
   table.insert(allFrames, notTargetDropdown)
 
   container:SetScript("OnShow", function()
+    local styles = {}
+    for key, value in pairs(addonTable.Config.Get(addonTable.Config.Options.DESIGNS)) do
+      table.insert(styles, {label = key ~= addonTable.Constants.CustomName and key or addonTable.Locales.CUSTOM, value = key})
+    end
+    table.sort(styles, function(a, b) return a.label < b.label end)
+    local stylesBuiltIn = {}
+    for key, label in pairs(addonTable.Design.NameMap) do
+      if key ~= addonTable.Constants.CustomName then
+        table.insert(stylesBuiltIn, {label = label .. " " .. addonTable.Locales.DEFAULT_BRACKETS, value = key})
+      end
+    end
+    table.sort(stylesBuiltIn, function(a, b) return a.label < b.label end)
+    tAppendAll(styles, stylesBuiltIn)
+    local labels, values = {}, {}
+    for _, entry in ipairs(styles) do
+      table.insert(labels, entry.label)
+      table.insert(values, entry.value)
+    end
+
+    friendlyStyleDropdown:Init(labels, values)
+    enemyStyleDropdown:Init(labels, values)
+
     for _, f in ipairs(allFrames) do
       if f.SetValue then
         if f.option then
@@ -231,8 +285,12 @@ local function SetupFont(parent)
 
   local allFrames = {}
 
+  local styleDropdown = addonTable.CustomiseDialog.GetStyleDropdown(container)
+  styleDropdown:SetPoint("TOP")
+  table.insert(allFrames, styleDropdown)
+
   local fontDropdown = addonTable.CustomiseDialog.Components.GetBasicDropdown(container, addonTable.Locales.FONT)
-  fontDropdown:SetPoint("TOP")
+  fontDropdown:SetPoint("TOP", allFrames[#allFrames], "BOTTOM", 0, -30)
   table.insert(allFrames, fontDropdown)
 
   local fonts = {}
@@ -245,14 +303,16 @@ local function SetupFont(parent)
     for _, details in ipairs(fonts) do
       local radio = rootDescription:CreateRadio(details.label,
         function()
-          return addonTable.Config.Get(addonTable.Config.Options.DESIGN).font.asset == details.id
+          return addonTable.CustomiseDialog.GetCurrentDesign().font.asset == details.id
         end,
         function()
-          local design = addonTable.Config.Get(addonTable.Config.Options.DESIGN)
+          local design = addonTable.CustomiseDialog.GetCurrentDesign()
           local oldAsset = design.font.asset
           if details.id ~= oldAsset then
             design.font.asset = details.id
-            addonTable.Config.Set(addonTable.Config.Options.STYLE, "custom")
+            if addonTable.Config.Get(addonTable.Config.Options.STYLE):match("^_") then
+              addonTable.Config.Set(addonTable.Config.Options.STYLE, addonTable.Constants.CustomName)
+            end
             addonTable.CallbackRegistry:TriggerEvent("RefreshStateChange", {[addonTable.Constants.RefreshReason.Design] = true})
           end
         end
@@ -265,10 +325,12 @@ local function SetupFont(parent)
   end)
 
   local outlineCheckbox = addonTable.CustomiseDialog.Components.GetCheckbox(container, addonTable.Locales.SHOW_OUTLINE, 28, function(value)
-    local design = addonTable.Config.Get(addonTable.Config.Options.DESIGN)
+    local design = addonTable.CustomiseDialog.GetCurrentDesign()
     if value ~= design.font.outline then
       design.font.outline = value
-      addonTable.Config.Set(addonTable.Config.Options.STYLE, "custom")
+      if addonTable.Config.Get(addonTable.Config.Options.STYLE):match("^_") then
+        addonTable.Config.Set(addonTable.Config.Options.STYLE, addonTable.Constants.CustomName)
+      end
       addonTable.CallbackRegistry:TriggerEvent("RefreshStateChange", {[addonTable.Constants.RefreshReason.Design] = true})
     end
   end)
@@ -276,18 +338,20 @@ local function SetupFont(parent)
   table.insert(allFrames, outlineCheckbox)
 
   local shadowCheckbox = addonTable.CustomiseDialog.Components.GetCheckbox(container, addonTable.Locales.SHOW_SHADOW, 28, function(value)
-    local design = addonTable.Config.Get(addonTable.Config.Options.DESIGN)
+    local design = addonTable.CustomiseDialog.GetCurrentDesign()
     if value ~= design.font.shadow then
       design.font.shadow = value
-      addonTable.Config.Set(addonTable.Config.Options.STYLE, "custom")
+      if addonTable.Config.Get(addonTable.Config.Options.STYLE):match("^_") then
+        addonTable.Config.Set(addonTable.Config.Options.STYLE, addonTable.Constants.CustomName)
+      end
       addonTable.CallbackRegistry:TriggerEvent("RefreshStateChange", {[addonTable.Constants.RefreshReason.Design] = true})
     end
   end)
   shadowCheckbox:SetPoint("TOP", allFrames[#allFrames], "BOTTOM")
   table.insert(allFrames, shadowCheckbox)
 
-  container:SetScript("OnShow", function()
-    local design = addonTable.Config.Get(addonTable.Config.Options.DESIGN)
+  local function Update()
+    local design = addonTable.CustomiseDialog.GetCurrentDesign()
     outlineCheckbox:SetValue(design.font.outline)
     shadowCheckbox:SetValue(design.font.shadow)
 
@@ -296,9 +360,126 @@ local function SetupFont(parent)
         f:SetValue()
       end
     end
+  end
+
+  addonTable.CallbackRegistry:RegisterCallback("SettingChanged", function(_, name)
+    if name == addonTable.Config.Options.STYLE and container:IsVisible() then
+      Update()
+    end
   end)
 
   return container
+end
+
+function addonTable.CustomiseDialog.GetStyleDropdown(parent)
+  local styleDropdown = addonTable.CustomiseDialog.Components.GetBasicDropdown(parent, addonTable.Locales.STYLE)
+  styleDropdown.option = addonTable.Config.Options.STYLE
+
+  styleDropdown.DropDown:SetupMenu(function(_, rootDescription)
+    local currentStyle = addonTable.Config.Get(addonTable.Config.Options.STYLE)
+    local styles = {}
+    for key, value in pairs(addonTable.Config.Get(addonTable.Config.Options.DESIGNS)) do
+      if key ~= addonTable.Constants.CustomName then
+        table.insert(styles, {label = key, value = key})
+      end
+    end
+    table.sort(styles, function(a, b) return a.label < b.label end)
+    for _, entry in ipairs(styles) do
+      local button = rootDescription:CreateRadio(entry.label, function()
+        return entry.value == currentStyle
+      end, function()
+          addonTable.Config.Set(addonTable.Config.Options.STYLE, entry.value)
+      end)
+
+      button:AddInitializer(function(button, description, menu)
+        local delete = MenuTemplates.AttachAutoHideButton(button, "transmog-icon-remove")
+        delete:SetPoint("RIGHT")
+        delete:SetSize(18, 18)
+        delete.Texture:SetAtlas("transmog-icon-remove")
+        delete:SetScript("OnClick", function()
+          menu:Close()
+          addonTable.Dialogs.ShowConfirm(addonTable.Locales.CONFIRM_DELETE_STYLE_X:format(entry.label), YES, NO, function()
+            addonTable.Config.Get(addonTable.Config.Options.DESIGNS)[entry.value] = nil
+            local assigned = addonTable.Config.Get(addonTable.Config.Options.DESIGNS_ASSIGNED)
+            if assigned["friend"] == entry.value then
+              assigned["friend"] = addonTable.Constants.CustomName
+            end
+            if assigned["enemy"] == entry.value then
+              assigned["enemy"] = addonTable.Constants.CustomName
+            end
+            if addonTable.Config.Get(addonTable.Config.Options.STYLE) == entry.value then
+              addonTable.Config.Set(addonTable.Config.Options.STYLE, addonTable.Constants.CustomName) 
+            end
+            addonTable.CallbackRegistry:TriggerEvent("RefreshStateChange", {[addonTable.Constants.RefreshReason.Design] = true})
+          end)
+        end)
+        MenuUtil.HookTooltipScripts(delete, function(tooltip)
+          GameTooltip_SetTitle(tooltip, DELETE);
+        end);
+      end)
+    end
+
+    local button = rootDescription:CreateRadio(addonTable.Locales.CUSTOM, function()
+      return addonTable.Constants.CustomName == currentStyle
+    end, function()
+      addonTable.Config.Set(addonTable.Config.Options.STYLE, addonTable.Constants.CustomName)
+    end)
+
+    do
+      rootDescription:CreateDivider()
+      local createButton = rootDescription:CreateButton(GREEN_FONT_COLOR:WrapTextInColorCode(addonTable.Locales.SAVE_AS), function()
+        addonTable.Dialogs.ShowEditBox(addonTable.Locales.ENTER_THE_NEW_STYLE_NAME, OKAY, CANCEL, function(value)
+          local allDesigns = addonTable.Config.Get(addonTable.Config.Options.DESIGNS)
+          if allDesigns[value] or value:match("^_") then
+            addonTable.Dialogs.ShowAcknowledge(addonTable.Locales.THAT_STYLE_NAME_ALREADY_EXISTS)
+          else
+            allDesigns[value] = CopyTable(allDesigns[currentStyle])
+            addonTable.Config.Set(addonTable.Config.Options.STYLE, value) 
+          end
+        end)
+      end)
+      rootDescription:CreateDivider()
+    end
+
+    rootDescription:CreateTitle(addonTable.Locales.IMPORT_DEFAULT_STYLE)
+
+    local stylesBuiltIn = {}
+    for key, label in pairs(addonTable.Design.NameMap) do
+      if key ~= addonTable.Constants.CustomName then
+        table.insert(stylesBuiltIn, {label = label, value = key})
+      end
+    end
+    table.sort(stylesBuiltIn, function(a, b) return a.label < b.label end)
+
+    for _, entry in ipairs(stylesBuiltIn) do
+      local button = rootDescription:CreateRadio(entry.label, function()
+        return entry.value == currentStyle
+      end, function()
+        addonTable.Dialogs.ShowConfirm(addonTable.Locales.THIS_WILL_OVERWRITE_STYLE_CUSTOM, OKAY, CANCEL, function()
+          addonTable.Config.Set(addonTable.Config.Options.STYLE, entry.value)
+        end)
+      end)
+    end
+  end)
+
+  styleDropdown:SetPoint("TOP")
+
+  addonTable.CallbackRegistry:RegisterCallback("SettingChanged", function(_, name)
+    if name == addonTable.Config.Options.STYLE then
+      styleDropdown:SetValue()
+    end
+  end)
+
+  return styleDropdown
+end
+
+function addonTable.CustomiseDialog.GetCurrentDesign()
+  local currentStyle = addonTable.Config.Get(addonTable.Config.Options.STYLE)
+  if currentStyle == addonTable.Constants.CustomName or not currentStyle:match("^_") then
+    return addonTable.Config.Get(addonTable.Config.Options.DESIGNS)[currentStyle]
+  else
+    return addonTable.Config.Get(addonTable.Config.Options.DESIGNS)[addonTable.Constants.CustomName]
+  end
 end
 
 local TabSetups = {
@@ -352,7 +533,7 @@ function addonTable.CustomiseDialog.Toggle()
   local Tabs = {}
   for _, setup in ipairs(TabSetups) do
     local tabContainer = setup.callback(frame)
-    tabContainer:SetPoint("TOPLEFT", 0 + addonTable.Constants.ButtonFrameOffset, -65)
+    tabContainer:SetPoint("TOPLEFT", addonTable.Constants.ButtonFrameOffset, -65)
     tabContainer:SetPoint("BOTTOMRIGHT")
 
     local tabButton = addonTable.CustomiseDialog.Components.GetTab(frame, setup.name)

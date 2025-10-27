@@ -2,7 +2,9 @@
 local addonTable = select(2, ...)
 
 local function Announce()
-  addonTable.Config.Set(addonTable.Config.Options.STYLE, "custom")
+  if addonTable.Config.Get(addonTable.Config.Options.STYLE):match("^_") then
+    addonTable.Config.Set(addonTable.Config.Options.STYLE, addonTable.Constants.CustomName)
+  end
   addonTable.CallbackRegistry:TriggerEvent("RefreshStateChange", {[addonTable.Constants.RefreshReason.Design] = true})
 end
 
@@ -11,49 +13,9 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
 
   local allFrames = {}
 
-  do
-    local styleDropdown = addonTable.CustomiseDialog.Components.GetBasicDropdown(container, addonTable.Locales.STYLE, function(value)
-      return addonTable.Config.Get(addonTable.Config.Options.STYLE) == value
-    end, function(value)
-      if addonTable.Config.Get(addonTable.Config.Options.STYLE, value) == "custom" then
-        addonTable.Dialogs.ShowConfirm(addonTable.Locales.THIS_WILL_OVERWRITE_YOUR_DESIGN, OKAY, CANCEL, function()
-          addonTable.Config.Set(addonTable.Config.Options.STYLE, value)
-        end)
-      else
-        addonTable.Config.Set(addonTable.Config.Options.STYLE, value)
-      end
-    end)
-    styleDropdown.option = addonTable.Config.Options.STYLE
-
-    styleDropdown:Init({
-      addonTable.Locales.CUSTOM,
-      addonTable.Locales.SQUIRREL,
-      addonTable.Locales.RABBIT,
-      addonTable.Locales.HARE,
-      addonTable.Locales.HEDGEHOG,
-      addonTable.Locales.BEAVER,
-      addonTable.Locales.BLIZZARD,
-      addonTable.Locales.BLIZZARD_CLASSIC,
-    }, {
-      "custom",
-      "squirrel",
-      "rabbit",
-      "hare",
-      "hedgehog",
-      "beaver",
-      "blizzard",
-      "blizzard-classic",
-    })
-
-    styleDropdown:SetPoint("TOP")
-    table.insert(allFrames, styleDropdown)
-
-    addonTable.CallbackRegistry:RegisterCallback("SettingChanged", function(_, name)
-      if name == addonTable.Config.Options.STYLE then
-        styleDropdown:SetValue()
-      end
-    end)
-  end
+  local styleDropdown = addonTable.CustomiseDialog.GetStyleDropdown(container)
+  styleDropdown:SetPoint("TOP")
+  table.insert(allFrames, styleDropdown)
 
   do
     local globalScale = addonTable.CustomiseDialog.Components.GetSlider(container, addonTable.Locales.GLOBAL_SCALE, 1, 300, "%d%%", function(value)
@@ -63,7 +25,7 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
     globalScale.option = addonTable.Config.Options.GLOBAL_SCALE
     globalScale.scale = 100
 
-    globalScale:SetPoint("TOP", allFrames[#allFrames], "BOTTOM")
+    globalScale:SetPoint("TOP", allFrames[#allFrames], "BOTTOM", 0, 0)
     table.insert(allFrames, globalScale)
   end
 
@@ -261,7 +223,7 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
     for _, index in ipairs(selectionIndexes) do
       local kind = widgets[index].kind
       local details = widgets[index].details
-      local design = addonTable.Config.Get(addonTable.Config.Options.DESIGN)
+      local design = addonTable.CustomiseDialog.GetCurrentDesign()
       local index = tIndexOf(design[kind], details)
       table.remove(design[kind], index)
     end
@@ -334,7 +296,7 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
   DynamicResizeButton_Resize(addButton)
   addButton:SetPoint("TOPLEFT", 0, addButton:GetHeight() + 2)
   addButton:SetupMenu(function(menu, rootDescription)
-    local design = addonTable.Config.Get(addonTable.Config.Options.DESIGN)
+    local design = addonTable.CustomiseDialog.GetCurrentDesign()
     for _, details in ipairs(addonTable.CustomiseDialog.DesignWidgets) do
       if details.special == "header" then
         rootDescription:CreateTitle(details.name)
@@ -438,7 +400,7 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
     if widgets then
       addonTable.Display.ReleaseWidgets(tFilter(widgets, function(w) return w.Strip end, true), true)
     end
-    local design = addonTable.Config.Get(addonTable.Config.Options.DESIGN)
+    local design = addonTable.CustomiseDialog.GetCurrentDesign()
     widgets = addonTable.Display.GetWidgets(design, preview, true)
     for _, w in ipairs(widgets) do
       w:SetClampedToScreen(true)
@@ -549,8 +511,8 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
 
   addonTable.CallbackRegistry:RegisterCallback("RefreshStateChange", function(_, state)
     if state[addonTable.Constants.RefreshReason.Design] then
-      local design = addonTable.Config.Get(addonTable.Config.Options.DESIGN)
-      addonTable.CurrentFont = addonTable.Core.GetFontByID(design.font.asset)
+      local design = addonTable.CustomiseDialog.GetCurrentDesign()
+      addonTable.CurrentFont = addonTable.Core.GetFontByDesign(design)
       GenerateWidgets()
       if autoSelectedDetails then
         for index, w in ipairs(widgets) do

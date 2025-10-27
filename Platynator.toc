@@ -23,10 +23,6 @@ Locales.lua
 Core/Objects.lua
 Core/Locales.lua
 Core/Constants.lua
-
-Design.lua
-Assets.lua
-
 Core/Config.lua
 Core/Utilities.lua
 Core/Dialogs.lua
@@ -57,6 +53,9 @@ Display/Widgets.lua
 Display/LegacyBuffTemplate.xml
 
 API/Main.lua
+
+Design.lua
+Assets.lua
 
 CustomiseDialog/Components.lua
 CustomiseDialog/AddWidgetsList.lua
