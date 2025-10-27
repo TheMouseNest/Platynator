@@ -117,6 +117,7 @@ function addonTable.Core.MigrateSettings()
     end
     addonTable.Config.Get(addonTable.Config.Options.DESIGNS)[addonTable.Constants.CustomName] = legacyDesign
     addonTable.Config.Set(addonTable.Config.Options.LEGACY_DESIGN, {})
+    addonTable.Config.Set(addonTable.Config.Options.STYLE, mapping["friend"])
   end
 
   for _, design in ipairs(addonTable.Config.Get(addonTable.Config.Options.DESIGNS)) do
