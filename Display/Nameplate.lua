@@ -205,7 +205,6 @@ function addonTable.Display.NameplateMixin:SetUnit(unit)
       self:RegisterUnitEvent("UNIT_SPELLCAST_CHANNEL_START", self.unit)
       self:RegisterUnitEvent("UNIT_SPELLCAST_STOP", self.unit)
       self:RegisterUnitEvent("UNIT_SPELLCAST_CHANNEL_STOP", self.unit)
-      self.casting = type((UnitCastingInfo(self.unit))) ~= "nil" or type((UnitChannelInfo(self.unit))) ~= "nil"
     end
   else
     self.unit = nil
@@ -235,6 +234,12 @@ function addonTable.Display.NameplateMixin:SetUnit(unit)
   end
 
   self:UpdateVisual()
+end
+
+function addonTable.Display.NameplateMixin:UpdateCastingState()
+  local _, t1 = UnitCastingInfo(self.unit)
+  local _, t2 = UnitChannelInfo(self.unit)
+  self.casting = type(t1) ~= "nil" or type(t2) ~= "nil"
 end
 
 function addonTable.Display.NameplateMixin:UpdateForTarget()
@@ -301,7 +306,7 @@ function addonTable.Display.NameplateMixin:OnEvent(eventName)
   if eventName == "PLAYER_SOFT_INTERACT_CHANGED" then
     self:UpdateSoftInteract()
   else
-    self.casting = type((UnitCastingInfo(self.unit))) ~= "nil" or type((UnitChannelInfo(self.unit))) ~= "nil"
+    self:UpdateCastingState()
     self:UpdateVisual()
   end
 end
