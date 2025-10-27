@@ -36,9 +36,9 @@ function addonTable.Display.CastIconMarkerMixin:ApplyCasting()
   end
 
   if type(texture) ~= "nil" then
-    self:Show()
     self.marker:SetTexture(texture)
+    self.marker:Show()
   else
-    self:Hide()
+    self.marker:Hide()
   end
 end
