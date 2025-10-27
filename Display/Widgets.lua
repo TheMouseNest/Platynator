@@ -356,16 +356,35 @@ end
 function addonTable.Display.GetText(frame, parent)
   frame = frame or CreateFrame("Frame", nil, parent or UIParent)
 
-  frame.text = frame:CreateFontString()
+  frame.text = frame:CreateFontString(nil, nil, "GameFontNormal")
   frame.text:SetPoint("CENTER")
+  frame.text:SetText(" ")
   hooksecurefunc(frame.text, "SetText", function()
     if frame.details.truncate ~= "NONE" then
-      frame.text:SetWidth(30 * frame.details.scale)
-      while frame.text:IsTruncated() and (frame.details.widthLimit == nil or frame.text:GetWidth() < frame.details.widthLimit) do
-        frame.text:SetWidth(frame.text:GetWidth() + 30 * frame.details.scale)
+      if frame.details.truncate == "LEFT" then
+        frame.text:SetWidth(frame.details.widthLimit)
+        -- Faster to do this, than to do GetWidth
+        local testWidth = frame.details.widthLimit
+        while frame.text:GetNumLines() ~= 1 do
+          testWidth = testWidth + 60 * frame.details.scale
+          frame.text:SetWidth(testWidth)
+        end
+        while not frame.text:IsTruncated() and frame.text:GetNumLines() < 2 and testWidth > 1 do
+          testWidth = math.max(1, testWidth - 15 * frame.details.scale)
+          frame.text:SetWidth(testWidth)
+        end
+        if frame.text:IsTruncated() then
+          frame.text:SetWidth(testWidth + (frame.text:IsTruncated() and 15 * frame.details.scale or 0))
+        end
+      elseif frame.details.truncate == "RIGHT" then
+        frame.text:SetWidth(30 * frame.details.scale)
+        while frame.text:IsTruncated() and (frame.details.widthLimit == nil or frame.text:GetWidth() < frame.details.widthLimit) do
+          frame.text:SetWidth(frame.text:GetWidth() + 30 * frame.details.scale)
+        end
       end
       local width = frame.details.widthLimit or frame.text:GetWidth()
-      frame.textWrapper:SetSize(width, frame.text:GetLineHeight() * 1.01)
+      frame.textWrapper:SetSize(width, frame.text:GetLineHeight() * 1.02)
+
       frame:SetSize(width, frame.text:GetLineHeight())
     else
       frame:SetSize(frame.text:GetSize())
@@ -410,7 +429,6 @@ function addonTable.Display.GetText(frame, parent)
       frame.text:SetPoint(details.align == "CENTER" and cropPoint or cropPoint ..  details.align)
     end
 
-    frame.text:SetText(" ")
     frame.text:SetJustifyV("BOTTOM")
     frame.text:SetJustifyH(details.align)
     frame.text:SetTextScale(details.scale)
