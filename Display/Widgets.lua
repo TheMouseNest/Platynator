@@ -91,9 +91,11 @@ function addonTable.Display.GetHealthBar(frame, parent)
   frame.statusBar = CreateFrame("StatusBar", nil, frame)
   frame.statusBar:SetAllPoints()
   frame.statusBar:SetClipsChildren(true)
+  frame.statusBar:SetFrameLevel(200)
 
   frame.statusBarAbsorb = CreateFrame("StatusBar", nil, frame)
   frame.statusBarAbsorb:SetClipsChildren(true)
+  frame.statusBarAbsorb:SetFrameLevel(300)
 
   frame.marker = frame.statusBar:CreateTexture()
   frame.marker:SetSnapToPixelGrid(false)

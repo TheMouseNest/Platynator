@@ -208,7 +208,7 @@ local function SetupBehaviour(parent)
   local targetDropdown = addonTable.CustomiseDialog.Components.GetBasicDropdown(container, addonTable.Locales.ON_TARGET_OR_CASTING, function(value)
     return addonTable.Config.Get(addonTable.Config.Options.TARGET_BEHAVIOUR) == value
   end, function(value)
-    addonTable.Config.Set(addonTable.Config.Options.NON_TARGET_BEHAVIOUR, value)
+    addonTable.Config.Set(addonTable.Config.Options.TARGET_BEHAVIOUR, value)
   end)
   targetDropdown:SetPoint("TOP", allFrames[#allFrames], "BOTTOM", 0, -30)
   do
