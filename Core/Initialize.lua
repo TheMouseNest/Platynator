@@ -86,7 +86,7 @@ function addonTable.Core.UpgradeDesign(design)
     end
     if bar.kind == "health" and not bar.absorb then
       local mode = addonTable.Assets.BarBorders[bar.border.asset].mode
-      local isNarrow = mode == addonTable.Assets.Mode.Short
+      local isNarrow = mode == addonTable.Assets.Mode.Percent50
       bar.absorb = {asset = isNarrow and "narrow/blizzard-absorb" or "wide/blizzard-absorb", color = {r = 1, g = 1, b = 1}}
     end
     if bar.kind == "cast" and bar.colors.interrupted == nil then

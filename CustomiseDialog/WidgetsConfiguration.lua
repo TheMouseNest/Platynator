@@ -37,12 +37,8 @@ local function GetLabelsValues(allAssets, filter)
       end
       if details.mode == addonTable.Assets.Mode.Special then
         text = text .. " " .. addonTable.Locales.SPECIAL_BRACKETS
-      elseif details.mode == addonTable.Assets.Mode.Tall then
-        text = text .. " " .. addonTable.Locales.TALL_BRACKETS
-      elseif details.mode == addonTable.Assets.Mode.Short then
-        text = text .. " " .. addonTable.Locales.SHORT_BRACKETS
-      elseif details.mode == addonTable.Assets.Mode.Medium then
-        text = text .. " " .. addonTable.Locales.MEDIUM_BRACKETS
+      elseif details.mode ~= nil then
+        text = text .. " " .. addonTable.Locales.PERCENT_BRACKETS:format(details.mode)
       end
 
       table.insert(labels, text)
