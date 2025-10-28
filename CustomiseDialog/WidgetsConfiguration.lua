@@ -85,7 +85,7 @@ addonTable.CustomiseDialog.WidgetsConfig = {
             end,
             setter = function(details, value)
               if addonTable.Assets.BarBackgrounds[details.background.asset].mode == addonTable.Assets.Mode.Special then
-                local design = addonTable.Design.GetDefaultDesignSquirrel()
+                local design = addonTable.Core.GetDesignByName("_squirrel")
                 details.background.asset = design.bars[1].background.asset
                 details.foreground.asset = design.bars[1].foreground.asset
               end
@@ -117,7 +117,7 @@ addonTable.CustomiseDialog.WidgetsConfig = {
             end,
             setter = function(details, value)
               if addonTable.Assets.BarBackgrounds[details.foreground.asset].mode == addonTable.Assets.Mode.Special then
-                local design = addonTable.Design.GetDefaultDesignSquirrel()
+                local design = addonTable.Core.GetDesignByName("_squirrel")
                 details.border.asset = design.bars[1].border.asset
                 details.background.asset = design.bars[1].background.asset
               end
@@ -139,7 +139,7 @@ addonTable.CustomiseDialog.WidgetsConfig = {
             end,
             setter = function(details, value)
               if addonTable.Assets.BarBackgrounds[details.background.asset].mode == addonTable.Assets.Mode.Special then
-                local design = addonTable.Design.GetDefaultDesignSquirrel()
+                local design = addonTable.Core.GetDesignByName("_squirrel")
                 details.border.asset = design.bars[1].border.asset
                 details.foreground.asset = design.bars[1].foreground.asset
               end
