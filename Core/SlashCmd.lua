@@ -64,9 +64,11 @@ local COMMANDS = {
   ["c"] = addonTable.SlashCmd.Config,
   ["config"] = addonTable.SlashCmd.Config,
   ["reset"] = addonTable.SlashCmd.Reset,
+  [addonTable.Locales.SLASH_RESET] = addonTable.SlashCmd.Reset,
 }
 local HELP = {
   {"", addonTable.Locales.SLASH_HELP},
+  {addonTable.Locales.SLASH_RESET, addonTable.Locales.SLASH_RESET_HELP},
 }
 
 function addonTable.SlashCmd.Handler(input)
@@ -83,9 +85,9 @@ function addonTable.SlashCmd.Handler(input)
 
     for _, entry in ipairs(HELP) do
       if entry[1] == "" then
-        addonTable.Utilities.Message("/ctnr - " .. entry[2])
+        addonTable.Utilities.Message("/platy - " .. entry[2])
       else
-        addonTable.Utilities.Message("/ctnr " .. entry[1] .. " - " .. entry[2])
+        addonTable.Utilities.Message("/platy " .. entry[1] .. " - " .. entry[2])
       end
     end
   end

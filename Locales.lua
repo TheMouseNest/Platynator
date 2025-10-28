@@ -146,6 +146,11 @@ L["THIS_WILL_OVERWRITE_STYLE_CUSTOM"] = "This will overwrite style \"Custom\". C
 L["ENTER_THE_NEW_STYLE_NAME"] = "Enter the new style name"
 L["THAT_STYLE_NAME_ALREADY_EXISTS"] = "That style name already exists"
 
+L["SLASH_RESET"] = "reset"
+L["SLASH_RESET_HELP"] = "Reset all Platynator settings, then reload."
+L["SLASH_HELP"] = "Open the Platynator settings."
+L["SLASH_UNKNOWN_COMMAND"] = "Unknown command '%s'"
+
 local L = Locales.frFR
 --@localization(locale="frFR", format="lua_additive_table")@
 
