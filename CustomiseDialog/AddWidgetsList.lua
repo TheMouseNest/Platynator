@@ -32,6 +32,10 @@ addonTable.CustomiseDialog.DesignWidgets = {
         asset = "wide/bold",
         color = GetColor("000000")
       },
+      absorb = {
+        asset = "wide/blizzard-absorb",
+        color = GetColor("FFFFFF")
+      },
       marker = {
         asset = "none",
       },

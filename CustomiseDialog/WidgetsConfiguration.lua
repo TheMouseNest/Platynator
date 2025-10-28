@@ -8,14 +8,15 @@ local function GetLabelsValues(allAssets, filter)
   table.sort(allKeys, function(a, b)
     local aType, aMain = a:match("(.+)%/(.+)")
     local bType, bMain = b:match("(.+)%/(.+)")
-    if not aType and bType then
+    local aMode, bMode = allAssets[a].mode, allAssets[b].mode
+    if not aMode and bMode then
       return true
-    elseif not bType and aType then
+    elseif not bMode and aMode then
       return false
-    elseif not bType and not aType then
+    elseif not bMode and not aMode then
       return a < b
     elseif bMain == aMain then
-      return aType > bType
+      return aMode > bMode
     else
       return aMain < bMain
     end
@@ -36,8 +37,12 @@ local function GetLabelsValues(allAssets, filter)
       end
       if details.mode == addonTable.Assets.Mode.Special then
         text = text .. " " .. addonTable.Locales.SPECIAL_BRACKETS
-      elseif details.mode == addonTable.Assets.Mode.Narrow then
-        text = text .. " " .. addonTable.Locales.NARROW_BRACKETS
+      elseif details.mode == addonTable.Assets.Mode.Tall then
+        text = text .. " " .. addonTable.Locales.TALL_BRACKETS
+      elseif details.mode == addonTable.Assets.Mode.Short then
+        text = text .. " " .. addonTable.Locales.SHORT_BRACKETS
+      elseif details.mode == addonTable.Assets.Mode.Medium then
+        text = text .. " " .. addonTable.Locales.MEDIUM_BRACKETS
       end
 
       table.insert(labels, text)

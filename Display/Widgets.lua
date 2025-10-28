@@ -25,8 +25,10 @@ local function InitBar(frame, details)
   local borderMaskDetails = addonTable.Assets.BarMasks[details.border.asset]
   local width, height = foregroundDetails.width, foregroundDetails.height
   if borderDetails.mode and borderDetails.mode ~= foregroundDetails.mode then
-    if borderMaskDetails then
+    if borderMaskDetails and (borderMaskDetails.mode == addonTable.Assets.Mode.Short or borderMaskDetails.mode == addonTable.Assets.Mode.Medium) then
       width, height = math.min(borderMaskDetails.width, width), math.min(borderMaskDetails.height, height)
+    elseif borderMaskDetails then
+      width, height = math.max(borderMaskDetails.width, width), math.max(borderMaskDetails.height, height)
     else
       width, height = math.min(borderDetails.width, width), math.min(borderDetails.height, height)
     end
