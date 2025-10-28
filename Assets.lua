@@ -39,6 +39,7 @@ addonTable.Assets.BarBackgrounds = {
 addonTable.Assets.BarBorders = {
   ["tall/transparent"] = {file = "Interface/AddOns/Platynator/Assets/Special/transparent.png", width = 1000, height = 250, mode = mode.Percent200, isTransparent = true},
   ["wide/transparent"] = {file = "Interface/AddOns/Platynator/Assets/Special/transparent.png", width = 1000, height = 125, mode = mode.Percent100, isTransparent = true},
+  ["75/transparent"] = {file = "Interface/AddOns/Platynator/Assets/Special/transparent.png", width = 1000, height = 94, mode = mode.Percent75, isTransparent = true},
   ["narrow/transparent"] = {file = "Interface/AddOns/Platynator/Assets/Special/transparent.png", width = 1000, height = 63, mode = mode.Percent50, isTransparent = true},
 
   ["wide/blizzard-health"] = {file = "Interface/AddOns/Platynator/Assets/%s/BarBorders/blizzard-health-100.png", width = 1116, height = 248, has4k = true, masked = true, mode = mode.Percent100},
