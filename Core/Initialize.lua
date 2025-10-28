@@ -100,6 +100,10 @@ function addonTable.Core.UpgradeDesign(design)
     design.font.outline = design.font.flags == "OUTLINE"
     design.font.flags = nil
   end
+
+  if design.font.asset == "ArialShort" then
+    design.font.asset = "ArialNarrow"
+  end
 end
 
 function addonTable.Core.MigrateSettings()

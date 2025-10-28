@@ -11,7 +11,7 @@ addonTable.Assets.Mode = {
 local mode = addonTable.Assets.Mode
 
 addonTable.Assets.Fonts = {
-  ["ArialShort"] = {file = "Fonts\\ARIALN.TTF", size = 10, preview = "Arial Short"},
+  ["ArialNarrow"] = {file = "Fonts\\ARIALN.TTF", size = 10, preview = "Arial Narrow"},
   ["FritzQuadrata"] = {file = "Fonts\\FRIZQT__.TTF", size = 10, preview = "Fritz Quadrata"},
   ["RobotoCondensed-Bold"] = {file = "Interface/AddOns/Platynator/Assets/Fonts/RobotoCondensed-Bold.ttf", size = 10, preview = "Roboto Condensed Bold"},
   ["Lato-Regular"] = {file = "Interface/AddOns/Platynator/Assets/Fonts/Lato-Regular.ttf", size = 10, preview = "Lato Regular"},
