@@ -120,7 +120,7 @@ function addonTable.Core.MigrateSettings()
     addonTable.Config.Set(addonTable.Config.Options.STYLE, mapping["friend"])
   end
 
-  for _, design in ipairs(addonTable.Config.Get(addonTable.Config.Options.DESIGNS)) do
+  for _, design in pairs(addonTable.Config.Get(addonTable.Config.Options.DESIGNS)) do
     addonTable.Core.UpgradeDesign(design)
   end
 end
