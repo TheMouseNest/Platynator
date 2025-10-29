@@ -9,6 +9,8 @@ function addonTable.Display.CastTargetTextMixin:SetUnit(unit)
     self:RegisterUnitEvent("UNIT_SPELLCAST_START", self.unit)
     self:RegisterUnitEvent("UNIT_SPELLCAST_CHANNEL_START", self.unit)
     self:RegisterUnitEvent("UNIT_SPELLCAST_STOP", self.unit)
+    self:RegisterUnitEvent("UNIT_SPELLCAST_FAILED", self.unit)
+    self:RegisterUnitEvent("UNIT_SPELLCAST_INTERRUPTED", self.unit)
     self:RegisterUnitEvent("UNIT_SPELLCAST_CHANNEL_STOP", self.unit)
     self:UpdateTarget()
     self:UpdateText()
@@ -41,8 +43,7 @@ function addonTable.Display.CastTargetTextMixin:UpdateText()
   if type(self.target) ~= "nil" then
     self.text:SetText(self.target)
     if type(self.targetClass) ~= "nil" then
-      local c = RAID_CLASS_COLORS[self.targetClass]
-      self.text:SetTextColor(c.r, c.g, c.b)
+      self.text:SetTextColor(C_ClassColor.GetClassColor(self.targetClass):GetRGB())
     end
   else
     self.text:SetText("")
@@ -50,6 +51,11 @@ function addonTable.Display.CastTargetTextMixin:UpdateText()
 end
 
 function addonTable.Display.CastTargetTextMixin:OnEvent(eventName, ...)
-  self:UpdateTarget()
+  if eventName ~= "UNIT_SPELLCAST_START" and eventName ~= "UNIT_SPELLCAST_CHANNEL_START" then
+    self.target = nil
+    self.targetClass = nil
+  else
+    self:UpdateTarget()
+  end
   self:UpdateText()
 end
