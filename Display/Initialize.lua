@@ -113,15 +113,16 @@ function addonTable.Display.ManagerMixin:OnLoad()
       -- Restore original anchors and parents to various things we changed
       if UF.HitTestFrame then
         UF.HitTestFrame:SetParent(UF)
+        UF.HitTestFrame:ClearAllPoints()
         UF.HitTestFrame:SetPoint("TOPLEFT", UF.HealthBarsContainer.healthBar)
         UF.HitTestFrame:SetPoint("BOTTOMRIGHT", UF.HealthBarsContainer.healthBar)
         UF.AurasFrame:SetParent(UF)
         UF.AurasFrame:SetIgnoreParentAlpha(false)
+        UF.AurasFrame:SetIgnoreParentScale(false)
         local debuffPadding = CVarCallbackRegistry:GetCVarNumberOrDefault(NamePlateConstants.DEBUFF_PADDING_CVAR);
         local namePlateStyle = GetCVar(NamePlateConstants.STYLE_CVAR)
         local unitNameInsideHealthBar = namePlateStyle == Enum.NamePlateStyle.Default or namePlateStyle == Enum.NamePlateStyle.Block
         UF.AurasFrame.DebuffListFrame:ClearAllPoints()
-        UF.AurasFrame:SetIgnoreParentScale(false)
         if unitNameInsideHealthBar then
           UF.AurasFrame.DebuffListFrame:SetPoint("BOTTOM", UF.HealthBarsContainer.healthBar, "TOP", 0, debuffPadding);
         else
@@ -129,12 +130,15 @@ function addonTable.Display.ManagerMixin:OnLoad()
         end
         UF.AurasFrame.DebuffListFrame:SetPoint("LEFT", UF.HealthBarsContainer)
         UF.AurasFrame.DebuffListFrame:SetParent(UF.AurasFrame)
+        UF.AurasFrame.DebuffListFrame:SetScale(1)
         UF.AurasFrame.BuffListFrame:ClearAllPoints()
-        UF.AurasFrame.BuffListFrame:SetPoint("RIGHT", UF.HealthBarsContainer.healthBar, "LEFT", -5, 0);
+        UF.AurasFrame.BuffListFrame:SetPoint("RIGHT", UF.ClassificationFrame, "LEFT", -5, 0);
         UF.AurasFrame.BuffListFrame:SetParent(UF.AurasFrame)
+        UF.AurasFrame.BuffListFrame:SetScale(1)
         UF.AurasFrame.CrowdControlListFrame:ClearAllPoints()
         UF.AurasFrame.CrowdControlListFrame:SetPoint("LEFT", UF.HealthBarsContainer.healthBar, "RIGHT", 5, 0);
         UF.AurasFrame.CrowdControlListFrame:SetParent(UF.AurasFrame)
+        UF.AurasFrame.CrowdControlListFrame:SetScale(1)
         UF:UnregisterEvent("UNIT_AURA")
       end
       if UF.WidgetContainer then

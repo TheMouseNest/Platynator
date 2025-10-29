@@ -245,6 +245,12 @@ function addonTable.Core.Initialize()
       SetStyle()
     end
   end)
+  UpdateRect(addonTable.Core.GetDesign("enemy"))
+  addonTable.CallbackRegistry:RegisterCallback("RefreshStateChange", function(_, state)
+    if state[addonTable.Constants.RefreshReason.Design] then
+      UpdateRect(addonTable.Core.GetDesign("enemy"))
+    end
+  end)
 
   addonTable.CustomiseDialog.Initialize()
 
