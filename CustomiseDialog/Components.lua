@@ -119,10 +119,6 @@ function addonTable.CustomiseDialog.Components.GetSlider(parent, label, min, max
   holder.Label:SetPoint("RIGHT", holder, "CENTER", -50, 0)
   holder.Label:SetText(label)
 
-  holder.ValueText = holder:CreateFontString(nil, "ARTWORK", "GameFontHighlight")
-  holder.ValueText:SetJustifyH("LEFT")
-  holder.ValueText:SetPoint("LEFT", holder, "RIGHT", -35, 0)
-
   holder.Slider = CreateFrame("Slider", nil, holder, "MinimalSliderWithSteppersTemplate")
   holder.Slider:SetPoint("LEFT", holder, "CENTER", -32, 0)
   holder.Slider:SetPoint("RIGHT", -45, 0)
@@ -138,7 +134,7 @@ function addonTable.CustomiseDialog.Components.GetSlider(parent, label, min, max
   end)
 
   function holder:GetValue()
-    return holder.Slider:GetValue()
+    return holder.Slider.Slider:GetValue()
   end
 
   function holder:SetValue(value)
