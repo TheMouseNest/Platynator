@@ -1,7 +1,7 @@
 ---@class addonTablePlatynator
 local addonTable = select(2, ...)
 
-local crowdControlSpells
+local crowdControlSpells, blacklistedBuffs
 
 addonTable.Display.AurasForNameplateMixin = {}
 function addonTable.Display.AurasForNameplateMixin:OnLoad()
@@ -41,7 +41,7 @@ function addonTable.Display.AurasForNameplateMixin:SetUnit(unit)
 end
 
 function addonTable.Display.AurasForNameplateMixin:GetAuraKind(info)
-  if info.isHelpful and not self.isPlayer and info.dispellName ~= nil then
+  if info.isHelpful and not self.isPlayer and not blacklistedBuffs[info.spellId] then
     return "buffs"
   elseif crowdControlSpells[info.spellId] then
     return "crowdControl"
@@ -260,4 +260,9 @@ end
 [451112] = true,
 [326450] = true,
 [117405] = true,
+}
+
+blacklistedBuffs = {
+[209859] = true,
+[206150] = true,
 }
