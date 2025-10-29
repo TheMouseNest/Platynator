@@ -29,6 +29,10 @@ function addonTable.Display.CreatureTextMSPMixin:SetUnit(unit)
     self:UnregisterCallback()
     self:RegisterUnitEvent("UNIT_NAME_UPDATE", self.unit)
     self:UpdateName()
+    if self.details.applyClassColors and UnitIsPlayer(self.unit) then
+      local c = RAID_CLASS_COLORS[UnitClassBase(self.unit)]
+      self.text:SetTextColor(c.r, c.g, c.b)
+    end
   else
     self:Strip()
   end
@@ -69,6 +73,8 @@ function addonTable.Display.CreatureTextMSPMixin:UnregisterCallback()
 end
 
 function addonTable.Display.CreatureTextMSPMixin:Strip()
+  local c = self.details.color
+  self.text:SetTextColor(c.r, c.g, c.b)
   self:UnregisterAllEvents()
 end
 
