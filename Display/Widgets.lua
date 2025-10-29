@@ -90,12 +90,12 @@ end
 function addonTable.Display.GetHealthBar(frame, parent)
   frame = frame or CreateFrame("Frame", nil, parent or UIParent)
 
+  frame.statusBarAbsorb = CreateFrame("StatusBar", nil, frame)
+  frame.statusBarAbsorb:SetClipsChildren(true)
+
   frame.statusBar = CreateFrame("StatusBar", nil, frame)
   frame.statusBar:SetAllPoints()
   frame.statusBar:SetClipsChildren(true)
-
-  frame.statusBarAbsorb = CreateFrame("StatusBar", nil, frame)
-  frame.statusBarAbsorb:SetClipsChildren(true)
 
   frame.marker = frame.statusBar:CreateTexture()
   frame.marker:SetSnapToPixelGrid(false)
@@ -108,8 +108,8 @@ function addonTable.Display.GetHealthBar(frame, parent)
   frame.mask = frame:CreateMaskTexture()
   frame.mask:SetPoint("CENTER")
 
-  frame.background = frame.statusBar:CreateTexture()
-  frame.background:SetAllPoints()
+  frame.background = frame:CreateTexture()
+  frame.background:SetPoint("CENTER")
   frame.background:SetDrawLayer("BACKGROUND")
 
   function frame:Init(details)
@@ -182,8 +182,8 @@ function addonTable.Display.GetCastBar(frame, parent)
   frame.mask = frame:CreateMaskTexture()
   frame.mask:SetPoint("CENTER")
 
-  frame.background = frame.statusBar:CreateTexture()
-  frame.background:SetAllPoints()
+  frame.background = frame:CreateTexture()
+  frame.background:SetPoint("CENTER")
   frame.background:SetDrawLayer("BACKGROUND")
 
   function frame:Init(details)
