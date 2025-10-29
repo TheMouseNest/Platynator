@@ -32,20 +32,11 @@ function addonTable.Display.HealthBarMixin:SetHealthColor(c)
   self.marker:SetVertexColor(c.r, c.g, c.b)
 end
 
-function addonTable.Display.HealthBarMixin:IsNeutral()
-  if UnitSelectionType then
-    return UnitSelectionType(self.unit) == 2
-  else
-    local r, g, b = UnitSelectionColor(self.unit)
-    return r == 1 and g == 1 and b == 0
-  end
-end
-
 function addonTable.Display.HealthBarMixin:UpdateColor()
   if UnitIsPlayer(self.unit) then
     local c = RAID_CLASS_COLORS[UnitClassBase(self.unit)]
     self:SetHealthColor(c)
-  elseif self:IsNeutral() and not UnitAffectingCombat(self.unit) then
+  elseif addonTable.Display.Utilities.IsNeutralUnit(self.unit) and not UnitAffectingCombat(self.unit) then
     local c = self.details.colors.npc.neutral
     self:SetHealthColor(c)
   elseif UnitIsFriend("player", self.unit) then

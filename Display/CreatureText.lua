@@ -8,8 +8,19 @@ function addonTable.Display.CreatureTextMixin:SetUnit(unit)
   if self.unit then
     self:RegisterUnitEvent("UNIT_NAME_UPDATE", self.unit)
     self.text:SetText(UnitName(self.unit))
-    if self.details.applyClassColors and UnitIsPlayer(self.unit) then
-      local c = RAID_CLASS_COLORS[UnitClassBase(self.unit)]
+    if self.details.applyClassColors then
+      local c
+      if UnitIsPlayer(self.unit) then
+        c = RAID_CLASS_COLORS[UnitClassBase(self.unit)]
+      elseif addonTable.Display.Utilities.IsNeutralUnit(self.unit) then
+        c = self.details.colors.npc.neutral
+      elseif UnitIsFriend("player", self.unit) then
+        c = self.details.colors.npc.friendly
+      elseif UnitIsTapDenied(self.unit) then
+        c = self.details.colors.npc.tapped
+      else
+        c = self.details.colors.npc.hostile
+      end
       self.text:SetTextColor(c.r, c.g, c.b)
     end
   else

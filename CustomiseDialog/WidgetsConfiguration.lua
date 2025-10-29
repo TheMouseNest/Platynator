@@ -439,7 +439,72 @@ addonTable.CustomiseDialog.WidgetsConfig = {
             getter = function(details)
               return details.applyClassColors
             end,
-          }
+          },
+          { kind = "spacer" },
+          {
+            label = addonTable.Locales.FRIENDLY,
+            kind = "colorPicker",
+            setter = function(details, value)
+              details.colors.npc.friendly = value
+            end,
+            getter = function(details)
+              return details.colors.npc.friendly
+            end,
+          },
+          {
+            label = addonTable.Locales.NEUTRAL,
+            kind = "colorPicker",
+            setter = function(details, value)
+              details.colors.npc.neutral = value
+            end,
+            getter = function(details)
+              return details.colors.npc.neutral
+            end,
+          },
+          {
+            label = addonTable.Locales.HOSTILE,
+            kind = "colorPicker",
+            setter = function(details, value)
+              details.colors.npc.hostile = value
+            end,
+            getter = function(details)
+              return details.colors.npc.hostile
+            end,
+          },
+        }
+      }
+    },
+    ["target"] = {
+      {
+        label = addonTable.Locales.COLORS,
+        entries = {
+          {
+            label = addonTable.Locales.CLASS_COLORED,
+            kind = "checkbox",
+            setter = function(details, value)
+              details.applyClassColors = value
+            end,
+            getter = function(details)
+              return details.applyClassColors
+            end,
+          },
+        }
+      }
+    },
+    ["castTarget"] = {
+      {
+        label = addonTable.Locales.COLORS,
+        entries = {
+          {
+            label = addonTable.Locales.CLASS_COLORED,
+            kind = "checkbox",
+            setter = function(details, value)
+              details.applyClassColors = value
+            end,
+            getter = function(details)
+              return details.applyClassColors
+            end,
+          },
         }
       }
     },

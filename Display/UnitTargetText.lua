@@ -19,9 +19,14 @@ function addonTable.Display.UnitTargetTextMixin:Strip()
 end
 
 function addonTable.Display.UnitTargetTextMixin:UpdateText()
-  local target = UnitName(self.unit .. "target")
-  if type(target) ~= nil then
+  local targetUnit = self.unit .. "target"
+  local target = UnitName(targetUnit)
+  if type(target) ~= "nil" then
     self.text:SetText(target)
+    if self.details.applyClassColors and UnitIsPlayer(targetUnit) then
+      local c = RAID_CLASS_COLORS[UnitClassBase(targetUnit)]
+      self.text:SetTextColor(c.r, c.g, c.b)
+    end
   else
     self.text:SetText("")
   end

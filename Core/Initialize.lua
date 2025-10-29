@@ -13,6 +13,11 @@ local offscreen = CreateFrame("Frame")
 offscreen:SetPoint("TOPLEFT", UIParent, "TOPRIGHT")
 addonTable.offscreenFrame = hidden
 
+local function GetColor(rgb)
+  local color = CreateColorFromRGBHexString(rgb)
+  return {r = color.r, g = color.g, b = color.b}
+end
+
 function addonTable.Core.UpgradeDesign(design)
   design.appliesToAll = nil
 
@@ -79,10 +84,8 @@ function addonTable.Core.UpgradeDesign(design)
       bar.aggroColoursOnHostiles = true
     end
     if bar.kind == "health" and (bar.colors.threat.offtank == nil or bar.colors.npc.tapped == nil) then
-      local newColor = CreateColorFromRGBHexString("0FAAC8")
-      bar.colors.threat.offtank = {r = newColor.r, g = newColor.g, b = newColor.b}
-      newColor = CreateColorFromRGBHexString("6E6E6E")
-      bar.colors.npc.tapped = {r = newColor.r, g = newColor.g, b = newColor.b}
+      bar.colors.threat.offtank = GetColor("0FAAC8")
+      bar.colors.npc.tapped = GetColor("6E6E6E")
     end
     if bar.kind == "health" and not bar.absorb then
       local mode = addonTable.Assets.BarBorders[bar.border.asset].mode
@@ -90,14 +93,23 @@ function addonTable.Core.UpgradeDesign(design)
       bar.absorb = {asset = isNarrow and "narrow/blizzard-absorb" or "wide/blizzard-absorb", color = {r = 1, g = 1, b = 1}}
     end
     if bar.kind == "cast" and bar.colors.interrupted == nil then
-      local newColor = CreateColorFromRGBHexString("FC36E0")
-      bar.colors.interrupted = {r = newColor.r, g = newColor.g, b = newColor.b}
+      bar.colors.interrupted = GetColor("FC36E0")
     end
   end
 
   for _, text in ipairs(design.texts) do
-    if text.kind == "creatureName" and text.applyClassColors == nil then
+    if (text.kind == "creatureName" or text.kind == "target") and text.applyClassColors == nil then
       text.applyClassColors = false
+    end
+    if text.kind == "creatureName" and not text.colors then
+      text.colors = {
+        npc = {
+          friendly = GetColor("00FF00"),
+          neutral = GetColor("FFFF00"),
+          hostile = GetColor("FF0000"),
+          tapped = GetColor("6E6E6E"),
+        },
+      }
     end
   end
 

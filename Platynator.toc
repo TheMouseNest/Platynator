@@ -31,6 +31,7 @@ Core/Fonts.lua
 Core/Initialize.lua
 
 Display/Initialize.lua
+Display/Utilities.lua
 Display/Nameplate.lua
 Display/Auras.lua
 Display/HealthBar.lua
@@ -40,6 +41,7 @@ Display/CreatureText.lua
 Display/CreatureTextMSP.lua
 Display/HealthText.lua
 Display/CastText.lua
+Display/CastTargetText.lua
 Display/LevelText.lua
 Display/UnitTargetText.lua
 Display/Highlight.lua

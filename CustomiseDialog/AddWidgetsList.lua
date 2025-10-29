@@ -166,6 +166,14 @@ addonTable.CustomiseDialog.DesignWidgets = {
       align = "CENTER",
       truncate = "NONE",
       applyClassColors = false,
+      colors = {
+        npc = {
+          friendly = GetColor("00FF00"),
+          neutral = GetColor("FFFF00"),
+          hostile = GetColor("FF0000"),
+          tapped = GetColor("6E6E6E"),
+        },
+      },
     },
   },
   {
@@ -191,6 +199,14 @@ addonTable.CustomiseDialog.DesignWidgets = {
       color = GetColor("FFFFFF"),
       align = "CENTER",
       truncate = "NONE",
+      colors = {
+        npc = {
+          friendly = GetColor("00FF00"),
+          neutral = GetColor("FFFF00"),
+          hostile = GetColor("FF0000"),
+          tapped = GetColor("6E6E6E"),
+        },
+      },
     },
   },
   {
@@ -213,6 +229,20 @@ addonTable.CustomiseDialog.DesignWidgets = {
       scale = 1,
       anchor = {"TOPLEFT", -140, 50},
       color = GetColor("FFFFFF"),
+      applyClassColors = true,
+      align = "CENTER",
+      truncate = "NONE",
+    },
+  },
+  {
+    name = addonTable.Locales.CAST_TARGET,
+    kind = "texts",
+    default = {
+      kind = "castTarget",
+      scale = 1,
+      anchor = {"TOPLEFT", -140, 50},
+      color = GetColor("FFFFFF"),
+      applyClassColors = true,
       align = "CENTER",
       truncate = "NONE",
     },
