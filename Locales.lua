@@ -81,6 +81,7 @@ L["BACKGROUND_TRANSPARENCY"] = "Background transparency"
 L["APPLY_MAIN_COLOR_TO_BACKGROUND"] = "Apply main color to background"
 L["BORDER"] = "Border"
 L["COLOR"] = "Color"
+L["CLASS_COLORED"] = "Class colored"
 
 L["ON_TARGET_OR_CASTING"] = "On target (or casting)"
 L["ON_NON_TARGET_AND_NON_CASTING"] = "On non-target (and non-casting)"

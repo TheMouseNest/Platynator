@@ -165,6 +165,7 @@ addonTable.CustomiseDialog.DesignWidgets = {
       color = GetColor("FFFFFF"),
       align = "CENTER",
       truncate = "NONE",
+      applyClassColors = false,
     },
   },
   {

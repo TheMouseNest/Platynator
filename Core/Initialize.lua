@@ -95,6 +95,12 @@ function addonTable.Core.UpgradeDesign(design)
     end
   end
 
+  for _, text in ipairs(design.texts) do
+    if text.kind == "creatureName" and text.applyClassColors == nil then
+      text.applyClassColors = false
+    end
+  end
+
   if design.font.shadow == nil or design.font.flags ~= nil then
     design.font.shadow = true
     design.font.outline = design.font.flags == "OUTLINE"

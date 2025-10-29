@@ -441,6 +441,10 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
           end
         elseif w.details.kind == "creatureName" then
           display = "Cheesanator"
+          if w.details.applyClassColors then
+            local c = RAID_CLASS_COLORS["MAGE"]
+            w.text:SetTextColor(c.r, c.g, c.b)
+          end
         elseif w.details.kind == "castSpellName" then
           display = addonTable.Locales.ARCANE_FLURRY
         elseif w.details.kind == "level" then
@@ -632,11 +636,6 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
         tab:SetPoint("RIGHT")
         tab:SetHeight(300)
         tab.button = tabButton
-        if #tabs == 0 then
-          tabButton:SetPoint("TOPLEFT", 20, 0)
-        else
-          tabButton:SetPoint("TOPLEFT", tabs[#tabs].button, "TOPRIGHT", 5, 0)
-        end
         tabButton.kind = label
         tabButton.label = label
         tabButton:SetScript("OnClick", function()
@@ -655,10 +654,22 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
               nestedContainer.details = nil
               nestedContainer:Show()
               nestedContainer:UpdateOptions(details)
+              valid = true
             else
               nestedContainer:Hide()
             end
           end
+        end
+        function tab:IsFor(details)
+          if tab.UpdateOptions then
+            return true
+          end
+          for subKind, nestedContainer in pairs(self.kindSpecificSettings) do
+            if subKind == details.kind then
+              return true
+            end
+          end
+          return false
         end
       end
 
@@ -690,6 +701,21 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
       end
       function settingsContainer:Set(details)
         settingsContainer.details = details
+        local lastTab
+        for index, t in ipairs(tabs) do
+          local tabButton = t.button
+          if t:IsFor(details) then
+            tabButton:Show()
+            if not lastTab then
+              tabButton:SetPoint("TOPLEFT", 20, 0)
+            else
+              tabButton:SetPoint("TOPLEFT", lastTab, "TOPRIGHT", 5, 0)
+            end
+            lastTab = t.button
+          else
+            tabButton:Hide()
+          end
+        end
         tabManager:SetTab(tabs[settingsContainer.tabIndex].button.label)
       end
       if details["*"] then
@@ -697,7 +723,9 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
           local tabContainer = CreateFrame("Frame", nil, settingsContainer)
           local tabButton = addonTable.CustomiseDialog.Components.GetTab(tabManager, tabDetails.label)
           InitTab(tabContainer, tabButton, tabDetails.label)
-          AddToTab(tabContainer, tabDetails.entries, "*")
+          if #tabDetails.entries > 0 then
+            AddToTab(tabContainer, tabDetails.entries, "*")
+          end
         end
       end
       for key in pairs(details) do
