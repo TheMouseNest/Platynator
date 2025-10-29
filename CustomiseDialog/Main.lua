@@ -433,7 +433,7 @@ function addonTable.CustomiseDialog.GetStyleDropdown(parent)
           if allDesigns[value] or value:match("^_") then
             addonTable.Dialogs.ShowAcknowledge(addonTable.Locales.THAT_STYLE_NAME_ALREADY_EXISTS)
           else
-            allDesigns[value] = CopyTable(allDesigns[currentStyle])
+            allDesigns[value] = CopyTable(addonTable.Core.GetDesignByName(currentStyle))
             addonTable.Config.Set(addonTable.Config.Options.STYLE, value) 
           end
         end)
