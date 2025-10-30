@@ -81,7 +81,7 @@ specializationMonitor:SetScript("OnEvent", function()
     if GetShapeshiftForm() == 2 then
       specID = classToSpec["DRUID"]
     end
-  elseif C_SpecializationInfo.GetSpecialization then
+  elseif addonTable.Constants.IsRetail or addonTable.Constants.IsMists then
     local specIndex = C_SpecializationInfo.GetSpecialization()
     specID = C_SpecializationInfo.GetSpecializationInfo(specIndex)
   else
