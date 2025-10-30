@@ -35,7 +35,7 @@ function addonTable.Display.GuildTextMixin:SetUnit(unit)
       if C_TooltipInfo then
         local tooltipData = C_TooltipInfo.GetUnit(self.unit)
         local line = tooltipData.lines[isColorBlindMode and 3 or 2]
-        if not issecretvalue and line or (not issecretvalue(line) and line and not issecretvalue(line.leftText)) then
+        if not issecretvalue and line or (issecretvalue and not issecretvalue(line) and line and not issecretvalue(line.leftText)) then
           text = line.leftText
         end
       else
