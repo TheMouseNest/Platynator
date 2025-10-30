@@ -498,7 +498,7 @@ function addonTable.Display.GetWidgets(design, parent, isEditor)
     w:SetParent(parent)
     w:Show()
     w:SetFrameStrata("MEDIUM")
-    w:SetFrameLevel(500 + index)
+    w:SetFrameLevel(500 + index * 10)
     w:Init(barDetails)
     w.kind = "bars"
     w.kindIndex = index
@@ -511,7 +511,7 @@ function addonTable.Display.GetWidgets(design, parent, isEditor)
     w:SetParent(parent)
     w:Show()
     w:SetFrameStrata("MEDIUM")
-    w:SetFrameLevel(1000 + index)
+    w:SetFrameLevel(1000 + index * 10)
     w:Init(textDetails)
     w.kind = "texts"
     w.kindIndex = index
@@ -524,7 +524,7 @@ function addonTable.Display.GetWidgets(design, parent, isEditor)
     w:SetParent(parent)
     w:Show()
     w:SetFrameStrata("MEDIUM")
-    w:SetFrameLevel(200 + index)
+    w:SetFrameLevel(200 + index * 10)
     w:Init(highlightDetails)
     w.kind = "highlights"
     w.kindIndex = index
