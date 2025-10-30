@@ -35,8 +35,6 @@ local function InitBar(frame, details)
   end
   frame:SetSize(width * details.scale, height * details.scale)
 
-  frame.statusBar:SetMinMaxValues(0, 1)
-  frame.statusBar:SetValue(1)
   frame.statusBar:SetStatusBarTexture(foregroundDetails.file)
   frame.statusBar:GetStatusBarTexture():SetDrawLayer("ARTWORK")
   frame.statusBar:GetStatusBarTexture():SetSnapToPixelGrid(false)
@@ -67,6 +65,7 @@ local function InitBar(frame, details)
 
   local maskInfo = addonTable.Assets.BarMasks[details.border.asset]
   if maskInfo then
+    frame.mask:SetBlockingLoadsRequested(true)
     frame.mask:SetTexture(maskInfo.file, "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
     frame.mask:SetSize(maskInfo.width * details.scale, maskInfo.height * details.scale)
     frame.mask:SetSnapToPixelGrid(false)
@@ -101,6 +100,7 @@ function addonTable.Display.GetHealthBar(frame, parent)
   frame.marker:SetSnapToPixelGrid(false)
 
   local borderHolder = CreateFrame("Frame", nil, frame)
+  borderHolder:SetFlattensRenderLayers(true)
   frame.border = borderHolder:CreateTexture()
   frame.border:SetDrawLayer("OVERLAY")
   frame.border:SetPoint("CENTER", frame)
@@ -115,8 +115,10 @@ function addonTable.Display.GetHealthBar(frame, parent)
   function frame:Init(details)
     InitBar(frame, details)
 
-    frame.statusBarAbsorb:SetMinMaxValues(0, 1)
-    frame.statusBarAbsorb:SetValue(1)
+    frame.statusBarAbsorb:SetFrameLevel(frame:GetFrameLevel() + 1)
+    frame.statusBar:SetFrameLevel(frame:GetFrameLevel() + 2)
+    borderHolder:SetFrameLevel(frame:GetFrameLevel() + 4)
+
     frame.statusBarAbsorb:SetStatusBarTexture(addonTable.Assets.BarBackgrounds[details.absorb.asset].file)
     frame.statusBarAbsorb:SetPoint("LEFT", frame.statusBar:GetStatusBarTexture(), "RIGHT")
     frame.statusBarAbsorb:SetHeight(frame:GetHeight())
@@ -161,6 +163,7 @@ function addonTable.Display.GetCastBar(frame, parent)
   frame.marker:SetSnapToPixelGrid(false)
 
   local borderHolder = CreateFrame("Frame", nil, frame)
+  borderHolder:SetFlattensRenderLayers(true)
   frame.border = borderHolder:CreateTexture()
   frame.border:SetDrawLayer("OVERLAY")
   frame.border:SetPoint("CENTER", frame)
@@ -188,6 +191,9 @@ function addonTable.Display.GetCastBar(frame, parent)
 
   function frame:Init(details)
     InitBar(frame, details)
+
+    frame.statusBar:SetFrameLevel(frame:GetFrameLevel() + 2)
+    borderHolder:SetFrameLevel(frame:GetFrameLevel() + 4)
 
     local foregroundDetails = addonTable.Assets.BarBackgrounds[details.foreground.asset]
     frame.reverseStatusTexture:Hide()
@@ -491,9 +497,9 @@ function addonTable.Display.GetWidgets(design, parent, isEditor)
     poolType[w] = barDetails.kind .. "Bars"
     w:SetParent(parent)
     w:Show()
-    w:Init(barDetails)
     w:SetFrameStrata("MEDIUM")
     w:SetFrameLevel(500 + index)
+    w:Init(barDetails)
     w.kind = "bars"
     w.kindIndex = index
     table.insert(widgets, w)
@@ -504,9 +510,9 @@ function addonTable.Display.GetWidgets(design, parent, isEditor)
     poolType[w] = "texts"
     w:SetParent(parent)
     w:Show()
-    w:Init(textDetails)
     w:SetFrameStrata("MEDIUM")
     w:SetFrameLevel(1000 + index)
+    w:Init(textDetails)
     w.kind = "texts"
     w.kindIndex = index
     table.insert(widgets, w)
@@ -517,9 +523,9 @@ function addonTable.Display.GetWidgets(design, parent, isEditor)
     poolType[w] = "highlights"
     w:SetParent(parent)
     w:Show()
-    w:Init(highlightDetails)
     w:SetFrameStrata("MEDIUM")
     w:SetFrameLevel(200 + index)
+    w:Init(highlightDetails)
     w.kind = "highlights"
     w.kindIndex = index
     table.insert(widgets, w)
@@ -531,8 +537,8 @@ function addonTable.Display.GetWidgets(design, parent, isEditor)
     poolType[w] = "powers"
     w:SetParent(parent)
     w:Show()
-    w:Init(specialDetails)
     w:SetFrameStrata("HIGH")
+    w:Init(specialDetails)
     w.kind = "specialBars"
     w.kindIndex = index
     table.insert(widgets, w)
@@ -543,8 +549,8 @@ function addonTable.Display.GetWidgets(design, parent, isEditor)
     poolType[w] = "markers"
     w:SetParent(parent)
     w:Show()
-    w:Init(markerDetails)
     w:SetFrameStrata("HIGH")
+    w:Init(markerDetails)
     w.kind = "markers"
     w.kindIndex = index
     table.insert(widgets, w)
