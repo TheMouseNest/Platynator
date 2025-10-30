@@ -177,6 +177,19 @@ addonTable.CustomiseDialog.DesignWidgets = {
     },
   },
   {
+    name = addonTable.Locales.GUILD,
+    kind = "texts",
+    default = {
+      kind = "guild",
+      scale = 1,
+      anchor = {"TOPLEFT", -140, 50},
+      widthLimit = 124,
+      color = GetColor("FFFFFF"),
+      align = "CENTER",
+      truncate = "NONE",
+    },
+  },
+  {
     name = addonTable.Locales.HEALTH_VALUE,
     kind = "texts",
     default = {

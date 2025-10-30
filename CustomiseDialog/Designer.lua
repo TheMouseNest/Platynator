@@ -445,6 +445,8 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
             local c = RAID_CLASS_COLORS["MAGE"]
             w.text:SetTextColor(c.r, c.g, c.b)
           end
+        elseif w.details.kind == "guild" then
+          display = "Surge of Awesome"
         elseif w.details.kind == "castSpellName" then
           display = addonTable.Locales.ARCANE_FLURRY
         elseif w.details.kind == "level" then

@@ -8,6 +8,8 @@ function addonTable.Display.ApplyAnchor(frame, anchor)
     frame:SetPoint(anchor[1], frame:GetParent(), "CENTER", anchor[2], anchor[3])
   elseif #anchor == 2 then
     frame:SetPoint("CENTER", frame:GetParent(), "CENTER", anchor[1], anchor[2])
+  elseif #anchor == 1 then
+    frame:SetPoint("TOP", frame:GetParent(), "CENTER")
   end
 end
 
@@ -445,6 +447,8 @@ function addonTable.Display.GetText(frame, parent)
       Mixin(frame, addonTable.Display.HealthTextMixin)
     elseif details.kind == "creatureName" then
       Mixin(frame, addonTable.Display.CreatureTextMSPMixin or addonTable.Display.CreatureTextMixin)
+    elseif details.kind == "guild" then
+      Mixin(frame, addonTable.Display.GuildTextMixin)
     elseif details.kind == "castSpellName" then
       Mixin(frame, addonTable.Display.CastTextMixin)
     elseif details.kind == "level" then
