@@ -171,20 +171,26 @@ local function UpdateRect(design)
       left = anchor[2] or 0
       bottom = anchor[3] or 0
     elseif anchor[1] == "BOTTOM" then
-      left = anchor[2] and anchor[2] - width / 2 or -width / 2
+      left = anchor[2] and anchor[2] - width/2 or -width/2
       bottom = anchor[3] or 0
     elseif anchor[1] == "BOTTOMRIGHT" then
       left = anchor[2] and anchor[2] - width or -width
       bottom = anchor[3] or 0
     elseif anchor[1] == "TOPLEFT" then
       left = anchor[2] or 0
-      bottom = anchor[3] and anchor[3] - height
+      bottom = anchor[3] and anchor[3] - height or -height
     elseif anchor[1] == "TOP" then
-      left = anchor[2] and anchor[2] - width / 2 or -width / 2
-      bottom = anchor[3] and anchor[3] - height
+      left = anchor[2] and anchor[2] - width/2 or -width/2
+      bottom = anchor[3] and anchor[3] - height or -height
     elseif anchor[1] == "TOPRIGHT" then
       left = anchor[2] and anchor[2] - width or -width
-      bottom = anchor[3] and anchor[3] - height
+      bottom = anchor[3] and anchor[3] - height or -height
+    elseif anchor[1] == "LEFT" then
+      left = anchor[2] or 0
+      bottom = anchor[3] and anchor[3] - height/2 or -height/2
+    elseif anchor[1] == "RIGHT" then
+      left = anchor[2] and anchor[2] - width or -width
+      bottom = anchor[3] and anchor[3] - height/2 or -height/2
     else
       left = -width / 2
       bottom = -height / 2
