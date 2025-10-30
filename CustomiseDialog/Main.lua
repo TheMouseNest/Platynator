@@ -368,6 +368,8 @@ local function SetupFont(parent)
     end
   end)
 
+  container:SetScript("OnShow", Update)
+
   return container
 end
 
