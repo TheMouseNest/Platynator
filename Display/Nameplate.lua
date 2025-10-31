@@ -134,7 +134,7 @@ function addonTable.Display.NameplateMixin:InitializeWidgets(design)
     self.DebuffDisplay.details = designInfo.debuffs
     if self.DebuffDisplay.Wrapped then
       self.DebuffDisplay.Wrapped:ClearAllPoints()
-      self.DebuffDisplay.Wrapped:SetPoint(designInfo.debuffs.anchor[1])
+      self.DebuffDisplay.Wrapped:SetPoint(designInfo.debuffs.anchor[1] or "CENTER")
       self.DebuffDisplay.Wrapped:SetScale(designInfo.debuffs.scale)
     end
     self.DebuffDisplay:SetSize(defaultSize * designInfo.debuffs.scale, defaultSize * designInfo.debuffs.scale)
@@ -148,7 +148,7 @@ function addonTable.Display.NameplateMixin:InitializeWidgets(design)
     if self.BuffDisplay.Wrapped then
       self.BuffDisplay.Wrapped:ClearAllPoints()
       self.BuffDisplay.Wrapped:SetScale(designInfo.buffs.scale)
-      self.BuffDisplay.Wrapped:SetPoint(designInfo.buffs.anchor[1])
+      self.BuffDisplay.Wrapped:SetPoint(designInfo.buffs.anchor[1] or "CENTER")
     end
     self.BuffDisplay:SetSize(defaultSize * designInfo.buffs.scale, defaultSize * designInfo.buffs.scale)
     addonTable.Display.ApplyAnchor(self.BuffDisplay, designInfo.buffs.anchor)
@@ -161,7 +161,7 @@ function addonTable.Display.NameplateMixin:InitializeWidgets(design)
     if self.CrowdControlDisplay.Wrapped then
       self.CrowdControlDisplay.Wrapped:ClearAllPoints()
       self.CrowdControlDisplay.Wrapped:SetScale(designInfo.crowdControl.scale)
-      self.CrowdControlDisplay.Wrapped:SetPoint(designInfo.crowdControl.anchor[1])
+      self.CrowdControlDisplay.Wrapped:SetPoint(designInfo.crowdControl.anchor[1] or "CENTER")
     end
     self.CrowdControlDisplay:SetSize(defaultSize * designInfo.crowdControl.scale, defaultSize * designInfo.crowdControl.scale)
     addonTable.Display.ApplyAnchor(self.CrowdControlDisplay, designInfo.crowdControl.anchor)
