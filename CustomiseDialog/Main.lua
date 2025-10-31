@@ -271,6 +271,7 @@ local function SetupBehaviour(parent)
       }
     end
 
+    applyNameplatesDropdown.DropDown:SetDefaultText(NONE)
     applyNameplatesDropdown.DropDown:SetupMenu(function(_, rootDescription)
       for index, l in ipairs(labels) do
         rootDescription:CreateCheckbox(l, function()
@@ -280,7 +281,7 @@ local function SetupBehaviour(parent)
             return
           end
           local cvar = values[index][1]
-          local state = not GetCVarBool(cvar)
+          local state = not (GetCVarBool(values[index][1]) and (not values[index][2] or GetCVarBool(values[index][2])))
           C_CVar.SetCVar(cvar, state and "1" or "0")
           if state then
             C_CVar.SetCVar("nameplateShowAll", "1")
