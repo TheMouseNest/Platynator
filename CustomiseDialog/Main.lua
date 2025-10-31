@@ -243,6 +243,60 @@ local function SetupBehaviour(parent)
   end
   table.insert(allFrames, notTargetDropdown)
 
+  local applyNameplatesDropdown = addonTable.CustomiseDialog.Components.GetBasicDropdown(container, addonTable.Locales.USE_NAMEPLATES_FOR)
+  applyNameplatesDropdown:SetPoint("TOP", allFrames[#allFrames], "BOTTOM", 0, -30)
+  do
+    local values, labels
+    if C_CVar.GetCVarInfo("nameplateShowFriendlyPlayers") ~= nil then
+      values = {
+        {"nameplateShowFriendlyPlayers"},
+        {"nameplateShowFriendlyNpcs"},
+        {"nameplateShowEnemies"},
+      }
+      labels = {
+        addonTable.Locales.PLAYERS,
+        addonTable.Locales.FRIENDLY_NPCS,
+        addonTable.Locales.ENEMY_NPCS,
+      }
+    else
+      values = {
+        {"nameplateShowFriends"},
+        {"nameplateShowFriendlyNPCs", "nameplateShowFriends"},
+        {"nameplateShowEnemies"},
+      }
+      labels = {
+        addonTable.Locales.PLAYERS_AND_FRIENDS,
+        addonTable.Locales.FRIENDLY_NPCS,
+        addonTable.Locales.ENEMY_NPCS,
+      }
+    end
+
+    applyNameplatesDropdown.DropDown:SetupMenu(function(_, rootDescription)
+      for index, l in ipairs(labels) do
+        rootDescription:CreateCheckbox(l, function()
+          return GetCVarBool(values[index][1]) and (not values[index][2] or GetCVarBool(values[index][2]))
+        end, function()
+          if InCombatLockdown() then
+            return
+          end
+          local cvar = values[index][1]
+          local state = not GetCVarBool(cvar)
+          C_CVar.SetCVar(cvar, state and "1" or "0")
+          if state then
+            C_CVar.SetCVar("nameplateShowAll", "1")
+            if values[index][2] then
+              C_CVar.SetCVar(values[index][2], "1")
+            end
+          end
+        end)
+        if index == 1 then
+          rootDescription:CreateDivider()
+        end
+      end
+    end)
+  end
+  table.insert(allFrames, applyNameplatesDropdown)
+
   container:SetScript("OnShow", function()
     local styles = {}
     for key, value in pairs(addonTable.Config.Get(addonTable.Config.Options.DESIGNS)) do
@@ -270,7 +324,7 @@ local function SetupBehaviour(parent)
       if f.SetValue then
         if f.option then
           f:SetValue(addonTable.Config.Get(f.option))
-        else
+        elseif f.DropDown then
           f:SetValue()
         end
       end
