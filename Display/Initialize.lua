@@ -213,7 +213,8 @@ function addonTable.Display.ManagerMixin:OnEvent(eventName, ...)
     -- NOTE: the nameplate _name_ does not correspond to the unit
     if nameplate and nameplate.UnitFrame and not UnitIsUnit("player", unit) then
       local newDisplay
-      if UnitIsFriend("player", unit) or not UnitCanAttack("player", unit) then
+      -- Necesary check on friends in case its a player being mind controlled
+      if (UnitIsFriend("player", unit) and not UnitCanAttack("player", unit)) or not UnitCanAttack("player", unit) then
         newDisplay = self.friendDisplayPool:Acquire()
       else
         newDisplay = self.enemyDisplayPool:Acquire()
