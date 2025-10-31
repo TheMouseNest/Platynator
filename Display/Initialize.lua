@@ -206,7 +206,7 @@ function addonTable.Display.ManagerMixin:UpdateStacking()
     end
   else
     if addonTable.Config.Get(addonTable.Config.Options.CLOSER_NAMEPLATES) then
-      C_CVar.SetCVar("nameplateOverlapV", "0.4")
+      C_CVar.SetCVar("nameplateOverlapV", "0.6")
       C_CVar.SetCVar("nameplateOverlapH", "0.6")
       C_CVar.SetCVar("nameplateOtherTopInset", "0.05")
       C_CVar.SetCVar("nameplateLargeTopInset", "0.07")
