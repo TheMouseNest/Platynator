@@ -60,7 +60,7 @@ function addonTable.CustomiseDialog.Components.GetTab(parent, text)
   if addonTable.Constants.IsRetail then
     tab = CreateFrame("Button", nil, parent, "PanelTopTabButtonTemplate")
     tab:SetScript("OnShow", function(self)
-      PanelTemplates_TabResize(self, 15, nil, 10)
+      PanelTemplates_TabResize(self, 15, nil, 70)
       PanelTemplates_DeselectTab(self)
     end)
   else
