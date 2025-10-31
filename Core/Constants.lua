@@ -28,4 +28,5 @@ addonTable.Constants.RefreshReason = {
   Design = 1,
   Scale = 2,
   TargetBehaviour = 3,
+  StackingBehaviour = 4,
 }

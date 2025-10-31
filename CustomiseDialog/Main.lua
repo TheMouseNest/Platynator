@@ -298,6 +298,30 @@ local function SetupBehaviour(parent)
   end
   table.insert(allFrames, applyNameplatesDropdown)
 
+  if not addonTable.Constants.IsMidnight then
+    local stackingNameplatesCheckbox
+    stackingNameplatesCheckbox = addonTable.CustomiseDialog.Components.GetCheckbox(container, addonTable.Locales.STACKING_NAMEPLATES, 28, function(value)
+      if InCombatLockdown() then
+        return
+      end
+      addonTable.Config.Set(addonTable.Config.Options.STACKING_NAMEPLATES, value)
+    end)
+    stackingNameplatesCheckbox.option = addonTable.Config.Options.STACKING_NAMEPLATES
+    stackingNameplatesCheckbox:SetPoint("TOP", allFrames[#allFrames], "BOTTOM", 0, -30)
+    table.insert(allFrames, stackingNameplatesCheckbox)
+  end
+
+  local closerNameplatesCheckbox
+  closerNameplatesCheckbox = addonTable.CustomiseDialog.Components.GetCheckbox(container, addonTable.Locales.LESS_NAMEPLATE_SPACING, 28, function(value)
+    if InCombatLockdown() then
+      return
+    end
+    addonTable.Config.Set(addonTable.Config.Options.CLOSER_NAMEPLATES, value)
+  end)
+  closerNameplatesCheckbox.option = addonTable.Config.Options.CLOSER_NAMEPLATES
+  closerNameplatesCheckbox:SetPoint("TOP", allFrames[#allFrames], "BOTTOM", 0, addonTable.Constants.IsMidnight and -30 or 0)
+  table.insert(allFrames, closerNameplatesCheckbox)
+
   container:SetScript("OnShow", function()
     local styles = {}
     for key, value in pairs(addonTable.Config.Get(addonTable.Config.Options.DESIGNS)) do

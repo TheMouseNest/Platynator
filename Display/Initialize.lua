@@ -50,6 +50,8 @@ function addonTable.Display.ManagerMixin:OnLoad()
     NamePlateDriverFrame:UnregisterEvent("CVAR_UPDATE")
   end
 
+  self:RegisterEvent("VARIABLES_LOADED")
+
   self.ModifiedUFs = {}
   self.HookedUFs = {}
   -- Apply Platynator settings to aura layout
@@ -179,8 +181,44 @@ function addonTable.Display.ManagerMixin:OnLoad()
       for _, display in pairs(self.nameplateDisplays) do
         display:UpdateVisual()
       end
+    elseif state[addonTable.Constants.RefreshReason.StackingBehaviour] then
+      self:UpdateStacking()
     end
   end)
+end
+
+function addonTable.Display.ManagerMixin:UpdateStacking()
+  if InCombatLockdown() then
+    self:RegisterCallback("PLAYER_REGEN_ENABLED")
+  end
+  --[[if addonTable.Config.Get(addonTable.Config.Options.CLOSER_NAMEPLATES) then
+    C_NamePlate.SetNamePlateSize(30, 20)
+  else
+    C_NamePlate.SetNamePlateSize(175, 50)
+  end]]
+  if addonTable.Constants.IsMidnight then
+    if addonTable.Config.Get(addonTable.Config.Options.CLOSER_NAMEPLATES) then
+      C_CVar.SetCVarBitfield("nameplateStackingTypes", Enum.NamePlateStackType.Enemy, false)
+      C_CVar.SetCVarBitfield("nameplateStackingTypes", Enum.NamePlateStackType.Friendly, false)
+    elseif C_CVar.GetCVarBitfield("nameplateStackingTypes", Enum.NamePlateStackType.Enemy) == C_CVar.GetCVarBitfield("nameplateStackingTypes", Enum.NamePlateStackType.Friendly) then
+      C_CVar.SetCVarBitfield("nameplateStackingTypes", Enum.NamePlateStackType.Enemy, true)
+      C_CVar.SetCVarBitfield("nameplateStackingTypes", Enum.NamePlateStackType.Friendly, true)
+    end
+  else
+    if addonTable.Config.Get(addonTable.Config.Options.CLOSER_NAMEPLATES) then
+      C_CVar.SetCVar("nameplateOverlapV", "0.4")
+      C_CVar.SetCVar("nameplateOverlapH", "0.6")
+      C_CVar.SetCVar("nameplateOtherTopInset", "0.01")
+      C_CVar.SetCVar("nameplateLargeTopInset", "0.02")
+    elseif C_CVar.GetCVar("nameplateOverlapV") == "0.4" and C_CVar.GetCVar("nameplateOverlapH") == "0.6" then
+      C_CVar.SetCVar("nameplateOverlapV", "1.1")
+      C_CVar.SetCVar("nameplateOverlapH", "0.8")
+      C_CVar.SetCVar("nameplateOtherTopInset", "0.1")
+      C_CVar.SetCVar("nameplateLargeTopInset", "0.15")
+    end
+
+    C_CVar.SetCVar("nameplateMotion", addonTable.Config.Get(addonTable.Config.Options.STACKING_NAMEPLATES) and "1" or "0")
+  end
 end
 
 function addonTable.Display.ManagerMixin:PositionBuffs(display)
@@ -271,5 +309,20 @@ function addonTable.Display.ManagerMixin:OnEvent(eventName, ...)
     else
       self.lastTarget = nil
     end
+  elseif eventName == "VARIABLES_LOADED" then
+    if addonTable.Constants.IsMidnight then
+      C_CVar.SetCVarBitfield(NamePlateConstants.ENEMY_NPC_AURA_DISPLAY_CVAR, Enum.NamePlateEnemyNpcAuraDisplay.Buffs, true)
+      C_CVar.SetCVarBitfield(NamePlateConstants.ENEMY_NPC_AURA_DISPLAY_CVAR, Enum.NamePlateEnemyNpcAuraDisplay.Debuffs, true)
+      C_CVar.SetCVarBitfield(NamePlateConstants.ENEMY_NPC_AURA_DISPLAY_CVAR, Enum.NamePlateEnemyNpcAuraDisplay.CrowdControl, true)
+
+      C_CVar.SetCVarBitfield(NamePlateConstants.ENEMY_PLAYER_AURA_DISPLAY_CVAR, Enum.NamePlateEnemyPlayerAuraDisplay.Buffs, true)
+      C_CVar.SetCVarBitfield(NamePlateConstants.ENEMY_PLAYER_AURA_DISPLAY_CVAR, Enum.NamePlateEnemyPlayerAuraDisplay.Debuffs, true)
+      --SetCVarBitfield(NamePlateConstants.ENEMY_PLAYER_AURA_DISPLAY_CVAR, Enum.NamePlateEnemyPlayerAuraDisplay.LossOfControl, true);
+    end
+
+    self:UpdateStacking()
+  elseif eventName == "PLAYER_REGEN_ENABLED" then
+    self:UnregisterEvent("PLAYER_REGEN_ENABLED")
+    self:UpdateStacking()
   end
 end

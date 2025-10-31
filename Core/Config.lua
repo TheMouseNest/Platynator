@@ -15,6 +15,9 @@ local settings = {
 
   TARGET_BEHAVIOUR = {key = "target_behaviour", default = "enlarge", refresh = {addonTable.Constants.RefreshReason.TargetBehaviour}},
   NOT_TARGET_BEHAVIOUR = {key = "not_target_behaviour", default = "none", refresh = {addonTable.Constants.RefreshReason.TargetBehaviour}},
+
+  CLOSER_NAMEPLATES = {key = "closer_nameplates", default = true, refresh = {addonTable.Constants.RefreshReason.StackingBehaviour}},
+  STACKING_NAMEPLATES = {key = "stacking_nameplates", default = true, refresh = {addonTable.Constants.RefreshReason.StackingBehaviour}},
 }
 
 addonTable.Config.RefreshType = {}
