@@ -372,9 +372,9 @@ function addonTable.Display.GetText(frame, parent)
   hooksecurefunc(frame.text, "SetText", function()
     if frame.details.truncate ~= "NONE" then
       if frame.details.truncate == "LEFT" then
-        frame.text:SetWidth(frame.details.widthLimit)
+        frame.text:SetWidth(0)
         -- Faster to do this, than to do GetWidth
-        local testWidth = frame.details.widthLimit
+        local testWidth = frame.text:GetWidth()
         while frame.text:GetNumLines() ~= 1 do
           testWidth = testWidth + 60 * frame.details.scale
           frame.text:SetWidth(testWidth)
