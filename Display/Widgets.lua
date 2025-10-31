@@ -371,14 +371,10 @@ function addonTable.Display.GetText(frame, parent)
   frame.text:SetText(" ")
   hooksecurefunc(frame.text, "SetText", function()
     if frame.details.truncate ~= "NONE" then
+      local width
       if frame.details.truncate == "LEFT" then
         frame.text:SetWidth(0)
-        -- Faster to do this, than to do GetWidth
         local testWidth = frame.text:GetWidth()
-        while frame.text:GetNumLines() ~= 1 do
-          testWidth = testWidth + 60 * frame.details.scale
-          frame.text:SetWidth(testWidth)
-        end
         while not frame.text:IsTruncated() and frame.text:GetNumLines() < 2 and testWidth > 1 do
           testWidth = math.max(1, testWidth - 15 * frame.details.scale)
           frame.text:SetWidth(testWidth)
@@ -386,13 +382,14 @@ function addonTable.Display.GetText(frame, parent)
         if frame.text:IsTruncated() then
           frame.text:SetWidth(testWidth + (frame.text:IsTruncated() and 15 * frame.details.scale or 0))
         end
+        width = testWidth
       elseif frame.details.truncate == "RIGHT" then
         frame.text:SetWidth(30 * frame.details.scale)
         while frame.text:IsTruncated() and (frame.details.widthLimit == nil or frame.text:GetWidth() < frame.details.widthLimit) do
           frame.text:SetWidth(frame.text:GetWidth() + 30 * frame.details.scale)
         end
       end
-      local width = frame.details.widthLimit or frame.text:GetWidth()
+      width = frame.details.widthLimit > 0 and frame.details.widthLimit or width or frame.text:GetWidth()
       frame.textWrapper:SetSize(width, frame.text:GetLineHeight() * 1.02)
 
       frame:SetSize(width, frame.text:GetLineHeight())
