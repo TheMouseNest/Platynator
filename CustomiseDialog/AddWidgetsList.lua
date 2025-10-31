@@ -320,6 +320,17 @@ addonTable.CustomiseDialog.DesignWidgets = {
     },
   },
   {
+    name = addonTable.Locales.PVP,
+    kind = "markers",
+    default = {
+      kind = "pvp",
+      scale = 1,
+      asset = "normal/blizzard-pvp",
+      color = GetColor("ffffff"),
+      anchor = {"TOPLEFT", -140, 50},
+    },
+  },
+  {
     name = addonTable.Locales.RAID_MARKER,
     kind = "markers",
     default = {

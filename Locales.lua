@@ -150,6 +150,7 @@ L["CANNOT_INTERRUPT"] = "Cannot Interrupt"
 L["CAST"] = "Cast"
 L["ELITE"] = "Elite"
 L["RARE"] = "Rare"
+L["PVP"] = "PvP"
 L["RAID_MARKER"] = "Raid Marker"
 
 L["THIS_WILL_OVERWRITE_STYLE_CUSTOM"] = "This will overwrite style \"Custom\". Continue?"

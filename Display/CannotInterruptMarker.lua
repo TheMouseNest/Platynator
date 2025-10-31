@@ -45,7 +45,7 @@ function addonTable.Display.CannotInterruptMarkerMixin:ApplyCasting()
     name, _, _, _, _, _, notInterruptible, _ = UnitChannelInfo(self.unit)
   end
 
-  if type(name) ~= "nil"then
+  if type(name) ~= "nil" then
     self.marker:SetShown(self:IsUninterruptible(notInterruptible))
     C_Timer.After(0, function()
       if self.unit then

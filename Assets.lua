@@ -129,6 +129,8 @@ addonTable.Assets.Markers = {
   ["normal/blizzard-rare-silver-star"] = {file = "Interface/AddOns/Platynator/Assets/Special/Markers/blizzard-rare-star.png", width = 100, height = 100, tag = "rare"},
 
   ["normal/blizzard-raid"] = {file = "Interface/TargetingFrame/UI-RaidTargetingIcons", preview = "Interface\\TargetingFrame\\UI-RaidTargetingIcon_1.blp", width = 150, height = 150, tag = "raid"},
+
+  ["normal/blizzard-pvp"] = {file = "Interface/AddOns/Platynator/Assets/Special/Markers/pvp.png", width = 150, height = 150, tag = "pvp"},
 }
 
 addonTable.Assets.SpecialBars = {

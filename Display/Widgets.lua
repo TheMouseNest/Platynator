@@ -349,6 +349,8 @@ function addonTable.Display.GetMarker(frame, parent)
       Mixin(frame, addonTable.Display.RaidMarkerMixin)
     elseif details.kind == "castIcon" then
       Mixin(frame, addonTable.Display.CastIconMarkerMixin)
+    elseif details.kind == "pvp" then
+      Mixin(frame, addonTable.Display.PvPMarkerMixin)
     else
       assert(false)
     end

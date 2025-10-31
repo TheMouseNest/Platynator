@@ -52,6 +52,7 @@ Display/CastIconMarker.lua
 Display/EliteMarker.lua
 Display/RareMarker.lua
 Display/RaidMarker.lua
+Display/PvPMarker.lua
 Display/Widgets.lua
 Display/LegacyBuffTemplate.xml
 
