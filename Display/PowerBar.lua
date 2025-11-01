@@ -78,7 +78,7 @@ specializationMonitor:RegisterEvent("UPDATE_SHAPESHIFT_FORM")
 specializationMonitor:SetScript("OnEvent", function()
   local specID
   if UnitClassBase("player") == "DRUID" then
-    if GetShapeshiftForm() == 2 then
+    if GetShapeshiftFormID() == 1 then
       specID = classToSpec["DRUID"]
     end
   elseif addonTable.Constants.IsRetail or addonTable.Constants.IsMists then
