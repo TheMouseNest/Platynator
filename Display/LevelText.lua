@@ -54,7 +54,7 @@ function addonTable.Display.LevelTextMixin:UpdateLevel()
       difficulty = "verydifficult"
     elseif  levelDiff >= -4 then
       difficulty = "difficult"
-    elseif  -levelDiff <= UnitQuestTrivialLevelRange("player") then
+    elseif  -levelDiff <= GetQuestGreenRange() then
       difficulty = "standard"
     else
       difficulty =  "trivial"
