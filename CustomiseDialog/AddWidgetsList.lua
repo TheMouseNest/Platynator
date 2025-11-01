@@ -164,7 +164,8 @@ addonTable.CustomiseDialog.DesignWidgets = {
       widthLimit = 124,
       color = GetColor("FFFFFF"),
       align = "CENTER",
-      truncate = "NONE",
+      shorten = "NONE",
+      truncate = false,
       applyClassColors = false,
       colors = {
         npc = {
@@ -186,7 +187,8 @@ addonTable.CustomiseDialog.DesignWidgets = {
       widthLimit = 124,
       color = GetColor("FFFFFF"),
       align = "CENTER",
-      truncate = "NONE",
+      shorten = "NONE",
+      truncate = false,
     },
   },
   {
@@ -199,7 +201,8 @@ addonTable.CustomiseDialog.DesignWidgets = {
       displayTypes = {"percentage"}, -- or "absolute", or both
       color = GetColor("FFFFFF"),
       align = "CENTER",
-      truncate = "NONE",
+      shorten = "NONE",
+      truncate = false,
     },
   },
   {
@@ -211,7 +214,8 @@ addonTable.CustomiseDialog.DesignWidgets = {
       anchor = {"TOPLEFT", -140, 50},
       color = GetColor("FFFFFF"),
       align = "CENTER",
-      truncate = "NONE",
+      shorten = "NONE",
+      truncate = false,
       colors = {
         npc = {
           friendly = GetColor("00FF00"),
@@ -231,7 +235,8 @@ addonTable.CustomiseDialog.DesignWidgets = {
       anchor = {"TOPLEFT", -140, 50},
       color = GetColor("FFFFFF"),
       align = "CENTER",
-      truncate = "NONE",
+      shorten = "NONE",
+      truncate = false,
       applyDifficultyColors = true,
       colors = {
         difficulty = {
@@ -254,7 +259,8 @@ addonTable.CustomiseDialog.DesignWidgets = {
       color = GetColor("FFFFFF"),
       applyClassColors = true,
       align = "CENTER",
-      truncate = "NONE",
+      shorten = "NONE",
+      truncate = false,
     },
   },
   {
@@ -267,7 +273,7 @@ addonTable.CustomiseDialog.DesignWidgets = {
       color = GetColor("FFFFFF"),
       applyClassColors = true,
       align = "CENTER",
-      truncate = "NONE",
+      shorten = "NONE",
     },
   },
   {

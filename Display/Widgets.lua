@@ -372,9 +372,9 @@ function addonTable.Display.GetText(frame, parent)
   frame.text:SetPoint("CENTER")
   frame.text:SetText(" ")
   hooksecurefunc(frame.text, "SetText", function()
-    if frame.details.truncate ~= "NONE" then
+    if frame.details.shorten ~= "NONE" then
       local width
-      if frame.details.truncate == "LEFT" then
+      if frame.details.shorten == "LAST" then
         frame.text:SetWidth(0)
         local testWidth = frame.text:GetWidth()
         while not frame.text:IsTruncated() and frame.text:GetNumLines() < 2 and testWidth > 1 do
@@ -385,7 +385,7 @@ function addonTable.Display.GetText(frame, parent)
           frame.text:SetWidth(testWidth + (frame.text:IsTruncated() and 15 * frame.details.scale or 0))
         end
         width = testWidth
-      elseif frame.details.truncate == "RIGHT" then
+      elseif frame.details.shorten == "FIRST" then
         frame.text:SetWidth(30 * frame.details.scale)
         while frame.text:IsTruncated() and (frame.details.widthLimit == nil or frame.text:GetWidth() < frame.details.widthLimit) do
           frame.text:SetWidth(frame.text:GetWidth() + 30 * frame.details.scale)
@@ -414,7 +414,7 @@ function addonTable.Display.GetText(frame, parent)
     frame.text:ClearAllPoints()
     frame.text:SetPoint(details.anchor[1] or "CENTER")
     frame.text:SetTextColor(details.color.r, details.color.g, details.color.b)
-    frame.text:SetWordWrap(true)
+    frame.text:SetWordWrap(not details.truncate)
     frame.text:SetNonSpaceWrap(false)
     frame.text:SetSpacing(0)
 
@@ -424,7 +424,7 @@ function addonTable.Display.GetText(frame, parent)
       frame.text:SetWidth(0)
     end
 
-    if details.truncate ~= "NONE" then
+    if details.shorten ~= "NONE" then
       if not frame.textWrapper then
         frame.textWrapper = CreateFrame("Frame", nil, frame)
         frame.textWrapper:SetClipsChildren(true)
@@ -434,7 +434,7 @@ function addonTable.Display.GetText(frame, parent)
       frame.text:SetSpacing(10)
 
       frame.text:ClearAllPoints()
-      local cropPoint = details.truncate == "LEFT" and "BOTTOM" or "TOP"
+      local cropPoint = details.shorten == "LAST" and "BOTTOM" or "TOP"
       frame.text:SetPoint(details.align == "CENTER" and cropPoint or cropPoint ..  details.align)
     end
 

@@ -361,16 +361,32 @@ addonTable.CustomiseDialog.WidgetsConfig = {
                 addonTable.Locales.FIRST_WORD,
               }, {
                 "NONE",
-                "LEFT",
-                "RIGHT",
+                "LAST",
+                "FIRST",
               }
             end,
             setter = function(details, value)
+              details.shorten = value
+              if value ~= "NONE" then
+                details.truncate = false
+              end
+            end,
+            getter = function(details)
+              return details.shorten
+            end
+          },
+          {
+            label = addonTable.Locales.TRUNCATE,
+            kind = "checkbox",
+            setter = function(details, value)
               details.truncate = value
+              if value then
+                details.shorten = "NONE"
+              end
             end,
             getter = function(details)
               return details.truncate
-            end
+            end,
           },
           {
             label = addonTable.Locales.COLOR,

@@ -158,6 +158,7 @@ L["DIFFICULT"] = "Difficult"
 L["STANDARD"] = "Standard"
 L["TRIVIAL"] = "Trivial"
 L["DIFFICULTY_COLORED"] = "Difficulty colored"
+L["TRUNCATE"] = "Truncate"
 
 L["THIS_WILL_OVERWRITE_STYLE_CUSTOM"] = "This will overwrite style \"Custom\". Continue?"
 L["ENTER_THE_NEW_STYLE_NAME"] = "Enter the new style name"

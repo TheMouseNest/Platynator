@@ -18,6 +18,12 @@ local function GetColor(rgb)
   return {r = color.r, g = color.g, b = color.b}
 end
 
+local truncateMap = {
+  ["NONE"] = "NONE",
+  ["LEFT"] = "LAST",
+  ["RIGHT"] = "FIRST",
+}
+
 function addonTable.Core.UpgradeDesign(design)
   design.appliesToAll = nil
 
@@ -28,8 +34,12 @@ function addonTable.Core.UpgradeDesign(design)
     if not text.align then
       text.align = "CENTER"
     end
+    if type(text.truncate) == "string" then
+      text.shorten = truncateMap[text.truncate]
+      text.truncate = false
+    end
     if text.truncate == nil then
-      text.truncate = "NONE"
+      text.truncate = false
     end
   end
   for _, marker in ipairs(design.markers) do
