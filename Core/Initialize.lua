@@ -111,6 +111,18 @@ function addonTable.Core.UpgradeDesign(design)
         },
       }
     end
+    if text.kind == "level" and (text.colors == nil or text.applyDifficultyColors == nil) then
+      text.applyDifficultyColors = true
+      text.colors = {
+        difficulty = {
+          impossible = {r = 1.00, g = 0.10, b = 0.10},
+          verydifficult = {r = 1.00, g = 0.50, b = 0.25},
+          difficult = {r = 1.00, g = 0.82, b = 0.00},
+          standard = {r = 0.25, g = 0.75, b = 0.25},
+          trivial = {r = 0.50, g = 0.50, b = 0.50},
+        }
+      }
+    end
   end
 
   if design.font.shadow == nil or design.font.flags ~= nil then

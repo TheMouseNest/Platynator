@@ -508,6 +508,74 @@ addonTable.CustomiseDialog.WidgetsConfig = {
         }
       }
     },
+    ["level"] = {
+      {
+        label = addonTable.Locales.COLORS,
+        entries = {
+          {
+            label = addonTable.Locales.DIFFICULTY_COLORED,
+            kind = "checkbox",
+            setter = function(details, value)
+              details.applyDifficultyColors = value
+            end,
+            getter = function(details)
+              return details.applyDifficultyColors
+            end,
+          },
+          { kind = "spacer" },
+          {
+            label = addonTable.Locales.TRIVIAL,
+            kind = "colorPicker",
+            setter = function(details, value)
+              details.colors.difficulty.trivial = value
+            end,
+            getter = function(details)
+              return details.colors.difficulty.trivial
+            end,
+          },
+          {
+            label = addonTable.Locales.STANDARD,
+            kind = "colorPicker",
+            setter = function(details, value)
+              details.colors.difficulty.standard = value
+            end,
+            getter = function(details)
+              return details.colors.difficulty.standard
+            end,
+          },
+          {
+            label = addonTable.Locales.DIFFICULT,
+            kind = "colorPicker",
+            setter = function(details, value)
+              details.colors.difficulty.difficult = value
+            end,
+            getter = function(details)
+              return details.colors.difficulty.difficult
+            end,
+          },
+          {
+            label = addonTable.Locales.VERY_DIFFICULT,
+            kind = "colorPicker",
+            setter = function(details, value)
+              details.colors.difficulty.verydifficult = value
+            end,
+            getter = function(details)
+              return details.colors.difficulty.verydifficult
+            end,
+          },
+          {
+            label = addonTable.Locales.IMPOSSIBLE,
+            kind = "colorPicker",
+            setter = function(details, value)
+              details.colors.difficulty.impossible = value
+            end,
+            getter = function(details)
+              return details.colors.difficulty.impossible
+            end,
+          },
+        }
+      }
+    },
   },
   ["markers"] = {
     ["*"] = {
