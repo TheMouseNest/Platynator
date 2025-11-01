@@ -1,7 +1,7 @@
 ---@class addonTablePlatynator
 local addonTable = select(2, ...)
 
-local crowdControlSpells, blacklistedBuffs
+local crowdControlSpells, blacklistedBuffs, whitelistedDebuffs
 
 addonTable.Display.AurasForNameplateMixin = {}
 function addonTable.Display.AurasForNameplateMixin:OnLoad()
@@ -45,7 +45,7 @@ function addonTable.Display.AurasForNameplateMixin:GetAuraKind(info)
     return "buffs"
   elseif crowdControlSpells[info.spellId] then
     return "crowdControl"
-  elseif info.isHarmful and (info.nameplateShowPersonal or addonTable.Constants.IsClassic) and info.sourceUnit == "player" then
+  elseif info.isHarmful and (info.nameplateShowPersonal or whitelistedDebuffs[info.spellId] or addonTable.Constants.IsClassic) and info.sourceUnit == "player" then
     return "debuffs"
   end
 end
@@ -265,4 +265,8 @@ end
 blacklistedBuffs = {
 [209859] = true,
 [206150] = true,
+}
+
+whitelistedDebuffs = {
+  [257284] = true, -- Hunter's Mark (Retail)
 }
