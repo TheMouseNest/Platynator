@@ -7,6 +7,14 @@ function addonTable.Display.CreatureTextMixin:SetUnit(unit)
   self.unit = unit
   if self.unit then
     self:RegisterUnitEvent("UNIT_NAME_UPDATE", self.unit)
+
+    -- *** NEW: respect Blizzard's name display settings ***
+    if UnitShouldDisplayName and not UnitShouldDisplayName(self.unit) then
+      self.text:SetText("") -- blank out name if Blizzard wouldn't show it
+      return
+    end
+    -- *** END NEW ***
+
     self.text:SetText(UnitName(self.unit))
     if self.details.applyClassColors then
       local c
@@ -35,5 +43,10 @@ function addonTable.Display.CreatureTextMixin:Strip()
 end
 
 function addonTable.Display.CreatureTextMixin:OnEvent(eventName, ...)
-  self.text:SetText(UnitName(self.unit))
+  -- Recheck Blizzard name visibility on name update
+  if UnitShouldDisplayName and not UnitShouldDisplayName(self.unit) then
+    self.text:SetText("")
+  else
+    self.text:SetText(UnitName(self.unit))
+  end
 end
