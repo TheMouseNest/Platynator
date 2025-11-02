@@ -7,7 +7,7 @@ function addonTable.Display.CreatureTextMixin:SetUnit(unit)
   self.unit = unit
   if self.unit then
     self:RegisterUnitEvent("UNIT_NAME_UPDATE", self.unit)
-    self.text:SetText(UnitName(self.unit))
+    -- ApplyTarget is assumed to run and update the name text
     if self.details.applyClassColors then
       local c
       if UnitIsPlayer(self.unit) then
@@ -25,8 +25,20 @@ function addonTable.Display.CreatureTextMixin:SetUnit(unit)
       end
       self.text:SetTextColor(c.r, c.g, c.b)
     end
+
+    self.rawText = UnitName(self.unit)
+    self.targetRequired = false
   else
     self:Strip()
+  end
+end
+
+function addonTable.Display.CreatureTextMixin:UpdateText()
+  if UnitShouldDisplayName(self.unit) and (not self.targetRequired or UnitIsUnit("target", self.unit)) then
+    self.text:SetText(self.rawText)
+  else
+    self.targetRequired = true
+    self.text:SetText("")
   end
 end
 
@@ -37,5 +49,10 @@ function addonTable.Display.CreatureTextMixin:Strip()
 end
 
 function addonTable.Display.CreatureTextMixin:OnEvent(eventName, ...)
-  self.text:SetText(UnitName(self.unit))
+  self.rawText = UnitName(self.unit)
+  self:UpdateText()
+end
+
+function addonTable.Display.CreatureTextMixin:ApplyTarget()
+  self:UpdateText()
 end

@@ -18,6 +18,8 @@ local ApplyAnchor = addonTable.Display.ApplyAnchor
 local function InitBar(frame, details)
   if frame.Strip then
     frame:Strip()
+    frame.ApplyTarget = nil
+    frame.Strip = nil
   end
 
   ApplyAnchor(frame, details.anchor)
@@ -252,6 +254,8 @@ function addonTable.Display.GetPower(frame, parent)
   function frame:Init(details)
     if frame.Strip then
       frame:Strip()
+      frame.ApplyTarget = nil
+      frame.Strip = nil
     end
 
     ApplyAnchor(frame, details.anchor)
@@ -405,6 +409,8 @@ function addonTable.Display.GetText(frame, parent)
   function frame:Init(details)
     if frame.Strip then
       frame:Strip()
+      frame.ApplyTarget = nil
+      frame.Strip = nil
     end
 
     frame.details = details
