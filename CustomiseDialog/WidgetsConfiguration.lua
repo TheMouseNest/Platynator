@@ -241,6 +241,16 @@ addonTable.CustomiseDialog.WidgetsConfig = {
             end,
           },
           {
+            label = addonTable.Locales.UNFRIENDLY,
+            kind = "colorPicker",
+            setter = function(details, value)
+              details.colors.npc.unfriendly = value
+            end,
+            getter = function(details)
+              return details.colors.npc.unfriendly
+            end,
+          },
+          {
             label = addonTable.Locales.HOSTILE,
             kind = "colorPicker",
             setter = function(details, value)
@@ -475,6 +485,16 @@ addonTable.CustomiseDialog.WidgetsConfig = {
             end,
             getter = function(details)
               return details.colors.npc.neutral
+            end,
+          },
+          {
+            label = addonTable.Locales.UNFRIENDLY,
+            kind = "colorPicker",
+            setter = function(details, value)
+              details.colors.npc.unfriendly = value
+            end,
+            getter = function(details)
+              return details.colors.npc.unfriendly
             end,
           },
           {

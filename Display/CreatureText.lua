@@ -14,6 +14,8 @@ function addonTable.Display.CreatureTextMixin:SetUnit(unit)
         c = RAID_CLASS_COLORS[UnitClassBase(self.unit)]
       elseif addonTable.Display.Utilities.IsNeutralUnit(self.unit) then
         c = self.details.colors.npc.neutral
+      elseif addonTable.Display.Utilities.IsUnfriendlyUnit(self.unit) then
+        c = self.details.colors.npc.unfriendly
       elseif UnitIsFriend("player", self.unit) then
         c = self.details.colors.npc.friendly
       elseif UnitIsTapDenied(self.unit) then

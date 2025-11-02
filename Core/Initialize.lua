@@ -102,6 +102,9 @@ function addonTable.Core.UpgradeDesign(design)
       local isNarrow = mode == addonTable.Assets.Mode.Percent50
       bar.absorb = {asset = isNarrow and "narrow/blizzard-absorb" or "wide/blizzard-absorb", color = {r = 1, g = 1, b = 1}}
     end
+    if bar.kind == "health" and not bar.colors.npc.unfriendly then
+      bar.colors.npc.unfriendly = GetColor("ff8100")
+    end
     if bar.kind == "cast" and bar.colors.interrupted == nil then
       bar.colors.interrupted = GetColor("FC36E0")
     end
@@ -120,6 +123,9 @@ function addonTable.Core.UpgradeDesign(design)
           tapped = GetColor("6E6E6E"),
         },
       }
+    end
+    if text.kind == "creatureName" and not text.colors.npc.unfriendly then
+      text.colors.npc.unfriendly = GetColor("ff8100")
     end
     if text.kind == "level" and (text.colors == nil or text.applyDifficultyColors == nil) then
       text.applyDifficultyColors = true

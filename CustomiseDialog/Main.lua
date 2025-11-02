@@ -581,7 +581,7 @@ function addonTable.CustomiseDialog.Toggle()
   frame:SetToplevel(true)
   customisers[addonTable.Config.Get(addonTable.Config.Options.CURRENT_SKIN)] = frame
   table.insert(UISpecialFrames, frame:GetName())
-  frame:SetSize(600, 790)
+  frame:SetSize(600, 830)
   frame:SetPoint("CENTER")
   frame:Raise()
 

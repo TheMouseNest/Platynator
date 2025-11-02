@@ -44,6 +44,7 @@ function addonTable.Display.ManagerMixin:OnLoad()
 
   self:RegisterUnitEvent("UNIT_POWER_UPDATE", "player")
   self:RegisterEvent("RUNE_POWER_UPDATE")
+  self:RegisterEvent("UNIT_THREAT_LIST_UPDATE")
 
   NamePlateDriverFrame:UnregisterEvent("DISPLAY_SIZE_CHANGED")
   if not addonTable.Constants.IsMidnight then
@@ -244,40 +245,48 @@ function addonTable.Display.ManagerMixin:PositionBuffs(display)
   end
 end
 
+function addonTable.Display.ManagerMixin:Install(unit, nameplate)
+  local nameplate = C_NamePlate.GetNamePlateForUnit(unit, issecure())
+  -- NOTE: the nameplate _name_ does not correspond to the unit
+  if nameplate and nameplate.UnitFrame and not UnitIsUnit("player", unit) then
+    local newDisplay
+    -- Necesary check on friends in case its a player being mind controlled
+    if (UnitIsFriend("player", unit) and not UnitCanAttack("player", unit)) or not UnitCanAttack("player", unit) then
+      newDisplay = self.friendDisplayPool:Acquire()
+    else
+      newDisplay = self.enemyDisplayPool:Acquire()
+    end
+    self.nameplateDisplays[unit] = newDisplay
+    newDisplay:Install(nameplate)
+    if newDisplay.styleIndex ~= self.styleIndex then
+      newDisplay:InitializeWidgets(addonTable.Core.GetDesign(newDisplay.kind))
+      newDisplay.styleIndex = self.styleIndex
+    end
+    newDisplay:SetUnit(unit)
+    self:PositionBuffs(newDisplay)
+  end
+end
+
+function addonTable.Display.ManagerMixin:Uninstall(unit)
+  local display = self.nameplateDisplays[unit]
+  if display then
+    display:SetUnit(nil)
+    if display.kind == "friend" then
+      self.friendDisplayPool:Release(display)
+    else
+      self.enemyDisplayPool:Release(display)
+    end
+    self.nameplateDisplays[unit] = nil
+  end
+end
+
 function addonTable.Display.ManagerMixin:OnEvent(eventName, ...)
   if eventName == "NAME_PLATE_UNIT_ADDED" then
     local unit = ...
-    local nameplate = C_NamePlate.GetNamePlateForUnit(unit, issecure())
-    -- NOTE: the nameplate _name_ does not correspond to the unit
-    if nameplate and nameplate.UnitFrame and not UnitIsUnit("player", unit) then
-      local newDisplay
-      -- Necesary check on friends in case its a player being mind controlled
-      if (UnitIsFriend("player", unit) and not UnitCanAttack("player", unit)) or not UnitCanAttack("player", unit) then
-        newDisplay = self.friendDisplayPool:Acquire()
-      else
-        newDisplay = self.enemyDisplayPool:Acquire()
-      end
-      self.nameplateDisplays[unit] = newDisplay
-      newDisplay:Install(nameplate)
-      if newDisplay.styleIndex ~= self.styleIndex then
-        newDisplay:InitializeWidgets(addonTable.Core.GetDesign(newDisplay.kind))
-        newDisplay.styleIndex = self.styleIndex
-      end
-      newDisplay:SetUnit(unit)
-      self:PositionBuffs(newDisplay)
-    end
+    self:Install(unit)
   elseif  eventName == "NAME_PLATE_UNIT_REMOVED" then
     local unit = ...
-    local display = self.nameplateDisplays[unit]
-    if display then
-      display:SetUnit(nil)
-      if display.kind == "friend" then
-        self.friendDisplayPool:Release(display)
-      else
-        self.enemyDisplayPool:Release(display)
-      end
-      self.nameplateDisplays[unit] = nil
-    end
+    self:Uninstall(unit)
   elseif eventName == "PLAYER_TARGET_CHANGED" then
     if self.lastTarget and (not self.lastTarget.unit or UnitExists(self.lastTarget.unit)) then
       self.lastTarget:UpdateForTarget()
@@ -308,6 +317,13 @@ function addonTable.Display.ManagerMixin:OnEvent(eventName, ...)
       self.lastTarget:UpdateForTarget()
     else
       self.lastTarget = nil
+    end
+  elseif eventName == "UNIT_THREAT_LIST_UPDATE" then
+    local unit = ...
+    local display = self.nameplateDisplays[unit]
+    if display and ((display.kind == "friend" and UnitCanAttack("player", unit)) or (display.kind == "enemy" and not UnitCanAttack("player", unit))) then
+      self:Uninstall(unit)
+      self:Install(unit, nameplate)
     end
   elseif eventName == "VARIABLES_LOADED" then
     if addonTable.Constants.IsMidnight then
