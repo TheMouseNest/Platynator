@@ -382,7 +382,8 @@ function addonTable.Display.GetText(frame, parent)
           frame.text:SetWidth(testWidth)
         end
         if frame.text:IsTruncated() then
-          frame.text:SetWidth(testWidth + 15 * frame.details.scale)
+          testWidth = frame.text:GetNumLines() >= 2 and testWidth + 15 * frame.details.scale or frame.details.widthLimit
+          frame.text:SetWidth(testWidth)
         end
         width = testWidth
       elseif frame.details.shorten == "FIRST" then
