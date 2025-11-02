@@ -386,7 +386,7 @@ function addonTable.Display.GetText(frame, parent)
           frame.text:SetWidth(testWidth)
         end
         if frame.text:IsTruncated() then
-          testWidth = frame.text:GetNumLines() >= 2 and testWidth + 15 * frame.details.scale or frame.details.widthLimit
+          testWidth = frame.details.widthLimit
           frame.text:SetWidth(testWidth)
         end
         width = testWidth
@@ -396,7 +396,7 @@ function addonTable.Display.GetText(frame, parent)
           frame.text:SetWidth(frame.text:GetWidth() + 30 * frame.details.scale)
         end
       end
-      width = frame.details.widthLimit > 0 and frame.details.widthLimit or width or frame.text:GetWidth()
+      width = frame.details.widthLimit > 0 and frame.details.widthLimit or width > 0 and width or frame.text:GetWidth()
       frame.textWrapper:SetSize(width, frame.text:GetLineHeight() * 1.02)
 
       frame:SetSize(width, frame.text:GetLineHeight())
