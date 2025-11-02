@@ -60,7 +60,8 @@ function addonTable.Display.GuildTextMixin:UpdateText()
 end
 
 function addonTable.Display.GuildTextMixin:Strip()
-  self.text:SetText("")
+  self.rawText = nil
+  self.targetRequired = nil
   self:UnregisterAllEvents()
 end
 

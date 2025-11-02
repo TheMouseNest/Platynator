@@ -45,6 +45,8 @@ end
 function addonTable.Display.CreatureTextMixin:Strip()
   local c = self.details.color
   self.text:SetTextColor(c.r, c.g, c.b)
+  self.rawText = nil
+  self.targetRequired = nil
   self:UnregisterAllEvents()
 end
 
