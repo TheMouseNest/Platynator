@@ -3,11 +3,36 @@ local addonTable = select(2, ...)
 
 addonTable.Display.CreatureTextMixin = {}
 
+-- Helper to decide when to respect Blizzard's name visibility rules
+local function ShouldRespectBlizzardFilter(unit)
+  if not unit or UnitIsPlayer(unit) then return false end
+
+  local reaction = UnitReaction("player", unit)
+  if not reaction then return true end
+
+  -- Hostile: always show
+  if reaction <= 3 then
+    return false
+  end
+
+  -- Neutral (reaction == 4): obey Blizzard for peaceful units only
+  if reaction == 4 then
+    if UnitCanAttack("player", unit) then
+      return false -- aggressive neutral
+    else
+      return true  -- peaceful neutral → follow Blizzard
+    end
+  end
+
+  -- Friendly: always follow Blizzard
+  return true
+end
+
 function addonTable.Display.CreatureTextMixin:SetUnit(unit)
   self.unit = unit
   if self.unit then
     self:RegisterUnitEvent("UNIT_NAME_UPDATE", self.unit)
-    -- ApplyTarget is assumed to run and update the name text
+
     if self.details.applyClassColors then
       local c
       if UnitIsPlayer(self.unit) then
@@ -34,7 +59,14 @@ function addonTable.Display.CreatureTextMixin:SetUnit(unit)
 end
 
 function addonTable.Display.CreatureTextMixin:UpdateText()
-  if UnitShouldDisplayName(self.unit) and (not self.targetRequired or UnitIsUnit("target", self.unit)) then
+  if not self.unit then return end
+
+  -- Apply hybrid rule: only hide if Blizzard says so *and* this unit type should obey that rule
+  local respectFilter = ShouldRespectBlizzardFilter(self.unit)
+  local showByBlizzard = UnitShouldDisplayName(self.unit)
+
+  if (not respectFilter or showByBlizzard)
+     and (not self.targetRequired or UnitIsUnit("target", self.unit)) then
     self.text:SetText(self.rawText)
   else
     self.targetRequired = true
