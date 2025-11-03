@@ -392,7 +392,7 @@ function addonTable.Display.GetText(frame, parent)
           frame.text:SetWidth(frame.text:GetWidth() + 30 * frame.details.scale)
         end
       end
-      width = frame.details.widthLimit > 0 and frame.details.widthLimit or width > 0 and width or frame.text:GetWidth()
+      width = frame.details.widthLimit and frame.details.widthLimit > 0 and frame.details.widthLimit or width and width > 0 and width or frame.text:GetWidth()
       frame.textWrapper:SetSize(width, frame.text:GetLineHeight() * 1.02)
 
       frame:SetSize(width, frame.text:GetLineHeight())
