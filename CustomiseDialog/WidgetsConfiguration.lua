@@ -127,10 +127,10 @@ addonTable.CustomiseDialog.WidgetsConfig = {
             kind = "dropdown",
             getInitData = function(details)
               local height = addonTable.Assets.BarBorders[details.border.asset].mode
-              return GetLabelsValues(addonTable.Assets.BarBorders, function(asset) return asset.mode == height or asset.mode == addonTable.Assets.Mode.Special end)
+              return GetLabelsValues(addonTable.Assets.BarBorders, function(asset) return asset.mode == height or (height == addonTable.Assets.Mode.Special and asset.mode == addonTable.Assets.Mode.Percent100) or asset.mode == addonTable.Assets.Mode.Special end)
             end,
             setter = function(details, value)
-              if addonTable.Assets.BarBackgrounds[details.background.asset].mode == addonTable.Assets.Mode.Special then
+              if addonTable.Assets.BarBorders[details.border.asset].mode == addonTable.Assets.Mode.Special then
                 local design = addonTable.Core.GetDesignByName("_squirrel")
                 details.background.asset = design.bars[1].background.asset
                 details.foreground.asset = design.bars[1].foreground.asset
