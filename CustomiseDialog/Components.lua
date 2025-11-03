@@ -107,7 +107,7 @@ function addonTable.CustomiseDialog.Components.GetBasicDropdown(parent, labelTex
   return frame
 end
 
-function addonTable.CustomiseDialog.Components.GetSlider(parent, label, min, max, valuePattern, callback)
+function addonTable.CustomiseDialog.Components.GetSlider(parent, label, min, max, formatter, callback)
   local holder = CreateFrame("Frame", nil, parent)
   holder:SetHeight(40)
   holder:SetPoint("LEFT", parent, "LEFT", 30, 0)
@@ -125,7 +125,7 @@ function addonTable.CustomiseDialog.Components.GetSlider(parent, label, min, max
   holder.Slider:SetHeight(20)
   holder.Slider:Init(max, min, max, max - min, {
     [MinimalSliderWithSteppersMixin.Label.Right]  = CreateMinimalSliderFormatter(MinimalSliderWithSteppersMixin.Label.Right, function(value)
-      return WHITE_FONT_COLOR:WrapTextInColorCode(valuePattern:format(value))
+      return WHITE_FONT_COLOR:WrapTextInColorCode(formatter(value))
     end)
   })
 

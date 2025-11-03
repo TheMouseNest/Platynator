@@ -1,7 +1,7 @@
 ---@class addonTablePlatynator
 local addonTable = select(2, ...)
 
-local function GetLabelsValues(allAssets, filter)
+local function GetLabelsValues(allAssets, filter, showHeight)
   local labels, values = {}, {}
 
   local allKeys = GetKeysArray(allAssets)
@@ -37,7 +37,7 @@ local function GetLabelsValues(allAssets, filter)
       end
       if details.mode == addonTable.Assets.Mode.Special then
         text = text .. " " .. addonTable.Locales.SPECIAL_BRACKETS
-      elseif details.mode ~= nil then
+      elseif details.mode ~= nil and showHeight then
         text = text .. " " .. addonTable.Locales.PERCENT_BRACKETS:format(details.mode)
       end
 
@@ -74,10 +74,60 @@ addonTable.CustomiseDialog.WidgetsConfig = {
             end,
           },
           {
+            label = addonTable.Locales.HEIGHT,
+            kind = "slider",
+            min = 1, max = 4,
+            formatter = function(val)
+              return ({"50%", "75%", "100%", "200%"})[val] or UNKNOWN
+            end,
+            setter = function(details, value)
+              local newMode = ({
+                addonTable.Assets.Mode.Percent50,
+                addonTable.Assets.Mode.Percent75,
+                addonTable.Assets.Mode.Percent100,
+                addonTable.Assets.Mode.Percent200,
+              })[value] 
+
+              local asset = addonTable.Assets.BarBorders[details.border.asset]
+              local mode = asset.mode
+              local tag = asset.tag
+              if mode ~= addonTable.Assets.Mode.Special then
+                for key, alt in pairs(addonTable.Assets.BarBorders) do
+                  if alt.tag == tag and alt.mode == newMode then
+                    details.border.asset = key
+                    return
+                  end
+                end
+              end
+
+              for key, alt in pairs(addonTable.Assets.BarBorders) do
+                if alt.tag == "soft" and alt.mode == newMode then
+                  details.border.asset = key
+                  break
+                end
+              end
+              if mode == addonTable.Assets.Mode.Special then
+                details.background.asset = "wide/bevelled-grey"
+                details.foreground.asset = "wide/bevelled"
+              end
+            end,
+            getter = function(details)
+              local mode = addonTable.Assets.BarBorders[details.border.asset].mode
+              assert(mode)
+              return tIndexOf({
+                addonTable.Assets.Mode.Percent50,
+                addonTable.Assets.Mode.Percent75,
+                addonTable.Assets.Mode.Percent100,
+                addonTable.Assets.Mode.Percent200,
+              }, mode) or 3
+            end,
+          },
+          {
             label = addonTable.Locales.BORDER,
             kind = "dropdown",
-            getInitData = function()
-              return GetLabelsValues(addonTable.Assets.BarBorders)
+            getInitData = function(details)
+              local height = addonTable.Assets.BarBorders[details.border.asset].mode
+              return GetLabelsValues(addonTable.Assets.BarBorders, function(asset) return asset.mode == height or asset.mode == addonTable.Assets.Mode.Special end)
             end,
             setter = function(details, value)
               if addonTable.Assets.BarBackgrounds[details.background.asset].mode == addonTable.Assets.Mode.Special then
@@ -109,7 +159,7 @@ addonTable.CustomiseDialog.WidgetsConfig = {
             label = addonTable.Locales.FOREGROUND,
             kind = "dropdown",
             getInitData = function()
-              return GetLabelsValues(addonTable.Assets.BarBackgrounds)
+              return GetLabelsValues(addonTable.Assets.BarBackgrounds, nil, true)
             end,
             setter = function(details, value)
               if addonTable.Assets.BarBackgrounds[details.foreground.asset].mode == addonTable.Assets.Mode.Special then
@@ -131,7 +181,7 @@ addonTable.CustomiseDialog.WidgetsConfig = {
             label = addonTable.Locales.BACKGROUND,
             kind = "dropdown",
             getInitData = function()
-              return GetLabelsValues(addonTable.Assets.BarBackgrounds)
+              return GetLabelsValues(addonTable.Assets.BarBackgrounds, nil, true)
             end,
             setter = function(details, value)
               if addonTable.Assets.BarBackgrounds[details.background.asset].mode == addonTable.Assets.Mode.Special then
@@ -718,7 +768,7 @@ addonTable.CustomiseDialog.WidgetsConfig = {
             label = addonTable.Locales.VISUAL,
             kind = "dropdown",
             getInitData = function()
-              return GetLabelsValues(addonTable.Assets.Highlights)
+              return GetLabelsValues(addonTable.Assets.Highlights, nil, true)
             end,
             setter = function(details, value)
               details.asset = value

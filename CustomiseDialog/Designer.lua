@@ -18,7 +18,7 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
   table.insert(allFrames, styleDropdown)
 
   do
-    local globalScale = addonTable.CustomiseDialog.Components.GetSlider(container, addonTable.Locales.GLOBAL_SCALE, 1, 300, "%d%%", function(value)
+    local globalScale = addonTable.CustomiseDialog.Components.GetSlider(container, addonTable.Locales.GLOBAL_SCALE, 1, 300, function(val) return ("%d%%"):format(val) end, function(value)
       addonTable.Config.Set(addonTable.Config.Options.GLOBAL_SCALE, value/100)
     end)
     globalScale:SetValue(addonTable.Config.Get(addonTable.Config.Options.GLOBAL_SCALE) * 100)
@@ -578,7 +578,11 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
           return e.getter(parent.details)
         end
         if e.kind == "slider" then
-          frame = addonTable.CustomiseDialog.Components.GetSlider(parent, e.label, e.min, e.max, e.valuePattern, Setter)
+          if e.valuePattern then
+            frame = addonTable.CustomiseDialog.Components.GetSlider(parent, e.label, e.min, e.max, function(val) return e.valuePattern:format(val) end, Setter)
+          else
+            frame = addonTable.CustomiseDialog.Components.GetSlider(parent, e.label, e.min, e.max, e.formatter, Setter)
+          end
         elseif e.kind == "dropdown" then
           frame = addonTable.CustomiseDialog.Components.GetBasicDropdown(parent, e.label, function(value)
             if not parent.details then

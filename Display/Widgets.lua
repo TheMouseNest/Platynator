@@ -46,7 +46,7 @@ local function InitBar(frame, details)
 
   local backgroundDetails = addonTable.Assets.BarBackgrounds[details.background.asset]
   frame.background:SetTexture(backgroundDetails.file)
-  frame.background:SetSize(backgroundDetails.width * details.scale, backgroundDetails.height * details.scale)
+  frame.background:SetSize(width * details.scale, height * details.scale)
   frame.background:SetAlpha(details.background.alpha)
   frame.background:SetVertexColor(1, 1, 1)
   local borderDetails = addonTable.Assets.BarBorders[details.border.asset]
