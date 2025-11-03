@@ -34,27 +34,28 @@ end
 
 function addonTable.Display.HealthBarMixin:UpdateColor()
   local threat = UnitThreatSituation("player", self.unit)
+  local inInstance = IsInInstance()
   if UnitIsPlayer(self.unit) then
     local c = RAID_CLASS_COLORS[UnitClassBase(self.unit)]
     self:SetHealthColor(c)
   elseif threat ~= nil then
     self:ApplyThreat(threat)
-  elseif addonTable.Display.Utilities.IsNeutralUnit(self.unit) then
+  elseif addonTable.Display.Utilities.IsNeutralUnit(self.unit) and (not inInstance or not UnitAffectingCombat(self.unit)) then
     local c = self.details.colors.npc.neutral
     self:SetHealthColor(c)
   -- Reputation unfriendly, unable to interact, attack, etc.
-  elseif addonTable.Display.Utilities.IsUnfriendlyUnit(self.unit) then
+  elseif addonTable.Display.Utilities.IsUnfriendlyUnit(self.unit) and (not inInstance or not UnitAffectingCombat(self.unit)) then
     local c = self.details.colors.npc.unfriendly
     self:SetHealthColor(c)
   elseif UnitIsFriend("player", self.unit) then
     local c = self.details.colors.npc.friendly
     self:SetHealthColor(c)
   -- Tapped (no xp) unit
-  elseif UnitIsTapDenied(self.unit) and UnitCanAttack("player", self.unit) then
+  elseif UnitIsTapDenied(self.unit) and UnitCanAttack("player", self.unit) and (not inInstance or not UnitAffectingCombat(self.unit)) then
     local c = self.details.colors.npc.tapped
     self:SetHealthColor(c)
   -- Enemy
-  elseif not UnitCanAttack("player", self.unit) or not self.details.aggroColoursOnHostiles then
+  elseif (not UnitCanAttack("player", self.unit) or not self.details.aggroColoursOnHostiles) and (not inInstance or not UnitAffectingCombat(self.unit)) then
     local c = self.details.colors.npc.hostile
     self:SetHealthColor(c)
   else
