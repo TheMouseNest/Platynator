@@ -46,10 +46,6 @@ function addonTable.Display.ManagerMixin:OnLoad()
   self:RegisterEvent("RUNE_POWER_UPDATE")
   self:RegisterEvent("UNIT_THREAT_LIST_UPDATE")
 
-  if not addonTable.Constants.IsMidnight then
-    C_NamePlate.SetNamePlateFriendlyClickThrough(true)
-  end
-
   NamePlateDriverFrame:UnregisterEvent("DISPLAY_SIZE_CHANGED")
   if not addonTable.Constants.IsMidnight then
     NamePlateDriverFrame:UnregisterEvent("CVAR_UPDATE")
@@ -123,7 +119,6 @@ function addonTable.Display.ManagerMixin:OnLoad()
         UF.HitTestFrame:ClearAllPoints()
         UF.HitTestFrame:SetPoint("TOPLEFT", UF.HealthBarsContainer.healthBar)
         UF.HitTestFrame:SetPoint("BOTTOMRIGHT", UF.HealthBarsContainer.healthBar)
-        UF.HitTestFrame:Show()
         UF.AurasFrame:SetParent(UF)
         UF.AurasFrame:SetIgnoreParentAlpha(false)
         UF.AurasFrame:SetIgnoreParentScale(false)
@@ -260,9 +255,6 @@ function addonTable.Display.ManagerMixin:Install(unit, nameplate)
       newDisplay = self.friendDisplayPool:Acquire()
     else
       newDisplay = self.enemyDisplayPool:Acquire()
-    end
-    if addonTable.Constants.IsMidnight then
-      nameplate.UnitFrame.HitTestFrame:SetShown(newDisplay.kind ~= "friend")
     end
     self.nameplateDisplays[unit] = newDisplay
     newDisplay:Install(nameplate)
