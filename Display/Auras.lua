@@ -159,7 +159,7 @@ function addonTable.Display.AurasForNameplateMixin:SetCrowdControlCallback(callb
   self.OnCrowdControlUpdate = callback
 end
 
- crowdControlSpells = {
+crowdControlSpells = {
 [377048] = true,
 [221562] = true,
 [31935] = true,
@@ -205,6 +205,7 @@ end
 [316593] = true,
 [24394] = true,
 [408] = true,
+[8643] = true,
 [355689] = true,
 [119381] = true,
 [305485] = true,
