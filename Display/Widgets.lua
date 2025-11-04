@@ -382,7 +382,7 @@ function addonTable.Display.GetText(frame, parent)
           frame.text:SetWidth(testWidth)
         end
         if frame.text:IsTruncated() then
-          testWidth = frame.details.widthLimit
+          testWidth = frame.details.widthLimit or 0
           frame.text:SetWidth(testWidth)
         end
         width = testWidth
@@ -440,6 +440,9 @@ function addonTable.Display.GetText(frame, parent)
     end
 
     frame.text:SetJustifyV("BOTTOM")
+    if details.align ~= frame.text:GetJustifyH() then
+      frame.text:SetText(" ")
+    end
     frame.text:SetJustifyH(details.align)
     frame.text:SetTextScale(details.scale)
 
