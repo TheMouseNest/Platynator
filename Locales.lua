@@ -120,6 +120,7 @@ L["HARE"] = "Hare"
 L["HEDGEHOG"] = "Hedgehog"
 L["BLIZZARD"] = "Blizzard"
 L["BLIZZARD_CLASSIC"] = "Blizzard Classic"
+L["NAME_ONLY"] = "Name Only"
 L["CUSTOM"] = "Custom"
 L["SAVE_AS"] = "Save as"
 
