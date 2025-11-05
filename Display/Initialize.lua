@@ -42,6 +42,8 @@ function addonTable.Display.ManagerMixin:OnLoad()
   self:RegisterEvent("PLAYER_SOFT_INTERACT_CHANGED")
   self:RegisterEvent("UPDATE_MOUSEOVER_UNIT")
 
+  self:RegisterEvent("PLAYER_SOFT_INTERACT_CHANGED")
+
   self:RegisterUnitEvent("UNIT_POWER_UPDATE", "player")
   self:RegisterEvent("RUNE_POWER_UPDATE")
   self:RegisterEvent("UNIT_THREAT_LIST_UPDATE")
@@ -177,6 +179,9 @@ function addonTable.Display.ManagerMixin:OnLoad()
           self:PositionBuffs(display)
           display:SetUnit(unit)
         end
+        if self.lastInteract and self.lastInteract.interactUnit then
+          self.lastInteract:UpdateSoftInteract()
+        end
       end)
     elseif state[addonTable.Constants.RefreshReason.Scale] or state[addonTable.Constants.RefreshReason.TargetBehaviour] then
       for _, display in pairs(self.nameplateDisplays) do
@@ -296,6 +301,8 @@ function addonTable.Display.ManagerMixin:OnEvent(eventName, ...)
       unit = "nameplate" .. i
       if UnitIsUnit(unit, "target") then
         break
+      else
+        unit = nil
       end
     end
     if self.nameplateDisplays[unit] then
@@ -304,12 +311,33 @@ function addonTable.Display.ManagerMixin:OnEvent(eventName, ...)
     else
       self.lastTarget = nil
     end
+  elseif eventName == "PLAYER_SOFT_INTERACT_CHANGED" then
+    if self.lastInteract and self.lastInteract.interactUnit then
+      self.lastInteract:UpdateSoftInteract()
+    end
+    local unit
+    for i = 1, 40 do
+      unit = "nameplate" .. i
+      if UnitIsUnit(unit, "softinteract") or UnitIsUnit(unit, "softenemy") or UnitIsUnit(unit, "softfriend") then
+        break
+      else
+        unit = nil
+      end
+    end
+    if self.nameplateDisplays[unit] then
+      self.lastInteract = self.nameplateDisplays[unit]
+      self.lastInteract:UpdateSoftInteract()
+    else
+      self.lastInteract = nil
+    end
   elseif eventName == "UNIT_POWER_UPDATE" or eventName == "RUNE_POWER_UPDATE" then
     local unit
     for i = 1, 40 do
       unit = "nameplate" .. i
       if UnitIsUnit(unit, "target") then
         break
+      else
+        unit = nil
       end
     end
     if self.nameplateDisplays[unit] then

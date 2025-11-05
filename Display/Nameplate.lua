@@ -225,13 +225,7 @@ function addonTable.Display.NameplateMixin:SetUnit(unit)
     self.casting = false
   end
 
-  if unit and UnitIsInteractable(unit) then
-    self.interactUnit = unit
-    self:UpdateSoftInteract()
-    self:RegisterEvent("PLAYER_SOFT_INTERACT_CHANGED")
-  else
-    self:UnregisterEvent("PLAYER_SOFT_INTERACT_CHANGED")
-  end
+  self.interactUnit = unit
 
   self:UpdateVisual()
 end
@@ -243,11 +237,6 @@ function addonTable.Display.NameplateMixin:UpdateCastingState()
 end
 
 function addonTable.Display.NameplateMixin:UpdateForTarget()
-  if self.interactUnit and not self.unit and UnitExists(self.interactUnit) and UnitIsUnit("target", self.interactUnit) then
-    self:SetUnit(self.interactUnit)
-    return
-  end
-
   if self.unit then
     for _, w in ipairs(self.widgets) do
       if w.ApplyTarget then
@@ -303,10 +292,6 @@ function addonTable.Display.NameplateMixin:UpdateSoftInteract()
   self.SoftTargetIcon:SetShown(hasCursorTexture)
 end
 function addonTable.Display.NameplateMixin:OnEvent(eventName)
-  if eventName == "PLAYER_SOFT_INTERACT_CHANGED" then
-    self:UpdateSoftInteract()
-  else
-    self:UpdateCastingState()
-    self:UpdateVisual()
-  end
+  self:UpdateCastingState()
+  self:UpdateVisual()
 end
