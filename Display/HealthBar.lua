@@ -38,6 +38,10 @@ function addonTable.Display.HealthBarMixin:UpdateColor()
   if UnitIsPlayer(self.unit) then
     local c = RAID_CLASS_COLORS[UnitClassBase(self.unit)]
     self:SetHealthColor(c)
+  -- Tapped (no xp) unit (forced color)
+  elseif UnitIsTapDenied(self.unit) and UnitCanAttack("player", self.unit) then
+    local c = self.details.colors.npc.tapped
+    self:SetHealthColor(c)
   elseif threat ~= nil then
     self:ApplyThreat(threat)
   elseif addonTable.Display.Utilities.IsNeutralUnit(self.unit) and (not inInstance or not UnitAffectingCombat(self.unit)) then
@@ -49,10 +53,6 @@ function addonTable.Display.HealthBarMixin:UpdateColor()
     self:SetHealthColor(c)
   elseif UnitIsFriend("player", self.unit) then
     local c = self.details.colors.npc.friendly
-    self:SetHealthColor(c)
-  -- Tapped (no xp) unit
-  elseif UnitIsTapDenied(self.unit) and UnitCanAttack("player", self.unit) and (not inInstance or not UnitAffectingCombat(self.unit)) then
-    local c = self.details.colors.npc.tapped
     self:SetHealthColor(c)
   -- Enemy
   elseif (not UnitCanAttack("player", self.unit) or not self.details.aggroColoursOnHostiles) and (not inInstance or not UnitAffectingCombat(self.unit)) then
