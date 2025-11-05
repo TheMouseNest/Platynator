@@ -182,6 +182,8 @@ local function SetStyle()
   if mapping["friend"] == mapping["enemy"] then
     mapping["friend"] = styleName
     mapping["enemy"] = styleName
+  elseif mapping["friend"] ~= styleName and mapping["enemy"] ~= styleName then
+    mapping["enemy"] = styleName
   end
   if styleName:match("^_") then
     local designs = addonTable.Config.Get(addonTable.Config.Options.DESIGNS)
