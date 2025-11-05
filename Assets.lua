@@ -100,14 +100,23 @@ addonTable.Assets.BarMasks = {
 }
 
 addonTable.Assets.Highlights = {
-  ["wide/outline"] = {file = "Interface/AddOns/Platynator/Assets/%s/Highlights/outline.png", width = 1030, height = 155, has4k = true, mode = mode.Percent100},
-  ["wide/outline-narrow"] = {file = "Interface/AddOns/Platynator/Assets/%s/Highlights/outline-narrow.png", width = 1030, height = 93, has4k = true, mode = mode.Percent50},
-  ["wide/glow"] = {file = "Interface/AddOns/Platynator/Assets/%s/Highlights/glow.png", width = 1472, height = 592, has4k = true, mode = mode.Percent100},
-  ["tall/soft-glow"] = {file = "Interface/AddOns/Platynator/Assets/%s/Highlights/soft-glow-tall.png", width = 1066, height = 324, has4k = true, mode = mode.Percent200},
-  ["wide/soft-glow"] = {file = "Interface/AddOns/Platynator/Assets/%s/Highlights/soft-glow.png", width = 1066, height = 193, has4k = true, mode = mode.Percent100},
-  ["wide/soft-glow-narrow"] = {file = "Interface/AddOns/Platynator/Assets/%s/Highlights/soft-glow-narrow.png", width = 1066, height = 123, has4k = true, mode = mode.Percent50},
-  ["wide/arrows"] = {file = "Interface/AddOns/Platynator/Assets/%s/Highlights/arrows.png", width = 1230, height = 164, has4k = true, mode = mode.Percent100},
-  ["wide/double-arrows"] = {file = "Interface/AddOns/Platynator/Assets/%s/Highlights/double-arrows.png", width = 1351, height = 173, has4k = true, mode = mode.Percent100},
+  ["200/outline"] = {file = "Interface/AddOns/Platynator/Assets/%s/Highlights/outline-200.png", width = 1030, height = 280, has4k = true, mode = mode.Percent200, tag = "outline"},
+  ["wide/outline"] = {file = "Interface/AddOns/Platynator/Assets/%s/Highlights/outline-100.png", width = 1030, height = 155, has4k = true, mode = mode.Percent100, tag = "outline"},
+  ["75/outline"] = {file = "Interface/AddOns/Platynator/Assets/%s/Highlights/outline-75.png", width = 1030, height = 125, has4k = true, mode = mode.Percent75, tag = "outline"},
+  ["wide/outline-narrow"] = {file = "Interface/AddOns/Platynator/Assets/%s/Highlights/outline-50.png", width = 1030, height = 93, has4k = true, mode = mode.Percent50, tag = "outline"},
+
+  ["200/glow"] = {file = "Interface/AddOns/Platynator/Assets/%s/Highlights/glow-100.png", width = 1588, height = 870, has4k = true, mode = mode.Percent200, tag = "glow"},
+  ["wide/glow"] = {file = "Interface/AddOns/Platynator/Assets/%s/Highlights/glow-100.png", width = 1563, height = 680, has4k = true, mode = mode.Percent100, tag = "glow"},
+  ["75/glow"] = {file = "Interface/AddOns/Platynator/Assets/%s/Highlights/glow-75.png", width = 1585, height = 628, has4k = true, mode = mode.Percent75, tag = "glow"},
+  ["50/glow"] = {file = "Interface/AddOns/Platynator/Assets/%s/Highlights/glow-50.png", width = 1610, height = 578, has4k = true, mode = mode.Percent50, tag = "glow"},
+
+  ["tall/soft-glow"] = {file = "Interface/AddOns/Platynator/Assets/%s/Highlights/soft-glow-200.png", width = 1066, height = 324, has4k = true, mode = mode.Percent200, tag = "soft-glow"},
+  ["wide/soft-glow"] = {file = "Interface/AddOns/Platynator/Assets/%s/Highlights/soft-glow-100.png", width = 1066, height = 193, has4k = true, mode = mode.Percent100, tag = "soft-glow"},
+  ["75/soft-glow"] = {file = "Interface/AddOns/Platynator/Assets/%s/Highlights/soft-glow-75.png", width = 1066, height = 160, has4k = true, mode = mode.Percent50, tag = "soft-glow"},
+  ["wide/soft-glow-narrow"] = {file = "Interface/AddOns/Platynator/Assets/%s/Highlights/soft-glow-50.png", width = 1066, height = 123, has4k = true, mode = mode.Percent50, tag = "soft-glow"},
+
+  ["wide/arrows"] = {file = "Interface/AddOns/Platynator/Assets/%s/Highlights/arrows.png", width = 1230, height = 164, has4k = true, mode = mode.Percent100, tag = "arrows"},
+  ["wide/double-arrows"] = {file = "Interface/AddOns/Platynator/Assets/%s/Highlights/double-arrows.png", width = 1351, height = 173, has4k = true, mode = mode.Percent100, tag = "arrows"},
 }
 
 addonTable.Assets.BarPositionHighlights = {

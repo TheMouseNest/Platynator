@@ -765,10 +765,56 @@ addonTable.CustomiseDialog.WidgetsConfig = {
             end,
           },
           {
+            label = addonTable.Locales.HEIGHT,
+            kind = "slider",
+            min = 1, max = 4,
+            formatter = function(val)
+              return ({"50%", "75%", "100%", "200%"})[val] or UNKNOWN
+            end,
+            setter = function(details, value)
+              local newMode = ({
+                addonTable.Assets.Mode.Percent50,
+                addonTable.Assets.Mode.Percent75,
+                addonTable.Assets.Mode.Percent100,
+                addonTable.Assets.Mode.Percent200,
+              })[value] 
+
+              local asset = addonTable.Assets.Highlights[details.asset]
+              local mode = asset.mode
+              local tag = asset.tag
+              if mode ~= addonTable.Assets.Mode.Special then
+                for key, alt in pairs(addonTable.Assets.Highlights) do
+                  if alt.tag == tag and alt.mode == newMode then
+                    details.asset = key
+                    return
+                  end
+                end
+              end
+
+              for key, alt in pairs(addonTable.Assets.Highlights) do
+                if alt.tag == "soft-glow" and alt.mode == newMode then
+                  details.asset = key
+                  break
+                end
+              end
+            end,
+            getter = function(details)
+              local mode = addonTable.Assets.Highlights[details.asset].mode
+              assert(mode)
+              return tIndexOf({
+                addonTable.Assets.Mode.Percent50,
+                addonTable.Assets.Mode.Percent75,
+                addonTable.Assets.Mode.Percent100,
+                addonTable.Assets.Mode.Percent200,
+              }, mode) or 3
+            end,
+          },
+          {
             label = addonTable.Locales.VISUAL,
             kind = "dropdown",
-            getInitData = function()
-              return GetLabelsValues(addonTable.Assets.Highlights, nil, true)
+            getInitData = function(details)
+              local height = addonTable.Assets.Highlights[details.asset].mode
+              return GetLabelsValues(addonTable.Assets.Highlights, function(asset) return asset.mode == height or (asset.tag == "arrows") end)
             end,
             setter = function(details, value)
               details.asset = value
