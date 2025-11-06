@@ -177,7 +177,7 @@ end
 function addonTable.Display.NameplateMixin:SetUnit(unit)
   self.SoftTargetIcon:Hide()
   self.interactUnit = nil
-  if unit and (not UnitNameplateShowsWidgetsOnly or not UnitNameplateShowsWidgetsOnly(unit)) and (not UnitIsUnit(unit, "softinteract") or UnitIsUnit(unit, "target")) then
+  if unit and (not UnitNameplateShowsWidgetsOnly or not UnitNameplateShowsWidgetsOnly(unit)) and UnitHealthMax(unit) > 0 then
     self.unit = unit
     self:Show()
     if addonTable.Constants.IsMidnight then
