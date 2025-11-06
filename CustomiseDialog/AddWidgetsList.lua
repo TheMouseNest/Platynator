@@ -319,7 +319,7 @@ addonTable.CustomiseDialog.DesignWidgets = {
     default = {
       kind = "elite",
       scale = 1 * 0.8,
-      asset = "special/blizzard-elite",
+      asset = "special/blizzard-elite-midnight",
       color = GetColor("ffffff"),
       anchor = {"TOPLEFT", -140, 50},
     },
@@ -330,7 +330,7 @@ addonTable.CustomiseDialog.DesignWidgets = {
     default = {
       kind = "rare",
       scale = 1,
-      asset = "normal/blizzard-rare",
+      asset = "normal/blizzard-rare-midnight",
       color = GetColor("ffffff"),
       anchor = {"TOPLEFT", -140, 50},
     },
