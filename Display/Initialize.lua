@@ -50,6 +50,7 @@ function addonTable.Display.ManagerMixin:OnLoad()
 
   NamePlateDriverFrame:UnregisterEvent("DISPLAY_SIZE_CHANGED")
   if not addonTable.Constants.IsMidnight then
+    C_NamePlate.SetNamePlateFriendlyClickThrough(true)
     NamePlateDriverFrame:UnregisterEvent("CVAR_UPDATE")
   end
 
