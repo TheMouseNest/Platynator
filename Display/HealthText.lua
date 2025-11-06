@@ -29,16 +29,15 @@ function addonTable.Display.HealthTextMixin:UpdateText()
   if UnitIsDeadOrGhost(self.unit) then
     self.text:SetText("0")
   else
-    local values = {percentage = "", absolute = ""}
+    local values = {
+      percentage = "",
+      absolute = AbbreviateNumbers(UnitHealth(self.unit)),
+    }
     local types = self.details.displayTypes 
-    if addonTable.Constants.IsMidnight then
-      --- XXX: Add in AbbreviateNumbers when Midnight alpha 4 comes out
-      values.absolute = BreakUpLargeNumbers(UnitHealth(self.unit))
+    if UnitHealthPercent then -- Midnight APIs
       values.percentage = string.format("%d%%", UnitHealthPercent(self.unit, false, true))
     else
-      local health = UnitHealth(self.unit)
-      values.absolute = AbbreviateNumbers(health)
-      values.percentage = math.ceil(health/UnitHealthMax(self.unit)*100) .. "%"
+      values.percentage = math.ceil(UnitHealth(self.unit)/UnitHealthMax(self.unit)*100) .. "%"
     end
     if #types == 2 then
       self.text:SetFormattedText("%s (%s)", values[types[1]], values[types[2]])
