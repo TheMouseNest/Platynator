@@ -32,6 +32,10 @@ function addonTable.Display.HealthBarMixin:SetHealthColor(c)
   self.marker:SetVertexColor(c.r, c.g, c.b)
 end
 
+local IsTapped = addonTable.Display.Utilities.IsTappedUnit
+local IsNeutral = addonTable.Display.Utilities.IsNeutralUnit
+local IsUnfriendly = addonTable.Display.Utilities.IsUnfriendlyUnit
+
 function addonTable.Display.HealthBarMixin:UpdateColor()
   local threat = UnitThreatSituation("player", self.unit)
   local inInstance = IsInInstance()
@@ -39,16 +43,16 @@ function addonTable.Display.HealthBarMixin:UpdateColor()
     local c = RAID_CLASS_COLORS[UnitClassBase(self.unit)]
     self:SetHealthColor(c)
   -- Tapped (no xp) unit (forced color)
-  elseif UnitIsTapDenied(self.unit) and UnitCanAttack("player", self.unit) then
+  elseif IsTapped(self.unit) then
     local c = self.details.colors.npc.tapped
     self:SetHealthColor(c)
   elseif threat ~= nil then
     self:ApplyThreat(threat)
-  elseif addonTable.Display.Utilities.IsNeutralUnit(self.unit) and (not inInstance or not UnitAffectingCombat(self.unit)) then
+  elseif IsNeutral(self.unit) and (not inInstance or not UnitAffectingCombat(self.unit)) then
     local c = self.details.colors.npc.neutral
     self:SetHealthColor(c)
   -- Reputation unfriendly, unable to interact, attack, etc.
-  elseif addonTable.Display.Utilities.IsUnfriendlyUnit(self.unit) and (not inInstance or not UnitAffectingCombat(self.unit)) then
+  elseif IsUnfriendly(self.unit) and (not inInstance or not UnitAffectingCombat(self.unit)) then
     local c = self.details.colors.npc.unfriendly
     self:SetHealthColor(c)
   elseif UnitIsFriend("player", self.unit) then
@@ -90,6 +94,9 @@ function addonTable.Display.HealthBarMixin:DoesOtherTankHaveAggro()
 end
 
 function addonTable.Display.HealthBarMixin:ApplyThreat(status)
+  if IsTapped(self.unit) then
+    return
+  end
   local role = self:GetRole()
   if (role == roleType.Tank and (status == 0 or status == nil) and not self:DoesOtherTankHaveAggro()) or (role ~= roleType.Tank and status == 3) then
     self:SetHealthColor(self.details.colors.threat.warning)
@@ -108,6 +115,7 @@ function addonTable.Display.HealthBarMixin:UpdateHealth()
   else
     self.statusBar:SetValue(UnitHealth(self.unit))
   end
+  self:UpdateColor()
 end
 
 function addonTable.Display.HealthBarMixin:OnEvent(eventName)

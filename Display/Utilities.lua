@@ -18,3 +18,7 @@ function addonTable.Display.Utilities.IsUnfriendlyUnit(unit)
     return UnitReaction("player", unit) == 3
   end
 end
+
+function addonTable.Display.Utilities.IsTappedUnit(unit)
+  return not UnitPlayerControlled(unit) and UnitIsTapDenied(unit)
+end
