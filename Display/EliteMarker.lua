@@ -19,7 +19,7 @@ function addonTable.Display.EliteMarkerMixin:SetUnit(unit)
   self.unit = unit
   if self.unit then
     local classification = UnitClassification(self.unit)
-    if classification == "elite" then
+    if classification == "elite" or classification == "worldboss" then
       self.marker:Show()
       self.marker:SetTexture(self.eliteTexture)
     elseif classification == "rareelite" then
