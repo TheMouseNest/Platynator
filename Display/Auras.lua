@@ -261,6 +261,7 @@ crowdControlSpells = {
 [451112] = true,
 [326450] = true,
 [117405] = true,
+[236077] = true,
 }
 
 blacklistedBuffs = {
