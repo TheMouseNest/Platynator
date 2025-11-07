@@ -48,13 +48,13 @@ function addonTable.Display.LevelTextMixin:UpdateLevel()
     end
   else
     local levelDiff = UnitLevel(self.unit) - UnitEffectiveLevel("player");
-    if  levelDiff >= 5 then
+    if levelDiff >= 5 then
       difficulty = "impossible"
-    elseif  levelDiff >= 3 then
+    elseif levelDiff >= 3 then
       difficulty = "verydifficult"
-    elseif  levelDiff >= -4 then
+    elseif levelDiff >= -2 then
       difficulty = "difficult"
-    elseif  -levelDiff <= GetQuestGreenRange() then
+    elseif -levelDiff <= GetQuestGreenRange() then
       difficulty = "standard"
     else
       difficulty =  "trivial"
