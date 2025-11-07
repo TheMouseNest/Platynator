@@ -18,6 +18,8 @@ local settings = {
 
   CLOSER_NAMEPLATES = {key = "closer_nameplates", default = true, refresh = {addonTable.Constants.RefreshReason.StackingBehaviour}},
   STACKING_NAMEPLATES = {key = "stacking_nameplates", default = true, refresh = {addonTable.Constants.RefreshReason.StackingBehaviour}},
+
+  SHOW_NAMEPLATES = {key = "show_nameplates", default = {npc = true, player = true, enemy = true}, refresh = {addonTable.Constants.RefreshReason.ShowBehaviour}}
 }
 
 addonTable.Config.RefreshType = {}

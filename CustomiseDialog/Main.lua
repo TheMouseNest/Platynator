@@ -246,24 +246,19 @@ local function SetupBehaviour(parent)
   local applyNameplatesDropdown = addonTable.CustomiseDialog.Components.GetBasicDropdown(container, addonTable.Locales.USE_NAMEPLATES_FOR)
   applyNameplatesDropdown:SetPoint("TOP", allFrames[#allFrames], "BOTTOM", 0, -30)
   do
-    local values, labels
+    local labels
+    local values = {
+      "player",
+      "npc",
+      "enemy",
+    }
     if C_CVar.GetCVarInfo("nameplateShowFriendlyPlayers") ~= nil then
-      values = {
-        {"nameplateShowFriendlyPlayers"},
-        {"nameplateShowFriendlyNpcs"},
-        {"nameplateShowEnemies"},
-      }
       labels = {
         addonTable.Locales.PLAYERS,
         addonTable.Locales.FRIENDLY_NPCS,
         addonTable.Locales.ENEMY_NPCS,
       }
     else
-      values = {
-        {"nameplateShowFriends"},
-        {"nameplateShowFriendlyNPCs", "nameplateShowFriends"},
-        {"nameplateShowEnemies"},
-      }
       labels = {
         addonTable.Locales.PLAYERS_AND_FRIENDS,
         addonTable.Locales.FRIENDLY_NPCS,
@@ -275,20 +270,14 @@ local function SetupBehaviour(parent)
     applyNameplatesDropdown.DropDown:SetupMenu(function(_, rootDescription)
       for index, l in ipairs(labels) do
         rootDescription:CreateCheckbox(l, function()
-          return GetCVarBool(values[index][1]) and (not values[index][2] or GetCVarBool(values[index][2]))
+          return addonTable.Config.Get(addonTable.Config.Options.SHOW_NAMEPLATES)[values[index]]
         end, function()
           if InCombatLockdown() then
             return
           end
-          local cvar = values[index][1]
-          local state = not (GetCVarBool(values[index][1]) and (not values[index][2] or GetCVarBool(values[index][2])))
-          C_CVar.SetCVar(cvar, state and "1" or "0")
-          if state then
-            C_CVar.SetCVar("nameplateShowAll", "1")
-            if values[index][2] then
-              C_CVar.SetCVar(values[index][2], "1")
-            end
-          end
+          local current = addonTable.Config.Get(addonTable.Config.Options.SHOW_NAMEPLATES)[values[index]]
+          addonTable.Config.Get(addonTable.Config.Options.SHOW_NAMEPLATES)[values[index]] = not current
+          addonTable.CallbackRegistry:TriggerEvent("RefreshStateChange", {[addonTable.Constants.RefreshReason.ShowBehaviour] = true})
         end)
         if index == 1 then
           rootDescription:CreateDivider()
@@ -299,8 +288,7 @@ local function SetupBehaviour(parent)
   table.insert(allFrames, applyNameplatesDropdown)
 
   if not addonTable.Constants.IsMidnight then
-    local stackingNameplatesCheckbox
-    stackingNameplatesCheckbox = addonTable.CustomiseDialog.Components.GetCheckbox(container, addonTable.Locales.STACKING_NAMEPLATES, 28, function(value)
+    local stackingNameplatesCheckbox = addonTable.CustomiseDialog.Components.GetCheckbox(container, addonTable.Locales.STACKING_NAMEPLATES, 28, function(value)
       if InCombatLockdown() then
         return
       end

@@ -190,6 +190,8 @@ function addonTable.Display.ManagerMixin:OnLoad()
       end
     elseif state[addonTable.Constants.RefreshReason.StackingBehaviour] then
       self:UpdateStacking()
+    elseif state[addonTable.Constants.RefreshReason.ShowBehaviour] then
+      self:UpdateShowState()
     end
   end)
 end
@@ -225,6 +227,45 @@ function addonTable.Display.ManagerMixin:UpdateStacking()
     end
 
     C_CVar.SetCVar("nameplateMotion", addonTable.Config.Get(addonTable.Config.Options.STACKING_NAMEPLATES) and "1" or "0")
+  end
+end
+
+function addonTable.Display.ManagerMixin:UpdateShowState()
+  if InCombatLockdown() then
+    self:RegisterCallback("PLAYER_REGEN_ENABLED")
+  end
+
+  local currentShow = addonTable.Config.Get(addonTable.Config.Options.SHOW_NAMEPLATES)
+
+  local values
+  if C_CVar.GetCVarInfo("nameplateShowFriendlyPlayers") ~= nil then
+    values = {
+      player = "nameplateShowFriendlyPlayers",
+      npc = "nameplateShowFriendlyNpcs",
+      enemy = "nameplateShowEnemies",
+    }
+  else
+    values = {
+      player = "nameplateShowFriends",
+      npc = "nameplateShowFriendlyNPCs",
+      enemy = "nameplateShowEnemies",
+    }
+
+    if self.oldShowState then
+      if currentShow.npc and not currentShow.player and not self.oldShowState.player then
+        currentShow.player = true
+      end
+      if not currentShow.player and self.oldShowState.player then
+        currentShow.npc = false
+      end
+    end
+
+    self.oldShowState = CopyTable(currentShow)
+  end
+
+  for key, state in pairs(currentShow) do
+    local newValue = state and "1" or "0"
+    C_CVar.SetCVar(values[key], newValue)
   end
 end
 
@@ -366,8 +407,10 @@ function addonTable.Display.ManagerMixin:OnEvent(eventName, ...)
     end
 
     self:UpdateStacking()
+    self:UpdateShowState()
   elseif eventName == "PLAYER_REGEN_ENABLED" then
     self:UnregisterEvent("PLAYER_REGEN_ENABLED")
     self:UpdateStacking()
+    self:UpdateShowState()
   end
 end
