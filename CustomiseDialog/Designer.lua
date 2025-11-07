@@ -523,7 +523,7 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
       if autoSelectedDetails then
         for index, w in ipairs(widgets) do
           if w.details == autoSelectedDetails then
-            selectionIndex = index
+            selectionIndexes = {index}
             break
           end
         end
@@ -660,7 +660,6 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
               nestedContainer.details = nil
               nestedContainer:Show()
               nestedContainer:UpdateOptions(details)
-              valid = true
             else
               nestedContainer:Hide()
             end

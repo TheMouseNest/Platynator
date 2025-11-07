@@ -7,7 +7,7 @@ function addonTable.Core.GetFontByDesign(design)
   local id = design.font.asset
   local outline = design.font.outline and "OUTLINE" or ""
   local shadow = design.font.shadow and "SHADOW" or ""
-  size = size or addonTable.Assets.Fonts[design.font.asset].size
+  local size = addonTable.Assets.Fonts[design.font.asset].size
   if not fonts[id .. outline .. shadow .. size] then
     addonTable.Core.CreateFont(id, size, outline, shadow)
   end
