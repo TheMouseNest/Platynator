@@ -372,8 +372,12 @@ function addonTable.Display.GetText(frame, parent)
   frame.text = frame:CreateFontString(nil, nil, "GameFontNormal")
   frame.text:SetPoint("CENTER")
   frame.text:SetText(" ")
-  hooksecurefunc(frame.text, "SetText", function()
-    if frame.details.shorten ~= "NONE" then
+  hooksecurefunc(frame.text, "SetText", function(_, value)
+    if addonTable.Constants.IsMidnight and issecretvalue(frame.text:GetStringHeight()) then
+      frame:SetSize(1, 1)
+      return
+    end
+    if frame.details.shorten ~= "NONE" and frame.textWrapper then
       local width
       if frame.details.shorten == "LAST" then
         frame.text:SetWidth(0)
@@ -426,7 +430,7 @@ function addonTable.Display.GetText(frame, parent)
       frame.text:SetWidth(0)
     end
 
-    if details.shorten ~= "NONE" then
+    if details.shorten ~= "NONE" and not addonTable.Constants.IsMidnight then
       if not frame.textWrapper then
         frame.textWrapper = CreateFrame("Frame", nil, frame)
         frame.textWrapper:SetClipsChildren(true)

@@ -414,6 +414,7 @@ addonTable.CustomiseDialog.WidgetsConfig = {
           {
             label = addonTable.Locales.SHORTEN,
             kind = "dropdown",
+            hide = addonTable.Constants.IsMidnight,
             getInitData = function()
               return {
                 addonTable.Locales.SHOW_ALL,

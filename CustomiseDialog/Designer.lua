@@ -577,7 +577,9 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
           end
           return e.getter(parent.details)
         end
-        if e.kind == "slider" then
+        if e.hide then
+          frame = nil
+        elseif e.kind == "slider" then
           if e.valuePattern then
             frame = addonTable.CustomiseDialog.Components.GetSlider(parent, e.label, e.min, e.max, function(val) return e.valuePattern:format(val) end, Setter)
           else
