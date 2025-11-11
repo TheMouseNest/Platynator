@@ -98,7 +98,7 @@ function addonTable.Display.ManagerMixin:OnLoad()
   end
   hooksecurefunc(NamePlateDriverFrame, "OnNamePlateAdded", function(_, unit)
     local nameplate = C_NamePlate.GetNamePlateForUnit(unit, issecure())
-    if nameplate and unit and unit ~= "preview" and not ConvertSecret(UnitIsUnit("player", unit)) then
+    if nameplate and unit and unit ~= "preview" and (addonTable.Constants.IsMidnight or not UnitIsUnit("player", unit)) then
       nameplate.UnitFrame:SetParent(addonTable.hiddenFrame)
       nameplate.UnitFrame:UnregisterAllEvents()
       if addonTable.Constants.IsMidnight then
@@ -306,7 +306,7 @@ end
 function addonTable.Display.ManagerMixin:Install(unit, nameplate)
   local nameplate = C_NamePlate.GetNamePlateForUnit(unit, issecure())
   -- NOTE: the nameplate _name_ does not correspond to the unit
-  if nameplate and nameplate.UnitFrame and not ConvertSecret(UnitIsUnit("player", unit)) then
+  if nameplate and unit and unit ~= "preview" and (addonTable.Constants.IsMidnight or not UnitIsUnit("player", unit)) then
     local newDisplay
     -- Necesary check on friends in case its a player being mind controlled
     if (UnitIsFriend("player", unit) and not UnitCanAttack("player", unit)) or not UnitCanAttack("player", unit) then
