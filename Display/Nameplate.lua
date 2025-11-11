@@ -4,7 +4,6 @@ local addonTable = select(2, ...)
 addonTable.Display.NameplateMixin = {}
 function addonTable.Display.NameplateMixin:OnLoad()
   self:SetFlattensRenderLayers(true)
-
   self:SetIgnoreParentScale(true)
 
   self.SoftTargetIcon = self:CreateTexture(nil, "OVERLAY")
@@ -248,6 +247,17 @@ function addonTable.Display.NameplateMixin:UpdateForTarget()
   self:UpdateVisual()
 end
 
+local ConvertSecret
+if issecretvalue then
+  ConvertSecret = function(state)
+    return not issecretvalue(state) and state or false
+  end
+else
+  ConvertSecret = function(state)
+    return state
+  end
+end
+
 function addonTable.Display.NameplateMixin:UpdateVisual()
   self:SetScale(addonTable.Config.Get(addonTable.Config.Options.GLOBAL_SCALE) * UIParent:GetEffectiveScale())
 
@@ -257,7 +267,9 @@ function addonTable.Display.NameplateMixin:UpdateVisual()
 
   local scale = 1
   local alpha = 1
-  if UnitIsUnit("target", self.unit) then
+  local isTarget = UnitIsUnit("target", self.unit)
+  self:SetIgnoreParentScale(issecretvalue and not issecretvalue(isTarget) or true)
+  if ConvertSecret(isTarget) then
     local change = addonTable.Config.Get(addonTable.Config.Options.TARGET_BEHAVIOUR)
     if change == "enlarge" then
       scale = 1.25
@@ -283,9 +295,9 @@ function addonTable.Display.NameplateMixin:UpdateSoftInteract()
   local doFriendIcon = GetCVarBool("SoftTargetIconFriend")
   local doInteractIcon = GetCVarBool("SoftTargetIconInteract")
   local hasCursorTexture = false
-  if ((doEnemyIcon and UnitIsUnit(self.interactUnit, "softenemy")) or
-    (doFriendIcon and UnitIsUnit(self.interactUnit, "softfriend")) or
-    (doInteractIcon and UnitIsUnit(self.interactUnit, "softinteract"))
+  if ((doEnemyIcon and ConvertSecret(UnitIsUnit(self.interactUnit, "softenemy"))) or
+    (doFriendIcon and ConvertSecret(UnitIsUnit(self.interactUnit, "softfriend"))) or
+    (doInteractIcon and ConvertSecret(UnitIsUnit(self.interactUnit, "softinteract")))
     ) then
     hasCursorTexture = SetUnitCursorTexture(self.SoftTargetIcon, self.interactUnit)
   end

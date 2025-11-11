@@ -1,6 +1,17 @@
 ---@class addonTablePlatynator
 local addonTable = select(2, ...)
 
+local ConvertSecret
+if issecretvalue then
+  ConvertSecret = function(state)
+    return not issecretvalue(state) and state or false
+  end
+else
+  ConvertSecret = function(state)
+    return state
+  end
+end
+
 function addonTable.Display.Initialize()
   local design = addonTable.Core.GetDesign("enemy")
 
@@ -87,7 +98,7 @@ function addonTable.Display.ManagerMixin:OnLoad()
   end
   hooksecurefunc(NamePlateDriverFrame, "OnNamePlateAdded", function(_, unit)
     local nameplate = C_NamePlate.GetNamePlateForUnit(unit, issecure())
-    if nameplate and unit and unit ~= "preview" and not UnitIsUnit("player", unit) then
+    if nameplate and unit and unit ~= "preview" and not ConvertSecret(UnitIsUnit("player", unit)) then
       nameplate.UnitFrame:SetParent(addonTable.hiddenFrame)
       nameplate.UnitFrame:UnregisterAllEvents()
       if addonTable.Constants.IsMidnight then
@@ -295,7 +306,7 @@ end
 function addonTable.Display.ManagerMixin:Install(unit, nameplate)
   local nameplate = C_NamePlate.GetNamePlateForUnit(unit, issecure())
   -- NOTE: the nameplate _name_ does not correspond to the unit
-  if nameplate and nameplate.UnitFrame and not UnitIsUnit("player", unit) then
+  if nameplate and nameplate.UnitFrame and not ConvertSecret(UnitIsUnit("player", unit)) then
     local newDisplay
     -- Necesary check on friends in case its a player being mind controlled
     if (UnitIsFriend("player", unit) and not UnitCanAttack("player", unit)) or not UnitCanAttack("player", unit) then
@@ -341,7 +352,7 @@ function addonTable.Display.ManagerMixin:OnEvent(eventName, ...)
     local unit
     for i = 1, 40 do
       unit = "nameplate" .. i
-      if UnitIsUnit(unit, "target") then
+      if ConvertSecret(UnitIsUnit(unit, "target")) then
         break
       else
         unit = nil
@@ -360,7 +371,7 @@ function addonTable.Display.ManagerMixin:OnEvent(eventName, ...)
     local unit
     for i = 1, 40 do
       unit = "nameplate" .. i
-      if UnitIsUnit(unit, "softinteract") or UnitIsUnit(unit, "softenemy") or UnitIsUnit(unit, "softfriend") then
+      if ConvertSecret(UnitIsUnit(unit, "softinteract")) or ConvertSecret(UnitIsUnit(unit, "softenemy")) or ConvertSecret(UnitIsUnit(unit, "softfriend")) then
         break
       else
         unit = nil
@@ -376,7 +387,7 @@ function addonTable.Display.ManagerMixin:OnEvent(eventName, ...)
     local unit
     for i = 1, 40 do
       unit = "nameplate" .. i
-      if UnitIsUnit(unit, "target") then
+      if ConvertSecret(UnitIsUnit(unit, "target")) then
         break
       else
         unit = nil

@@ -11,5 +11,5 @@ function addonTable.Display.HighlightMixin:Strip()
 end
 
 function addonTable.Display.HighlightMixin:ApplyTarget()
-  self:SetShown(UnitIsUnit("target", self.unit))
+  self.highlight:SetChecked(UnitIsUnit("target", self.unit))
 end
