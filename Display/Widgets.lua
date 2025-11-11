@@ -285,6 +285,7 @@ function addonTable.Display.GetHighlight(frame, parent)
   frame.highlight = CreateFrame("CheckButton", nil, frame)
   frame.highlight:SetAllPoints()
   frame.highlight:Disable()
+  frame.highlight:EnableMouse(false)
 
   function frame:Init(details)
     ApplyAnchor(frame, details.anchor)
