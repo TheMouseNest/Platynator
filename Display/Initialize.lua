@@ -346,23 +346,29 @@ function addonTable.Display.ManagerMixin:OnEvent(eventName, ...)
     local unit = ...
     self:Uninstall(unit)
   elseif eventName == "PLAYER_TARGET_CHANGED" then
-    if self.lastTarget and (not self.lastTarget.unit or UnitExists(self.lastTarget.unit)) then
-      self.lastTarget:UpdateForTarget()
-    end
-    local unit
-    for i = 1, 40 do
-      unit = "nameplate" .. i
-      if ConvertSecret(UnitIsUnit(unit, "target")) then
-        break
-      else
-        unit = nil
+    if addonTable.Constants.IsMidnight and IsInInstance() then
+      for _, display in pairs(self.nameplateDisplays) do
+        display:UpdateForTarget()
       end
-    end
-    if self.nameplateDisplays[unit] then
-      self.lastTarget = self.nameplateDisplays[unit]
-      self.lastTarget:UpdateForTarget()
     else
-      self.lastTarget = nil
+      if self.lastTarget and (not self.lastTarget.unit or UnitExists(self.lastTarget.unit)) then
+        self.lastTarget:UpdateForTarget()
+      end
+      local unit
+      for i = 1, 40 do
+        unit = "nameplate" .. i
+        if ConvertSecret(UnitIsUnit(unit, "target")) then
+          break
+        else
+          unit = nil
+        end
+      end
+      if self.nameplateDisplays[unit] then
+        self.lastTarget = self.nameplateDisplays[unit]
+        self.lastTarget:UpdateForTarget()
+      else
+        self.lastTarget = nil
+      end
     end
   elseif eventName == "PLAYER_SOFT_INTERACT_CHANGED" then
     if self.lastInteract and self.lastInteract.interactUnit then
@@ -414,7 +420,9 @@ function addonTable.Display.ManagerMixin:OnEvent(eventName, ...)
 
       C_CVar.SetCVarBitfield(NamePlateConstants.ENEMY_PLAYER_AURA_DISPLAY_CVAR, Enum.NamePlateEnemyPlayerAuraDisplay.Buffs, true)
       C_CVar.SetCVarBitfield(NamePlateConstants.ENEMY_PLAYER_AURA_DISPLAY_CVAR, Enum.NamePlateEnemyPlayerAuraDisplay.Debuffs, true)
+
       --SetCVarBitfield(NamePlateConstants.ENEMY_PLAYER_AURA_DISPLAY_CVAR, Enum.NamePlateEnemyPlayerAuraDisplay.LossOfControl, true);
+      C_CVar.SetCVar("nameplateMinScale", 1)
     end
 
     self:UpdateStacking()
