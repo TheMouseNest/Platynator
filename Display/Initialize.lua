@@ -96,6 +96,7 @@ function addonTable.Display.ManagerMixin:OnLoad()
       child.Cooldown:SetCountdownFont("PlatynatorNameplateCooldownFont")
     end
   end
+  self.RelayoutAuras = RelayoutAuras
   hooksecurefunc(NamePlateDriverFrame, "OnNamePlateAdded", function(_, unit)
     local nameplate = C_NamePlate.GetNamePlateForUnit(unit, issecure())
     if nameplate and unit and unit ~= "preview" and (addonTable.Constants.IsMidnight or not UnitIsUnit("player", unit)) then
@@ -288,16 +289,22 @@ function addonTable.Display.ManagerMixin:PositionBuffs(display)
       designInfo[a.kind] = a
     end
     if designInfo.debuffs then
-      self.ModifiedUFs[unit].AurasFrame.DebuffListFrame:SetParent(display.DebuffDisplay)
-      self.ModifiedUFs[unit].AurasFrame.DebuffListFrame:SetScale(designInfo.debuffs.scale * 4/5)
+      local DebuffListFrame = self.ModifiedUFs[unit].AurasFrame.DebuffListFrame
+      DebuffListFrame:SetParent(display.DebuffDisplay)
+      DebuffListFrame:SetScale(designInfo.debuffs.scale * 4/5)
+      self.RelayoutAuras(DebuffListFrame)
     end
     if designInfo.buffs then
-      self.ModifiedUFs[unit].AurasFrame.BuffListFrame:SetParent(display.BuffDisplay)
-      self.ModifiedUFs[unit].AurasFrame.BuffListFrame:SetScale(designInfo.buffs.scale * 4/5)
+      local BuffListFrame = self.ModifiedUFs[unit].AurasFrame.BuffListFrame
+      BuffListFrame:SetParent(display.BuffDisplay)
+      BuffListFrame:SetScale(designInfo.buffs.scale * 4/5)
+      self.RelayoutAuras(BuffListFrame)
     end
     if designInfo.crowdControl then
-      self.ModifiedUFs[unit].AurasFrame.CrowdControlListFrame:SetParent(display.CrowdControlDisplay)
-      self.ModifiedUFs[unit].AurasFrame.CrowdControlListFrame:SetScale(designInfo.crowdControl.scale * 4/5)
+      local CrowdControlListFrame = self.ModifiedUFs[unit].AurasFrame.CrowdControlListFrame
+      CrowdControlListFrame:SetParent(display.CrowdControlDisplay)
+      CrowdControlListFrame:SetScale(designInfo.crowdControl.scale * 4/5)
+      self.RelayoutAuras(CrowdControlListFrame)
     end
   end
 end
