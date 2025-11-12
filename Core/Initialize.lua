@@ -238,24 +238,21 @@ local function UpdateRect(design)
   end
 
   for index, barDetails in ipairs(design.bars) do
-    local foregroundDetails = addonTable.Assets.BarBackgrounds[barDetails.foreground.asset]
-    local borderDetails = addonTable.Assets.BarBorders[barDetails.border.asset]
-    local asset = foregroundDetails
-    if borderDetails.mode and borderDetails.mode ~= foregroundDetails.mode then
-      asset = {width = math.min(borderDetails.width, foregroundDetails.width), height = math.min(borderDetails.height, foregroundDetails.height)}
-    end
-    local rect = GetRect(asset, barDetails.scale, barDetails.anchor)
-    CacheSize(rect)
-  end
-
-  for index, textDetails in ipairs(design.texts) do
-    local rect = GetRect({width = textDetails.widthLimit or 20, height = 10}, textDetails.scale, textDetails.anchor)
-    CacheSize(rect)
-  end
-
-  for index, specialDetails in ipairs(design.specialBars) do
-    if specialDetails.kind == "power" then
-      local rect = GetRect(addonTable.Assets.PowerBars[specialDetails.blank], specialDetails.scale, specialDetails.anchor)
+    if barDetails.kind == "health" then
+      local foregroundDetails = addonTable.Assets.BarBackgrounds[barDetails.foreground.asset]
+      local borderDetails = addonTable.Assets.BarBorders[barDetails.border.asset]
+      local borderMaskDetails = addonTable.Assets.BarMasks[barDetails.border.asset]
+      local width, height = foregroundDetails.width, foregroundDetails.height
+      if borderDetails.mode and borderDetails.mode ~= foregroundDetails.mode then
+        if borderMaskDetails and (borderMaskDetails.mode > 0 and borderMaskDetails.mode <= 100) then
+          width, height = math.min(borderMaskDetails.width, width), math.min(borderMaskDetails.height, height)
+        elseif borderMaskDetails then
+          width, height = math.min(borderMaskDetails.width, width), math.max(borderMaskDetails.height, height)
+        else
+          width, height = math.min(borderDetails.width, width), math.min(borderDetails.height, height)
+        end
+      end
+      local rect = GetRect({width = width, height = height}, barDetails.scale, barDetails.anchor)
       CacheSize(rect)
     end
   end

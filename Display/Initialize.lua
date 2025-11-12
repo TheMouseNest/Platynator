@@ -102,10 +102,6 @@ function addonTable.Display.ManagerMixin:OnLoad()
       nameplate.UnitFrame:SetParent(addonTable.hiddenFrame)
       nameplate.UnitFrame:UnregisterAllEvents()
       if addonTable.Constants.IsMidnight then
-        nameplate.UnitFrame.HitTestFrame:SetParent(nameplate)
-        nameplate.UnitFrame.HitTestFrame:ClearAllPoints()
-        nameplate.UnitFrame.HitTestFrame:SetPoint("BOTTOMLEFT", nameplate, "CENTER", addonTable.Rect.left, addonTable.Rect.bottom)
-        nameplate.UnitFrame.HitTestFrame:SetSize(addonTable.Rect.width, addonTable.Rect.height)
 
         nameplate.UnitFrame:RegisterUnitEvent("UNIT_AURA", unit)
         nameplate.UnitFrame.AurasFrame:SetParent(nameplate)
@@ -178,14 +174,17 @@ function addonTable.Display.ManagerMixin:OnLoad()
         end
         self.styleIndex = self.styleIndex + 1
         self:SetScript("OnUpdate", nil)
-        for _, display in pairs(self.nameplateDisplays) do
+        for unit, display in pairs(self.nameplateDisplays) do
           display.styleIndex = self.styleIndex
-          local unit = display.unit
-          if unit then
-            local nameplate = C_NamePlate.GetNamePlateForUnit(display.unit)
-            if nameplate then
-              display:Install(nameplate)
-            end
+          local nameplate = C_NamePlate.GetNamePlateForUnit(display.unit)
+          if nameplate then
+            display:Install(nameplate)
+          end
+          local UF = self.ModifiedUFs[unit]
+          if UF and UF.HitTestFrame then
+            UF.HitTestFrame:ClearAllPoints()
+            UF.HitTestFrame:SetPoint("BOTTOMLEFT", display, "CENTER", addonTable.Rect.left, addonTable.Rect.bottom)
+            UF.HitTestFrame:SetSize(addonTable.Rect.width, addonTable.Rect.height)
           end
           display:InitializeWidgets(addonTable.Core.GetDesign(display.kind))
           self:PositionBuffs(display)
@@ -313,6 +312,13 @@ function addonTable.Display.ManagerMixin:Install(unit, nameplate)
       newDisplay = self.friendDisplayPool:Acquire()
     else
       newDisplay = self.enemyDisplayPool:Acquire()
+    end
+    local UF = self.ModifiedUFs[unit]
+    if UF and UF.HitTestFrame then
+      UF.HitTestFrame:SetParent(newDisplay)
+      UF.HitTestFrame:ClearAllPoints()
+      UF.HitTestFrame:SetPoint("BOTTOMLEFT", newDisplay, "CENTER", addonTable.Rect.left, addonTable.Rect.bottom)
+      UF.HitTestFrame:SetSize(addonTable.Rect.width, addonTable.Rect.height)
     end
     self.nameplateDisplays[unit] = newDisplay
     newDisplay:Install(nameplate)
