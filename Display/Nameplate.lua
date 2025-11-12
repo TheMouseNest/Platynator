@@ -259,16 +259,17 @@ else
 end
 
 function addonTable.Display.NameplateMixin:UpdateVisual()
-  self:SetScale(addonTable.Config.Get(addonTable.Config.Options.GLOBAL_SCALE) * UIParent:GetEffectiveScale())
-
   if not self.unit then
+    self:SetIgnoreParentScale(true)
+    self:SetScale(addonTable.Config.Get(addonTable.Config.Options.GLOBAL_SCALE) * UIParent:GetEffectiveScale())
     return
   end
 
   local scale = 1
   local alpha = 1
   local isTarget = UnitIsUnit("target", self.unit)
-  self:SetIgnoreParentScale(not issecretvalue or not issecretvalue(isTarget) or addonTable.Config.Get(addonTable.Config.Options.TARGET_BEHAVIOUR) ~= "enlarge")
+  local ignoreScale = not issecretvalue or not issecretvalue(isTarget) or addonTable.Config.Get(addonTable.Config.Options.TARGET_BEHAVIOUR) ~= "enlarge"
+  self:SetIgnoreParentScale(ignoreScale)
   if ConvertSecret(isTarget) then
     local change = addonTable.Config.Get(addonTable.Config.Options.TARGET_BEHAVIOUR)
     if change == "enlarge" then
@@ -285,7 +286,11 @@ function addonTable.Display.NameplateMixin:UpdateVisual()
       alpha = 0.5
     end
   end
-  self:SetScale(scale * addonTable.Config.Get(addonTable.Config.Options.GLOBAL_SCALE) * UIParent:GetEffectiveScale())
+  if ignoreScale then
+    self:SetScale(scale * addonTable.Config.Get(addonTable.Config.Options.GLOBAL_SCALE) * UIParent:GetEffectiveScale())
+  else
+    self:SetScale(scale * addonTable.Config.Get(addonTable.Config.Options.GLOBAL_SCALE))
+  end
   self:SetAlpha(alpha)
 end
 
