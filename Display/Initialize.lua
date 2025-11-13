@@ -130,6 +130,7 @@ function addonTable.Display.ManagerMixin:OnLoad()
         UF.HitTestFrame:ClearAllPoints()
         UF.HitTestFrame:SetPoint("TOPLEFT", UF.HealthBarsContainer.healthBar)
         UF.HitTestFrame:SetPoint("BOTTOMRIGHT", UF.HealthBarsContainer.healthBar)
+        UF.HitTestFrame:SetScale(1)
         UF.AurasFrame:SetParent(UF)
         UF.AurasFrame:SetIgnoreParentAlpha(false)
         UF.AurasFrame:SetIgnoreParentScale(false)
@@ -186,6 +187,7 @@ function addonTable.Display.ManagerMixin:OnLoad()
             UF.HitTestFrame:ClearAllPoints()
             UF.HitTestFrame:SetPoint("BOTTOMLEFT", display, "CENTER", addonTable.Rect.left, addonTable.Rect.bottom)
             UF.HitTestFrame:SetSize(addonTable.Rect.width, addonTable.Rect.height)
+            UF.HitTestFrame:SetScale(addonTable.Config.Get(addonTable.Config.Options.CLICK_REGION_SCALE))
           end
           display:InitializeWidgets(addonTable.Core.GetDesign(display.kind))
           self:PositionBuffs(display)
@@ -203,6 +205,14 @@ function addonTable.Display.ManagerMixin:OnLoad()
       self:UpdateStacking()
     elseif state[addonTable.Constants.RefreshReason.ShowBehaviour] then
       self:UpdateShowState()
+    end
+  end)
+
+  addonTable.CallbackRegistry:RegisterCallback("SettingChanged", function(_, settingName)
+    if settingName == addonTable.Config.Options.CLICK_REGION_SCALE then
+      for _, UF in pairs(self.ModifiedUFs) do
+        UF.HitTestFrame:SetScale(addonTable.Config.Get(addonTable.Config.Options.CLICK_REGION_SCALE))
+      end
     end
   end)
 end

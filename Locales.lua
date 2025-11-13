@@ -75,6 +75,7 @@ L["SHOW_ALL"] = "Show all"
 L["LAST_WORD"] = "Last word"
 L["FIRST_WORD"] = "First word"
 L["HEIGHT"] = "Height"
+L["CLICK_REGION_SCALE"] = "Click region scale"
 
 L["FOREGROUND"] = "Foreground"
 L["VISUAL"] = "Visual"
