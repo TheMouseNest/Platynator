@@ -177,7 +177,7 @@ function addonTable.Display.ManagerMixin:OnLoad()
         self:SetScript("OnUpdate", nil)
         for unit, display in pairs(self.nameplateDisplays) do
           display.styleIndex = self.styleIndex
-          local nameplate = C_NamePlate.GetNamePlateForUnit(display.unit)
+          local nameplate = C_NamePlate.GetNamePlateForUnit(unit, issecure())
           if nameplate then
             display:Install(nameplate)
           end
