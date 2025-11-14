@@ -336,6 +336,7 @@ function addonTable.Display.ManagerMixin:Install(unit, nameplate)
       UF.HitTestFrame:ClearAllPoints()
       UF.HitTestFrame:SetPoint("BOTTOMLEFT", newDisplay, "CENTER", addonTable.Rect.left, addonTable.Rect.bottom)
       UF.HitTestFrame:SetSize(addonTable.Rect.width, addonTable.Rect.height)
+      UF.HitTestFrame:SetScale(addonTable.Config.Get(addonTable.Config.Options.CLICK_REGION_SCALE))
     end
     self.nameplateDisplays[unit] = newDisplay
     newDisplay:Install(nameplate)
