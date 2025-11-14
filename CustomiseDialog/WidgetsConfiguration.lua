@@ -774,15 +774,18 @@ addonTable.CustomiseDialog.WidgetsConfig = {
           {
             label = addonTable.Locales.HEIGHT,
             kind = "slider",
-            min = 1, max = 4,
+            min = 1, max = 7,
             formatter = function(val)
-              return ({"50%", "75%", "100%", "200%"})[val] or UNKNOWN
+              return ({"50%", "75%", "100%", "125%", "150%", "175%", "200%"})[val] or UNKNOWN
             end,
             setter = function(details, value)
               local newMode = ({
                 addonTable.Assets.Mode.Percent50,
                 addonTable.Assets.Mode.Percent75,
                 addonTable.Assets.Mode.Percent100,
+                addonTable.Assets.Mode.Percent125,
+                addonTable.Assets.Mode.Percent150,
+                addonTable.Assets.Mode.Percent175,
                 addonTable.Assets.Mode.Percent200,
               })[value] 
 
@@ -812,6 +815,9 @@ addonTable.CustomiseDialog.WidgetsConfig = {
                 addonTable.Assets.Mode.Percent50,
                 addonTable.Assets.Mode.Percent75,
                 addonTable.Assets.Mode.Percent100,
+                addonTable.Assets.Mode.Percent125,
+                addonTable.Assets.Mode.Percent150,
+                addonTable.Assets.Mode.Percent175,
                 addonTable.Assets.Mode.Percent200,
               }, mode) or 3
             end,

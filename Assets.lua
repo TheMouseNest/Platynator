@@ -132,16 +132,26 @@ addonTable.Assets.BarMasks = {
 
 addonTable.Assets.Highlights = {
   ["200/outline"] = {file = "Interface/AddOns/Platynator/Assets/%s/Highlights/outline-200.png", width = 1030, height = 280, has4k = true, mode = mode.Percent200, tag = "outline"},
+  ["175/outline"] = {file = "Interface/AddOns/Platynator/Assets/%s/Highlights/outline-175.png", width = 1030, height = 249, has4k = true, mode = mode.Percent175, tag = "outline"},
+  ["150/outline"] = {file = "Interface/AddOns/Platynator/Assets/%s/Highlights/outline-150.png", width = 1030, height = 218, has4k = true, mode = mode.Percent150, tag = "outline"},
+  ["125/outline"] = {file = "Interface/AddOns/Platynator/Assets/%s/Highlights/outline-125.png", width = 1030, height = 186, has4k = true, mode = mode.Percent125, tag = "outline"},
+  ["wide/outline"] = {file = "Interface/AddOns/Platynator/Assets/%s/Highlights/outline-100.png", width = 1030, height = 155, has4k = true, mode = mode.Percent100, tag = "outline"},
   ["wide/outline"] = {file = "Interface/AddOns/Platynator/Assets/%s/Highlights/outline-100.png", width = 1030, height = 155, has4k = true, mode = mode.Percent100, tag = "outline"},
   ["75/outline"] = {file = "Interface/AddOns/Platynator/Assets/%s/Highlights/outline-75.png", width = 1030, height = 125, has4k = true, mode = mode.Percent75, tag = "outline"},
   ["wide/outline-narrow"] = {file = "Interface/AddOns/Platynator/Assets/%s/Highlights/outline-50.png", width = 1030, height = 93, has4k = true, mode = mode.Percent50, tag = "outline"},
 
   ["200/glow"] = {file = "Interface/AddOns/Platynator/Assets/%s/Highlights/glow-100.png", width = 1588, height = 870, has4k = true, mode = mode.Percent200, tag = "glow"},
+  ["175/glow"] = {file = "Interface/AddOns/Platynator/Assets/%s/Highlights/glow-175.png", width = 1588, height = 763, has4k = true, mode = mode.Percent175, tag = "glow"},
+  ["150/glow"] = {file = "Interface/AddOns/Platynator/Assets/%s/Highlights/glow-150.png", width = 1588, height = 735, has4k = true, mode = mode.Percent150, tag = "glow"},
+  ["125/glow"] = {file = "Interface/AddOns/Platynator/Assets/%s/Highlights/glow-125.png", width = 1588, height = 692, has4k = true, mode = mode.Percent125, tag = "glow"},
   ["wide/glow"] = {file = "Interface/AddOns/Platynator/Assets/%s/Highlights/glow-100.png", width = 1563, height = 680, has4k = true, mode = mode.Percent100, tag = "glow"},
   ["75/glow"] = {file = "Interface/AddOns/Platynator/Assets/%s/Highlights/glow-75.png", width = 1585, height = 628, has4k = true, mode = mode.Percent75, tag = "glow"},
   ["50/glow"] = {file = "Interface/AddOns/Platynator/Assets/%s/Highlights/glow-50.png", width = 1610, height = 578, has4k = true, mode = mode.Percent50, tag = "glow"},
 
   ["tall/soft-glow"] = {file = "Interface/AddOns/Platynator/Assets/%s/Highlights/soft-glow-200.png", width = 1066, height = 324, has4k = true, mode = mode.Percent200, tag = "soft-glow"},
+  ["175/soft-glow"] = {file = "Interface/AddOns/Platynator/Assets/%s/Highlights/soft-glow-175.png", width = 1066, height = 287, has4k = true, mode = mode.Percent175, tag = "soft-glow"},
+  ["150/soft-glow"] = {file = "Interface/AddOns/Platynator/Assets/%s/Highlights/soft-glow-150.png", width = 1066, height = 257, has4k = true, mode = mode.Percent150, tag = "soft-glow"},
+  ["125/soft-glow"] = {file = "Interface/AddOns/Platynator/Assets/%s/Highlights/soft-glow-125.png", width = 1066, height = 225, has4k = true, mode = mode.Percent125, tag = "soft-glow"},
   ["wide/soft-glow"] = {file = "Interface/AddOns/Platynator/Assets/%s/Highlights/soft-glow-100.png", width = 1066, height = 193, has4k = true, mode = mode.Percent100, tag = "soft-glow"},
   ["75/soft-glow"] = {file = "Interface/AddOns/Platynator/Assets/%s/Highlights/soft-glow-75.png", width = 1066, height = 160, has4k = true, mode = mode.Percent75, tag = "soft-glow"},
   ["wide/soft-glow-narrow"] = {file = "Interface/AddOns/Platynator/Assets/%s/Highlights/soft-glow-50.png", width = 1066, height = 123, has4k = true, mode = mode.Percent50, tag = "soft-glow"},
