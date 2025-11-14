@@ -96,6 +96,39 @@ function addonTable.Display.ManagerMixin:OnLoad()
       child.Cooldown:SetCountdownFont("PlatynatorNameplateCooldownFont")
     end
   end
+  -- Apply Platynator settings to aura layout, limiting auras to just those from current player
+  local function RelayoutDebuffAuras(list)
+    if list:IsForbidden() then
+      return
+    end
+    local details = list:GetParent().details
+    if not details then
+      return
+    end
+    local dir = -1
+    if details.direction == "RIGHT" then
+      dir = 1
+    end
+    local padding = 2
+    local children = list:GetLayoutChildren()
+    if #children == 0 then
+      return
+    end
+    list:ClearAllPoints()
+    local anchor = details.direction == "LEFT" and "RIGHT" or "LEFT"
+    list:SetPoint(anchor)
+    local index = 1
+    for _, child in ipairs(children) do
+      if C_UnitAuras.IsAuraFilteredOutByInstanceID(child.unitToken, child.auraInstanceID, "PLAYER") then
+        child:ClearAllPoints()
+        child:SetPoint(anchor, (index - 1) * (child:GetWidth() + padding) * dir, 0)
+        child.Cooldown:SetCountdownFont("PlatynatorNameplateCooldownFont")
+        index = index + 1
+      else
+        child:Hide()
+      end
+    end
+  end
   self.RelayoutAuras = RelayoutAuras
   hooksecurefunc(NamePlateDriverFrame, "OnNamePlateAdded", function(_, unit)
     local nameplate = C_NamePlate.GetNamePlateForUnit(unit, issecure())
@@ -111,7 +144,7 @@ function addonTable.Display.ManagerMixin:OnLoad()
           self.HookedUFs[nameplate.UnitFrame] = true
           local af = nameplate.UnitFrame.AurasFrame
           hooksecurefunc(af.BuffListFrame, "Layout", RelayoutAuras)
-          hooksecurefunc(af.DebuffListFrame, "Layout", RelayoutAuras)
+          hooksecurefunc(af.DebuffListFrame, "Layout", RelayoutDebuffAuras)
           hooksecurefunc(af.CrowdControlListFrame, "Layout", RelayoutAuras)
         end
       end
