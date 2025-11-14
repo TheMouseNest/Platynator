@@ -43,7 +43,7 @@ function addonTable.Display.GuildTextMixin:SetUnit(unit)
         tooltip:SetUnit(self.unit)
         local line = _G[tooltip:GetName() .. "TextLeft" .. (isColorBlindMode and 3 or 2)]
         if line then
-          local text = line:GetText()
+          text = line:GetText()
         end
       end
       if text and not text:match(invalidPattern1) and not text:match(invalidPattern2) then
