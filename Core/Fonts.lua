@@ -1,37 +1,65 @@
 ---@class addonTablePlatynator
 local addonTable = select(2, ...)
 
+local LSM = LibStub("LibSharedMedia-3.0")
+
 local fonts = {}
 
 function addonTable.Core.GetFontByDesign(design)
   local id = design.font.asset
   local outline = design.font.outline and "OUTLINE" or ""
   local shadow = design.font.shadow and "SHADOW" or ""
-  local size = addonTable.Assets.Fonts[design.font.asset].size
-  if not fonts[id .. outline .. shadow .. size] then
-    addonTable.Core.CreateFont(id, size, outline, shadow)
+  local key = id:lower() .. outline .. shadow
+  if not fonts[key] then
+    addonTable.Core.CreateFont(id, outline, shadow, false)
+    if not fonts[key] and not fonts[addonTable.Constants.DefaultFont:lower() .. outline .. shadow] then
+      addonTable.Core.CreateFont(addonTable.Constants.DefaultFont, outline, shadow, true)
+    end
   end
-  return fonts[id .. outline .. shadow .. size]
+  return fonts[key] or fonts[addonTable.Constants.DefaultFont:lower() .. outline .. shadow]
 end
 
-function addonTable.Core.GetFontByID(id, size)
+function addonTable.Core.GetFontByID(id)
   local outline = ""
   local shadow = ""
-  if not fonts[id .. outline .. shadow .. size] then
-    addonTable.Core.CreateFont(id, size, outline, shadow)
+  local key = id:lower() .. outline .. shadow
+  if not fonts[key] then
+    addonTable.Core.CreateFont(id, outline, shadow, false)
+    if not fonts[key] and not fonts[addonTable.Constants.DefaultFont:lower() .. outline .. shadow] then
+      addonTable.Core.CreateFont(addonTable.Constants.DefaultFont, outline, shadow, true)
+    end
   end
-  return fonts[id .. outline .. shadow .. size]
+  return fonts[key] or fonts[addonTable.Constants.DefaultFont:lower() .. outline .. shadow]
 end
 
 local alphabet = {"roman", "korean", "simplifiedchinese", "traditionalchinese", "russian"}
 
-local function GetDefaultMembers(size, outline)
+local locale = GetLocale()
+local overrideAlphabet = "roman"
+if locale == "koKR" then
+  overrideAlphabet = "korean"
+elseif locale == "zhCN" then
+  overrideAlphabet = "simplifiedchinese"
+elseif locale == "zhTW" then
+  overrideAlphabet = "traditionalchinese"
+elseif locale == "ruRU" then
+  overrideAlphabet = "russian"
+end
+
+local function GetMembers(overrideFile, outline)
   local members = {}
-  local coreFont = ChatFontNormal
+  local coreFont = GameFontNormal
   for _, a in ipairs(alphabet) do
     local forAlphabet = coreFont:GetFontObjectForAlphabet(a)
-    if forAlphabet then
-      local file, _, flags = forAlphabet:GetFont()
+    local file, size, _ = forAlphabet:GetFont()
+    if a == overrideAlphabet then
+      table.insert(members, {
+        alphabet = a,
+        file = overrideFile,
+        height = size,
+        flags = outline,
+      })
+    else
       table.insert(members, {
         alphabet = a,
         file = file,
@@ -44,20 +72,27 @@ local function GetDefaultMembers(size, outline)
   return members
 end
 
-function addonTable.Core.CreateFont(assetKey, size, outline, shadow)
-  local key = assetKey .. outline .. shadow .. size
+function addonTable.Core.CreateFont(assetKey, outline, shadow, useDefault)
+  local key = assetKey:lower() .. outline .. shadow
   if fonts[key] then
     error("duplicate font creation " .. key)
   end
   local globalName = "PlatynatorFont" .. key
 
+  if addonTable.Constants.OldFontMapping[assetKey] then
+    assetKey = addonTable.Constants.OldFontMapping[assetKey]
+  end
+
+  local path = LSM:Fetch(LSM.MediaType.FONT, assetKey, not useDefault)
+  if not path then
+    return
+  end
+
   if addonTable.Constants.IsMidnight then
     outline = outline .. " SLUG"
   end
 
-  local font = CreateFontFamily(globalName, GetDefaultMembers(size, outline))
-  local path = addonTable.Assets.Fonts[assetKey].file
-  font:SetFont(path, size, outline)
+  local font = CreateFontFamily(globalName, GetMembers(path, outline))
   font:SetTextColor(1, 1, 1)
   fonts[key] = globalName
 

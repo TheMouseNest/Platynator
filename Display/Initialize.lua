@@ -13,16 +13,6 @@ else
 end
 
 function addonTable.Display.Initialize()
-  local design = addonTable.Core.GetDesign("enemy")
-
-  addonTable.CurrentFont = addonTable.Core.GetFontByDesign(design)
-  CreateFont("PlatynatorNameplateCooldownFont")
-  PlatynatorNameplateCooldownFont:SetFont(addonTable.Assets.Fonts[design.font.asset].file, 13, design.font.outline and "OUTLINE" or "")
-  if design.font.shadow then
-    PlatynatorNameplateCooldownFont:SetShadowOffset(1, -1)
-  else
-    PlatynatorNameplateCooldownFont:SetShadowOffset(0, 0)
-  end
 
   local manager = CreateFrame("Frame")
   Mixin(manager, addonTable.Display.ManagerMixin)
@@ -52,6 +42,7 @@ function addonTable.Display.ManagerMixin:OnLoad()
   self:RegisterEvent("PLAYER_TARGET_CHANGED")
   self:RegisterEvent("PLAYER_SOFT_INTERACT_CHANGED")
   self:RegisterEvent("UPDATE_MOUSEOVER_UNIT")
+  self:RegisterEvent("PLAYER_LOGIN")
 
   self:RegisterEvent("PLAYER_SOFT_INTERACT_CHANGED")
 
@@ -455,5 +446,12 @@ function addonTable.Display.ManagerMixin:OnEvent(eventName, ...)
     self:UnregisterEvent("PLAYER_REGEN_ENABLED")
     self:UpdateStacking()
     self:UpdateShowState()
+  elseif eventName == "PLAYER_LOGIN" then
+    local design = addonTable.Core.GetDesign("enemy")
+
+    addonTable.CurrentFont = addonTable.Core.GetFontByDesign(design)
+    CreateFont("PlatynatorNameplateCooldownFont")
+    local file, size, flags = _G[addonTable.CurrentFont]:GetFont()
+    PlatynatorNameplateCooldownFont:SetFont(file, 14, flags)
   end
 end

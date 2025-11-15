@@ -450,7 +450,7 @@ function addonTable.Display.GetText(frame, parent)
       frame.text:SetText(" ")
     end
     frame.text:SetJustifyH(details.align)
-    frame.text:SetTextScale(details.scale)
+    frame.text:SetTextScale(details.scale * 0.85)
 
     if details.kind == "health" then
       Mixin(frame, addonTable.Display.HealthTextMixin)

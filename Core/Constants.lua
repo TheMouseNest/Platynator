@@ -16,6 +16,8 @@ addonTable.Constants = {
   ButtonFrameOffset = 5,
 
   CustomName = "_custom",
+
+  DefaultFont = "Roboto Condensed Bold"
 }
 addonTable.Constants.Events = {
   "SettingChanged",
@@ -30,4 +32,15 @@ addonTable.Constants.RefreshReason = {
   TargetBehaviour = 3,
   StackingBehaviour = 4,
   ShowBehaviour = 5,
+}
+
+addonTable.Constants.OldFontMapping = {
+  ["ArialNarrow"] = "Arial Narrow",
+  ["FritzQuadrata"] = "Friz Quadrata TT",
+  ["2002"] = "2002",
+  ["RobotoCondensed-Bold"] = addonTable.Constants.DefaultFont,
+  ["Lato-Regular"] = "Lato",
+  ["Poppins-SemiBold"] = "Poppins SemiBold",
+  ["DiabloHeavy"] = "Diablo Heavy",
+  ["AtkinsonHyperlegible-Regular"] = "Atkinson Hyperlegible Next",
 }

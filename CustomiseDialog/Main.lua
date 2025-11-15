@@ -373,37 +373,6 @@ local function SetupFont(parent)
   fontDropdown:SetPoint("TOP", allFrames[#allFrames], "BOTTOM", 0, -30)
   table.insert(allFrames, fontDropdown)
 
-  local fonts = {}
-  for key, value in pairs(addonTable.Assets.Fonts) do
-    table.insert(fonts, {label = value.preview, id = key})
-  end
-  table.sort(fonts, function(a, b) return a.label < b.label end)
-
-  fontDropdown.DropDown:SetupMenu(function(_, rootDescription)
-    for _, details in ipairs(fonts) do
-      local radio = rootDescription:CreateRadio(details.label,
-        function()
-          return addonTable.CustomiseDialog.GetCurrentDesign().font.asset == details.id
-        end,
-        function()
-          local design = addonTable.CustomiseDialog.GetCurrentDesign()
-          local oldAsset = design.font.asset
-          if details.id ~= oldAsset then
-            design.font.asset = details.id
-            if addonTable.Config.Get(addonTable.Config.Options.STYLE):match("^_") then
-              addonTable.Config.Set(addonTable.Config.Options.STYLE, addonTable.Constants.CustomName)
-            end
-            addonTable.CallbackRegistry:TriggerEvent("RefreshStateChange", {[addonTable.Constants.RefreshReason.Design] = true})
-          end
-        end
-      )
-      radio:AddInitializer(function(button, elementDescription, menu)
-        button.fontString:SetFontObject(addonTable.Core.GetFontByID(details.id, 13))
-      end)
-    end
-    rootDescription:SetScrollMode(20 * 20)
-  end)
-
   local outlineCheckbox = addonTable.CustomiseDialog.Components.GetCheckbox(container, addonTable.Locales.SHOW_OUTLINE, 28, function(value)
     local design = addonTable.CustomiseDialog.GetCurrentDesign()
     if value ~= design.font.outline then
@@ -440,6 +409,36 @@ local function SetupFont(parent)
         f:SetValue()
       end
     end
+
+    local LibSharedMedia = LibStub("LibSharedMedia-3.0")
+    local fonts = CopyTable(LibSharedMedia:List("font"))
+    table.sort(fonts)
+
+    fontDropdown.DropDown:SetupMenu(function(_, rootDescription)
+      for index, label in ipairs(fonts) do
+        local radio = rootDescription:CreateRadio(label,
+          function()
+            local asset = addonTable.CustomiseDialog.GetCurrentDesign().font.asset
+            return asset == label or addonTable.Constants.OldFontMapping[asset] == label
+          end,
+          function()
+            local design = addonTable.CustomiseDialog.GetCurrentDesign()
+            local oldAsset = design.font.asset
+            if label ~= oldAsset then
+              design.font.asset = label
+              if addonTable.Config.Get(addonTable.Config.Options.STYLE):match("^_") then
+                addonTable.Config.Set(addonTable.Config.Options.STYLE, addonTable.Constants.CustomName)
+              end
+              addonTable.CallbackRegistry:TriggerEvent("RefreshStateChange", {[addonTable.Constants.RefreshReason.Design] = true})
+            end
+          end
+        )
+        radio:AddInitializer(function(button, elementDescription, menu)
+          button.fontString:SetFontObject(addonTable.Core.GetFontByID(label))
+        end)
+      end
+      rootDescription:SetScrollMode(20 * 20)
+    end)
   end
 
   addonTable.CallbackRegistry:RegisterCallback("SettingChanged", function(_, name)

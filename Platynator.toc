@@ -18,6 +18,10 @@
 ## Category-zhCN: 单位框体
 ## Category-zhTW: 單位框架
 
+Libs\LibStub\LibStub.lua
+Libs\CallbackHandler-1.0\CallbackHandler-1.0.lua
+Libs\LibSharedMedia-3.0\lib.xml
+
 Locales.lua
 
 Core/Objects.lua
