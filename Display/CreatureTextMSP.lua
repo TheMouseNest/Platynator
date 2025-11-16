@@ -75,6 +75,7 @@ end
 function addonTable.Display.CreatureTextMSPMixin:Strip()
   local c = self.details.color
   self.text:SetTextColor(c.r, c.g, c.b)
+  self:UnregisterCallback()
   self:UnregisterAllEvents()
 end
 
