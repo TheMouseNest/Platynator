@@ -292,19 +292,19 @@ function addonTable.Display.ManagerMixin:PositionBuffs(display)
     local DebuffListFrame = self.ModifiedUFs[unit].AurasFrame.DebuffListFrame
     DebuffListFrame:SetParent(display.DebuffDisplay)
     if designInfo.debuffs then
-      DebuffListFrame:SetScale(designInfo.debuffs.scale)
+      DebuffListFrame:SetScale(designInfo.debuffs.scale * 6/5)
       self.RelayoutAuras(DebuffListFrame)
     end
     local BuffListFrame = self.ModifiedUFs[unit].AurasFrame.BuffListFrame
     BuffListFrame:SetParent(display.BuffDisplay)
     if designInfo.buffs then
-      BuffListFrame:SetScale(designInfo.buffs.scale)
+      BuffListFrame:SetScale(designInfo.buffs.scale * 6/5)
       self.RelayoutAuras(BuffListFrame)
     end
     local CrowdControlListFrame = self.ModifiedUFs[unit].AurasFrame.CrowdControlListFrame
     CrowdControlListFrame:SetParent(display.CrowdControlDisplay)
     if designInfo.crowdControl then
-      CrowdControlListFrame:SetScale(designInfo.crowdControl.scale)
+      CrowdControlListFrame:SetScale(designInfo.crowdControl.scale * 6/5)
       self.RelayoutAuras(CrowdControlListFrame)
     end
   end
