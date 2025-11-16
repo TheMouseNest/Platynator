@@ -61,7 +61,7 @@ function addonTable.Display.ManagerMixin:OnLoad()
   self.ModifiedUFs = {}
   self.HookedUFs = {}
   -- Apply Platynator settings to aura layout
-  local function RelayoutAuras(list)
+  local function RelayoutAuras(list, filter)
     if list:IsForbidden() then
       return
     end
@@ -84,11 +84,18 @@ function addonTable.Display.ManagerMixin:OnLoad()
     list:SetPoint(anchor)
     for index, child in ipairs(children) do
       child:ClearAllPoints()
-      child:SetPoint(anchor, parent, anchor, (index - 1) * (child:GetWidth() + padding) * dir, 0)
-      child.Cooldown:SetCountdownFont("PlatynatorNameplateCooldownFont")
+      if not filter or filter(child.unitToken, child.auraInstanceID) then
+        child:SetPoint(anchor, parent, anchor, (index - 1) * (child:GetWidth() + padding) * dir, 0)
+        child.Cooldown:SetCountdownFont("PlatynatorNameplateCooldownFont")
+      else
+        child:Hide()
+      end
     end
   end
   self.RelayoutAuras = RelayoutAuras
+  self.DebuffFilter = function(unitToken, auraInstanceID)
+    return not C_UnitAuras.IsAuraFilteredOutByInstanceID(unitToken, auraInstanceID, "HARMFUL|PLAYER")
+  end
   hooksecurefunc(NamePlateDriverFrame, "OnNamePlateAdded", function(_, unit)
     local nameplate = C_NamePlate.GetNamePlateForUnit(unit, issecure())
     if nameplate and unit and unit ~= "preview" and (addonTable.Constants.IsMidnight or not UnitIsUnit("player", unit)) then
@@ -103,7 +110,9 @@ function addonTable.Display.ManagerMixin:OnLoad()
           self.HookedUFs[nameplate.UnitFrame] = true
           local af = nameplate.UnitFrame.AurasFrame
           hooksecurefunc(af.BuffListFrame, "Layout", RelayoutAuras)
-          hooksecurefunc(af.DebuffListFrame, "Layout", RelayoutAuras)
+          hooksecurefunc(af.DebuffListFrame, "Layout", function(list)
+            RelayoutAuras(list, self.DebuffFilter)
+          end)
           hooksecurefunc(af.CrowdControlListFrame, "Layout", RelayoutAuras)
         end
       end
@@ -294,7 +303,7 @@ function addonTable.Display.ManagerMixin:PositionBuffs(display)
     DebuffListFrame:SetParent(display.DebuffDisplay)
     if designInfo.debuffs then
       DebuffListFrame:SetScale(designInfo.debuffs.scale * 6/5)
-      self.RelayoutAuras(DebuffListFrame)
+      self.RelayoutAuras(DebuffListFrame, self.DebuffFilter)
     end
     local BuffListFrame = self.ModifiedUFs[unit].AurasFrame.BuffListFrame
     BuffListFrame:SetParent(display.BuffDisplay)
