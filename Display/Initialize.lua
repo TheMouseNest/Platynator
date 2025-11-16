@@ -65,7 +65,8 @@ function addonTable.Display.ManagerMixin:OnLoad()
     if list:IsForbidden() then
       return
     end
-    local details = list:GetParent().details
+    local parent = list:GetParent()
+    local details = parent.details
     if not details then
       return
     end
@@ -83,7 +84,7 @@ function addonTable.Display.ManagerMixin:OnLoad()
     list:SetPoint(anchor)
     for index, child in ipairs(children) do
       child:ClearAllPoints()
-      child:SetPoint(anchor, (index - 1) * (child:GetWidth() + padding) * dir, 0)
+      child:SetPoint(anchor, parent, anchor, (index - 1) * (child:GetWidth() + padding) * dir, 0)
       child.Cooldown:SetCountdownFont("PlatynatorNameplateCooldownFont")
     end
   end
