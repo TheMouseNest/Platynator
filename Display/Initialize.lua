@@ -85,6 +85,7 @@ function addonTable.Display.ManagerMixin:OnLoad()
     for index, child in ipairs(children) do
       child:ClearAllPoints()
       if not filter or filter(child.unitToken, child.auraInstanceID) then
+        child:SetScale(0.75)
         child:SetPoint(anchor, parent, anchor, (index - 1) * (child:GetWidth() + padding) * dir, 0)
         child.Cooldown:SetCountdownFont("PlatynatorNameplateCooldownFont")
       else
