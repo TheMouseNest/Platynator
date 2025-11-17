@@ -47,6 +47,7 @@ function addonTable.Display.ManagerMixin:OnLoad()
   self:RegisterEvent("PLAYER_SOFT_INTERACT_CHANGED")
   self:RegisterEvent("UPDATE_MOUSEOVER_UNIT")
   self:RegisterEvent("PLAYER_LOGIN")
+  self:RegisterEvent("UI_SCALE_CHANGED")
 
   self:RegisterEvent("PLAYER_SOFT_INTERACT_CHANGED")
 
@@ -201,11 +202,13 @@ function addonTable.Display.ManagerMixin:OnLoad()
         if self.lastInteract and self.lastInteract.interactUnit then
           self.lastInteract:UpdateSoftInteract()
         end
+        self:UpdateNamePlateSize()
       end)
     elseif state[addonTable.Constants.RefreshReason.Scale] or state[addonTable.Constants.RefreshReason.TargetBehaviour] then
       for _, display in pairs(self.nameplateDisplays) do
         display:UpdateVisual()
       end
+      self:UpdateNamePlateSize()
     elseif state[addonTable.Constants.RefreshReason.StackingBehaviour] then
       self:UpdateStacking()
     elseif state[addonTable.Constants.RefreshReason.ShowBehaviour] then
@@ -216,10 +219,13 @@ function addonTable.Display.ManagerMixin:OnLoad()
   addonTable.CallbackRegistry:RegisterCallback("SettingChanged", function(_, settingName)
     if settingName == addonTable.Config.Options.CLICK_REGION_SCALE_X or settingName == addonTable.Config.Options.CLICK_REGION_SCALE_Y then
       for unit, UF in pairs(self.ModifiedUFs) do
-        UF.HitTestFrame:ClearAllPoints()
-        UF.HitTestFrame:SetPoint("BOTTOMLEFT", self.nameplateDisplays[unit], "CENTER", addonTable.Rect.left * addonTable.Config.Get(addonTable.Config.Options.CLICK_REGION_SCALE_X), addonTable.Rect.bottom * addonTable.Config.Get(addonTable.Config.Options.CLICK_REGION_SCALE_Y))
-        UF.HitTestFrame:SetSize(addonTable.Rect.width * addonTable.Config.Get(addonTable.Config.Options.CLICK_REGION_SCALE_X), addonTable.Rect.height * addonTable.Config.Get(addonTable.Config.Options.CLICK_REGION_SCALE_Y))
+        if UF.HitTestFrame then
+          UF.HitTestFrame:ClearAllPoints()
+          UF.HitTestFrame:SetPoint("BOTTOMLEFT", self.nameplateDisplays[unit], "CENTER", addonTable.Rect.left * addonTable.Config.Get(addonTable.Config.Options.CLICK_REGION_SCALE_X), addonTable.Rect.bottom * addonTable.Config.Get(addonTable.Config.Options.CLICK_REGION_SCALE_Y))
+          UF.HitTestFrame:SetSize(addonTable.Rect.width * addonTable.Config.Get(addonTable.Config.Options.CLICK_REGION_SCALE_X), addonTable.Rect.height * addonTable.Config.Get(addonTable.Config.Options.CLICK_REGION_SCALE_Y))
+        end
       end
+      self:UpdateNamePlateSize()
     end
   end)
 end
@@ -243,11 +249,11 @@ function addonTable.Display.ManagerMixin:UpdateStacking()
     end
   else
     if addonTable.Config.Get(addonTable.Config.Options.CLOSER_NAMEPLATES) then
-      C_CVar.SetCVar("nameplateOverlapV", "0.6")
-      C_CVar.SetCVar("nameplateOverlapH", "0.5")
+      C_CVar.SetCVar("nameplateOverlapV", "1.2")
+      C_CVar.SetCVar("nameplateOverlapH", "1.1")
       C_CVar.SetCVar("nameplateOtherTopInset", "0.05")
       C_CVar.SetCVar("nameplateLargeTopInset", "0.07")
-    elseif C_CVar.GetCVar("nameplateOverlapV") == "0.6" and C_CVar.GetCVar("nameplateOverlapH") == "0.5" and C_CVar.GetCVar("nameplateOtherTopInset") == "0.05" and C_CVar.GetCVar("nameplateLargeTopInset") == "0.07" then
+    elseif C_CVar.GetCVar("nameplateOverlapV") == "1" and C_CVar.GetCVar("nameplateOverlapH") == "1" and C_CVar.GetCVar("nameplateOtherTopInset") == "0.05" and C_CVar.GetCVar("nameplateLargeTopInset") == "0.07" then
       C_CVar.SetCVar("nameplateOverlapV", "1.1")
       C_CVar.SetCVar("nameplateOverlapH", "0.8")
       C_CVar.SetCVar("nameplateOtherTopInset", "0.1")
@@ -439,6 +445,16 @@ function addonTable.Display.ManagerMixin:UpdateForTarget()
   end
 end
 
+function addonTable.Display.ManagerMixin:UpdateNamePlateSize()
+  if C_NamePlate.SetNamePlateEnemySize and not addonTable.Constants.IsMidnight then
+    local globalScale = addonTable.Config.Get(addonTable.Config.Options.GLOBAL_SCALE) * UIParent:GetScale()
+    local width = addonTable.Rect.width * globalScale * addonTable.Config.Get(addonTable.Config.Options.CLICK_REGION_SCALE_X)
+    local height = addonTable.Rect.height * globalScale * addonTable.Config.Get(addonTable.Config.Options.CLICK_REGION_SCALE_Y)
+    C_NamePlate.SetNamePlateEnemySize(width, height)
+    C_NamePlate.SetNamePlateFriendlySize(width, height)
+  end
+end
+
 function addonTable.Display.ManagerMixin:OnEvent(eventName, ...)
   if eventName == "NAME_PLATE_UNIT_ADDED" then
     local unit = ...
@@ -521,5 +537,13 @@ function addonTable.Display.ManagerMixin:OnEvent(eventName, ...)
     CreateFont("PlatynatorNameplateCooldownFont")
     local file, size, flags = _G[addonTable.CurrentFont]:GetFont()
     PlatynatorNameplateCooldownFont:SetFont(file, 14, flags)
+
+    if C_NamePlate.SetNamePlateEnemySize then
+      C_Timer.After(0, function()
+        self:UpdateNamePlateSize()
+      end)
+    end
+  elseif eventName == "UI_SCALE_CHANGED" then
+    self:UpdateNamePlateSize()
   end
 end

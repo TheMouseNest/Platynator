@@ -310,20 +310,17 @@ local function SetupBehaviour(parent)
   closerNameplatesCheckbox:SetPoint("TOP", allFrames[#allFrames], "BOTTOM", 0, addonTable.Constants.IsMidnight and -30 or 0)
   table.insert(allFrames, closerNameplatesCheckbox)
 
-  local clickRegionSliderX
-  if addonTable.Constants.IsMidnight then
-    clickRegionSliderX = addonTable.CustomiseDialog.Components.GetSlider(container, addonTable.Locales.CLICK_REGION_WIDTH, 1, 300, function(value) return ("%d%%"):format(value) end, function(value)
-      addonTable.Config.Set(addonTable.Config.Options.CLICK_REGION_SCALE_X, value / 100)
-    end)
-    clickRegionSliderX:SetPoint("TOP", allFrames[#allFrames], "BOTTOM", 0, -30)
-    table.insert(allFrames, clickRegionSliderX)
+  local clickRegionSliderX = addonTable.CustomiseDialog.Components.GetSlider(container, addonTable.Locales.CLICK_REGION_WIDTH, 1, 300, function(value) return ("%d%%"):format(value) end, function(value)
+    addonTable.Config.Set(addonTable.Config.Options.CLICK_REGION_SCALE_X, value / 100)
+  end)
+  clickRegionSliderX:SetPoint("TOP", allFrames[#allFrames], "BOTTOM", 0, -30)
+  table.insert(allFrames, clickRegionSliderX)
 
-    clickRegionSliderY = addonTable.CustomiseDialog.Components.GetSlider(container, addonTable.Locales.CLICK_REGION_HEIGHT, 1, 500, function(value) return ("%d%%"):format(value) end, function(value)
-      addonTable.Config.Set(addonTable.Config.Options.CLICK_REGION_SCALE_Y, value / 100)
-    end)
-    clickRegionSliderY:SetPoint("TOP", allFrames[#allFrames], "BOTTOM", 0, 0)
-    table.insert(allFrames, clickRegionSliderY)
-  end
+  local clickRegionSliderY = addonTable.CustomiseDialog.Components.GetSlider(container, addonTable.Locales.CLICK_REGION_HEIGHT, 1, 500, function(value) return ("%d%%"):format(value) end, function(value)
+    addonTable.Config.Set(addonTable.Config.Options.CLICK_REGION_SCALE_Y, value / 100)
+  end)
+  clickRegionSliderY:SetPoint("TOP", allFrames[#allFrames], "BOTTOM", 0, 0)
+  table.insert(allFrames, clickRegionSliderY)
 
   container:SetScript("OnShow", function()
     local styles = {}
