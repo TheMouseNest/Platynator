@@ -59,7 +59,7 @@ addonTable.CustomiseDialog.WidgetsConfig = {
   ["bars"] = {
     ["*"] = {
       {
-        label = addonTable.Locales.TEXTURES,
+        label = addonTable.Locales.GENERAL,
         entries = {
           {
             label = addonTable.Locales.SCALE,
@@ -128,6 +128,11 @@ addonTable.CustomiseDialog.WidgetsConfig = {
               }, mode) or 3
             end,
           },
+        },
+      },
+      {
+        label = addonTable.Locales.TEXTURES,
+        entries = {
           {
             label = addonTable.Locales.BORDER,
             kind = "dropdown",
@@ -217,7 +222,6 @@ addonTable.CustomiseDialog.WidgetsConfig = {
               return (1 - details.background.alpha) * 100
             end,
           },
-          { kind = "spacer" },
           {
             label = addonTable.Locales.APPLY_MAIN_COLOR_TO_BACKGROUND,
             kind = "checkbox",
@@ -228,10 +232,48 @@ addonTable.CustomiseDialog.WidgetsConfig = {
               return details.background.applyColor or false
             end,
           },
+          {
+            label = addonTable.Locales.HIGHLIGHT_BAR_EDGE,
+            kind = "checkbox",
+            setter = function(details, value)
+              details.marker.asset = value and "wide/glow" or "none"
+            end,
+            getter = function(details)
+              return details.marker.asset ~= "none"
+            end,
+          },
         }
       },
     },
     ["health"] = {
+      {
+        label =addonTable.Locales.TEXTURES,
+        entries = {
+          {
+            label = addonTable.Locales.ABSORB,
+            kind = "dropdown",
+            getInitData = function()
+              return GetLabelsValues(addonTable.Assets.BarBackgrounds, function(asset) return asset.mode ~= addonTable.Assets.Mode.Special end, true)
+            end,
+            setter = function(details, value)
+              details.absorb.asset = value
+            end,
+            getter = function(details)
+              return details.absorb.asset
+            end
+          },
+          {
+            label = addonTable.Locales.ABSORB_COLOR,
+            kind = "colorPicker",
+            setter = function(details, value)
+              details.absorb.color = value
+            end,
+            getter = function(details)
+              return details.absorb.color
+            end,
+          },
+        }
+      },
       {
         label = addonTable.Locales.COLORS,
         entries = {
@@ -673,7 +715,7 @@ addonTable.CustomiseDialog.WidgetsConfig = {
   ["markers"] = {
     ["*"] = {
       {
-        label = addonTable.Locales.TEXTURES,
+        label = addonTable.Locales.GENERAL,
         entries = {
           {
             label = addonTable.Locales.SCALE,
@@ -757,7 +799,7 @@ addonTable.CustomiseDialog.WidgetsConfig = {
   ["highlights"] = {
     ["*"] = {
       {
-        label = addonTable.Locales.TEXTURES,
+        label = addonTable.Locales.GENERAL,
         entries = {
           {
             label = addonTable.Locales.SCALE,
@@ -853,7 +895,7 @@ addonTable.CustomiseDialog.WidgetsConfig = {
   ["specialBars"] = {
     ["power"] = {
       {
-        label = addonTable.Locales.TEXTURES,
+        label = addonTable.Locales.GENERAL,
         entries = {
           {
             label = addonTable.Locales.SCALE,

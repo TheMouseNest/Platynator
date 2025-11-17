@@ -122,6 +122,7 @@ function addonTable.Display.GetHealthBar(frame, parent)
     borderHolder:SetFrameLevel(frame:GetFrameLevel() + 4)
 
     frame.statusBarAbsorb:SetStatusBarTexture(addonTable.Assets.BarBackgrounds[details.absorb.asset].file)
+    frame.statusBarAbsorb:GetStatusBarTexture():SetVertexColor(details.absorb.color.r, details.absorb.color.g, details.absorb.color.b)
     frame.statusBarAbsorb:SetPoint("LEFT", frame.statusBar:GetStatusBarTexture(), "RIGHT")
     frame.statusBarAbsorb:SetHeight(frame:GetHeight())
     frame.statusBarAbsorb:SetWidth(frame:GetWidth())

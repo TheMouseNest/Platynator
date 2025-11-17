@@ -105,6 +105,9 @@ function addonTable.Core.UpgradeDesign(design)
     if bar.kind == "health" and not bar.colors.npc.unfriendly then
       bar.colors.npc.unfriendly = GetColor("ff8100")
     end
+    if bar.kind == "health" and not bar.absorb.color then
+      bar.absorb.color = GetColor("FFFFFF")
+    end
     if bar.kind == "cast" and bar.colors.interrupted == nil then
       bar.colors.interrupted = GetColor("FC36E0")
     end
