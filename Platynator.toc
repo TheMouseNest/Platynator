@@ -49,7 +49,8 @@ Display/CastText.lua
 Display/CastTargetText.lua
 Display/LevelText.lua
 Display/UnitTargetText.lua
-Display/Highlight.lua
+Display/TargetHighlight.lua
+Display/MouseoverHighlight.lua
 Display/QuestMarker.lua
 Display/CannotInterruptMarker.lua
 Display/CastIconMarker.lua

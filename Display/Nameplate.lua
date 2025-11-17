@@ -189,6 +189,9 @@ function addonTable.Display.NameplateMixin:SetUnit(unit)
       if w.ApplyTarget then
         w:ApplyTarget()
       end
+      if w.ApplyMouseover then
+        w:ApplyMouseover()
+      end
     end
 
     self.BuffDisplay:SetShown(self.BuffDisplay.enabled)
@@ -240,6 +243,18 @@ function addonTable.Display.NameplateMixin:UpdateForTarget()
     for _, w in ipairs(self.widgets) do
       if w.ApplyTarget then
         w:ApplyTarget()
+      end
+    end
+  end
+
+  self:UpdateVisual()
+end
+
+function addonTable.Display.NameplateMixin:UpdateForMouseover()
+  if self.unit then
+    for _, w in ipairs(self.widgets) do
+      if w.ApplyMouseover then
+        w:ApplyMouseover()
       end
     end
   end

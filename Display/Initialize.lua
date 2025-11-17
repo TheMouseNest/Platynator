@@ -33,7 +33,11 @@ function addonTable.Display.ManagerMixin:OnLoad()
     frame:OnLoad()
   end)
   self.nameplateDisplays = {}
+
   self.lastTarget = nil
+  self.lastMouseover = nil
+  self.MouseoverMonitor = nil
+
   self:SetScript("OnEvent", self.OnEvent)
 
   self:RegisterEvent("NAME_PLATE_CREATED")
@@ -364,6 +368,77 @@ function addonTable.Display.ManagerMixin:Uninstall(unit)
   end
 end
 
+function addonTable.Display.ManagerMixin:UpdateForMouseover()
+  if addonTable.Constants.IsMidnight and IsInInstance() then
+    for _, display in pairs(self.nameplateDisplays) do
+      display:UpdateForMouseover()
+    end
+  else
+    if self.lastMouseover and (not self.lastMouseover.unit or UnitExists(self.lastMouseover.unit)) then
+      self.lastMouseover:UpdateForMouseover()
+    end
+    local unit
+    for i = 1, 40 do
+      unit = "nameplate" .. i
+      if ConvertSecret(UnitIsUnit(unit, "mouseover")) then
+        break
+      else
+        unit = nil
+      end
+    end
+    if self.nameplateDisplays[unit] then
+      self.lastMouseover = self.nameplateDisplays[unit]
+      self.lastMouseover:UpdateForMouseover()
+    else
+      self.lastMouseover = nil
+    end
+  end
+
+  if UnitExists("mouseover") and not self.MouseoverMonitor then
+    self.MouseoverMonitor = C_Timer.NewTicker(0.1, function()
+      self:UpdateForMouseoverFrequent()
+    end)
+  end
+end
+
+function addonTable.Display.ManagerMixin:UpdateForMouseoverFrequent()
+  if not UnitExists("mouseover") then
+    self.MouseoverMonitor:Cancel()
+    self.MouseoverMonitor = nil
+    self:UpdateForMouseover()
+    if IsMouseButtonDown() then -- Holding down the mouse button will remove the mouseover unit temporarily
+      self:RegisterEvent("GLOBAL_MOUSE_UP")
+    end
+  end
+end
+
+function addonTable.Display.ManagerMixin:UpdateForTarget()
+  if addonTable.Constants.IsMidnight and IsInInstance() then
+    for _, display in pairs(self.nameplateDisplays) do
+      display:UpdateForTarget()
+    end
+  else
+    if self.lastTarget and (not self.lastTarget.unit or UnitExists(self.lastTarget.unit)) then
+      self.lastTarget:UpdateForTarget()
+    end
+    local unit
+    for i = 1, 40 do
+      unit = "nameplate" .. i
+      if ConvertSecret(UnitIsUnit(unit, "target")) then
+        break
+      else
+        unit = nil
+      end
+    end
+    if self.nameplateDisplays[unit] then
+      self.lastTarget = self.nameplateDisplays[unit]
+      self.lastTarget:UpdateForTarget()
+    else
+      self.lastTarget = nil
+    end
+  end
+end
+
 function addonTable.Display.ManagerMixin:OnEvent(eventName, ...)
   if eventName == "NAME_PLATE_UNIT_ADDED" then
     local unit = ...
@@ -372,30 +447,9 @@ function addonTable.Display.ManagerMixin:OnEvent(eventName, ...)
     local unit = ...
     self:Uninstall(unit)
   elseif eventName == "PLAYER_TARGET_CHANGED" then
-    if addonTable.Constants.IsMidnight and IsInInstance() then
-      for _, display in pairs(self.nameplateDisplays) do
-        display:UpdateForTarget()
-      end
-    else
-      if self.lastTarget and (not self.lastTarget.unit or UnitExists(self.lastTarget.unit)) then
-        self.lastTarget:UpdateForTarget()
-      end
-      local unit
-      for i = 1, 40 do
-        unit = "nameplate" .. i
-        if ConvertSecret(UnitIsUnit(unit, "target")) then
-          break
-        else
-          unit = nil
-        end
-      end
-      if self.nameplateDisplays[unit] then
-        self.lastTarget = self.nameplateDisplays[unit]
-        self.lastTarget:UpdateForTarget()
-      else
-        self.lastTarget = nil
-      end
-    end
+    self:UpdateForTarget()
+  elseif eventName == "UPDATE_MOUSEOVER_UNIT" then
+    self:UpdateForMouseover()
   elseif eventName == "PLAYER_SOFT_INTERACT_CHANGED" then
     if self.lastInteract and self.lastInteract.interactUnit then
       self.lastInteract:UpdateSoftInteract()
@@ -453,6 +507,9 @@ function addonTable.Display.ManagerMixin:OnEvent(eventName, ...)
 
     self:UpdateStacking()
     self:UpdateShowState()
+  elseif eventName == "GLOBAL_MOUSE_UP" then
+    self:UpdateForMouseover()
+    self:UnregisterEvent("GLOBAL_MOUSE_UP")
   elseif eventName == "PLAYER_REGEN_ENABLED" then
     self:UnregisterEvent("PLAYER_REGEN_ENABLED")
     self:UpdateStacking()

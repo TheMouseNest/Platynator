@@ -112,6 +112,17 @@ addonTable.CustomiseDialog.DesignWidgets = {
     },
   },
   {
+    name = addonTable.Locales.MOUSEOVER,
+    kind = "highlights",
+    default = {
+      anchor = {"TOPLEFT", -140, 50},
+      kind = "mouseover",
+      asset = "wide/glow",
+      color = GetColor("AAAAAA"),
+      scale = 1,
+    },
+  },
+  {
     name = addonTable.Locales.AURAS,
     special = "header",
   },

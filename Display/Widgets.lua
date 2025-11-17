@@ -302,7 +302,9 @@ function addonTable.Display.GetHighlight(frame, parent)
     frame.highlight:GetCheckedTexture():SetTexelSnappingBias(0)
 
     if details.kind == "target" then
-      Mixin(frame, addonTable.Display.HighlightMixin)
+      Mixin(frame, addonTable.Display.TargetHighlightMixin)
+    elseif details.kind == "mouseover" then
+      Mixin(frame, addonTable.Display.MouseoverHighlightMixin)
     else
       assert(false)
     end
