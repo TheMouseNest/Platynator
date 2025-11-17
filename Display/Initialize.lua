@@ -345,7 +345,11 @@ function addonTable.Display.ManagerMixin:Install(unit, nameplate)
     end
     local UF = self.ModifiedUFs[unit]
     if UF and UF.HitTestFrame then
-      UF.HitTestFrame:SetParent(newDisplay)
+      if UnitCanAttack("player", unit) then
+        UF.HitTestFrame:SetParent(newDisplay)
+      else
+        UF.HitTestFrame:SetParent(addonTable.hiddenFrame)
+      end
       UF.HitTestFrame:ClearAllPoints()
       UF.HitTestFrame:SetPoint("BOTTOMLEFT", newDisplay, "CENTER", addonTable.Rect.left * addonTable.Config.Get(addonTable.Config.Options.CLICK_REGION_SCALE_X), addonTable.Rect.bottom * addonTable.Config.Get(addonTable.Config.Options.CLICK_REGION_SCALE_Y))
       UF.HitTestFrame:SetSize(addonTable.Rect.width * addonTable.Config.Get(addonTable.Config.Options.CLICK_REGION_SCALE_X), addonTable.Rect.height * addonTable.Config.Get(addonTable.Config.Options.CLICK_REGION_SCALE_Y))
