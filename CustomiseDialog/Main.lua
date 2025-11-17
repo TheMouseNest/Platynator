@@ -310,13 +310,19 @@ local function SetupBehaviour(parent)
   closerNameplatesCheckbox:SetPoint("TOP", allFrames[#allFrames], "BOTTOM", 0, addonTable.Constants.IsMidnight and -30 or 0)
   table.insert(allFrames, closerNameplatesCheckbox)
 
-  local clickRegionSlider
+  local clickRegionSliderX
   if addonTable.Constants.IsMidnight then
-    clickRegionSlider = addonTable.CustomiseDialog.Components.GetSlider(container, addonTable.Locales.CLICK_REGION_SCALE, 1, 300, function(value) return ("%d%%"):format(value) end, function(value)
-      addonTable.Config.Set(addonTable.Config.Options.CLICK_REGION_SCALE, value / 100)
+    clickRegionSliderX = addonTable.CustomiseDialog.Components.GetSlider(container, addonTable.Locales.CLICK_REGION_WIDTH, 1, 300, function(value) return ("%d%%"):format(value) end, function(value)
+      addonTable.Config.Set(addonTable.Config.Options.CLICK_REGION_SCALE_X, value / 100)
     end)
-    clickRegionSlider:SetPoint("TOP", allFrames[#allFrames], "BOTTOM", 0, -30)
-    table.insert(allFrames, clickRegionSlider)
+    clickRegionSliderX:SetPoint("TOP", allFrames[#allFrames], "BOTTOM", 0, -30)
+    table.insert(allFrames, clickRegionSliderX)
+
+    clickRegionSliderY = addonTable.CustomiseDialog.Components.GetSlider(container, addonTable.Locales.CLICK_REGION_HEIGHT, 1, 500, function(value) return ("%d%%"):format(value) end, function(value)
+      addonTable.Config.Set(addonTable.Config.Options.CLICK_REGION_SCALE_Y, value / 100)
+    end)
+    clickRegionSliderY:SetPoint("TOP", allFrames[#allFrames], "BOTTOM", 0, 0)
+    table.insert(allFrames, clickRegionSliderY)
   end
 
   container:SetScript("OnShow", function()
@@ -342,8 +348,9 @@ local function SetupBehaviour(parent)
     friendlyStyleDropdown:Init(labels, values)
     enemyStyleDropdown:Init(labels, values)
 
-    if clickRegionSlider then
-      clickRegionSlider:SetValue(addonTable.Config.Get(addonTable.Config.Options.CLICK_REGION_SCALE) * 100)
+    if clickRegionSliderX then
+      clickRegionSliderX:SetValue(addonTable.Config.Get(addonTable.Config.Options.CLICK_REGION_SCALE_X) * 100)
+      clickRegionSliderY:SetValue(addonTable.Config.Get(addonTable.Config.Options.CLICK_REGION_SCALE_Y) * 100)
     end
 
     for _, f in ipairs(allFrames) do

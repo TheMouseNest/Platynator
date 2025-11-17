@@ -186,9 +186,8 @@ function addonTable.Display.ManagerMixin:OnLoad()
           local UF = self.ModifiedUFs[unit]
           if UF and UF.HitTestFrame then
             UF.HitTestFrame:ClearAllPoints()
-            UF.HitTestFrame:SetPoint("BOTTOMLEFT", display, "CENTER", addonTable.Rect.left, addonTable.Rect.bottom)
-            UF.HitTestFrame:SetSize(addonTable.Rect.width, addonTable.Rect.height)
-            UF.HitTestFrame:SetScale(addonTable.Config.Get(addonTable.Config.Options.CLICK_REGION_SCALE))
+            UF.HitTestFrame:SetPoint("BOTTOMLEFT", display, "CENTER", addonTable.Rect.left * addonTable.Config.Get(addonTable.Config.Options.CLICK_REGION_SCALE_X), addonTable.Rect.bottom * addonTable.Config.Get(addonTable.Config.Options.CLICK_REGION_SCALE_Y))
+            UF.HitTestFrame:SetSize(addonTable.Rect.width * addonTable.Config.Get(addonTable.Config.Options.CLICK_REGION_SCALE_X), addonTable.Rect.height * addonTable.Config.Get(addonTable.Config.Options.CLICK_REGION_SCALE_Y))
           end
           display:InitializeWidgets(addonTable.Core.GetDesign(display.kind))
           self:PositionBuffs(display)
@@ -210,9 +209,11 @@ function addonTable.Display.ManagerMixin:OnLoad()
   end)
 
   addonTable.CallbackRegistry:RegisterCallback("SettingChanged", function(_, settingName)
-    if settingName == addonTable.Config.Options.CLICK_REGION_SCALE then
-      for _, UF in pairs(self.ModifiedUFs) do
-        UF.HitTestFrame:SetScale(addonTable.Config.Get(addonTable.Config.Options.CLICK_REGION_SCALE))
+    if settingName == addonTable.Config.Options.CLICK_REGION_SCALE_X or settingName == addonTable.Config.Options.CLICK_REGION_SCALE_Y then
+      for unit, UF in pairs(self.ModifiedUFs) do
+        UF.HitTestFrame:ClearAllPoints()
+        UF.HitTestFrame:SetPoint("BOTTOMLEFT", self.nameplateDisplays[unit], "CENTER", addonTable.Rect.left * addonTable.Config.Get(addonTable.Config.Options.CLICK_REGION_SCALE_X), addonTable.Rect.bottom * addonTable.Config.Get(addonTable.Config.Options.CLICK_REGION_SCALE_Y))
+        UF.HitTestFrame:SetSize(addonTable.Rect.width * addonTable.Config.Get(addonTable.Config.Options.CLICK_REGION_SCALE_X), addonTable.Rect.height * addonTable.Config.Get(addonTable.Config.Options.CLICK_REGION_SCALE_Y))
       end
     end
   end)
@@ -335,9 +336,8 @@ function addonTable.Display.ManagerMixin:Install(unit, nameplate)
     if UF and UF.HitTestFrame then
       UF.HitTestFrame:SetParent(newDisplay)
       UF.HitTestFrame:ClearAllPoints()
-      UF.HitTestFrame:SetPoint("BOTTOMLEFT", newDisplay, "CENTER", addonTable.Rect.left, addonTable.Rect.bottom)
-      UF.HitTestFrame:SetSize(addonTable.Rect.width, addonTable.Rect.height)
-      UF.HitTestFrame:SetScale(addonTable.Config.Get(addonTable.Config.Options.CLICK_REGION_SCALE))
+      UF.HitTestFrame:SetPoint("BOTTOMLEFT", newDisplay, "CENTER", addonTable.Rect.left * addonTable.Config.Get(addonTable.Config.Options.CLICK_REGION_SCALE_X), addonTable.Rect.bottom * addonTable.Config.Get(addonTable.Config.Options.CLICK_REGION_SCALE_Y))
+      UF.HitTestFrame:SetSize(addonTable.Rect.width * addonTable.Config.Get(addonTable.Config.Options.CLICK_REGION_SCALE_X), addonTable.Rect.height * addonTable.Config.Get(addonTable.Config.Options.CLICK_REGION_SCALE_Y))
     end
     self.nameplateDisplays[unit] = newDisplay
     newDisplay:Install(nameplate)
