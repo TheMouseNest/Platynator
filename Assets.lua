@@ -88,7 +88,7 @@ addonTable.Assets.BarBorders = {
   ["125/blizzard-cast-bar"] = {file = "Interface/AddOns/Platynator/Assets/%s/BarBorders/blizzard-cast-bar-125.png", width = 1000, height = 157, has4k = true, masked = true, mode = mode.Percent125, tag = "blizzard-cast-bar"},
   ["100/blizzard-cast-bar"] = {file = "Interface/AddOns/Platynator/Assets/%s/BarBorders/blizzard-cast-bar-100.png", width = 1000, height = 125, has4k = true, masked = true, mode = mode.Percent100, tag = "blizzard-cast-bar"},
   ["75/blizzard-cast-bar"] = {file = "Interface/AddOns/Platynator/Assets/%s/BarBorders/blizzard-cast-bar-75.png", width = 1000, height = 94, has4k = true, masked = true, mode = mode.Percent75, tag = "blizzard-cast-bar"},
-  ["special/blizzard-cast-bar"] = {file = "Interface/AddOns/Platynator/Assets/Special/BarBorders/blizzard-cast-bar.png", width = 1000, height = 63, masked = true, mode = mode.Percent50, tag = "blizzard-cast-bar"},
+  ["special/blizzard-cast-bar"] = {file = "Interface/AddOns/Platynator/Assets/%s/BarBorders/blizzard-cast-bar-50.png", width = 1000, height = 63, has4k = true, masked = true, mode = mode.Percent50, tag = "blizzard-cast-bar"},
 }
 
 addonTable.Assets.BarMasks = {
