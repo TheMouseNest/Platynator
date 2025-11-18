@@ -47,6 +47,7 @@ function addonTable.Display.ManagerMixin:OnLoad()
   self:RegisterEvent("PLAYER_SOFT_INTERACT_CHANGED")
   self:RegisterEvent("UPDATE_MOUSEOVER_UNIT")
   self:RegisterEvent("PLAYER_LOGIN")
+  self:RegisterEvent("PLAYER_ENTERING_WORLD")
   self:RegisterEvent("UI_SCALE_CHANGED")
 
   self:RegisterEvent("PLAYER_SOFT_INTERACT_CHANGED")
@@ -301,6 +302,14 @@ function addonTable.Display.ManagerMixin:UpdateShowState()
     local newValue = state and "1" or "0"
     C_CVar.SetCVar(values[key], newValue)
   end
+
+  if IsInInstance() and not addonTable.Config.Get(addonTable.Config.Options.SHOW_FRIENDLY_IN_INSTANCES) then
+    local _, instanceType = GetInstanceInfo()
+    if instanceType == "raid" or instanceType == "party" or instanceType == "arenas" then
+      C_CVar.SetCVar(values.player, "0")
+      C_CVar.SetCVar(values.npc, "0")
+    end
+  end
 end
 
 function addonTable.Display.ManagerMixin:PositionBuffs(display)
@@ -533,6 +542,8 @@ function addonTable.Display.ManagerMixin:OnEvent(eventName, ...)
   elseif eventName == "PLAYER_REGEN_ENABLED" then
     self:UnregisterEvent("PLAYER_REGEN_ENABLED")
     self:UpdateStacking()
+    self:UpdateShowState()
+  elseif eventName == "PLAYER_ENTERING_WORLD" then
     self:UpdateShowState()
   elseif eventName == "PLAYER_LOGIN" then
     local design = addonTable.Core.GetDesign("enemy")

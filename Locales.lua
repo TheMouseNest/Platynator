@@ -104,6 +104,7 @@ L["FRIENDLY_NPCS"] = "Friendly NPCs"
 L["ENEMY_NPCS"] = "Enemy NPCs"
 L["LESS_NAMEPLATE_SPACING"] = "Less nameplate spacing"
 L["STACKING_NAMEPLATES"] = "Stacking nameplates"
+L["SHOW_FRIENDLY_IN_INSTANCES"] = "Show friendly in instances"
 
 L["ENTER_PROFILE_NAME"] = "Enter Profile Name:"
 L["PROFILES"] = "Profiles"

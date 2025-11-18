@@ -287,6 +287,16 @@ local function SetupBehaviour(parent)
   end
   table.insert(allFrames, applyNameplatesDropdown)
 
+  local friendliesInInstancesCheckbox = addonTable.CustomiseDialog.Components.GetCheckbox(container, addonTable.Locales.SHOW_FRIENDLY_IN_INSTANCES, 28, function(value)
+    if InCombatLockdown() then
+      return
+    end
+    addonTable.Config.Set(addonTable.Config.Options.SHOW_FRIENDLY_IN_INSTANCES, value)
+  end)
+  friendliesInInstancesCheckbox.option = addonTable.Config.Options.SHOW_FRIENDLY_IN_INSTANCES
+  friendliesInInstancesCheckbox:SetPoint("TOP", allFrames[#allFrames], "BOTTOM", 0, 0)
+  table.insert(allFrames, friendliesInInstancesCheckbox)
+
   if not addonTable.Constants.IsMidnight then
     local stackingNameplatesCheckbox = addonTable.CustomiseDialog.Components.GetCheckbox(container, addonTable.Locales.STACKING_NAMEPLATES, 28, function(value)
       if InCombatLockdown() then

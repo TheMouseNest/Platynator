@@ -21,7 +21,8 @@ local settings = {
   CLICK_REGION_SCALE_X = {key = "click_region_scale_x", default = 1},
   CLICK_REGION_SCALE_Y = {key = "click_region_scale_y", default = 1},
 
-  SHOW_NAMEPLATES = {key = "show_nameplates", default = {npc = true, player = true, enemy = true}, refresh = {addonTable.Constants.RefreshReason.ShowBehaviour}}
+  SHOW_NAMEPLATES = {key = "show_nameplates", default = {npc = true, player = true, enemy = true}, refresh = {addonTable.Constants.RefreshReason.ShowBehaviour}},
+  SHOW_FRIENDLY_IN_INSTANCES = {key = "show_friendly_in_instances", default = true, refresh = {addonTable.Constants.RefreshReason.ShowBehaviour}},
 }
 
 addonTable.Config.RefreshType = {}
