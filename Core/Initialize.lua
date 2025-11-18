@@ -142,6 +142,10 @@ function addonTable.Core.UpgradeDesign(design)
         }
       }
     end
+    if text.shorten ~= nil then
+      text.shorten = nil
+      text.truncate = text.truncate or text.shorten and true or false
+     end
   end
 
   if design.font.shadow == nil or design.font.flags ~= nil then
