@@ -48,12 +48,6 @@ local function GetLabelsValues(allAssets, filter, showHeight)
 
   return labels, values
 end
-local function ApplySpecial(details, value)
-  local group = addonTable.Assets.SpecialBars[value]
-  details.foreground.asset = group.foreground
-  details.background.asset = group.background
-  details.border.asset = group.border
-end
 
 addonTable.CustomiseDialog.WidgetsConfig = {
   ["bars"] = {
@@ -94,12 +88,10 @@ addonTable.CustomiseDialog.WidgetsConfig = {
               local asset = addonTable.Assets.BarBorders[details.border.asset]
               local mode = asset.mode
               local tag = asset.tag
-              if mode ~= addonTable.Assets.Mode.Special then
-                for key, alt in pairs(addonTable.Assets.BarBorders) do
-                  if alt.tag == tag and alt.mode == newMode then
-                    details.border.asset = key
-                    return
-                  end
+              for key, alt in pairs(addonTable.Assets.BarBorders) do
+                if alt.tag == tag and alt.mode == newMode then
+                  details.border.asset = key
+                  return
                 end
               end
 
@@ -108,10 +100,6 @@ addonTable.CustomiseDialog.WidgetsConfig = {
                   details.border.asset = key
                   break
                 end
-              end
-              if mode == addonTable.Assets.Mode.Special then
-                details.background.asset = "wide/bevelled-grey"
-                details.foreground.asset = "wide/bevelled"
               end
             end,
             getter = function(details)
@@ -138,19 +126,10 @@ addonTable.CustomiseDialog.WidgetsConfig = {
             kind = "dropdown",
             getInitData = function(details)
               local height = addonTable.Assets.BarBorders[details.border.asset].mode
-              return GetLabelsValues(addonTable.Assets.BarBorders, function(asset) return asset.mode == height or (height == addonTable.Assets.Mode.Special and asset.mode == addonTable.Assets.Mode.Percent100) or asset.mode == addonTable.Assets.Mode.Special end)
+              return GetLabelsValues(addonTable.Assets.BarBorders, function(asset) return asset.mode == height end)
             end,
             setter = function(details, value)
-              if addonTable.Assets.BarBorders[details.border.asset].mode == addonTable.Assets.Mode.Special then
-                local design = addonTable.Core.GetDesignByName("_squirrel")
-                details.background.asset = design.bars[1].background.asset
-                details.foreground.asset = design.bars[1].foreground.asset
-              end
-              if addonTable.Assets.BarBorders[value].mode == addonTable.Assets.Mode.Special then
-                ApplySpecial(details, value)
-              else
-                details.border.asset = value
-              end
+              details.border.asset = value
             end,
             getter = function(details)
               return details.border.asset
@@ -173,16 +152,7 @@ addonTable.CustomiseDialog.WidgetsConfig = {
               return GetLabelsValues(addonTable.Assets.BarBackgrounds, nil, true)
             end,
             setter = function(details, value)
-              if addonTable.Assets.BarBackgrounds[details.foreground.asset].mode == addonTable.Assets.Mode.Special then
-                local design = addonTable.Core.GetDesignByName("_squirrel")
-                details.border.asset = design.bars[1].border.asset
-                details.background.asset = design.bars[1].background.asset
-              end
-              if addonTable.Assets.BarBackgrounds[value].mode == addonTable.Assets.Mode.Special then
-                ApplySpecial(details, value)
-              else
-                details.foreground.asset = value
-              end
+              details.foreground.asset = value
             end,
             getter = function(details)
               return details.foreground.asset
@@ -195,16 +165,7 @@ addonTable.CustomiseDialog.WidgetsConfig = {
               return GetLabelsValues(addonTable.Assets.BarBackgrounds, nil, true)
             end,
             setter = function(details, value)
-              if addonTable.Assets.BarBackgrounds[details.background.asset].mode == addonTable.Assets.Mode.Special then
-                local design = addonTable.Core.GetDesignByName("_squirrel")
-                details.border.asset = design.bars[1].border.asset
-                details.foreground.asset = design.bars[1].foreground.asset
-              end
-              if addonTable.Assets.BarBackgrounds[value].mode == addonTable.Assets.Mode.Special then
-                ApplySpecial(details, value)
-              else
-                details.background.asset = value
-              end
+              details.background.asset = value
             end,
             getter = function(details)
               return details.background.asset
@@ -253,7 +214,7 @@ addonTable.CustomiseDialog.WidgetsConfig = {
             label = addonTable.Locales.ABSORB,
             kind = "dropdown",
             getInitData = function()
-              return GetLabelsValues(addonTable.Assets.BarBackgrounds, function(asset) return asset.mode ~= addonTable.Assets.Mode.Special end, true)
+              return GetLabelsValues(addonTable.Assets.BarBackgrounds, nil, true)
             end,
             setter = function(details, value)
               details.absorb.asset = value
@@ -834,12 +795,10 @@ addonTable.CustomiseDialog.WidgetsConfig = {
               local asset = addonTable.Assets.Highlights[details.asset]
               local mode = asset.mode
               local tag = asset.tag
-              if mode ~= addonTable.Assets.Mode.Special then
-                for key, alt in pairs(addonTable.Assets.Highlights) do
-                  if alt.tag == tag and alt.mode == newMode then
-                    details.asset = key
-                    return
-                  end
+              for key, alt in pairs(addonTable.Assets.Highlights) do
+                if alt.tag == tag and alt.mode == newMode then
+                  details.asset = key
+                  return
                 end
               end
 

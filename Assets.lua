@@ -31,7 +31,7 @@ addonTable.Assets.BarBackgrounds = {
   ["wide/fade-bottom"] = {file = "Interface/AddOns/Platynator/Assets/%s/BarBackgrounds/fade-bottom.png", width = 1000, height = 125, has4k = true, mode = mode.Percent100},
   ["wide/fade-top"] = {file = "Interface/AddOns/Platynator/Assets/%s/BarBackgrounds/fade-top.png", width = 1000, height = 125, has4k = true, mode = mode.Percent100},
   ["wide/fade-left"] = {file = "Interface/AddOns/Platynator/Assets/%s/BarBackgrounds/fade-left.png", width = 1000, height = 125, has4k = true, mode = mode.Percent100},
-  ["special/blizzard-cast-bar"] = {file = "Interface/AddOns/Platynator/Assets/Special/BarBackgrounds/blizzard-cast-bar.png", width = 1000, height = 57, mode = mode.Special},
+  ["special/blizzard-cast-bar"] = {file = "Interface/AddOns/Platynator/Assets/Special/BarBackgrounds/blizzard-cast-bar.png", width = 1000, height = 125, mode = mode.Percent100},
   ["wide/blizzard-absorb"] = {file = "Interface/AddOns/Platynator/Assets/%s/BarBackgrounds/blizzard-absorb.png", width = 1000, height = 125, has4k = true, mode = mode.Percent100},
   ["narrow/blizzard-absorb"] = {file = "Interface/AddOns/Platynator/Assets/%s/BarBackgrounds/blizzard-absorb-narrow.png", width = 1000, height = 63, has4k = true, mode = mode.Percent50},
 }
@@ -82,7 +82,13 @@ addonTable.Assets.BarBorders = {
   ["75/thin"] = {file = "Interface/AddOns/Platynator/Assets/%s/BarBorders/thin-75.png", width = 1000, height = 94, has4k = true, masked = true, mode = mode.Percent75, tag = "thin"},
   ["narrow/thin"] = {file = "Interface/AddOns/Platynator/Assets/%s/BarBorders/thin-50.png", width = 1000, height = 63, has4k = true, masked = true, mode = mode.Percent50, tag = "thin"},
 
-  ["special/blizzard-cast-bar"] = {file = "Interface/AddOns/Platynator/Assets/Special/BarBorders/blizzard-cast-bar.png", width = 1000, height = 57, masked = true, mode = mode.Special, tag = "blizzard-cast-bar"},
+  ["200/blizzard-cast-bar"] = {file = "Interface/AddOns/Platynator/Assets/%s/BarBorders/blizzard-cast-bar-200.png", width = 1000, height = 250, has4k = true, masked = true, mode = mode.Percent200, tag = "blizzard-cast-bar"},
+  ["175/blizzard-cast-bar"] = {file = "Interface/AddOns/Platynator/Assets/%s/BarBorders/blizzard-cast-bar-175.png", width = 1000, height = 219, has4k = true, masked = true, mode = mode.Percent175, tag = "blizzard-cast-bar"},
+  ["150/blizzard-cast-bar"] = {file = "Interface/AddOns/Platynator/Assets/%s/BarBorders/blizzard-cast-bar-150.png", width = 1000, height = 189, has4k = true, masked = true, mode = mode.Percent150, tag = "blizzard-cast-bar"},
+  ["125/blizzard-cast-bar"] = {file = "Interface/AddOns/Platynator/Assets/%s/BarBorders/blizzard-cast-bar-125.png", width = 1000, height = 157, has4k = true, masked = true, mode = mode.Percent125, tag = "blizzard-cast-bar"},
+  ["100/blizzard-cast-bar"] = {file = "Interface/AddOns/Platynator/Assets/%s/BarBorders/blizzard-cast-bar-100.png", width = 1000, height = 125, has4k = true, masked = true, mode = mode.Percent100, tag = "blizzard-cast-bar"},
+  ["75/blizzard-cast-bar"] = {file = "Interface/AddOns/Platynator/Assets/%s/BarBorders/blizzard-cast-bar-75.png", width = 1000, height = 94, has4k = true, masked = true, mode = mode.Percent75, tag = "blizzard-cast-bar"},
+  ["special/blizzard-cast-bar"] = {file = "Interface/AddOns/Platynator/Assets/Special/BarBorders/blizzard-cast-bar.png", width = 1000, height = 63, masked = true, mode = mode.Percent50, tag = "blizzard-cast-bar"},
 }
 
 addonTable.Assets.BarMasks = {
@@ -123,7 +129,14 @@ addonTable.Assets.BarMasks = {
   ["75/thin"] = {file = "Interface/AddOns/Platynator/Assets/%s/BarBorders/thin-75-mask.png", width = 1000, height = 94, has4k = true, mode = mode.Percent50},
   ["narrow/thin"] = {file = "Interface/AddOns/Platynator/Assets/%s/BarBorders/thin-50-mask.png", width = 1000, height = 63, has4k = true, mode = mode.Percent50},
 
-  ["special/blizzard-cast-bar"] = {file = "Interface/AddOns/Platynator/Assets/Special/BarBorders/blizzard-cast-bar-mask.png", width = 1000, height = 63, has4k = true, mode = mode.Special},
+
+  ["200/blizzard-cast-bar"] = {file = "Interface/AddOns/Platynator/Assets/%s/BarBorders/blizzard-cast-bar-200-mask.png", width = 1000, height = 250, has4k = true, mode = mode.Percent200},
+  ["175/blizzard-cast-bar"] = {file = "Interface/AddOns/Platynator/Assets/%s/BarBorders/blizzard-cast-bar-175-mask.png", width = 1000, height = 219, has4k = true, mode = mode.Percent175},
+  ["150/blizzard-cast-bar"] = {file = "Interface/AddOns/Platynator/Assets/%s/BarBorders/blizzard-cast-bar-150-mask.png", width = 1000, height = 189, has4k = true, mode = mode.Percent150},
+  ["125/blizzard-cast-bar"] = {file = "Interface/AddOns/Platynator/Assets/%s/BarBorders/blizzard-cast-bar-125-mask.png", width = 1000, height = 157, has4k = true, mode = mode.Percent125},
+  ["100/blizzard-cast-bar"] = {file = "Interface/AddOns/Platynator/Assets/%s/BarBorders/blizzard-cast-bar-100-mask.png", width = 1000, height = 125, has4k = true, mode = mode.Percent100},
+  ["75/blizzard-cast-bar"] = {file = "Interface/AddOns/Platynator/Assets/%s/BarBorders/blizzard-cast-bar-75-mask.png", width = 1000, height = 94, has4k = true, mode = mode.Percent50},
+  ["special/blizzard-cast-bar"] = {file = "Interface/AddOns/Platynator/Assets/%s/BarBorders/blizzard-cast-bar-50-mask.png", width = 1000, height = 63, has4k = true, mode = mode.Percent50},
 }
 
 addonTable.Assets.Highlights = {
@@ -209,11 +222,6 @@ addonTable.Assets.Markers = {
 }
 
 addonTable.Assets.SpecialBars = {
-  ["special/blizzard-cast-bar"] = {
-    background = "transparent",
-    foreground = "special/blizzard-cast-bar",
-    border = "special/blizzard-cast-bar",
-  },
 }
 
 addonTable.Assets.SpecialEliteMarkers = {
