@@ -723,6 +723,16 @@ addonTable.CustomiseDialog.WidgetsConfig = {
               return details.direction
             end
           },
+          {
+            label = addonTable.Locales.SHOW_COUNTDOWN,
+            kind = "checkbox",
+            setter = function(details, value)
+              details.showCountdown = value
+            end,
+            getter = function(details)
+              return details.showCountdown
+            end,
+          },
         },
       },
     },

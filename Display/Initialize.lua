@@ -87,6 +87,7 @@ function addonTable.Display.ManagerMixin:OnLoad()
     end
     list:ClearAllPoints()
     local anchor = details.direction == "LEFT" and "RIGHT" or "LEFT"
+    local showCountdown = details.showCountdown
     list:SetPoint(anchor)
     for index, child in ipairs(children) do
       child:ClearAllPoints()
@@ -94,6 +95,7 @@ function addonTable.Display.ManagerMixin:OnLoad()
         child:SetScale(0.75)
         child:SetPoint(anchor, parent, anchor, (index - 1) * (child:GetWidth() + padding) * dir, 0)
         child.Cooldown:SetCountdownFont("PlatynatorNameplateCooldownFont")
+        child.Cooldown:SetHideCountdownNumbers(not showCountdown)
       else
         child:Hide()
       end
