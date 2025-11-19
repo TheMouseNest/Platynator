@@ -59,6 +59,7 @@ function addonTable.Display.NameplateMixin:OnLoad()
         end
 
         frame.items = {}
+        local texBase = 0.95 * (1 - details.height) / 2
         for _, auraInstanceID in ipairs(keys) do
           local aura = data[auraInstanceID]
           local buff = self.AurasPool:Acquire()
@@ -76,6 +77,9 @@ function addonTable.Display.NameplateMixin:OnLoad()
             buff.CountFrame.Count:Hide();
           end
           buff.Cooldown:SetHideCountdownNumbers(not details.showCountdown)
+          buff:SetHeight(20 * details.height)
+          buff.Icon:SetHeight(19 * details.height)
+          buff.Icon:SetTexCoord(0.05, 0.95, 0.05 + texBase, 0.95 - texBase)
           CooldownFrame_Set(buff.Cooldown, aura.expirationTime - aura.duration, aura.duration, aura.duration > 0, true);
 
           buff:Show();

@@ -71,21 +71,23 @@ function addonTable.Core.UpgradeDesign(design)
         direction = "RIGHT",
       },
     }
-  else
-    for _, aura in ipairs(design.auras) do
-      if not aura.scale then
-        aura.scale = 1
+  end
+  for _, aura in ipairs(design.auras) do
+    if not aura.scale then
+      aura.scale = 1
+    end
+    if aura.showCountdown == nil then
+      aura.showCountdown = true
+    end
+    if aura.direction == nil then
+      if aura.anchor[1] and aura.anchor[1]:match("RIGHT") then
+        aura.direction = "LEFT"
+      else
+        aura.direction = "RIGHT"
       end
-      if aura.showCountdown == nil then
-        aura.showCountdown = true
-      end
-      if aura.direction == nil then
-        if aura.anchor[1] and aura.anchor[1]:match("RIGHT") then
-          aura.direction = "LEFT"
-        else
-          aura.direction = "RIGHT"
-        end
-      end
+    end
+    if not aura.height then
+      aura.height = 1
     end
   end
 

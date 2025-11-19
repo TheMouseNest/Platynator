@@ -89,10 +89,13 @@ function addonTable.Display.ManagerMixin:OnLoad()
     local anchor = details.direction == "LEFT" and "RIGHT" or "LEFT"
     local showCountdown = details.showCountdown
     list:SetPoint(anchor)
+    local texBase = (1 - details.height) / 2
     for index, child in ipairs(children) do
       child:ClearAllPoints()
       if not filter or filter(child.unitToken, child.auraInstanceID) then
-        child:SetScale(0.75)
+        child:SetScale(0.8)
+        child:SetSize(25, 25 * details.height)
+        child.Icon:SetTexCoord(0, 1, texBase, 1 - texBase)
         child:SetPoint(anchor, parent, anchor, (index - 1) * (child:GetWidth() + padding) * dir, 0)
         child.Cooldown:SetCountdownFont("PlatynatorNameplateCooldownFont")
         child.Cooldown:SetHideCountdownNumbers(not showCountdown)

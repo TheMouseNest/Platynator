@@ -705,6 +705,18 @@ addonTable.CustomiseDialog.WidgetsConfig = {
             end,
           },
           {
+            label = addonTable.Locales.HEIGHT,
+            kind = "slider",
+            min = 25, max = 100,
+            valuePattern = "%d%%",
+            setter = function(details, value)
+              details.height = value / 100
+            end,
+            getter = function(details)
+              return details.height * 100
+            end,
+          },
+          {
             label = addonTable.Locales.DIRECTION,
             kind = "dropdown",
             getInitData = function()

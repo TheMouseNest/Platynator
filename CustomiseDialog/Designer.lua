@@ -362,11 +362,13 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
       w.Wrapper:SetSize(10, 20)
       w.Wrapper:SetPoint("BOTTOMLEFT")
       w.count = #textures[kind]
+      w.auras = {}
       for index, tex in ipairs(textures[kind]) do
         local buff = CreateFrame("Frame", nil, w.Wrapper, "PlatynatorNameplateBuffButtonTemplate")
         buff:Show()
         buff.Icon:SetTexture(tex)
         buff:SetPoint("LEFT", (index - 1) * 22, 0)
+        table.insert(w.auras, buff)
       end
       w.kind = "auras"
       w:SetScript("OnEnter", function()
@@ -509,6 +511,12 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
       container:SetSize(22 * container.count * details.scale, 20 * details.scale)
       container.Wrapper:SetScale(details.scale)
       container.details = details
+      local texBase = 0.95 * (1 - details.height) / 2
+      for _, aura in ipairs(container.auras) do
+        aura:SetHeight(20 * details.height)
+        aura.Icon:SetHeight(19 * details.height)
+        aura.Icon:SetTexCoord(0.05, 0.95, 0.05 + texBase, 0.95 - texBase)
+      end
       table.insert(widgets, container)
       container:ClearAllPoints()
       addonTable.Display.ApplyAnchor(container, details.anchor)
