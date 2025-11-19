@@ -49,6 +49,22 @@ local function GetLabelsValues(allAssets, filter, showHeight)
   return labels, values
 end
 
+local sizes = {
+  addonTable.Assets.Mode.Percent50,
+  addonTable.Assets.Mode.Percent75,
+  addonTable.Assets.Mode.Percent100,
+  addonTable.Assets.Mode.Percent125,
+  addonTable.Assets.Mode.Percent150,
+  addonTable.Assets.Mode.Percent175,
+  addonTable.Assets.Mode.Percent200,
+}
+local sizeFormatter = function(val)
+  return ({"50%", "75%", "100%", "125%", "150%", "175%", "200%"})[val] or UNKNOWN
+end
+
+local minSize = 1
+local maxSize = 7
+
 addonTable.CustomiseDialog.WidgetsConfig = {
   ["bars"] = {
     ["*"] = {
@@ -70,20 +86,10 @@ addonTable.CustomiseDialog.WidgetsConfig = {
           {
             label = addonTable.Locales.HEIGHT,
             kind = "slider",
-            min = 1, max = 7,
-            formatter = function(val)
-              return ({"50%", "75%", "100%", "125%", "150%", "175%", "200%"})[val] or UNKNOWN
-            end,
+            min = minSize, max = maxSize,
+            formatter = sizeFormatter,
             setter = function(details, value)
-              local newMode = ({
-                addonTable.Assets.Mode.Percent50,
-                addonTable.Assets.Mode.Percent75,
-                addonTable.Assets.Mode.Percent100,
-                addonTable.Assets.Mode.Percent125,
-                addonTable.Assets.Mode.Percent150,
-                addonTable.Assets.Mode.Percent175,
-                addonTable.Assets.Mode.Percent200,
-              })[value] 
+              local newMode = sizes[value] 
 
               local asset = addonTable.Assets.BarBorders[details.border.asset]
               local mode = asset.mode
@@ -105,15 +111,7 @@ addonTable.CustomiseDialog.WidgetsConfig = {
             getter = function(details)
               local mode = addonTable.Assets.BarBorders[details.border.asset].mode
               assert(mode)
-              return tIndexOf({
-                addonTable.Assets.Mode.Percent50,
-                addonTable.Assets.Mode.Percent75,
-                addonTable.Assets.Mode.Percent100,
-                addonTable.Assets.Mode.Percent125,
-                addonTable.Assets.Mode.Percent150,
-                addonTable.Assets.Mode.Percent175,
-                addonTable.Assets.Mode.Percent200,
-              }, mode) or 3
+              return tIndexOf(sizes, mode) or 3
             end,
           },
         },
@@ -746,23 +744,20 @@ addonTable.CustomiseDialog.WidgetsConfig = {
               return details.scale * 100
             end,
           },
+        },
+      },
+    },
+    ["target"] = {
+      {
+        label = addonTable.Locales.GENERAL,
+        entries = {
           {
             label = addonTable.Locales.HEIGHT,
             kind = "slider",
-            min = 1, max = 7,
-            formatter = function(val)
-              return ({"50%", "75%", "100%", "125%", "150%", "175%", "200%"})[val] or UNKNOWN
-            end,
+            min = minSize, max = maxSize,
+            formatter = sizeFormatter,
             setter = function(details, value)
-              local newMode = ({
-                addonTable.Assets.Mode.Percent50,
-                addonTable.Assets.Mode.Percent75,
-                addonTable.Assets.Mode.Percent100,
-                addonTable.Assets.Mode.Percent125,
-                addonTable.Assets.Mode.Percent150,
-                addonTable.Assets.Mode.Percent175,
-                addonTable.Assets.Mode.Percent200,
-              })[value] 
+              local newMode = sizes[value]
 
               local asset = addonTable.Assets.Highlights[details.asset]
               local mode = asset.mode
@@ -784,15 +779,7 @@ addonTable.CustomiseDialog.WidgetsConfig = {
             getter = function(details)
               local mode = addonTable.Assets.Highlights[details.asset].mode
               assert(mode)
-              return tIndexOf({
-                addonTable.Assets.Mode.Percent50,
-                addonTable.Assets.Mode.Percent75,
-                addonTable.Assets.Mode.Percent100,
-                addonTable.Assets.Mode.Percent125,
-                addonTable.Assets.Mode.Percent150,
-                addonTable.Assets.Mode.Percent175,
-                addonTable.Assets.Mode.Percent200,
-              }, mode) or 3
+              return tIndexOf(sizes, mode) or 3
             end,
           },
           {
@@ -821,7 +808,7 @@ addonTable.CustomiseDialog.WidgetsConfig = {
           },
         },
       },
-    },
+    }
   },
   ["specialBars"] = {
     ["power"] = {
