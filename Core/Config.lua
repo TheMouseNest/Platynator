@@ -16,10 +16,12 @@ local settings = {
   TARGET_BEHAVIOUR = {key = "target_behaviour", default = "enlarge", refresh = {addonTable.Constants.RefreshReason.TargetBehaviour}},
   NOT_TARGET_BEHAVIOUR = {key = "not_target_behaviour", default = "none", refresh = {addonTable.Constants.RefreshReason.TargetBehaviour}},
 
-  CLOSER_NAMEPLATES = {key = "closer_nameplates", default = true, refresh = {addonTable.Constants.RefreshReason.StackingBehaviour}},
   STACKING_NAMEPLATES = {key = "stacking_nameplates", default = true, refresh = {addonTable.Constants.RefreshReason.StackingBehaviour}},
   CLICK_REGION_SCALE_X = {key = "click_region_scale_x", default = 1},
   CLICK_REGION_SCALE_Y = {key = "click_region_scale_y", default = 1},
+
+  STACK_REGION_SCALE_X = {key = "stack_region_scale_x", default = 1.2, refresh = {addonTable.Constants.RefreshReason.StackingBehaviour}},
+  STACK_REGION_SCALE_Y = {key = "stack_region_scale_y", default = 1.1, refresh = {addonTable.Constants.RefreshReason.StackingBehaviour}},
 
   SHOW_NAMEPLATES = {key = "show_nameplates", default = {npc = true, player = true, enemy = true}, refresh = {addonTable.Constants.RefreshReason.ShowBehaviour}},
   SHOW_FRIENDLY_IN_INSTANCES = {key = "show_friendly_in_instances", default = true, refresh = {addonTable.Constants.RefreshReason.ShowBehaviour}},

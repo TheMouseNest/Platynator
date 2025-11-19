@@ -172,9 +172,8 @@ function addonTable.Display.NameplateMixin:InitializeWidgets(design)
 end
 
 function addonTable.Display.NameplateMixin:Install(nameplate)
-  self:SetParent(nameplate)
   self:Show()
-  self:SetPoint("CENTER")
+  self:SetPoint("CENTER", nameplate)
 end
 
 function addonTable.Display.NameplateMixin:SetUnit(unit)

@@ -307,19 +307,6 @@ local function SetupBehaviour(parent)
   stackingNameplatesCheckbox:SetPoint("TOP", allFrames[#allFrames], "BOTTOM", 0, -30)
   table.insert(allFrames, stackingNameplatesCheckbox)
 
-  if not addonTable.Constants.IsMidnight then
-    local closerNameplatesCheckbox
-    closerNameplatesCheckbox = addonTable.CustomiseDialog.Components.GetCheckbox(container, addonTable.Locales.LESS_NAMEPLATE_SPACING, 28, function(value)
-      if InCombatLockdown() then
-        return
-      end
-      addonTable.Config.Set(addonTable.Config.Options.CLOSER_NAMEPLATES, value)
-    end)
-    closerNameplatesCheckbox.option = addonTable.Config.Options.CLOSER_NAMEPLATES
-    closerNameplatesCheckbox:SetPoint("TOP", allFrames[#allFrames], "BOTTOM", 0, addonTable.Constants.IsMidnight and -30 or 0)
-    table.insert(allFrames, closerNameplatesCheckbox)
-  end
-
   local clickRegionSliderX = addonTable.CustomiseDialog.Components.GetSlider(container, addonTable.Locales.CLICK_REGION_WIDTH, 1, 300, function(value) return ("%d%%"):format(value) end, function(value)
     addonTable.Config.Set(addonTable.Config.Options.CLICK_REGION_SCALE_X, value / 100)
   end)
@@ -331,6 +318,18 @@ local function SetupBehaviour(parent)
   end)
   clickRegionSliderY:SetPoint("TOP", allFrames[#allFrames], "BOTTOM", 0, 0)
   table.insert(allFrames, clickRegionSliderY)
+
+  local stackRegionSliderX = addonTable.CustomiseDialog.Components.GetSlider(container, addonTable.Locales.STACKING_REGION_WIDTH, 1, 300, function(value) return ("%d%%"):format(value) end, function(value)
+    addonTable.Config.Set(addonTable.Config.Options.STACK_REGION_SCALE_X, value / 100)
+  end)
+  stackRegionSliderX:SetPoint("TOP", allFrames[#allFrames], "BOTTOM", 0, -30)
+  table.insert(allFrames, stackRegionSliderX)
+
+  local stackRegionSliderY = addonTable.CustomiseDialog.Components.GetSlider(container, addonTable.Locales.STACKING_REGION_HEIGHT, 1, 500, function(value) return ("%d%%"):format(value) end, function(value)
+    addonTable.Config.Set(addonTable.Config.Options.STACK_REGION_SCALE_Y, value / 100)
+  end)
+  stackRegionSliderY:SetPoint("TOP", allFrames[#allFrames], "BOTTOM", 0, 0)
+  table.insert(allFrames, stackRegionSliderY)
 
   container:SetScript("OnShow", function()
     local styles = {}
@@ -355,10 +354,10 @@ local function SetupBehaviour(parent)
     friendlyStyleDropdown:Init(labels, values)
     enemyStyleDropdown:Init(labels, values)
 
-    if clickRegionSliderX then
-      clickRegionSliderX:SetValue(addonTable.Config.Get(addonTable.Config.Options.CLICK_REGION_SCALE_X) * 100)
-      clickRegionSliderY:SetValue(addonTable.Config.Get(addonTable.Config.Options.CLICK_REGION_SCALE_Y) * 100)
-    end
+    clickRegionSliderX:SetValue(addonTable.Config.Get(addonTable.Config.Options.CLICK_REGION_SCALE_X) * 100)
+    clickRegionSliderY:SetValue(addonTable.Config.Get(addonTable.Config.Options.CLICK_REGION_SCALE_Y) * 100)
+    stackRegionSliderX:SetValue(addonTable.Config.Get(addonTable.Config.Options.STACK_REGION_SCALE_X) * 100)
+    stackRegionSliderY:SetValue(addonTable.Config.Get(addonTable.Config.Options.STACK_REGION_SCALE_Y) * 100)
 
     for _, f in ipairs(allFrames) do
       if f.SetValue then

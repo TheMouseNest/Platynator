@@ -267,6 +267,15 @@ local function UpdateRect(design)
   end
 
   addonTable.Rect = {left = left, bottom = bottom, width = right - left, height = top - bottom}
+
+  for _, textDetails in ipairs(design.texts) do
+    if textDetails.kind == "creatureName" then
+      local rect = GetRect({width = textDetails.widthLimit, height = 10}, textDetails.scale, textDetails.anchor)
+      CacheSize(rect)
+    end
+  end
+
+  addonTable.StackRect = {left = left, bottom = bottom, width = right - left, height = top - bottom}
 end
 
 function addonTable.Core.GetDesignByName(name)
