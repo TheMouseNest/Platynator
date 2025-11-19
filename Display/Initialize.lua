@@ -472,8 +472,9 @@ function addonTable.Display.ManagerMixin:UpdateNamePlateSize()
     height = height * addonTable.Config.Get(addonTable.Config.Options.CLICK_REGION_SCALE_Y)
     C_NamePlate.SetNamePlateEnemySize(width, height)
     C_NamePlate.SetNamePlateFriendlySize(width, height)
-  elseif C_NamePlate.SetNamePlateSize then
-    C_NamePlate.SetNamePlateSize(width, height)
+  --Here in case its needed in the future if Midnight's stacking changes
+  --elseif C_NamePlate.SetNamePlateSize then
+  --  C_NamePlate.SetNamePlateSize(width, height)
   end
 end
 
