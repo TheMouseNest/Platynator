@@ -205,7 +205,11 @@ function addonTable.Display.ManagerMixin:OnLoad()
         if self.lastInteract and self.lastInteract.interactUnit then
           self.lastInteract:UpdateSoftInteract()
         end
-        self:UpdateNamePlateSize()
+        if InCombatLockdown() then
+          self:RegisterEvent("PLAYER_REGEN_ENABLED")
+        else
+          self:UpdateNamePlateSize()
+        end
       end)
     elseif state[addonTable.Constants.RefreshReason.Scale] or state[addonTable.Constants.RefreshReason.TargetBehaviour] then
       for _, display in pairs(self.nameplateDisplays) do
@@ -545,6 +549,7 @@ function addonTable.Display.ManagerMixin:OnEvent(eventName, ...)
     self:UnregisterEvent("PLAYER_REGEN_ENABLED")
     self:UpdateStacking()
     self:UpdateShowState()
+    self:UpdateNamePlateSize()
   elseif eventName == "PLAYER_ENTERING_WORLD" then
     self:UpdateShowState()
   elseif eventName == "PLAYER_LOGIN" then
@@ -556,11 +561,13 @@ function addonTable.Display.ManagerMixin:OnEvent(eventName, ...)
     PlatynatorNameplateCooldownFont:SetFont(file, 14, flags)
 
     if C_NamePlate.SetNamePlateEnemySize then
-      C_Timer.After(0, function()
-        self:UpdateNamePlateSize()
-      end)
+      self:UpdateNamePlateSize()
     end
   elseif eventName == "UI_SCALE_CHANGED" then
-    self:UpdateNamePlateSize()
+    if InCombatLockdown() then
+      self:RegisterEvent("PLAYER_REGEN_ENABLED")
+    else
+      self:UpdateNamePlateSize()
+    end
   end
 end
