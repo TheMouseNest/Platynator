@@ -250,13 +250,8 @@ function addonTable.Display.ManagerMixin:UpdateStacking()
     C_NamePlate.SetNamePlateSize(175, 50)
   end]]
   if addonTable.Constants.IsMidnight then
-    if addonTable.Config.Get(addonTable.Config.Options.CLOSER_NAMEPLATES) then
-      C_CVar.SetCVarBitfield("nameplateStackingTypes", Enum.NamePlateStackType.Enemy, false)
-      C_CVar.SetCVarBitfield("nameplateStackingTypes", Enum.NamePlateStackType.Friendly, false)
-    elseif C_CVar.GetCVarBitfield("nameplateStackingTypes", Enum.NamePlateStackType.Enemy) == C_CVar.GetCVarBitfield("nameplateStackingTypes", Enum.NamePlateStackType.Friendly) then
-      C_CVar.SetCVarBitfield("nameplateStackingTypes", Enum.NamePlateStackType.Enemy, true)
-      C_CVar.SetCVarBitfield("nameplateStackingTypes", Enum.NamePlateStackType.Friendly, true)
-    end
+    C_CVar.SetCVarBitfield("nameplateStackingTypes", Enum.NamePlateStackType.Enemy, true)
+    C_CVar.SetCVarBitfield("nameplateStackingTypes", Enum.NamePlateStackType.Friendly, false)
   else
     if addonTable.Config.Get(addonTable.Config.Options.CLOSER_NAMEPLATES) then
       C_CVar.SetCVar("nameplateOverlapV", "1.2")

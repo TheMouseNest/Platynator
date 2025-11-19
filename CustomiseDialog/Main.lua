@@ -307,18 +307,18 @@ local function SetupBehaviour(parent)
     stackingNameplatesCheckbox.option = addonTable.Config.Options.STACKING_NAMEPLATES
     stackingNameplatesCheckbox:SetPoint("TOP", allFrames[#allFrames], "BOTTOM", 0, -30)
     table.insert(allFrames, stackingNameplatesCheckbox)
-  end
 
-  local closerNameplatesCheckbox
-  closerNameplatesCheckbox = addonTable.CustomiseDialog.Components.GetCheckbox(container, addonTable.Locales.LESS_NAMEPLATE_SPACING, 28, function(value)
-    if InCombatLockdown() then
-      return
-    end
-    addonTable.Config.Set(addonTable.Config.Options.CLOSER_NAMEPLATES, value)
-  end)
-  closerNameplatesCheckbox.option = addonTable.Config.Options.CLOSER_NAMEPLATES
-  closerNameplatesCheckbox:SetPoint("TOP", allFrames[#allFrames], "BOTTOM", 0, addonTable.Constants.IsMidnight and -30 or 0)
-  table.insert(allFrames, closerNameplatesCheckbox)
+    local closerNameplatesCheckbox
+    closerNameplatesCheckbox = addonTable.CustomiseDialog.Components.GetCheckbox(container, addonTable.Locales.LESS_NAMEPLATE_SPACING, 28, function(value)
+      if InCombatLockdown() then
+        return
+      end
+      addonTable.Config.Set(addonTable.Config.Options.CLOSER_NAMEPLATES, value)
+    end)
+    closerNameplatesCheckbox.option = addonTable.Config.Options.CLOSER_NAMEPLATES
+    closerNameplatesCheckbox:SetPoint("TOP", allFrames[#allFrames], "BOTTOM", 0, addonTable.Constants.IsMidnight and -30 or 0)
+    table.insert(allFrames, closerNameplatesCheckbox)
+  end
 
   local clickRegionSliderX = addonTable.CustomiseDialog.Components.GetSlider(container, addonTable.Locales.CLICK_REGION_WIDTH, 1, 300, function(value) return ("%d%%"):format(value) end, function(value)
     addonTable.Config.Set(addonTable.Config.Options.CLICK_REGION_SCALE_X, value / 100)
