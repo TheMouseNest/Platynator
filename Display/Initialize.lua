@@ -244,11 +244,6 @@ function addonTable.Display.ManagerMixin:UpdateStacking()
   if InCombatLockdown() then
     self:RegisterCallback("PLAYER_REGEN_ENABLED")
   end
-  --[[if addonTable.Config.Get(addonTable.Config.Options.CLOSER_NAMEPLATES) then
-    C_NamePlate.SetNamePlateSize(30, 20)
-  else
-    C_NamePlate.SetNamePlateSize(175, 50)
-  end]]
   if addonTable.Constants.IsMidnight then
     if addonTable.Config.Get(addonTable.Config.Options.STACKING_NAMEPLATES) then
       C_CVar.SetCVarBitfield("nameplateStackingTypes", Enum.NamePlateStackType.Enemy, true)
@@ -468,12 +463,17 @@ function addonTable.Display.ManagerMixin:UpdateForTarget()
 end
 
 function addonTable.Display.ManagerMixin:UpdateNamePlateSize()
+  local globalScale = addonTable.Config.Get(addonTable.Config.Options.GLOBAL_SCALE) * UIParent:GetScale()
+  local width = addonTable.Rect.width * globalScale
+  local height = addonTable.Rect.height * globalScale
+
   if C_NamePlate.SetNamePlateEnemySize and not addonTable.Constants.IsMidnight then
-    local globalScale = addonTable.Config.Get(addonTable.Config.Options.GLOBAL_SCALE) * UIParent:GetScale()
-    local width = addonTable.Rect.width * globalScale * addonTable.Config.Get(addonTable.Config.Options.CLICK_REGION_SCALE_X)
-    local height = addonTable.Rect.height * globalScale * addonTable.Config.Get(addonTable.Config.Options.CLICK_REGION_SCALE_Y)
+    width = width * addonTable.Config.Get(addonTable.Config.Options.CLICK_REGION_SCALE_X)
+    height = height * addonTable.Config.Get(addonTable.Config.Options.CLICK_REGION_SCALE_Y)
     C_NamePlate.SetNamePlateEnemySize(width, height)
     C_NamePlate.SetNamePlateFriendlySize(width, height)
+  elseif C_NamePlate.SetNamePlateSize then
+    C_NamePlate.SetNamePlateSize(width, height)
   end
 end
 
