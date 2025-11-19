@@ -250,7 +250,7 @@ end
 
 function addonTable.Display.ManagerMixin:UpdateStacking()
   if InCombatLockdown() then
-    self:RegisterCallback("PLAYER_REGEN_ENABLED")
+    self:RegisterEvent("PLAYER_REGEN_ENABLED")
   end
   if addonTable.Constants.IsMidnight then
     if addonTable.Config.Get(addonTable.Config.Options.STACKING_NAMEPLATES) then
