@@ -66,6 +66,17 @@ function addonTable.Display.ManagerMixin:OnLoad()
 
   self.ModifiedUFs = {}
   self.HookedUFs = {}
+  self.unitToNameplate = {}
+  self.AlphaImporter = CreateFrame("Frame", nil, self)
+  self.AlphaImporter:SetScript("OnUpdate", function()
+    for unit, nameplate in pairs(self.unitToNameplate) do
+      local display = self.nameplateDisplays[unit]
+      display:SetAlpha(nameplate:GetAlpha() * display.overrideAlpha)
+      if display.overrideScale then
+        display:SetScale(nameplate:GetScale() * display.overrideScale)
+      end
+    end
+  end)
   -- Apply Platynator settings to aura layout
   local function RelayoutAuras(list, filter)
     if list:IsForbidden() then
@@ -366,10 +377,11 @@ function addonTable.Display.ManagerMixin:Install(unit, nameplate)
       newDisplay = self.enemyDisplayPool:Acquire()
     end
     self.nameplateDisplays[unit] = newDisplay
+    self.unitToNameplate[unit] = nameplate
     local UF = self.ModifiedUFs[unit]
     if UF and UF.HitTestFrame then
       if UnitCanAttack("player", unit) then
-        UF.HitTestFrame:SetParent(nameplate)
+        UF.HitTestFrame:SetParent(newDisplay)
       else
         UF.HitTestFrame:SetParent(addonTable.hiddenFrame)
       end
@@ -407,6 +419,7 @@ function addonTable.Display.ManagerMixin:Uninstall(unit)
       self.enemyDisplayPool:Release(display)
     end
     self.nameplateDisplays[unit] = nil
+    self.unitToNameplate[unit] = nil
   end
 end
 

@@ -173,6 +173,7 @@ end
 
 function addonTable.Display.NameplateMixin:Install(nameplate)
   self:Show()
+  self:SetFrameStrata("BACKGROUND")
   self:SetPoint("CENTER", nameplate)
 end
 
@@ -306,10 +307,11 @@ function addonTable.Display.NameplateMixin:UpdateVisual()
   end
   if ignoreScale then
     self:SetScale(scale * addonTable.Config.Get(addonTable.Config.Options.GLOBAL_SCALE) * UIParent:GetEffectiveScale())
+    self.overrideScale = nil
   else
-    self:SetScale(scale * addonTable.Config.Get(addonTable.Config.Options.GLOBAL_SCALE))
+    self.overrideScale = scale * addonTable.Config.Get(addonTable.Config.Options.GLOBAL_SCALE)
   end
-  self:SetAlpha(alpha)
+  self.overrideAlpha = alpha
 end
 
 function addonTable.Display.NameplateMixin:UpdateSoftInteract()
