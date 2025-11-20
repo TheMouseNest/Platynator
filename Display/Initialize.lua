@@ -74,6 +74,7 @@ function addonTable.Display.ManagerMixin:OnLoad()
     for unit, nameplate in pairs(self.unitToNameplate) do
       local display = self.nameplateDisplays[unit]
       display:SetAlpha(nameplate:GetAlpha() * display.overrideAlpha)
+      display:SetFrameLevel(nameplate:GetFrameLevel())
       if display.overrideScale then
         display:SetScale(nameplate:GetScale() * display.overrideScale)
       end
@@ -398,6 +399,7 @@ function addonTable.Display.ManagerMixin:Install(unit, nameplate)
       newDisplay.stackRegion:SetParent(nameplate)
       self:UpdateStackingRegion(nameplate, unit)
     end
+
     newDisplay:Install(nameplate)
     if newDisplay.styleIndex ~= self.styleIndex then
       newDisplay:InitializeWidgets(addonTable.Core.GetDesign(newDisplay.kind))
