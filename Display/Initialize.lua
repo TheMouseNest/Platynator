@@ -36,6 +36,7 @@ function addonTable.Display.ManagerMixin:OnLoad()
 
   self.lastTarget = nil
   self.lastMouseover = nil
+  self.lastFocus = nil
   self.MouseoverMonitor = nil
 
   self:SetScript("OnEvent", self.OnEvent)
@@ -46,6 +47,7 @@ function addonTable.Display.ManagerMixin:OnLoad()
   self:RegisterEvent("PLAYER_TARGET_CHANGED")
   self:RegisterEvent("PLAYER_SOFT_INTERACT_CHANGED")
   self:RegisterEvent("UPDATE_MOUSEOVER_UNIT")
+  self:RegisterEvent("PLAYER_FOCUS_CHANGED")
   self:RegisterEvent("PLAYER_LOGIN")
   self:RegisterEvent("PLAYER_ENTERING_WORLD")
   self:RegisterEvent("UI_SCALE_CHANGED")
@@ -494,6 +496,33 @@ function addonTable.Display.ManagerMixin:UpdateForTarget()
   end
 end
 
+function addonTable.Display.ManagerMixin:UpdateForFocus()
+  if addonTable.Constants.IsMidnight and IsInInstance() then
+    for _, display in pairs(self.nameplateDisplays) do
+      display:UpdateForFocus()
+    end
+  else
+    if self.lastFocus and (not self.lastFocus.unit or UnitExists(self.lastFocus.unit)) then
+      self.lastFocus:UpdateForFocus()
+    end
+    local unit
+    for i = 1, 40 do
+      unit = "nameplate" .. i
+      if ConvertSecret(UnitIsUnit(unit, "target")) then
+        break
+      else
+        unit = nil
+      end
+    end
+    if self.nameplateDisplays[unit] then
+      self.lastFocus = self.nameplateDisplays[unit]
+      self.lastFocus:UpdateForFocus()
+    else
+      self.lastFocus = nil
+    end
+  end
+end
+
 function addonTable.Display.ManagerMixin:UpdateNamePlateSize()
   local globalScale = addonTable.Config.Get(addonTable.Config.Options.GLOBAL_SCALE) * UIParent:GetScale()
   local width = addonTable.Rect.width * globalScale
@@ -529,6 +558,8 @@ function addonTable.Display.ManagerMixin:OnEvent(eventName, ...)
     self:Uninstall(unit)
   elseif eventName == "PLAYER_TARGET_CHANGED" then
     self:UpdateForTarget()
+  elseif eventName == "PLAYER_FOCUS_CHANGED" then
+    self:UpdateForFocus()
   elseif eventName == "UPDATE_MOUSEOVER_UNIT" then
     self:UpdateForMouseover()
   elseif eventName == "PLAYER_SOFT_INTERACT_CHANGED" then
