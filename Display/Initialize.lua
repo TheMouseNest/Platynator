@@ -74,7 +74,9 @@ function addonTable.Display.ManagerMixin:OnLoad()
     for unit, nameplate in pairs(self.unitToNameplate) do
       local display = self.nameplateDisplays[unit]
       display:SetAlpha(nameplate:GetAlpha() * display.overrideAlpha)
-      display:SetFrameLevel(nameplate:GetFrameLevel())
+      if display:GetFrameLevel() ~= nameplate:GetFrameLevel() then
+        display:SetFrameLevel(nameplate:GetFrameLevel())
+      end
       if display.overrideScale then
         display:SetScale(nameplate:GetScale() * display.overrideScale)
       end
