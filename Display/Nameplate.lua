@@ -294,6 +294,7 @@ end
 
 function addonTable.Display.NameplateMixin:UpdateVisual()
   if not self.unit then
+    self.overrideAlpha = 1
     self:SetIgnoreParentScale(true)
     self:SetScale(addonTable.Config.Get(addonTable.Config.Options.GLOBAL_SCALE) * UIParent:GetEffectiveScale())
     return
