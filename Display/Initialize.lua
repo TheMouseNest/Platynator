@@ -39,9 +39,10 @@ function addonTable.Display.ManagerMixin:OnLoad()
   self.lastFocus = nil
   self.MouseoverMonitor = nil
 
+  self.overrideScaleModifier = 1
+
   self:SetScript("OnEvent", self.OnEvent)
 
-  self:RegisterEvent("NAME_PLATE_CREATED")
   self:RegisterEvent("NAME_PLATE_UNIT_ADDED")
   self:RegisterEvent("NAME_PLATE_UNIT_REMOVED")
   self:RegisterEvent("PLAYER_TARGET_CHANGED")
@@ -78,7 +79,7 @@ function addonTable.Display.ManagerMixin:OnLoad()
         display:SetFrameLevel(nameplate:GetFrameLevel())
       end
       if display.overrideScale then
-        display:SetScale(nameplate:GetScale() * display.overrideScale)
+        display:SetScale(nameplate:GetScale() * display.overrideScale * self.overrideScaleModifier)
       end
     end
   end)
@@ -553,6 +554,25 @@ function addonTable.Display.ManagerMixin:UpdateNamePlateSize()
   end
 end
 
+function addonTable.Display.ManagerMixin:ImportNameplateScaleModifier(force)
+  if addonTable.Constants.IsMidnight and (not IsInInstance() or force) then
+    local nameplate
+    for i = 1, 40 do
+      unit = "nameplate" .. i
+      if UnitExists(unit) then
+        local target, focus = UnitIsUnit(unit, "target"), UnitIsUnit(unit, "focus")
+        if force or not target and not focus then
+          nameplate = C_NamePlate.GetNamePlateForUnit(unit, issecure())
+          if nameplate then
+            self.overrideScaleModifier = 1 / nameplate:GetScale()
+            break
+          end
+        end
+      end
+    end
+  end
+end
+
 function addonTable.Display.ManagerMixin:OnEvent(eventName, ...)
   if eventName == "NAME_PLATE_UNIT_ADDED" then
     local unit = ...
@@ -634,6 +654,9 @@ function addonTable.Display.ManagerMixin:OnEvent(eventName, ...)
   elseif eventName == "PLAYER_ENTERING_WORLD" then
     self:UpdateShowState()
     self:UpdateNamePlateSize()
+    C_Timer.After(0, function()
+      self:ImportNameplateScaleModifier(true)
+    end)
   elseif eventName == "PLAYER_LOGIN" then
     local design = addonTable.Core.GetDesign("enemy")
 
@@ -651,5 +674,8 @@ function addonTable.Display.ManagerMixin:OnEvent(eventName, ...)
     else
       self:UpdateNamePlateSize()
     end
+    C_Timer.After(0, function()
+      self:ImportNameplateScaleModifier()
+    end)
   end
 end
