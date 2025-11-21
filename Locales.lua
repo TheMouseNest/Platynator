@@ -80,6 +80,7 @@ L["ABSORB_COLOR"] = "Absorb color"
 L["HIGHLIGHT_BAR_EDGE"] = "Highlight bar edge"
 L["SHOW_COUNTDOWN"] = "Show countdown"
 L["FOCUSED"] = "Focused"
+L["CLOSER_TO_SCREEN_EDGES"] = "Closer to screen edges"
 
 L["FOREGROUND"] = "Foreground"
 L["VISUAL"] = "Visual"

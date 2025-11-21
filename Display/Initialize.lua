@@ -280,8 +280,13 @@ function addonTable.Display.ManagerMixin:UpdateStacking()
   else
     C_CVar.SetCVar("nameplateOverlapH", addonTable.StackRect.width / addonTable.Rect.width * addonTable.Config.Get(addonTable.Config.Options.STACK_REGION_SCALE_X) / addonTable.Config.Get(addonTable.Config.Options.CLICK_REGION_SCALE_X))
     C_CVar.SetCVar("nameplateOverlapV", addonTable.StackRect.height / addonTable.Rect.height * addonTable.Config.Get(addonTable.Config.Options.STACK_REGION_SCALE_Y) / addonTable.Config.Get(addonTable.Config.Options.CLICK_REGION_SCALE_Y))
-    C_CVar.SetCVar("nameplateOtherTopInset", "0.05")
-    C_CVar.SetCVar("nameplateLargeTopInset", "0.07")
+    if addonTable.Config.Get(addonTable.Config.Options.CLOSER_TO_SCREEN_EDGES) then
+      C_CVar.SetCVar("nameplateOtherTopInset", "0.05")
+      C_CVar.SetCVar("nameplateLargeTopInset", "0.07")
+    elseif C_CVar.GetCVar("nameplateOtherTopInset") == "0.05" and C_CVar.GetCVar("nameplateLargeTopInset") == "0.07" then
+      C_CVar.SetCVar("nameplateOtherTopInset", "0.08")
+      C_CVar.SetCVar("nameplateLargeTopInset", "0.1")
+    end
 
     C_CVar.SetCVar("nameplateMotion", addonTable.Config.Get(addonTable.Config.Options.STACKING_NAMEPLATES) and "1" or "0")
   end

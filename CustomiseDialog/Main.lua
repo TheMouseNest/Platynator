@@ -307,6 +307,18 @@ local function SetupBehaviour(parent)
   stackingNameplatesCheckbox:SetPoint("TOP", allFrames[#allFrames], "BOTTOM", 0, -30)
   table.insert(allFrames, stackingNameplatesCheckbox)
 
+  if C_CVar.GetCVarInfo("nameplateOtherTopInset") then
+    local closerToScreenEdgesCheckbox = addonTable.CustomiseDialog.Components.GetCheckbox(container, addonTable.Locales.CLOSER_TO_SCREEN_EDGES, 28, function(value)
+      if InCombatLockdown() then
+        return
+      end
+      addonTable.Config.Set(addonTable.Config.Options.CLOSER_TO_SCREEN_EDGES, value)
+    end)
+    closerToScreenEdgesCheckbox.option = addonTable.Config.Options.CLOSER_TO_SCREEN_EDGES
+    closerToScreenEdgesCheckbox:SetPoint("TOP", allFrames[#allFrames], "BOTTOM", 0, 0)
+    table.insert(allFrames, closerToScreenEdgesCheckbox)
+  end
+
   local clickRegionSliderX = addonTable.CustomiseDialog.Components.GetSlider(container, addonTable.Locales.CLICK_REGION_WIDTH, 1, 300, function(value) return ("%d%%"):format(value) end, function(value)
     addonTable.Config.Set(addonTable.Config.Options.CLICK_REGION_SCALE_X, value / 100)
   end)

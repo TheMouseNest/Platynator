@@ -17,6 +17,7 @@ local settings = {
   NOT_TARGET_BEHAVIOUR = {key = "not_target_behaviour", default = "none", refresh = {addonTable.Constants.RefreshReason.TargetBehaviour}},
 
   STACKING_NAMEPLATES = {key = "stacking_nameplates", default = true, refresh = {addonTable.Constants.RefreshReason.StackingBehaviour}},
+  CLOSER_TO_SCREEN_EDGES = {key = "closer_to_screen_edges", default = true, refresh = {addonTable.Constants.RefreshReason.StackingBehaviour}},
   CLICK_REGION_SCALE_X = {key = "click_region_scale_x", default = 1},
   CLICK_REGION_SCALE_Y = {key = "click_region_scale_y", default = 1},
 
