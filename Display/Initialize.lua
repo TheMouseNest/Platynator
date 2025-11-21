@@ -184,6 +184,10 @@ function addonTable.Display.ManagerMixin:OnLoad()
         UF.AurasFrame.CrowdControlListFrame:SetPoint("LEFT", UF.HealthBarsContainer.healthBar, "RIGHT", 5, 0);
         UF.AurasFrame.CrowdControlListFrame:SetParent(UF.AurasFrame)
         UF.AurasFrame.CrowdControlListFrame:SetScale(1)
+        UF.AurasFrame.LossOfControlFrame:ClearAllPoints()
+        UF.AurasFrame.LossOfControlFrame:SetPoint("LEFT", UF.HealthBarsContainer.healthBar, "RIGHT", 5, 0);
+        UF.AurasFrame.LossOfControlFrame:SetParent(UF.AurasFrame)
+        UF.AurasFrame.LossOfControlFrame:SetScale(1)
         UF:UnregisterEvent("UNIT_AURA")
       end
       if UF.WidgetContainer then
@@ -364,6 +368,12 @@ function addonTable.Display.ManagerMixin:PositionBuffs(display)
     if designInfo.crowdControl then
       CrowdControlListFrame:SetScale(designInfo.crowdControl.scale * 6/5)
       self.RelayoutAuras(CrowdControlListFrame)
+    end
+    local LossOfControlFrame = self.ModifiedUFs[unit].AurasFrame.LossOfControlFrame
+    LossOfControlFrame:SetParent(display.CrowdControlDisplay)
+    if designInfo.crowdControl then
+      LossOfControlFrame:SetScale(designInfo.crowdControl.scale * 6/5)
+      self.RelayoutAuras(LossOfControlFrame)
     end
   end
 end
