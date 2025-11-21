@@ -373,7 +373,6 @@ function addonTable.Display.ManagerMixin:PositionBuffs(display)
     LossOfControlFrame:SetParent(display.CrowdControlDisplay)
     if designInfo.crowdControl then
       LossOfControlFrame:SetScale(designInfo.crowdControl.scale * 6/5)
-      self.RelayoutAuras(LossOfControlFrame)
     end
   end
 end
