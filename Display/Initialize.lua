@@ -534,7 +534,7 @@ function addonTable.Display.ManagerMixin:UpdateForFocus()
 end
 
 function addonTable.Display.ManagerMixin:UpdateNamePlateSize()
-  local globalScale = addonTable.Config.Get(addonTable.Config.Options.GLOBAL_SCALE) * UIParent:GetScale()
+  local globalScale = addonTable.Config.Get(addonTable.Config.Options.GLOBAL_SCALE)
   local width = addonTable.Rect.width * globalScale
   local height = addonTable.Rect.height * globalScale
 
