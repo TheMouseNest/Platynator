@@ -766,13 +766,6 @@ addonTable.CustomiseDialog.WidgetsConfig = {
               return details.scale * 100
             end,
           },
-        },
-      },
-    },
-    ["target"] = {
-      {
-        label = addonTable.Locales.GENERAL,
-        entries = {
           {
             label = addonTable.Locales.HEIGHT,
             kind = "slider",
