@@ -1,9 +1,9 @@
 ---@class addonTablePlatynator
 local addonTable = select(2, ...)
 
-local function GetColor(rgb)
+local function GetColor(rgb, a)
   local color = CreateColorFromRGBHexString(rgb)
-  return {r = color.r, g = color.g, b = color.b}
+  return {r = color.r, g = color.g, b = color.b, a = a}
 end
 
 addonTable.CustomiseDialog.DesignWidgets = {
@@ -34,7 +34,7 @@ addonTable.CustomiseDialog.DesignWidgets = {
       },
       absorb = {
         asset = "wide/blizzard-absorb",
-        color = GetColor("FFFFFF")
+        color = GetColor("FFFFFF", 1)
       },
       marker = {
         asset = "none",
@@ -109,7 +109,7 @@ addonTable.CustomiseDialog.DesignWidgets = {
       anchor = {"TOPLEFT", -140, 50},
       kind = "target",
       asset = "wide/glow",
-      color = GetColor("FFFFFF"),
+      color = GetColor("FFFFFF", 1),
       scale = 1,
       layer = 0,
     },
@@ -121,7 +121,7 @@ addonTable.CustomiseDialog.DesignWidgets = {
       anchor = {"TOPLEFT", -140, 50},
       kind = "focus",
       asset = "wide/glow",
-      color = GetColor("FFFFFF"),
+      color = GetColor("FFFFFF", 1),
       scale = 1,
       layer = 0,
     },
@@ -133,7 +133,7 @@ addonTable.CustomiseDialog.DesignWidgets = {
       anchor = {"TOPLEFT", -140, 50},
       kind = "mouseover",
       asset = "wide/glow",
-      color = GetColor("AAAAAA"),
+      color = GetColor("AAAAAA", 1),
       scale = 1,
       layer = 0,
     },

@@ -50,7 +50,7 @@ local function InitBar(frame, details)
   local borderDetails = addonTable.Assets.BarBorders[details.border.asset]
   frame.border:SetTexture(borderDetails.file)
   frame.border:SetSize(borderDetails.width * details.scale, borderDetails.height * details.scale)
-  frame.border:SetVertexColor(details.border.color.r, details.border.color.g, details.border.color.b)
+  frame.border:SetVertexColor(details.border.color.r, details.border.color.g, details.border.color.b, details.border.color.a)
   if details.marker.asset ~= "none" then
     frame.marker:Show()
     local markerDetails = addonTable.Assets.BarPositionHighlights[details.marker.asset]
@@ -122,7 +122,7 @@ function addonTable.Display.GetHealthBar(frame, parent)
     borderHolder:SetFrameLevel(frame:GetFrameLevel() + 4)
 
     frame.statusBarAbsorb:SetStatusBarTexture(addonTable.Assets.BarBackgrounds[details.absorb.asset].file)
-    frame.statusBarAbsorb:GetStatusBarTexture():SetVertexColor(details.absorb.color.r, details.absorb.color.g, details.absorb.color.b)
+    frame.statusBarAbsorb:GetStatusBarTexture():SetVertexColor(details.absorb.color.r, details.absorb.color.g, details.absorb.color.b, details.absorb.color.a)
     frame.statusBarAbsorb:SetPoint("LEFT", frame.statusBar:GetStatusBarTexture(), "RIGHT")
     frame.statusBarAbsorb:SetHeight(frame:GetHeight())
     frame.statusBarAbsorb:SetWidth(frame:GetWidth())
@@ -295,7 +295,7 @@ function addonTable.Display.GetHighlight(frame, parent)
     frame.details = details
 
     frame.highlight:SetCheckedTexture(highlightDetails.file)
-    frame.highlight:GetCheckedTexture():SetVertexColor(details.color.r, details.color.g, details.color.b)
+    frame.highlight:GetCheckedTexture():SetVertexColor(details.color.r, details.color.g, details.color.b, details.color.a)
     frame:SetSize(highlightDetails.width * details.scale, highlightDetails.height * details.scale)
 
     frame.highlight:GetCheckedTexture():SetSnapToPixelGrid(false)

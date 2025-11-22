@@ -122,6 +122,9 @@ function addonTable.Core.UpgradeDesign(design)
     if bar.layer == nil then
       bar.layer = 1
     end
+    if bar and bar.absorb and bar.absorb.color.a == nil then
+      bar.absorb.color.a = 1
+    end
   end
 
   for _, text in ipairs(design.texts) do
@@ -162,6 +165,9 @@ function addonTable.Core.UpgradeDesign(design)
   for _, highlight in ipairs(design.highlights) do
     if highlight.layer == nil then
       highlight.layer = 0
+    end
+    if highlight.color.a == nil then
+      highlight.color.a = 1
     end
   end
 
