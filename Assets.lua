@@ -165,6 +165,22 @@ addonTable.Assets.Highlights = {
   ["75/soft-glow"] = {file = "Interface/AddOns/Platynator/Assets/%s/Highlights/soft-glow-75.png", width = 1066, height = 160, has4k = true, mode = mode.Percent75, tag = "soft-glow"},
   ["wide/soft-glow-narrow"] = {file = "Interface/AddOns/Platynator/Assets/%s/Highlights/soft-glow-50.png", width = 1066, height = 123, has4k = true, mode = mode.Percent50, tag = "soft-glow"},
 
+  ["200/slight"] = {file = "Interface/AddOns/Platynator/Assets/%s/BarBorders/slight-200.png", width = 1000, height = 250, has4k = true, masked = true, mode = mode.Percent200, tag = "slight"},
+  ["175/slight"] = {file = "Interface/AddOns/Platynator/Assets/%s/BarBorders/slight-175.png", width = 1000, height = 219, has4k = true, masked = true, mode = mode.Percent175, tag = "slight"},
+  ["150/slight"] = {file = "Interface/AddOns/Platynator/Assets/%s/BarBorders/slight-150.png", width = 1000, height = 189, has4k = true, masked = true, mode = mode.Percent150, tag = "slight"},
+  ["125/slight"] = {file = "Interface/AddOns/Platynator/Assets/%s/BarBorders/slight-125.png", width = 1000, height = 157, has4k = true, masked = true, mode = mode.Percent125, tag = "slight"},
+  ["100/slight"] = {file = "Interface/AddOns/Platynator/Assets/%s/BarBorders/slight-100.png", width = 1000, height = 125, has4k = true, masked = true, mode = mode.Percent100, tag = "slight"},
+  ["75/slight"] = {file = "Interface/AddOns/Platynator/Assets/%s/BarBorders/slight-75.png", width = 1000, height = 94, has4k = true, masked = true, mode = mode.Percent75, tag = "slight"},
+  ["50/slight"] = {file = "Interface/AddOns/Platynator/Assets/%s/BarBorders/slight-50.png", width = 1000, height = 63, has4k = true, masked = true, mode = mode.Percent50, tag = "slight"},
+
+  ["200/blizzard-bold-health"] = {file = "Interface/AddOns/Platynator/Assets/%s/Highlights/blizzard-bold-health-200.png", width = 1018, height = 270, has4k = true, masked = true, mode = mode.Percent200, tag = "blizzard-bold-health"},
+  ["175/blizzard-bold-health"] = {file = "Interface/AddOns/Platynator/Assets/%s/Highlights/blizzard-bold-health-175.png", width = 1018, height = 238, has4k = true, masked = true, mode = mode.Percent175, tag = "blizzard-bold-health"},
+  ["150/blizzard-bold-health"] = {file = "Interface/AddOns/Platynator/Assets/%s/Highlights/blizzard-bold-health-150.png", width = 1018, height = 208, has4k = true, masked = true, mode = mode.Percent150, tag = "blizzard-bold-health"},
+  ["125/blizzard-bold-health"] = {file = "Interface/AddOns/Platynator/Assets/%s/Highlights/blizzard-bold-health-125.png", width = 1018, height = 175, has4k = true, masked = true, mode = mode.Percent125, tag = "blizzard-bold-health"},
+  ["100/blizzard-bold-health"] = {file = "Interface/AddOns/Platynator/Assets/%s/Highlights/blizzard-bold-health-100.png", width = 1018, height = 145, has4k = true, masked = true, mode = mode.Percent100, tag = "blizzard-bold-health"},
+  ["75/blizzard-bold-health"] = {file = "Interface/AddOns/Platynator/Assets/%s/Highlights/blizzard-bold-health-75.png", width = 1000, height = 113, has4k = true, masked = true, mode = mode.Percent75, tag = "blizzard-bold-health"},
+  ["50/blizzard-bold-health"] = {file = "Interface/AddOns/Platynator/Assets/%s/Highlights/blizzard-bold-health-50.png", width = 1000, height = 83, has4k = true, masked = true, mode = mode.Percent50, tag = "blizzard-bold-health"},
+
   ["wide/arrows"] = {file = "Interface/AddOns/Platynator/Assets/%s/Highlights/arrows.png", width = 1230, height = 164, has4k = true, mode = mode.Percent100, tag = "arrows"},
   ["wide/double-arrows"] = {file = "Interface/AddOns/Platynator/Assets/%s/Highlights/double-arrows.png", width = 1351, height = 173, has4k = true, mode = mode.Percent100, tag = "arrows"},
 }
