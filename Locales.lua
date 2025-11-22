@@ -85,6 +85,7 @@ L["STACKING_APPLIES_TO"] = "Stacking applies to"
 L["NORMAL"] = "Normal"
 L["MINION"] = "Minion"
 L["MINOR"] = "Minor"
+L["LAYER"] = "Layer"
 
 L["FOREGROUND"] = "Foreground"
 L["VISUAL"] = "Visual"

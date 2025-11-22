@@ -84,6 +84,19 @@ addonTable.CustomiseDialog.WidgetsConfig = {
             end,
           },
           {
+            label = addonTable.Locales.LAYER,
+            kind = "slider",
+            min = 0, max = 5,
+            valuePattern = "%d",
+            setter = function(details, value)
+              details.layer = value
+            end,
+            getter = function(details)
+              return details.layer
+            end,
+          },
+          { kind = "spacer" },
+          {
             label = addonTable.Locales.HEIGHT,
             kind = "slider",
             min = minSize, max = maxSize,
@@ -386,6 +399,19 @@ addonTable.CustomiseDialog.WidgetsConfig = {
             end,
           },
           {
+            label = addonTable.Locales.LAYER,
+            kind = "slider",
+            min = 0, max = 5,
+            valuePattern = "%d",
+            setter = function(details, value)
+              details.layer = value
+            end,
+            getter = function(details)
+              return details.layer
+            end,
+          },
+          { kind = "spacer" },
+          {
             label = addonTable.Locales.WIDTH_RESTRICTION,
             kind = "slider",
             min = 0, max = 300,
@@ -661,6 +687,19 @@ addonTable.CustomiseDialog.WidgetsConfig = {
             end,
           },
           {
+            label = addonTable.Locales.LAYER,
+            kind = "slider",
+            min = 0, max = 5,
+            valuePattern = "%d",
+            setter = function(details, value)
+              details.layer = value
+            end,
+            getter = function(details)
+              return details.layer
+            end,
+          },
+          { kind = "spacer" },
+          {
             label = addonTable.Locales.VISUAL,
             kind = "dropdown",
             getInitData = function(details)
@@ -704,6 +743,7 @@ addonTable.CustomiseDialog.WidgetsConfig = {
               return details.scale * 100
             end,
           },
+          { kind = "spacer" },
           {
             label = addonTable.Locales.HEIGHT,
             kind = "slider",
@@ -766,6 +806,19 @@ addonTable.CustomiseDialog.WidgetsConfig = {
               return details.scale * 100
             end,
           },
+          {
+            label = addonTable.Locales.LAYER,
+            kind = "slider",
+            min = 0, max = 5,
+            valuePattern = "%d",
+            setter = function(details, value)
+              details.layer = value
+            end,
+            getter = function(details)
+              return details.layer
+            end,
+          },
+          { kind = "spacer" },
           {
             label = addonTable.Locales.HEIGHT,
             kind = "slider",
@@ -842,6 +895,19 @@ addonTable.CustomiseDialog.WidgetsConfig = {
               return details.scale * 100
             end,
           },
+          {
+            label = addonTable.Locales.LAYER,
+            kind = "slider",
+            min = 0, max = 5,
+            valuePattern = "%d",
+            setter = function(details, value)
+              details.layer = value
+            end,
+            getter = function(details)
+              return details.layer
+            end,
+          },
+          { kind = "spacer" },
           {
             label = addonTable.Locales.FILLED,
             kind = "dropdown",

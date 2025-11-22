@@ -41,10 +41,16 @@ function addonTable.Core.UpgradeDesign(design)
     if text.truncate == nil then
       text.truncate = false
     end
+    if text.layer == nil then
+      text.layer = 2
+    end
   end
   for _, marker in ipairs(design.markers) do
     if not marker.color then
       marker.color = {r = 1, g = 1, b = 1}
+    end
+    if marker.layer == nil then
+      marker.layer = 3
     end
   end
   if not design.auras then
@@ -113,6 +119,9 @@ function addonTable.Core.UpgradeDesign(design)
     if bar.kind == "cast" and bar.colors.interrupted == nil then
       bar.colors.interrupted = GetColor("FC36E0")
     end
+    if bar.layer == nil then
+      bar.layer = 1
+    end
   end
 
   for _, text in ipairs(design.texts) do
@@ -132,7 +141,7 @@ function addonTable.Core.UpgradeDesign(design)
     if text.kind == "creatureName" and not text.colors.npc.unfriendly then
       text.colors.npc.unfriendly = GetColor("ff8100")
     end
-    if text.kind == "level" and (text.colors == nil or text.applyDifficultyColors == nil) then
+    if text.kind == "layer" and (text.colors == nil or text.applyDifficultyColors == nil) then
       text.applyDifficultyColors = true
       text.colors = {
         difficulty = {
@@ -148,6 +157,18 @@ function addonTable.Core.UpgradeDesign(design)
       text.shorten = nil
       text.truncate = text.truncate or text.shorten and true or false
      end
+  end
+
+  for _, highlight in ipairs(design.highlights) do
+    if highlight.layer == nil then
+      highlight.layer = 0
+    end
+  end
+
+  for _, bar in ipairs(design.specialBars) do
+    if bar.layer == nil then
+      bar.layer = 3
+    end
   end
 
   if design.font.shadow == nil or design.font.flags ~= nil then
