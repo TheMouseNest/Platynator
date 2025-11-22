@@ -34,9 +34,6 @@ function addonTable.Display.ManagerMixin:OnLoad()
   end)
   self.nameplateDisplays = {}
 
-  self.lastTarget = nil
-  self.lastMouseover = nil
-  self.lastFocus = nil
   self.MouseoverMonitor = nil
 
   self.overrideScaleModifier = 1
@@ -445,29 +442,8 @@ function addonTable.Display.ManagerMixin:Uninstall(unit)
 end
 
 function addonTable.Display.ManagerMixin:UpdateForMouseover()
-  if addonTable.Constants.IsMidnight and IsInInstance() then
-    for _, display in pairs(self.nameplateDisplays) do
-      display:UpdateForMouseover()
-    end
-  else
-    if self.lastMouseover and (not self.lastMouseover.unit or UnitExists(self.lastMouseover.unit)) then
-      self.lastMouseover:UpdateForMouseover()
-    end
-    local unit
-    for i = 1, 40 do
-      unit = "nameplate" .. i
-      if ConvertSecret(UnitIsUnit(unit, "mouseover")) then
-        break
-      else
-        unit = nil
-      end
-    end
-    if self.nameplateDisplays[unit] then
-      self.lastMouseover = self.nameplateDisplays[unit]
-      self.lastMouseover:UpdateForMouseover()
-    else
-      self.lastMouseover = nil
-    end
+  for _, display in pairs(self.nameplateDisplays) do
+    display:UpdateForMouseover()
   end
 
   if UnitExists("mouseover") and not self.MouseoverMonitor then
@@ -489,56 +465,14 @@ function addonTable.Display.ManagerMixin:UpdateForMouseoverFrequent()
 end
 
 function addonTable.Display.ManagerMixin:UpdateForTarget()
-  if addonTable.Constants.IsMidnight and IsInInstance() then
-    for _, display in pairs(self.nameplateDisplays) do
-      display:UpdateForTarget()
-    end
-  else
-    if self.lastTarget and (not self.lastTarget.unit or UnitExists(self.lastTarget.unit)) then
-      self.lastTarget:UpdateForTarget()
-    end
-    local unit
-    for i = 1, 40 do
-      unit = "nameplate" .. i
-      if ConvertSecret(UnitIsUnit(unit, "target")) then
-        break
-      else
-        unit = nil
-      end
-    end
-    if self.nameplateDisplays[unit] then
-      self.lastTarget = self.nameplateDisplays[unit]
-      self.lastTarget:UpdateForTarget()
-    else
-      self.lastTarget = nil
-    end
+  for _, display in pairs(self.nameplateDisplays) do
+    display:UpdateForTarget()
   end
 end
 
 function addonTable.Display.ManagerMixin:UpdateForFocus()
-  if addonTable.Constants.IsMidnight and IsInInstance() then
-    for _, display in pairs(self.nameplateDisplays) do
-      display:UpdateForFocus()
-    end
-  else
-    if self.lastFocus and (not self.lastFocus.unit or UnitExists(self.lastFocus.unit)) then
-      self.lastFocus:UpdateForFocus()
-    end
-    local unit
-    for i = 1, 40 do
-      unit = "nameplate" .. i
-      if ConvertSecret(UnitIsUnit(unit, "target")) then
-        break
-      else
-        unit = nil
-      end
-    end
-    if self.nameplateDisplays[unit] then
-      self.lastFocus = self.nameplateDisplays[unit]
-      self.lastFocus:UpdateForFocus()
-    else
-      self.lastFocus = nil
-    end
+  for _, display in pairs(self.nameplateDisplays) do
+    display:UpdateForFocus()
   end
 end
 
@@ -630,10 +564,7 @@ function addonTable.Display.ManagerMixin:OnEvent(eventName, ...)
       end
     end
     if self.nameplateDisplays[unit] then
-      self.lastTarget = self.nameplateDisplays[unit]
-      self.lastTarget:UpdateForTarget()
-    else
-      self.lastTarget = nil
+      self.nameplateDisplays[unit]:UpdateForTarget()
     end
   elseif eventName == "UNIT_THREAT_LIST_UPDATE" then
     local unit = ...
