@@ -25,6 +25,7 @@ local settings = {
   STACK_REGION_SCALE_Y = {key = "stack_region_scale_y", default = 1.1, refresh = {addonTable.Constants.RefreshReason.StackingBehaviour}},
 
   SHOW_NAMEPLATES = {key = "show_nameplates", default = {npc = true, player = true, enemy = true}, refresh = {addonTable.Constants.RefreshReason.ShowBehaviour}},
+  STACK_APPLIES_TO = {key = "stack_applies_to", default = {normal = true, minion = false, minor = false}},
   SHOW_FRIENDLY_IN_INSTANCES = {key = "show_friendly_in_instances", default = true, refresh = {addonTable.Constants.RefreshReason.ShowBehaviour}},
 }
 
