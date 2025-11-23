@@ -181,6 +181,22 @@ addonTable.Assets.Highlights = {
   ["75/blizzard-bold-health"] = {file = "Interface/AddOns/Platynator/Assets/%s/Highlights/blizzard-bold-health-75.png", width = 1000, height = 113, has4k = true, masked = true, mode = mode.Percent75, tag = "blizzard-bold-health"},
   ["50/blizzard-bold-health"] = {file = "Interface/AddOns/Platynator/Assets/%s/Highlights/blizzard-bold-health-50.png", width = 1000, height = 83, has4k = true, masked = true, mode = mode.Percent50, tag = "blizzard-bold-health"},
 
+  ["200/striped"] = {file = "Interface/AddOns/Platynator/Assets/%s/Highlights/striped.png", width = 1000, height = 250, has4k = true, masked = true, mode = mode.Percent200, tag = "striped"},
+  ["175/striped"] = {file = "Interface/AddOns/Platynator/Assets/%s/Highlights/striped.png", width = 1000, height = 219, has4k = true, masked = true, mode = mode.Percent175, tag = "striped"},
+  ["150/striped"] = {file = "Interface/AddOns/Platynator/Assets/%s/Highlights/striped.png", width = 1000, height = 189, has4k = true, masked = true, mode = mode.Percent150, tag = "striped"},
+  ["125/striped"] = {file = "Interface/AddOns/Platynator/Assets/%s/Highlights/striped.png", width = 1000, height = 157, has4k = true, masked = true, mode = mode.Percent125, tag = "striped"},
+  ["100/striped"] = {file = "Interface/AddOns/Platynator/Assets/%s/Highlights/striped.png", width = 1000, height = 125, has4k = true, masked = true, mode = mode.Percent100, tag = "striped"},
+  ["75/striped"] = {file = "Interface/AddOns/Platynator/Assets/%s/Highlights/striped.png", width = 1000, height = 94, has4k = true, masked = true, mode = mode.Percent75, tag = "striped"},
+  ["50/striped"] = {file = "Interface/AddOns/Platynator/Assets/%s/Highlights/striped.png", width = 1000, height = 63, has4k = true, masked = true, mode = mode.Percent50, tag = "striped"},
+
+  ["200/striped-reverse"] = {file = "Interface/AddOns/Platynator/Assets/%s/Highlights/striped-reverse.png", width = 1000, height = 250, has4k = true, masked = true, mode = mode.Percent200, tag = "striped-reverse"},
+  ["175/striped-reverse"] = {file = "Interface/AddOns/Platynator/Assets/%s/Highlights/striped-reverse.png", width = 1000, height = 219, has4k = true, masked = true, mode = mode.Percent175, tag = "striped-reverse"},
+  ["150/striped-reverse"] = {file = "Interface/AddOns/Platynator/Assets/%s/Highlights/striped-reverse.png", width = 1000, height = 189, has4k = true, masked = true, mode = mode.Percent150, tag = "striped-reverse"},
+  ["125/striped-reverse"] = {file = "Interface/AddOns/Platynator/Assets/%s/Highlights/striped-reverse.png", width = 1000, height = 157, has4k = true, masked = true, mode = mode.Percent125, tag = "striped-reverse"},
+  ["100/striped-reverse"] = {file = "Interface/AddOns/Platynator/Assets/%s/Highlights/striped-reverse.png", width = 1000, height = 125, has4k = true, masked = true, mode = mode.Percent100, tag = "striped-reverse"},
+  ["75/striped-reverse"] = {file = "Interface/AddOns/Platynator/Assets/%s/Highlights/striped-reverse.png", width = 1000, height = 94, has4k = true, masked = true, mode = mode.Percent75, tag = "striped-reverse"},
+  ["50/striped-reverse"] = {file = "Interface/AddOns/Platynator/Assets/%s/Highlights/striped-reverse.png", width = 1000, height = 63, has4k = true, masked = true, mode = mode.Percent50, tag = "striped-reverse"},
+
   ["wide/arrows"] = {file = "Interface/AddOns/Platynator/Assets/%s/Highlights/arrows.png", width = 1230, height = 164, has4k = true, mode = mode.Percent100, tag = "arrows"},
   ["wide/double-arrows"] = {file = "Interface/AddOns/Platynator/Assets/%s/Highlights/double-arrows.png", width = 1351, height = 173, has4k = true, mode = mode.Percent100, tag = "arrows"},
 }
