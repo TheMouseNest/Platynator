@@ -9,9 +9,9 @@
    id="svg1"
    inkscape:version="1.4.2 (ebf0e940d0, 2025-05-08)"
    sodipodi:docname="highlight-striped.svg"
-   inkscape:export-filename="highlight-arrows-out.png"
-   inkscape:export-xdpi="423.33334"
-   inkscape:export-ydpi="423.33334"
+   inkscape:export-filename="highlight-arrows-out-close.png"
+   inkscape:export-xdpi="846.66669"
+   inkscape:export-ydpi="846.66669"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns="http://www.w3.org/2000/svg"
@@ -28,7 +28,7 @@
      inkscape:document-units="mm"
      inkscape:zoom="2.9178273"
      inkscape:cx="134.17518"
-     inkscape:cy="30.844868"
+     inkscape:cy="30.844869"
      inkscape:window-width="2560"
      inkscape:window-height="1366"
      inkscape:window-x="0"
@@ -42,10 +42,11 @@
      inkscape:groupmode="layer"
      id="layer1">
     <g
-       id="g17">
+       id="g1"
+       transform="translate(-1.0881384,11.697488)">
       <g
          id="g9"
-         transform="translate(-0.2614955)">
+         transform="matrix(-1,0,0,1,18.986477,0)">
         <rect
            style="fill:#ffffff;stroke-width:0.715903;stroke-linecap:round;stroke-linejoin:round;stroke-opacity:0.501961"
            id="rect1"
@@ -97,7 +98,7 @@
       </g>
       <g
          id="g15"
-         transform="matrix(-1,0,0,1,60.261496,0)">
+         transform="translate(41.013525)">
         <rect
            style="fill:#ffffff;stroke-width:0.715903;stroke-linecap:round;stroke-linejoin:round;stroke-opacity:0.501961"
            id="rect10"
@@ -149,10 +150,11 @@
       </g>
     </g>
     <g
-       id="g16">
+       id="g2"
+       transform="translate(1.0583345,14.871225)">
       <g
          id="g9-3"
-         transform="matrix(-1,0,0,1,27.755778,-24.302894)">
+         transform="translate(8.7343426,-14.871225)">
         <rect
            style="fill:#ffffff;stroke-width:0.715903;stroke-linecap:round;stroke-linejoin:round;stroke-opacity:0.501961"
            id="rect1-5"
@@ -204,7 +206,7 @@
       </g>
       <g
          id="g15-7"
-         transform="translate(27.557813,-24.302894)">
+         transform="matrix(-1,0,0,1,49.148988,-14.871225)">
         <rect
            style="fill:#ffffff;stroke-width:0.715903;stroke-linecap:round;stroke-linejoin:round;stroke-opacity:0.501961"
            id="rect10-0"
