@@ -86,7 +86,7 @@ addonTable.CustomiseDialog.WidgetsConfig = {
           {
             label = addonTable.Locales.LAYER,
             kind = "slider",
-            min = 0, max = 5,
+            min = 0, max = 6,
             valuePattern = "%d",
             setter = function(details, value)
               details.layer = value
@@ -401,7 +401,7 @@ addonTable.CustomiseDialog.WidgetsConfig = {
           {
             label = addonTable.Locales.LAYER,
             kind = "slider",
-            min = 0, max = 5,
+            min = 0, max = 6,
             valuePattern = "%d",
             setter = function(details, value)
               details.layer = value
@@ -689,7 +689,7 @@ addonTable.CustomiseDialog.WidgetsConfig = {
           {
             label = addonTable.Locales.LAYER,
             kind = "slider",
-            min = 0, max = 5,
+            min = 0, max = 6,
             valuePattern = "%d",
             setter = function(details, value)
               details.layer = value
@@ -809,7 +809,7 @@ addonTable.CustomiseDialog.WidgetsConfig = {
           {
             label = addonTable.Locales.LAYER,
             kind = "slider",
-            min = 0, max = 5,
+            min = 0, max = 6,
             valuePattern = "%d",
             setter = function(details, value)
               details.layer = value
@@ -898,7 +898,7 @@ addonTable.CustomiseDialog.WidgetsConfig = {
           {
             label = addonTable.Locales.LAYER,
             kind = "slider",
-            min = 0, max = 5,
+            min = 0, max = 6,
             valuePattern = "%d",
             setter = function(details, value)
               details.layer = value
