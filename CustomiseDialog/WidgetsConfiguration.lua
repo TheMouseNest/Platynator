@@ -310,6 +310,16 @@ addonTable.CustomiseDialog.WidgetsConfig = {
               return details.colors.npc.neutral
             end,
           },
+		      {
+            label = addonTable.Locales.NEUTRAL_QUEST_OBJECTIVE,
+            kind = "colorPicker",
+            setter = function(details, value)
+              details.colors.npc.neutral_quest_objective = value
+            end,
+            getter = function(details)
+              return details.colors.npc.neutral_quest_objective
+            end,
+          },
           {
             label = addonTable.Locales.UNFRIENDLY,
             kind = "colorPicker",
@@ -328,6 +338,16 @@ addonTable.CustomiseDialog.WidgetsConfig = {
             end,
             getter = function(details)
               return details.colors.npc.hostile
+            end,
+          },
+		      {
+            label = addonTable.Locales.HOSTILE_QUEST_OBJECTIVE,
+            kind = "colorPicker",
+            setter = function(details, value)
+              details.colors.npc.hostile_quest_objective = value
+            end,
+            getter = function(details)
+              return details.colors.npc.hostile_quest_objective
             end,
           },
           {

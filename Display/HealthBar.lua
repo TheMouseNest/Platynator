@@ -49,8 +49,13 @@ function addonTable.Display.HealthBarMixin:UpdateColor()
   elseif threat ~= nil then
     self:ApplyThreat(threat)
   elseif IsNeutral(self.unit) and (not inInstance or not UnitAffectingCombat(self.unit)) then
-    local c = self.details.colors.npc.neutral
-    self:SetHealthColor(c)
+    if C_QuestLog.UnitIsRelatedToActiveQuest and C_QuestLog.UnitIsRelatedToActiveQuest(self.unit) then
+	    local c = self.details.colors.npc.neutral_quest_objective
+	    self:SetHealthColor(c)
+	  else
+      local c = self.details.colors.npc.neutral
+	    self:SetHealthColor(c)
+	  end
   -- Reputation unfriendly, unable to interact, attack, etc.
   elseif IsUnfriendly(self.unit) and (not inInstance or not UnitAffectingCombat(self.unit)) then
     local c = self.details.colors.npc.unfriendly
@@ -60,8 +65,13 @@ function addonTable.Display.HealthBarMixin:UpdateColor()
     self:SetHealthColor(c)
   -- Enemy
   elseif (not UnitCanAttack("player", self.unit) or not self.details.aggroColoursOnHostiles) and (not inInstance or not UnitAffectingCombat(self.unit)) then
-    local c = self.details.colors.npc.hostile
-    self:SetHealthColor(c)
+    if C_QuestLog.UnitIsRelatedToActiveQuest and C_QuestLog.UnitIsRelatedToActiveQuest(self.unit) then
+	    local c = self.details.colors.npc.hostile_quest_objective
+	    self:SetHealthColor(c)
+	  else
+      local c = self.details.colors.npc.hostile
+	    self:SetHealthColor(c)
+	  end
   else
     self:ApplyThreat(threat)
   end

@@ -618,7 +618,7 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
             frame:SetPoint("TOP", allFrames[#allFrames], "BOTTOM", 0, yOffset)
           end
           table.insert(allFrames, frame)
-          yOffset = 0
+          yOffset = 10
         elseif e.kind == "spacer" then
           yOffset = -30
         end
