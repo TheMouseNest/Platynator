@@ -88,6 +88,7 @@ L["NORMAL"] = "Normal"
 L["MINION"] = "Minion"
 L["MINOR"] = "Minor"
 L["LAYER"] = "Layer"
+L["SQUARE"] = "Square"
 
 L["FOREGROUND"] = "Foreground"
 L["VISUAL"] = "Visual"
