@@ -33,6 +33,7 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
   local UpdateWidgetPoints
   local widgets
   local selectionIndexes = {}
+  local fociOnDown = {}
   local autoSelectedDetails
 
   local titleMap = {}
@@ -105,8 +106,8 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
       ApplyIndex(index)
     end
   end
-  local function ForceSelection()
-    local foci = tFilter(GetMouseFoci(), function(w) return w:GetParent() == preview end, true)
+  local function ForceSelection(fociOnDown)
+    local foci = tFilter(fociOnDown, function(w) return w:GetParent() == preview end, true)
     local any = false
     for _, w in ipairs(foci) do
       local index = tIndexOf(widgets, w)
@@ -235,6 +236,7 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
   movingMonitor:RegisterEvent("GLOBAL_MOUSE_UP")
   local cursorX, cursorY = GetCursorPosition()
   local function NotifyMouseDown()
+    fociOnDown = GetMouseFoci()
     cursorX, cursorY = GetCursorPosition()
     cursorX = cursorX / preview:GetEffectiveScale()
     cursorY = cursorY / preview:GetEffectiveScale()
@@ -425,7 +427,7 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
         NotifyMouseDown()
       end)
       w:SetScript("OnDragStart", function()
-        ForceSelection()
+        ForceSelection(fociOnDown)
         StartMovingSelection()
       end)
       w:SetScript("OnMouseUp", function()
@@ -526,7 +528,7 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
         NotifyMouseDown()
       end)
       w:SetScript("OnDragStart", function()
-        ForceSelection()
+        ForceSelection(fociOnDown)
         StartMovingSelection()
       end)
       w:SetScript("OnMouseUp", function()
