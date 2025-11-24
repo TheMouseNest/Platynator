@@ -64,8 +64,8 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
   preview:SetFlattensRenderLayers(true)
   preview:SetScale(2)
 
-  local function ToggleSelection()
-    local foci = tFilter(GetMouseFoci(), function(w) return w:GetParent() == preview end, true)
+  local function ToggleSelection(rawFoci)
+    local foci = tFilter(rawFoci, function(w) return w:GetParent() == preview end, true)
     local ApplyIndex
     if IsShiftKeyDown() then
       ApplyIndex = function(index)
@@ -106,8 +106,8 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
       ApplyIndex(index)
     end
   end
-  local function ForceSelection(fociOnDown)
-    local foci = tFilter(fociOnDown, function(w) return w:GetParent() == preview end, true)
+  local function ForceSelection(rawFoci)
+    local foci = tFilter(rawFoci, function(w) return w:GetParent() == preview end, true)
     local any = false
     for _, w in ipairs(foci) do
       local index = tIndexOf(widgets, w)
@@ -431,7 +431,7 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
         StartMovingSelection()
       end)
       w:SetScript("OnMouseUp", function()
-        ToggleSelection()
+        ToggleSelection(GetMouseFoci())
       end)
     end
   end
@@ -532,13 +532,8 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
         StartMovingSelection()
       end)
       w:SetScript("OnMouseUp", function()
-        ToggleSelection()
+        ToggleSelection(GetMouseFoci())
       end)
-
-      if not InCombatLockdown() then
-        w:SetPropagateMouseMotion(true)
-        w:SetPropagateMouseClicks(false)
-      end
     end
     for _, container in pairs(auraContainers) do
       container:Hide()
@@ -565,10 +560,12 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
       table.insert(widgets, container)
       container:ClearAllPoints()
       addonTable.Display.ApplyAnchor(container, details.anchor)
+    end
 
-      if not InCombatLockdown() then
-        container:SetPropagateMouseMotion(true)
-        container:SetPropagateMouseClicks(false)
+    if not InCombatLockdown() then
+      for _, w in ipairs(widgets) do
+        w:SetPropagateMouseMotion(true)
+        w:SetPropagateMouseClicks(false)
       end
     end
   end
@@ -880,8 +877,26 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
       end
     end
 
+    if not InCombatLockdown() then
+      for _, w in ipairs(widgets) do
+        w:SetPropagateMouseMotion(true)
+        w:SetPropagateMouseClicks(false)
+      end
+    end
     selectionIndexes = {}
     UpdateSelection()
+
+    container:RegisterEvent("PLAYER_REGEN_ENABLED")
+  end)
+  container:SetScript("OnHide", function()
+    container:UnregisterEvent("PLAYER_REGEN_ENABLED")
+  end)
+
+  container:SetScript("OnEvent", function()
+    for _, w in ipairs(widgets) do
+      w:SetPropagateMouseMotion(true)
+      w:SetPropagateMouseClicks(false)
+    end
   end)
 
   return container
