@@ -10,6 +10,9 @@ function addonTable.Display.HealthBarMixin:SetUnit(unit)
     self:RegisterUnitEvent("UNIT_MAXHEALTH", self.unit)
     self:RegisterUnitEvent("UNIT_THREAT_LIST_UPDATE", self.unit)
     self:RegisterUnitEvent("UNIT_ABSORB_AMOUNT_CHANGED", self.unit)
+    if self.details.colors.npc.neutral ~= self.details.colors.npc.neutral_quest_objective or self.details.colors.npc.hostile ~= self.details.colors.npc.hostile_quest_objective then
+      self:RegisterUnitEvent("QUEST_LOG_UPDATE")
+    end
     self.statusBar:SetMinMaxValues(0, UnitHealthMax(self.unit))
     self.statusBarAbsorb:SetMinMaxValues(self.statusBar:GetMinMaxValues())
     self.statusBarAbsorb:SetValue(UnitGetTotalAbsorbs(self.unit))
@@ -49,13 +52,15 @@ function addonTable.Display.HealthBarMixin:UpdateColor()
   elseif threat ~= nil then
     self:ApplyThreat(threat)
   elseif IsNeutral(self.unit) and (not inInstance or not UnitAffectingCombat(self.unit)) then
-    if C_QuestLog.UnitIsRelatedToActiveQuest and C_QuestLog.UnitIsRelatedToActiveQuest(self.unit) then
-	    local c = self.details.colors.npc.neutral_quest_objective
-	    self:SetHealthColor(c)
-	  else
-      local c = self.details.colors.npc.neutral
-	    self:SetHealthColor(c)
-	  end
+    local standard_color = self.details.colors.npc.neutral
+    local quest_objective_color = self.details.colors.npc.neutral_quest_objective
+    local effective_color = standard_color
+    if standard_color ~= quest_objective_color then
+      if C_QuestLog.UnitIsRelatedToActiveQuest and C_QuestLog.UnitIsRelatedToActiveQuest(self.unit) then
+        effective_color = quest_objective_color
+      end
+    end
+    self:SetHealthColor(effective_color)
   -- Reputation unfriendly, unable to interact, attack, etc.
   elseif IsUnfriendly(self.unit) and (not inInstance or not UnitAffectingCombat(self.unit)) then
     local c = self.details.colors.npc.unfriendly
@@ -65,13 +70,15 @@ function addonTable.Display.HealthBarMixin:UpdateColor()
     self:SetHealthColor(c)
   -- Enemy
   elseif (not UnitCanAttack("player", self.unit) or not self.details.aggroColoursOnHostiles) and (not inInstance or not UnitAffectingCombat(self.unit)) then
-    if C_QuestLog.UnitIsRelatedToActiveQuest and C_QuestLog.UnitIsRelatedToActiveQuest(self.unit) then
-	    local c = self.details.colors.npc.hostile_quest_objective
-	    self:SetHealthColor(c)
-	  else
-      local c = self.details.colors.npc.hostile
-	    self:SetHealthColor(c)
-	  end
+    local standard_color = self.details.colors.npc.hostile
+    local quest_objective_color = self.details.colors.npc.hostile_quest_objective
+    local effective_color = standard_color
+    if standard_color ~= quest_objective_color then
+      if C_QuestLog.UnitIsRelatedToActiveQuest and C_QuestLog.UnitIsRelatedToActiveQuest(self.unit) then
+        effective_color = quest_objective_color
+      end
+    end
+    self:SetHealthColor(effective_color)
   else
     self:ApplyThreat(threat)
   end
@@ -137,6 +144,8 @@ function addonTable.Display.HealthBarMixin:OnEvent(eventName)
   elseif eventName == "UNIT_ABSORB_AMOUNT_CHANGED" then
     self.statusBarAbsorb:SetValue(UnitGetTotalAbsorbs(self.unit))
   elseif eventName == "UNIT_THREAT_LIST_UPDATE" then
+    self:UpdateColor()
+  elseif eventName == "QUEST_LOG_UPDATE" then
     self:UpdateColor()
   end
 end
