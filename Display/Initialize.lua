@@ -269,6 +269,7 @@ end
 function addonTable.Display.ManagerMixin:UpdateStacking()
   if InCombatLockdown() then
     self:RegisterEvent("PLAYER_REGEN_ENABLED")
+    return
   end
   if addonTable.Constants.IsMidnight then
     if addonTable.Config.Get(addonTable.Config.Options.STACKING_NAMEPLATES) then
@@ -296,6 +297,7 @@ end
 function addonTable.Display.ManagerMixin:UpdateShowState()
   if InCombatLockdown() then
     self:RegisterCallback("PLAYER_REGEN_ENABLED")
+    return
   end
 
   local currentShow = addonTable.Config.Get(addonTable.Config.Options.SHOW_NAMEPLATES)
