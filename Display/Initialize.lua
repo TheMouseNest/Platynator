@@ -55,6 +55,7 @@ function addonTable.Display.ManagerMixin:OnLoad()
   self:RegisterUnitEvent("UNIT_POWER_UPDATE", "player")
   self:RegisterEvent("RUNE_POWER_UPDATE")
   self:RegisterEvent("UNIT_THREAT_LIST_UPDATE")
+  self:RegisterEvent("UNIT_FACTION")
 
   NamePlateDriverFrame:UnregisterEvent("DISPLAY_SIZE_CHANGED")
   if not addonTable.Constants.IsMidnight then
@@ -402,8 +403,7 @@ function addonTable.Display.ManagerMixin:Install(unit, nameplate)
   -- NOTE: the nameplate _name_ does not correspond to the unit
   if nameplate and unit and unit ~= "preview" and (addonTable.Constants.IsMidnight or not UnitIsUnit("player", unit)) then
     local newDisplay
-    -- Necesary check on friends in case its a player being mind controlled
-    if (UnitIsFriend("player", unit) and not UnitCanAttack("player", unit)) or not UnitCanAttack("player", unit) then
+    if UnitCanAttack("player", unit) then
       newDisplay = self.friendDisplayPool:Acquire()
     else
       newDisplay = self.enemyDisplayPool:Acquire()
@@ -588,21 +588,13 @@ function addonTable.Display.ManagerMixin:OnEvent(eventName, ...)
       self:Uninstall(unit)
       self:Install(unit, nameplate)
     end
-  elseif eventName == "VARIABLES_LOADED" then
-    if addonTable.Constants.IsMidnight then
-      C_CVar.SetCVarBitfield(NamePlateConstants.ENEMY_NPC_AURA_DISPLAY_CVAR, Enum.NamePlateEnemyNpcAuraDisplay.Buffs, true)
-      C_CVar.SetCVarBitfield(NamePlateConstants.ENEMY_NPC_AURA_DISPLAY_CVAR, Enum.NamePlateEnemyNpcAuraDisplay.Debuffs, true)
-      C_CVar.SetCVarBitfield(NamePlateConstants.ENEMY_NPC_AURA_DISPLAY_CVAR, Enum.NamePlateEnemyNpcAuraDisplay.CrowdControl, true)
-
-      C_CVar.SetCVarBitfield(NamePlateConstants.ENEMY_PLAYER_AURA_DISPLAY_CVAR, Enum.NamePlateEnemyPlayerAuraDisplay.Buffs, true)
-      C_CVar.SetCVarBitfield(NamePlateConstants.ENEMY_PLAYER_AURA_DISPLAY_CVAR, Enum.NamePlateEnemyPlayerAuraDisplay.Debuffs, true)
-
-      --SetCVarBitfield(NamePlateConstants.ENEMY_PLAYER_AURA_DISPLAY_CVAR, Enum.NamePlateEnemyPlayerAuraDisplay.LossOfControl, true);
-      C_CVar.SetCVar("nameplateMinScale", 1)
+  elseif eventName == "UNIT_FACTION" then
+    local unit = ...
+    local display = self.nameplateDisplays[unit]
+    if display and ((display.kind == "friend" and UnitCanAttack("player", unit)) or (display.kind == "enemy" and not UnitCanAttack("player", unit))) then
+      self:Uninstall(unit)
+      self:Install(unit, nameplate)
     end
-
-    self:UpdateStacking()
-    self:UpdateShowState()
   elseif eventName == "GLOBAL_MOUSE_UP" then
     self:UpdateForMouseover()
     self:UnregisterEvent("GLOBAL_MOUSE_UP")
@@ -611,6 +603,15 @@ function addonTable.Display.ManagerMixin:OnEvent(eventName, ...)
     self:UpdateStacking()
     self:UpdateShowState()
     self:UpdateNamePlateSize()
+  elseif eventName == "UI_SCALE_CHANGED" then
+    if InCombatLockdown() then
+      self:RegisterEvent("PLAYER_REGEN_ENABLED")
+    else
+      self:UpdateNamePlateSize()
+    end
+    C_Timer.After(0, function()
+      self:ImportNameplateScaleModifier()
+    end)
   elseif eventName == "PLAYER_ENTERING_WORLD" then
     self:UpdateShowState()
     self:UpdateNamePlateSize()
@@ -628,14 +629,20 @@ function addonTable.Display.ManagerMixin:OnEvent(eventName, ...)
     if C_NamePlate.SetNamePlateEnemySize then
       self:UpdateNamePlateSize()
     end
-  elseif eventName == "UI_SCALE_CHANGED" then
-    if InCombatLockdown() then
-      self:RegisterEvent("PLAYER_REGEN_ENABLED")
-    else
-      self:UpdateNamePlateSize()
+  elseif eventName == "VARIABLES_LOADED" then
+    if addonTable.Constants.IsMidnight then
+      C_CVar.SetCVarBitfield(NamePlateConstants.ENEMY_NPC_AURA_DISPLAY_CVAR, Enum.NamePlateEnemyNpcAuraDisplay.Buffs, true)
+      C_CVar.SetCVarBitfield(NamePlateConstants.ENEMY_NPC_AURA_DISPLAY_CVAR, Enum.NamePlateEnemyNpcAuraDisplay.Debuffs, true)
+      C_CVar.SetCVarBitfield(NamePlateConstants.ENEMY_NPC_AURA_DISPLAY_CVAR, Enum.NamePlateEnemyNpcAuraDisplay.CrowdControl, true)
+
+      C_CVar.SetCVarBitfield(NamePlateConstants.ENEMY_PLAYER_AURA_DISPLAY_CVAR, Enum.NamePlateEnemyPlayerAuraDisplay.Buffs, true)
+      C_CVar.SetCVarBitfield(NamePlateConstants.ENEMY_PLAYER_AURA_DISPLAY_CVAR, Enum.NamePlateEnemyPlayerAuraDisplay.Debuffs, true)
+
+      --SetCVarBitfield(NamePlateConstants.ENEMY_PLAYER_AURA_DISPLAY_CVAR, Enum.NamePlateEnemyPlayerAuraDisplay.LossOfControl, true);
+      C_CVar.SetCVar("nameplateMinScale", 1)
     end
-    C_Timer.After(0, function()
-      self:ImportNameplateScaleModifier()
-    end)
+
+    self:UpdateStacking()
+    self:UpdateShowState()
   end
 end
