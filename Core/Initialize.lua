@@ -162,7 +162,11 @@ function addonTable.Core.UpgradeDesign(design)
     if text.shorten ~= nil then
       text.shorten = nil
       text.truncate = text.truncate or text.shorten and true or false
-     end
+    end
+
+    if text.kind == "layer" then
+      text.kind = "level"
+    end
   end
 
   for _, highlight in ipairs(design.highlights) do
