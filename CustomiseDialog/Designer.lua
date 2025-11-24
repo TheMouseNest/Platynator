@@ -33,7 +33,22 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
   local UpdateWidgetPoints
   local widgets
   local selectionIndexes = {}
+  local fociOnDown = {}
   local autoSelectedDetails
+
+  local titleMap = {}
+
+  local lastHeader
+  for _, entry in ipairs(addonTable.CustomiseDialog.DesignWidgets) do
+    if entry.special == "header" then
+      lastHeader = entry.name
+    else
+      if not titleMap[entry.kind] then
+        titleMap[entry.kind] = {}
+      end
+      titleMap[entry.kind][entry.default.kind] = lastHeader .. ": " .. entry.name
+    end
+  end
 
   local previewInset = CreateFrame("Frame", nil, container, "InsetFrameTemplate")
   previewInset:SetPoint("TOP", allFrames[#allFrames], "BOTTOM", 0, -30)
@@ -49,28 +64,62 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
   preview:SetFlattensRenderLayers(true)
   preview:SetScale(2)
 
-  local function ToggleSelection(w)
-    local index = tIndexOf(widgets, w)
+  local function ToggleSelection(rawFoci)
+    local foci = tFilter(rawFoci, function(w) return w:GetParent() == preview end, true)
+    local ApplyIndex
     if IsShiftKeyDown() then
-      local selectionIndex = tIndexOf(selectionIndexes, index)
-      if selectionIndex ~= nil then
-        table.remove(selectionIndexes, selectionIndex)
-      else
-        table.insert(selectionIndexes, index)
+      ApplyIndex = function(index)
+        local selectionIndex = tIndexOf(selectionIndexes, index)
+        if selectionIndex ~= nil then
+          table.remove(selectionIndexes, selectionIndex)
+        else
+          table.insert(selectionIndexes, index)
+        end
+        UpdateSelection()
       end
-    elseif #selectionIndexes > 1 or #selectionIndexes == 0 or selectionIndexes[1] ~= index then
-      selectionIndexes = {index}
     else
-      selectionIndexes = {}
+      ApplyIndex = function(index)
+        if #selectionIndexes > 1 or #selectionIndexes == 0 or selectionIndexes[1] ~= index then
+          selectionIndexes = {index}
+        else
+          selectionIndexes = {}
+        end
+        UpdateSelection()
+      end
     end
-    UpdateSelection()
+    if #foci > 1 then
+      MenuUtil.CreateContextMenu(foci[1], function(_, rootDescription)
+        for _, w in ipairs(foci) do
+          rootDescription:CreateButton(titleMap[w.kind][w.details.kind], function()
+            local index = tIndexOf(widgets, w)
+            ApplyIndex(index)
+          end)
+        end
+        rootDescription:CreateDivider()
+        rootDescription:CreateButton(addonTable.Locales.CLEAR_SELECTION, function()
+          selectionIndexes = {}
+          UpdateSelection()
+        end)
+      end)
+    else
+      local index = tIndexOf(widgets, foci[1])
+      ApplyIndex(index)
+    end
   end
-  local function ForceSelection(w)
-    local index = tIndexOf(widgets, w)
-    if tIndexOf(selectionIndexes, index) == nil then
-      selectionIndexes = {index}
+  local function ForceSelection(rawFoci)
+    local foci = tFilter(rawFoci, function(w) return w:GetParent() == preview end, true)
+    local any = false
+    for _, w in ipairs(foci) do
+      local index = tIndexOf(widgets, w)
+      if tIndexOf(selectionIndexes, index) ~= nil then
+        any = true
+      end
     end
-    UpdateSelection()
+    if not any then
+      local index = tIndexOf(widgets, foci[1])
+      selectionIndexes = {index}
+      UpdateSelection()
+    end
   end
 
   UpdateWidgetPoints = function(w, snapping, offsetX, offsetY)
@@ -187,6 +236,7 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
   movingMonitor:RegisterEvent("GLOBAL_MOUSE_UP")
   local cursorX, cursorY = GetCursorPosition()
   local function NotifyMouseDown()
+    fociOnDown = GetMouseFoci()
     cursorX, cursorY = GetCursorPosition()
     cursorX = cursorX / preview:GetEffectiveScale()
     cursorY = cursorY / preview:GetEffectiveScale()
@@ -323,20 +373,6 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
     end
   end)
 
-  local titleMap = {}
-
-  local lastHeader
-  for _, entry in ipairs(addonTable.CustomiseDialog.DesignWidgets) do
-    if entry.special == "header" then
-      lastHeader = entry.name
-    else
-      if not titleMap[entry.kind] then
-        titleMap[entry.kind] = {}
-      end
-      titleMap[entry.kind][entry.default.kind] = lastHeader .. ": " .. entry.name
-    end
-  end
-
   local deleteButton = CreateFrame("Button", nil, previewInset, "UIPanelDynamicResizeButtonTemplate")
   deleteButton:SetText(addonTable.Locales.DELETE_WIDGET)
   DynamicResizeButton_Resize(deleteButton)
@@ -372,11 +408,13 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
       end
       w.kind = "auras"
       w:SetScript("OnEnter", function()
-        hoverMarker:Show()
-        hoverMarker:SetFrameStrata("HIGH")
-        hoverMarker:ClearAllPoints()
-        hoverMarker:SetPoint("TOPLEFT", w, "TOPLEFT", -2, 2)
-        hoverMarker:SetPoint("BOTTOMRIGHT", w, "BOTTOMRIGHT", 2, -2)
+        if w == GetMouseFoci()[1] then
+          hoverMarker:Show()
+          hoverMarker:SetFrameStrata("HIGH")
+          hoverMarker:ClearAllPoints()
+          hoverMarker:SetPoint("TOPLEFT", w, "TOPLEFT", -2, 2)
+          hoverMarker:SetPoint("BOTTOMRIGHT", w, "BOTTOMRIGHT", 2, -2)
+        end
       end)
       w:SetScript("OnLeave", function()
         hoverMarker:Hide()
@@ -389,11 +427,11 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
         NotifyMouseDown()
       end)
       w:SetScript("OnDragStart", function()
-        ForceSelection(w)
+        ForceSelection(fociOnDown)
         StartMovingSelection()
       end)
       w:SetScript("OnMouseUp", function()
-        ToggleSelection(w)
+        ToggleSelection(GetMouseFoci())
       end)
     end
   end
@@ -471,11 +509,13 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
       end
 
       w:SetScript("OnEnter", function()
-        hoverMarker:Show()
-        hoverMarker:SetFrameStrata("HIGH")
-        hoverMarker:ClearAllPoints()
-        hoverMarker:SetPoint("TOPLEFT", w, "TOPLEFT", -2, 2)
-        hoverMarker:SetPoint("BOTTOMRIGHT", w, "BOTTOMRIGHT", 2, -2)
+        if w == GetMouseFoci()[1] then
+          hoverMarker:Show()
+          hoverMarker:SetFrameStrata("HIGH")
+          hoverMarker:ClearAllPoints()
+          hoverMarker:SetPoint("TOPLEFT", w, "TOPLEFT", -2, 2)
+          hoverMarker:SetPoint("BOTTOMRIGHT", w, "BOTTOMRIGHT", 2, -2)
+        end
       end)
       w:SetScript("OnLeave", function()
         hoverMarker:Hide()
@@ -488,11 +528,11 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
         NotifyMouseDown()
       end)
       w:SetScript("OnDragStart", function()
-        ForceSelection(w)
+        ForceSelection(fociOnDown)
         StartMovingSelection()
       end)
       w:SetScript("OnMouseUp", function()
-        ToggleSelection(w)
+        ToggleSelection(GetMouseFoci())
       end)
     end
     for _, container in pairs(auraContainers) do
@@ -520,6 +560,13 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
       table.insert(widgets, container)
       container:ClearAllPoints()
       addonTable.Display.ApplyAnchor(container, details.anchor)
+    end
+
+    if not InCombatLockdown() then
+      for _, w in ipairs(widgets) do
+        w:SetPropagateMouseMotion(true)
+        w:SetPropagateMouseClicks(false)
+      end
     end
   end
 
@@ -830,8 +877,26 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
       end
     end
 
+    if not InCombatLockdown() then
+      for _, w in ipairs(widgets) do
+        w:SetPropagateMouseMotion(true)
+        w:SetPropagateMouseClicks(false)
+      end
+    end
     selectionIndexes = {}
     UpdateSelection()
+
+    container:RegisterEvent("PLAYER_REGEN_ENABLED")
+  end)
+  container:SetScript("OnHide", function()
+    container:UnregisterEvent("PLAYER_REGEN_ENABLED")
+  end)
+
+  container:SetScript("OnEvent", function()
+    for _, w in ipairs(widgets) do
+      w:SetPropagateMouseMotion(true)
+      w:SetPropagateMouseClicks(false)
+    end
   end)
 
   return container
