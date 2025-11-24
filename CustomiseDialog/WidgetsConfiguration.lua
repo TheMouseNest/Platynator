@@ -725,6 +725,23 @@ addonTable.CustomiseDialog.WidgetsConfig = {
         },
       },
     },
+    ["castIcon"] = {
+      {
+        label = addonTable.Locales.GENERAL,
+        entries = {
+          {
+            label = addonTable.Locales.SQUARE,
+            kind = "checkbox",
+            setter = function(details, value)
+              details.square = value
+            end,
+            getter = function(details)
+              return details.square == true
+            end,
+          }
+        }
+      },
+    }
   },
   ["auras"] = {
     ["*"] = {
