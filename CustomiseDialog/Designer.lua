@@ -548,6 +548,16 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
       else
         container:SetFrameLevel(803)
       end
+      local cdText = container.auras[1].Cooldown:GetRegions()
+      cdText:SetFontObject(addonTable.CurrentFont)
+      cdText:SetTextScale(14/12 * details.textScale)
+      container.auras[1].Cooldown:SetCooldown(GetTime() - 2, 5)
+      container.auras[1].Cooldown:Pause()
+      container.auras[1].Cooldown:SetHideCountdownNumbers(not details.showCountdown)
+      container.auras[1].CountFrame.Count:SetText(2);
+      container.auras[1].CountFrame.Count:SetFontObject(addonTable.CurrentFont)
+      container.auras[1].CountFrame.Count:SetTextScale(11/12 * details.textScale)
+      container.auras[1].CountFrame.Count:Show();
       container:SetSize(22 * container.count * details.scale, 20 * details.scale)
       container.Wrapper:SetScale(details.scale)
       container.details = details

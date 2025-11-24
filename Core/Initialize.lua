@@ -95,6 +95,9 @@ function addonTable.Core.UpgradeDesign(design)
     if not aura.height then
       aura.height = 1
     end
+    if not aura.textScale then
+      aura.textScale = 1
+    end
   end
 
   for _, bar in ipairs(design.bars) do

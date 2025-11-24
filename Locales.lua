@@ -88,6 +88,7 @@ L["MINOR"] = "Minor"
 L["LAYER"] = "Layer"
 L["SQUARE"] = "Square"
 L["CLEAR_SELECTION"] = "Clear Selection"
+L["TEXT_SCALE"] = "Text scale"
 
 L["FOREGROUND"] = "Foreground"
 L["VISUAL"] = "Visual"

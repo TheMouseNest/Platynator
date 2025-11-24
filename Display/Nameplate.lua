@@ -21,8 +21,8 @@ function addonTable.Display.NameplateMixin:OnLoad()
   if not addonTable.Constants.IsMidnight then
     self.AurasManager = addonTable.Utilities.InitFrameWithMixin(self, addonTable.Display.AurasForNameplateMixin)
     self.AurasPool = CreateFramePool("Frame", self, "PlatynatorNameplateBuffButtonTemplate", nil, false, function(frame)
-      frame.Cooldown:SetCountdownFont("PlatynatorNameplateCooldownFont")
       frame.Cooldown:SetCountdownAbbrevThreshold(20)
+      frame.Cooldown.Text = frame.Cooldown:GetRegions()
     end)
 
     local function GetCallback(frame)
@@ -72,11 +72,17 @@ function addonTable.Display.NameplateMixin:OnLoad()
           buff.Icon:SetTexture(aura.icon);
           if (aura.applications > 1) then
             buff.CountFrame.Count:SetText(aura.applications);
+            buff.CountFrame.Count:SetFontObject(addonTable.CurrentFont)
+            buff.CountFrame.Count:SetTextScale(11/12 * details.textScale)
             buff.CountFrame.Count:Show();
           else
             buff.CountFrame.Count:Hide();
           end
           buff.Cooldown:SetHideCountdownNumbers(not details.showCountdown)
+          if details.showCountdown then
+            buff.Cooldown.Text:SetFontObject(addonTable.CurrentFont)
+            buff.Cooldown.Text:SetTextScale(14/12 * details.textScale)
+          end
           buff:SetHeight(20 * details.height)
           buff.Icon:SetHeight(19 * details.height)
           buff.Icon:SetTexCoord(0.05, 0.95, 0.05 + texBase, 0.95 - texBase)

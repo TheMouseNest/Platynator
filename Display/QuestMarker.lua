@@ -6,7 +6,7 @@ addonTable.Display.QuestMarkerMixin = {}
 function addonTable.Display.QuestMarkerMixin:SetUnit(unit)
   self.unit = unit
   if self.unit then
-    self:RegisterUnitEvent("QUEST_LOG_UPDATE")
+    self:RegisterEvent("QUEST_LOG_UPDATE")
     self:UpdateMarker()
   else
     self:Strip()
