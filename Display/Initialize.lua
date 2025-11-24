@@ -54,7 +54,6 @@ function addonTable.Display.ManagerMixin:OnLoad()
 
   self:RegisterUnitEvent("UNIT_POWER_UPDATE", "player")
   self:RegisterEvent("RUNE_POWER_UPDATE")
-  self:RegisterEvent("UNIT_THREAT_LIST_UPDATE")
   self:RegisterEvent("UNIT_FACTION")
 
   NamePlateDriverFrame:UnregisterEvent("DISPLAY_SIZE_CHANGED")
@@ -403,7 +402,7 @@ function addonTable.Display.ManagerMixin:Install(unit, nameplate)
   -- NOTE: the nameplate _name_ does not correspond to the unit
   if nameplate and unit and unit ~= "preview" and (addonTable.Constants.IsMidnight or not UnitIsUnit("player", unit)) then
     local newDisplay
-    if UnitCanAttack("player", unit) then
+    if not UnitCanAttack("player", unit) then
       newDisplay = self.friendDisplayPool:Acquire()
     else
       newDisplay = self.enemyDisplayPool:Acquire()
@@ -580,13 +579,6 @@ function addonTable.Display.ManagerMixin:OnEvent(eventName, ...)
     end
     if self.nameplateDisplays[unit] then
       self.nameplateDisplays[unit]:UpdateForTarget()
-    end
-  elseif eventName == "UNIT_THREAT_LIST_UPDATE" then
-    local unit = ...
-    local display = self.nameplateDisplays[unit]
-    if display and ((display.kind == "friend" and UnitCanAttack("player", unit)) or (display.kind == "enemy" and not UnitCanAttack("player", unit))) then
-      self:Uninstall(unit)
-      self:Install(unit, nameplate)
     end
   elseif eventName == "UNIT_FACTION" then
     local unit = ...
