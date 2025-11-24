@@ -87,6 +87,7 @@ L["MINION"] = "Minion"
 L["MINOR"] = "Minor"
 L["LAYER"] = "Layer"
 L["SQUARE"] = "Square"
+L["CLEAR_SELECTION"] = "Clear Selection"
 
 L["FOREGROUND"] = "Foreground"
 L["VISUAL"] = "Visual"
