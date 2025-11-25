@@ -113,6 +113,15 @@ function addonTable.Display.ManagerMixin:OnLoad()
         child:SetPoint(anchor, parent, anchor, (index - 1) * (child:GetWidth() + padding) * dir, 0)
         child.Cooldown:SetCountdownFont("PlatynatorNameplateCooldownFont")
         child.Cooldown:SetHideCountdownNumbers(not showCountdown)
+        if showCountdown then
+          if not child.Cooldown.Text then
+            child.Cooldown.Text = child.Cooldown:GetRegions()
+          end
+          child.Cooldown.Text:SetFontObject(addonTable.CurrentFont)
+          child.Cooldown.Text:SetTextScale(14/12 * details.textScale)
+        end
+        child.CountFrame.Count:SetFontObject(addonTable.CurrentFont)
+        child.CountFrame.Count:SetTextScale(11/12 * details.textScale)
       else
         child:Hide()
       end
@@ -353,25 +362,30 @@ function addonTable.Display.ManagerMixin:PositionBuffs(display)
     local DebuffListFrame = self.ModifiedUFs[unit].AurasFrame.DebuffListFrame
     DebuffListFrame:SetParent(display.DebuffDisplay)
     if designInfo.debuffs then
-      DebuffListFrame:SetScale(designInfo.debuffs.scale * 6/5)
+      DebuffListFrame:SetScale(designInfo.debuffs.scale)
       self.RelayoutAuras(DebuffListFrame, self.DebuffFilter)
     end
     local BuffListFrame = self.ModifiedUFs[unit].AurasFrame.BuffListFrame
     BuffListFrame:SetParent(display.BuffDisplay)
     if designInfo.buffs then
-      BuffListFrame:SetScale(designInfo.buffs.scale * 6/5)
+      BuffListFrame:SetScale(designInfo.buffs.scale)
       self.RelayoutAuras(BuffListFrame)
     end
     local CrowdControlListFrame = self.ModifiedUFs[unit].AurasFrame.CrowdControlListFrame
     CrowdControlListFrame:SetParent(display.CrowdControlDisplay)
     if designInfo.crowdControl then
-      CrowdControlListFrame:SetScale(designInfo.crowdControl.scale * 6/5)
+      CrowdControlListFrame:SetScale(designInfo.crowdControl.scale)
       self.RelayoutAuras(CrowdControlListFrame)
     end
     local LossOfControlFrame = self.ModifiedUFs[unit].AurasFrame.LossOfControlFrame
     LossOfControlFrame:SetParent(display.CrowdControlDisplay)
     if designInfo.crowdControl then
-      LossOfControlFrame:SetScale(designInfo.crowdControl.scale * 6/5)
+      if type(designInfo.crowdControl.anchor[1]) == "string" then
+        LossOfControlFrame:SetPoint(designInfo.crowdControl.anchor[1], display.CrowdControlDisplay)
+      else
+        LossOfControlFrame:SetPoint("CENTER")
+      end
+      LossOfControlFrame:SetScale(designInfo.crowdControl.scale)
     end
   end
 end

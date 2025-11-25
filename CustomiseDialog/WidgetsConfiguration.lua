@@ -780,6 +780,18 @@ addonTable.CustomiseDialog.WidgetsConfig = {
               return details.scale * 100
             end,
           },
+          {
+            label = addonTable.Locales.TEXT_SCALE,
+            kind = "slider",
+            min = 1, max = 300,
+            valuePattern = "%d%%",
+            setter = function(details, value)
+              details.textScale = value / 100
+            end,
+            getter = function(details)
+              return details.textScale * 100
+            end,
+          },
           { kind = "spacer" },
           {
             label = addonTable.Locales.HEIGHT,

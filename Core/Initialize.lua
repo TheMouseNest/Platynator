@@ -95,6 +95,9 @@ function addonTable.Core.UpgradeDesign(design)
     if not aura.height then
       aura.height = 1
     end
+    if not aura.textScale then
+      aura.textScale = 1
+    end
   end
 
   for _, bar in ipairs(design.bars) do
@@ -173,7 +176,11 @@ function addonTable.Core.UpgradeDesign(design)
     if text.shorten ~= nil then
       text.shorten = nil
       text.truncate = text.truncate or text.shorten and true or false
-     end
+    end
+
+    if text.kind == "layer" then
+      text.kind = "level"
+    end
   end
 
   for _, highlight in ipairs(design.highlights) do
