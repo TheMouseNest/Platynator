@@ -35,7 +35,7 @@ function addonTable.Display.CreatureTextMSPMixin:SetUnit(unit)
       self:SetShown(UnitShouldDisplayName(self.unit))
     end
   else
-    self:Strip()
+    self:StripInternal()
   end
 end
 
@@ -73,11 +73,15 @@ function addonTable.Display.CreatureTextMSPMixin:UnregisterCallback()
   end
 end
 
-function addonTable.Display.CreatureTextMSPMixin:Strip()
+function addonTable.Display.CreatureTextMSPMixin:StripInternal()
   local c = self.details.color
   self.text:SetTextColor(c.r, c.g, c.b)
   self:UnregisterCallback()
   self:UnregisterAllEvents()
+end
+
+function addonTable.Display.CreatureTextMixin:Strip()
+  self:StripInternal()
   self.ApplyTarget = nil
 end
 

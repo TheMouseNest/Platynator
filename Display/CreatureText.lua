@@ -14,7 +14,7 @@ function addonTable.Display.CreatureTextMixin:SetUnit(unit)
       self:SetShown(UnitShouldDisplayName(self.unit))
     end
   else
-    self:Strip()
+    self:UnregisterAllEvents()
   end
 end
 
@@ -45,7 +45,6 @@ end
 function addonTable.Display.CreatureTextMixin:Strip()
   local c = self.details.color
   self.text:SetTextColor(c.r, c.g, c.b)
-  self:UnregisterAllEvents()
   self.ApplyTarget = nil
 end
 
