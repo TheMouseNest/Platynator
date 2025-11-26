@@ -6,10 +6,6 @@ addonTable.Display.HealthTextMixin = {}
 function addonTable.Display.HealthTextMixin:SetUnit(unit)
   self.unit = unit
   if self.unit then
-    local unitFrame = C_NamePlate.GetNamePlateForUnit(self.unit).UnitFrame
-    if addonTable.Constants.IsMidnight then
-      self.healthSource = unitFrame.HealthBarsContainer.healthBar
-    end
     self:RegisterUnitEvent("UNIT_HEALTH", self.unit)
     self:UpdateText()
   else
@@ -35,9 +31,9 @@ function addonTable.Display.HealthTextMixin:UpdateText()
     }
     local types = self.details.displayTypes 
     if UnitHealthPercent then -- Midnight APIs
-      values.percentage = string.format("%d%%", UnitHealthPercent(self.unit, false, true))
+      values.percentage = string.format("%d%%", UnitHealthPercent(self.unit, true, true))
     else
-      values.percentage = math.ceil(UnitHealth(self.unit)/UnitHealthMax(self.unit)*100) .. "%"
+      values.percentage = math.ceil(UnitHealth(self.unit, true)/UnitHealthMax(self.unit)*100) .. "%"
     end
     if #types == 2 then
       self.text:SetFormattedText("%s (%s)", values[types[1]], values[types[2]])
