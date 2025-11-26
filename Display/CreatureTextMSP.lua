@@ -80,7 +80,7 @@ function addonTable.Display.CreatureTextMSPMixin:StripInternal()
   self:UnregisterAllEvents()
 end
 
-function addonTable.Display.CreatureTextMixin:Strip()
+function addonTable.Display.CreatureTextMSPMixin:Strip()
   self:StripInternal()
   self.ApplyTarget = nil
 end
