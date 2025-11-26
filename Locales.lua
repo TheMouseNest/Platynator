@@ -89,6 +89,7 @@ L["LAYER"] = "Layer"
 L["SQUARE"] = "Square"
 L["CLEAR_SELECTION"] = "Clear Selection"
 L["TEXT_SCALE"] = "Text scale"
+L["SHOW_WHEN_WOW_DOES"] = "Show when WoW does"
 
 L["FOREGROUND"] = "Foreground"
 L["VISUAL"] = "Visual"

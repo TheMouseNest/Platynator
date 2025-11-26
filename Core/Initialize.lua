@@ -147,6 +147,9 @@ function addonTable.Core.UpgradeDesign(design)
     if text.kind == "creatureName" and not text.colors.npc.unfriendly then
       text.colors.npc.unfriendly = GetColor("ff8100")
     end
+    if (text.kind == "creatureName" or text.kind == "guild") and text.showWhenWowDoes == nil then
+      text.showWhenWowDoes = false
+    end
     if text.kind == "layer" and (text.colors == nil or text.applyDifficultyColors == nil) then
       text.applyDifficultyColors = true
       text.colors = {

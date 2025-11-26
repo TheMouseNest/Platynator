@@ -510,6 +510,21 @@ addonTable.CustomiseDialog.WidgetsConfig = {
     },
     ["creatureName"] = {
       {
+        label = addonTable.Locales.GENERAL,
+        entries = {
+          {
+            label = addonTable.Locales.SHOW_WHEN_WOW_DOES,
+            kind = "checkbox",
+            setter = function(details, value)
+              details.showWhenWowDoes = value
+            end,
+            getter = function(details)
+              return details.showWhenWowDoes
+            end,
+          },
+        }
+      },
+      {
         label = addonTable.Locales.COLORS,
         entries = {
           {
@@ -667,6 +682,23 @@ addonTable.CustomiseDialog.WidgetsConfig = {
           },
         }
       }
+    },
+    ["guild"] = {
+      {
+        label = addonTable.Locales.GENERAL,
+        entries = {
+          {
+            label = addonTable.Locales.SHOW_WHEN_WOW_DOES,
+            kind = "checkbox",
+            setter = function(details, value)
+              details.showWhenWowDoes = value
+            end,
+            getter = function(details)
+              return details.showWhenWowDoes
+            end,
+          },
+        }
+      },
     },
   },
   ["markers"] = {
