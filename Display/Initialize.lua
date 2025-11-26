@@ -170,7 +170,7 @@ function addonTable.Display.ManagerMixin:OnLoad()
         UF.AurasFrame:SetParent(UF)
         UF.AurasFrame:SetIgnoreParentAlpha(false)
         UF.AurasFrame:SetIgnoreParentScale(false)
-        local debuffPadding = CVarCallbackRegistry:GetCVarNumberOrDefault(NamePlateConstants.DEBUFF_PADDING_CVAR);
+        local debuffPadding = tonumber(GetCVar(NamePlateConstants.DEBUFF_PADDING_CVAR)) or 0
         local namePlateStyle = GetCVar(NamePlateConstants.STYLE_CVAR)
         local unitNameInsideHealthBar = namePlateStyle == Enum.NamePlateStyle.Default or namePlateStyle == Enum.NamePlateStyle.Block
         UF.AurasFrame.DebuffListFrame:ClearAllPoints()
