@@ -30,7 +30,7 @@ addonTable.CustomiseDialog.DesignWidgets = {
       },
       border = {
         asset = "wide/bold",
-        color = GetColor("000000")
+        color = GetColor("000000", 1)
       },
       absorb = {
         asset = "wide/blizzard-absorb",
@@ -82,7 +82,7 @@ addonTable.CustomiseDialog.DesignWidgets = {
       },
       border = {
         asset = "wide/bold",
-        color = GetColor("000000")
+        color = GetColor("000000", 1)
       },
       scale = 1,
       layer = 1,

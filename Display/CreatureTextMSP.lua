@@ -28,13 +28,14 @@ function addonTable.Display.CreatureTextMSPMixin:SetUnit(unit)
   if self.unit then
     self:UnregisterCallback()
     self:RegisterUnitEvent("UNIT_NAME_UPDATE", self.unit)
+    self:RegisterUnitEvent("UNIT_HEALTH", self.unit)
     self:UpdateName()
-    if self.details.applyClassColors and UnitIsPlayer(self.unit) then
-      local c = RAID_CLASS_COLORS[UnitClassBase(self.unit)]
-      self.text:SetTextColor(c.r, c.g, c.b)
+    addonTable.Display.CreatureTextMixin.UpdateColor(self)
+    if self.details.showWhenWowDoes then
+      self:SetShown(UnitShouldDisplayName(self.unit))
     end
   else
-    self:Strip()
+    self:StripInternal()
   end
 end
 
@@ -72,13 +73,31 @@ function addonTable.Display.CreatureTextMSPMixin:UnregisterCallback()
   end
 end
 
-function addonTable.Display.CreatureTextMSPMixin:Strip()
+function addonTable.Display.CreatureTextMSPMixin:StripInternal()
   local c = self.details.color
   self.text:SetTextColor(c.r, c.g, c.b)
   self:UnregisterCallback()
   self:UnregisterAllEvents()
 end
 
+function addonTable.Display.CreatureTextMSPMixin:Strip()
+  self:StripInternal()
+  self.ApplyTarget = nil
+end
+
 function addonTable.Display.CreatureTextMSPMixin:OnEvent(eventName, ...)
-  self:UpdateName()
+  if eventName == "UNIT_HEALTH" then
+    addonTable.Display.CreatureTextMixin.UpdateColor(self)
+    if self.details.showWhenWowDoes then
+      self:SetShown(UnitShouldDisplayName(self.unit))
+    end
+  else
+    self:UpdateName()
+  end
+end
+
+function addonTable.Display.CreatureTextMSPMixin:ApplyTarget()
+  if self.details.showWhenWowDoes then
+    self:SetShown(UnitShouldDisplayName(self.unit))
+  end
 end

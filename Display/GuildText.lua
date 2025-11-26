@@ -54,11 +54,25 @@ function addonTable.Display.GuildTextMixin:SetUnit(unit)
     if not set then
       self.text:SetText("")
     end
+    if self.details.showWhenWowDoes then
+      self:SetShown(UnitShouldDisplayName(self.unit))
+      self:RegisterUnitEvent("UNIT_HEALTH", self.unit)
+    end
   else
-    self:Strip()
+    self:UnregisterAllEvents()
   end
 end
 
 function addonTable.Display.GuildTextMixin:Strip()
-  self:UnregisterAllEvents()
+  self.ApplyTarget = nil
+end
+
+function addonTable.Display.GuildTextMixin:OnEvent()
+  self:ApplyTarget()
+end
+
+function addonTable.Display.GuildTextMixin:ApplyTarget()
+  if self.details.showWhenWowDoes then
+    self:SetShown(UnitShouldDisplayName(self.unit))
+  end
 end

@@ -514,8 +514,8 @@ function addonTable.Display.ManagerMixin:UpdateNamePlateSize()
       self:RegisterEvent("PLAYER_REGEN_ENABLED")
       return
     end
-    width = width * addonTable.Config.Get(addonTable.Config.Options.CLICK_REGION_SCALE_X)
-    height = height * addonTable.Config.Get(addonTable.Config.Options.CLICK_REGION_SCALE_Y)
+    width = width * addonTable.Config.Get(addonTable.Config.Options.CLICK_REGION_SCALE_X) * UIParent:GetScale()
+    height = height * addonTable.Config.Get(addonTable.Config.Options.CLICK_REGION_SCALE_Y) * UIParent:GetScale()
     C_NamePlate.SetNamePlateEnemySize(width, height)
     C_NamePlate.SetNamePlateFriendlySize(1, 1)
     if IsInInstance() then

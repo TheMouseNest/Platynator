@@ -142,6 +142,25 @@ function addonTable.Core.UpgradeDesign(design)
     if bar and bar.absorb and bar.absorb.color.a == nil then
       bar.absorb.color.a = 1
     end
+    if bar.border.color.a == nil then
+      bar.border.color.a = 1
+    end
+    if bar.border.asset:match("/blizzard%-cast%-bar$") then
+      local map = {
+        ["200/blizzard-cast-bar"] = "200/blizzard-cast-bar-white",
+        ["175/blizzard-cast-bar"] = "175/blizzard-cast-bar-white",
+        ["150/blizzard-cast-bar"] = "150/blizzard-cast-bar-white",
+        ["125/blizzard-cast-bar"] = "125/blizzard-cast-bar-white",
+        ["100/blizzard-cast-bar"] = "100/blizzard-cast-bar-white",
+        ["75/blizzard-cast-bar"] = "75/blizzard-cast-bar-white",
+        ["special/blizzard-cast-bar"] = "50/blizzard-cast-bar-white",
+      }
+      if bar.border.color.r == 1 and bar.border.color.g == 1 and bar.border.color.b == 1 and bar.border.color.a == 1 then
+        bar.border.color = GetColor("fffb52")
+        bar.border.color.a = 0.5
+      end
+      bar.border.asset = map[bar.border.asset]
+    end
   end
 
   for _, text in ipairs(design.texts) do
@@ -160,6 +179,9 @@ function addonTable.Core.UpgradeDesign(design)
     end
     if text.kind == "creatureName" and not text.colors.npc.unfriendly then
       text.colors.npc.unfriendly = GetColor("ff8100")
+    end
+    if (text.kind == "creatureName" or text.kind == "guild") and text.showWhenWowDoes == nil then
+      text.showWhenWowDoes = false
     end
     if text.kind == "layer" and (text.colors == nil or text.applyDifficultyColors == nil) then
       text.applyDifficultyColors = true
