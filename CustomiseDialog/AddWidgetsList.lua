@@ -166,6 +166,7 @@ addonTable.CustomiseDialog.DesignWidgets = {
       height = 1,
       showCountdown = true,
       direction = "LEFT",
+      dispellable = true,
     },
   },
   {

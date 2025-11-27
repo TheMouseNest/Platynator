@@ -68,6 +68,7 @@ function addonTable.Core.UpgradeDesign(design)
         scale = 1,
         showCountdown = true,
         direction = "LEFT",
+        dispellable = true,
       },
       {
         kind = "crowdControl",
@@ -84,6 +85,9 @@ function addonTable.Core.UpgradeDesign(design)
     end
     if aura.showCountdown == nil then
       aura.showCountdown = true
+    end
+    if aura.kind == "buffs" and aura.dispellable == nil then
+      aura.dispellable = true
     end
     if aura.direction == nil then
       if aura.anchor[1] and aura.anchor[1]:match("RIGHT") then

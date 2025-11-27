@@ -41,7 +41,8 @@ function addonTable.Display.AurasForNameplateMixin:SetUnit(unit)
 end
 
 function addonTable.Display.AurasForNameplateMixin:GetAuraKind(info)
-  if info.isHelpful and not self.isPlayer and info.dispelName ~= nil then
+  local buffdetails = self:GetParent().BuffDisplay.details
+  if info.isHelpful and not self.isPlayer and (info.dispelName and buffdetails.dispellable) then
     return "buffs"
   elseif crowdControlSpells[info.spellId] then
     return "crowdControl"
