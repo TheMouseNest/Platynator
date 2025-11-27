@@ -3,6 +3,10 @@ local addonTable = select(2, ...)
 
 addonTable.Display.HealthBarMixin = {}
 
+local function EqualColors(color1, color2)
+  return color1.r == color2.r and color1.g == color2.g and color1.b == color2.b
+end
+
 function addonTable.Display.HealthBarMixin:SetUnit(unit)
   self.unit = unit
   if self.unit then
@@ -10,9 +14,7 @@ function addonTable.Display.HealthBarMixin:SetUnit(unit)
     self:RegisterUnitEvent("UNIT_MAXHEALTH", self.unit)
     self:RegisterUnitEvent("UNIT_THREAT_LIST_UPDATE", self.unit)
     self:RegisterUnitEvent("UNIT_ABSORB_AMOUNT_CHANGED", self.unit)
-    if self.details.colors.npc.neutral ~= self.details.colors.npc.neutral_quest_objective or self.details.colors.npc.hostile ~= self.details.colors.npc.hostile_quest_objective then
-      self:RegisterUnitEvent("QUEST_LOG_UPDATE")
-    end
+    self:RegisterEvent("QUEST_LOG_UPDATE")
     self.statusBar:SetMinMaxValues(0, UnitHealthMax(self.unit))
     self.statusBarAbsorb:SetMinMaxValues(self.statusBar:GetMinMaxValues())
     self.statusBarAbsorb:SetValue(UnitGetTotalAbsorbs(self.unit))
@@ -55,7 +57,7 @@ function addonTable.Display.HealthBarMixin:UpdateColor()
     local standard_color = self.details.colors.npc.neutral
     local quest_objective_color = self.details.colors.npc.neutral_quest_objective
     local effective_color = standard_color
-    if standard_color ~= quest_objective_color then
+    if not EqualColors(standard_color, quest_objective_color) then
       if C_QuestLog.UnitIsRelatedToActiveQuest and C_QuestLog.UnitIsRelatedToActiveQuest(self.unit) then
         effective_color = quest_objective_color
       end
@@ -73,7 +75,7 @@ function addonTable.Display.HealthBarMixin:UpdateColor()
     local standard_color = self.details.colors.npc.hostile
     local quest_objective_color = self.details.colors.npc.hostile_quest_objective
     local effective_color = standard_color
-    if standard_color ~= quest_objective_color then
+    if not EqualColors(standard_color, quest_objective_color) then
       if C_QuestLog.UnitIsRelatedToActiveQuest and C_QuestLog.UnitIsRelatedToActiveQuest(self.unit) then
         effective_color = quest_objective_color
       end
