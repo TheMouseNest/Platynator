@@ -164,6 +164,9 @@ function addonTable.Core.UpgradeDesign(design)
   end
 
   for _, text in ipairs(design.texts) do
+    if text.kind == "layer" then
+      text.kind = "level"
+    end
     if (text.kind == "creatureName" or text.kind == "target") and text.applyClassColors == nil then
       text.applyClassColors = false
     end
@@ -183,7 +186,7 @@ function addonTable.Core.UpgradeDesign(design)
     if (text.kind == "creatureName" or text.kind == "guild") and text.showWhenWowDoes == nil then
       text.showWhenWowDoes = false
     end
-    if text.kind == "layer" and (text.colors == nil or text.applyDifficultyColors == nil) then
+    if text.kind == "level" and (text.colors == nil or text.applyDifficultyColors == nil) then
       text.applyDifficultyColors = true
       text.colors = {
         difficulty = {
@@ -198,10 +201,6 @@ function addonTable.Core.UpgradeDesign(design)
     if text.shorten ~= nil then
       text.shorten = nil
       text.truncate = text.truncate or text.shorten and true or false
-    end
-
-    if text.kind == "layer" then
-      text.kind = "level"
     end
   end
 
@@ -336,7 +335,7 @@ local function UpdateRect(design)
     end
   end
 
-  addonTable.Rect = {left = left, bottom = bottom, width = right - left, height = top - bottom}
+  addonTable.Rect = {left = left, bottom = bottom, width = right ~= left and right - left or 125, height = top ~= bottom and top - bottom or 10}
 
   for _, textDetails in ipairs(design.texts) do
     if textDetails.kind == "creatureName" then
@@ -345,7 +344,7 @@ local function UpdateRect(design)
     end
   end
 
-  addonTable.StackRect = {left = left, bottom = bottom, width = right - left, height = top - bottom}
+  addonTable.StackRect = {left = left, bottom = bottom, width = right ~= left and right - left or 125, height = top ~= bottom and top - bottom or 10}
 end
 
 function addonTable.Core.GetDesignByName(name)
