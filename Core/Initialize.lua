@@ -321,7 +321,7 @@ local function UpdateRect(design)
     end
   end
 
-  addonTable.Rect = {left = left, bottom = bottom, width = right - left, height = top - bottom}
+  addonTable.Rect = {left = left, bottom = bottom, width = right ~= left and right - left or 125, height = top ~= bottom and top - bottom or 10}
 
   for _, textDetails in ipairs(design.texts) do
     if textDetails.kind == "creatureName" then
@@ -330,7 +330,7 @@ local function UpdateRect(design)
     end
   end
 
-  addonTable.StackRect = {left = left, bottom = bottom, width = right - left, height = top - bottom}
+  addonTable.StackRect = {left = left, bottom = bottom, width = right ~= left and right - left or 125, height = top ~= bottom and top - bottom or 10}
 end
 
 function addonTable.Core.GetDesignByName(name)
