@@ -116,6 +116,20 @@ function addonTable.Core.UpgradeDesign(design)
     if bar.kind == "health" and not bar.colors.npc.unfriendly then
       bar.colors.npc.unfriendly = GetColor("ff8100")
     end
+    if bar.kind == "health" and not bar.colors.npc.neutral_quest_objective then
+      if not bar.colors.npc.neutral then
+        bar.colors.npc.neutral_quest_objective = GetColor("FFFF00")
+      else
+        bar.colors.npc.neutral_quest_objective = bar.colors.npc.neutral
+      end
+    end
+	  if bar.kind == "health" and not bar.colors.npc.hostile_quest_objective then
+      if not bar.colors.npc.hostile then
+        bar.colors.npc.hostile_quest_objective = GetColor("FF0000")
+      else
+        bar.colors.npc.hostile_quest_objective = bar.colors.npc.hostile
+      end
+    end
     if bar.kind == "health" and not bar.absorb.color then
       bar.absorb.color = GetColor("FFFFFF")
     end

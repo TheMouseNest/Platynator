@@ -49,8 +49,10 @@ addonTable.CustomiseDialog.DesignWidgets = {
         npc = {
           friendly = GetColor("00FF00"),
           neutral = GetColor("FFFF00"),
+		      neutral_quest_objective = GetColor("FFFF00"),
           unfriendly = GetColor("ff8100"),
           hostile = GetColor("FF0000"),
+		      hostile_quest_objective = GetColor("FF0000"),
           tapped = GetColor("6E6E6E"),
         },
       },
