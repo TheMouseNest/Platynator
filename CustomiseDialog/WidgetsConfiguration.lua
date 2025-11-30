@@ -849,6 +849,23 @@ addonTable.CustomiseDialog.WidgetsConfig = {
         },
       },
     },
+    ["buffs"] = {
+      {
+        label = addonTable.Locales.GENERAL,
+        entries = {
+          {
+            label = addonTable.Locales.SHOW_DISPELABLE,
+            kind = "checkbox",
+            setter = function(details, value)
+              details.dispellable = value
+            end,
+            getter = function(details)
+              return details.dispellable
+            end,
+          },
+        }
+      }
+    }
   },
   ["highlights"] = {
     ["*"] = {
