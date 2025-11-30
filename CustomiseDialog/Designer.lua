@@ -521,11 +521,17 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
     for _, w in ipairs(widgets) do
       w:SetClampedToScreen(true)
       if w.kind == "bars" then
-        local defaultColor
-        if w.details.kind == "health" and w.details.aggroColoursOnHostiles then
-          defaultColor = w.details.colors.threat.warning
-        elseif w.details.kind == "health" then
-          defaultColor = w.details.colors.npc.hostile
+        local defaultColor = {1, 1, 1}
+        if w.details.kind == "health" then
+          for _, s in ipairs(w.details.autoColors) do
+            if s.kind == "threat" then
+              defaultColor = s.colors.warning
+              break
+            elseif s.kind == "reaction" then
+              defaultColor = s.colors.hostile
+              break
+            end
+          end
         else
           defaultColor = w.details.colors.normal
         end
@@ -560,6 +566,22 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
           if w.details.applyClassColors then
             local c = RAID_CLASS_COLORS["MAGE"]
             w.text:SetTextColor(c.r, c.g, c.b)
+          elseif w.details.autoColors then
+            for _, s in ipairs(w.details.autoColors) do
+              if s.kind == "classColors" then
+                local c = RAID_CLASS_COLORS["MAGE"]
+                w.text:SetTextColor(c.r, c.g, c.b)
+                break
+              elseif s.kind == "threat" then
+                local c = s.colors.warning
+                w.text:SetTextColor(c.r, c.g, c.b)
+                break
+              elseif s.kind == "reaction" then
+                local c = s.colors.hostile
+                w.text:SetTextColor(c.r, c.g, c.b)
+                break
+              end
+            end
           end
         elseif w.details.kind == "guild" then
           display = "Surge of Awesome"

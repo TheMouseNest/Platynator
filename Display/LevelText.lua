@@ -8,6 +8,9 @@ function addonTable.Display.LevelTextMixin:SetUnit(unit)
   if self.unit then
     self:RegisterUnitEvent("UNIT_LEVEL", self.unit)
     self:UpdateLevel()
+
+    self:SetColor(addonTable.Display.GetColor(self.details.autoColors, self.unit))
+    addonTable.Display.RegisterForColorEvents(self, self.details.autoColors)
   else
     self:Strip()
   end
@@ -16,6 +19,7 @@ end
 function addonTable.Display.LevelTextMixin:Strip()
   self.text:SetTextColor(self.details.color.r, self.details.color.g, self.details.color.b)
   self:UnregisterAllEvents()
+  addonTable.Display.UnregisterForColorEvents(self)
 end
 
 function addonTable.Display.LevelTextMixin:UpdateLevel()
@@ -25,17 +29,8 @@ function addonTable.Display.LevelTextMixin:UpdateLevel()
   else
     self.text:SetText(level)
   end
-
-  if not self.details.applyDifficultyColors then
-    return
-  end
-
-  local difficulty = addonTable.Display.Utilities.GetUnitDifficulty(self.unit)
-
-  local color = self.details.colors.difficulty[difficulty]
-  self.text:SetTextColor(color.r, color.g, color.b)
 end
 
 function addonTable.Display.LevelTextMixin:OnEvent(eventName, ...)
-  self:UpdateLevel()
+  self:ColorEventHandler(eventName)
 end

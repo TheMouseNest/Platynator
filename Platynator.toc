@@ -36,6 +36,7 @@ Core/Initialize.lua
 
 Display/Initialize.lua
 Display/Utilities.lua
+Display/Colors.lua
 Display/Nameplate.lua
 Display/Auras.lua
 Display/HealthBar.lua
@@ -68,6 +69,7 @@ Design.lua
 Assets.lua
 
 CustomiseDialog/Components.lua
+CustomiseDialog/ColorsConfiguration.lua
 CustomiseDialog/AddWidgetsList.lua
 CustomiseDialog/WidgetsConfiguration.lua
 CustomiseDialog/Designer.lua

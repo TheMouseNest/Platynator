@@ -10,10 +10,11 @@ addonTable.CustomiseDialog.ColorsConfig = {
   ["tapped"] = {
     label = addonTable.Locales.TAPPED,
     default = {
+      kind = "tapped",
       colors = {
         tapped = GetColor("6E6E6E"),
       }
-    }
+    },
     entries = {
       {
         label = addonTable.Locales.TAPPED,
@@ -30,6 +31,7 @@ addonTable.CustomiseDialog.ColorsConfig = {
   ["target"] = {
     label = addonTable.Locales.TARGET,
     default = {
+      kind = "target",
       colors = {
         target = GetColor("34edd1"),
       },
@@ -50,6 +52,7 @@ addonTable.CustomiseDialog.ColorsConfig = {
   ["focus"] = {
     label = addonTable.Locales.FOCUS,
     default = {
+      kind = "focus",
       colors = {
         focus = GetColor("46ad32"),
       },
@@ -70,15 +73,16 @@ addonTable.CustomiseDialog.ColorsConfig = {
   ["threat"] = {
     label = addonTable.Locales.THREAT,
     default = {
+      kind = "threat",
       colors = {
         safe = GetColor("0F96E6"),
         transition = GetColor("FFA000"),
         warning = GetColor("CC0000"),
         offtank = GetColor("0FAAC8"),
-      }
+      },
       instancesOnly = false,
       combatOnly = true,
-    }
+    },
     entries = {
       {
         label = addonTable.Locales.SAFE,
@@ -146,14 +150,15 @@ addonTable.CustomiseDialog.ColorsConfig = {
   ["eliteType"] = {
     label = addonTable.Locales.ELITE_TYPE,
     default = {
+      kind = "eliteType",
       colors = {
-        boss = GetColor(""),
-        miniboss = GetColor(""),
-        caster = GetColor(""),
-        melee = GetColor(""),
-      }
+        boss = GetColor("bc1c00"),
+        miniboss = GetColor("9000bc"),
+        caster = GetColor("0074bc"),
+        melee = GetColor("fcfcfc"),
+      },
       instancesOnly = true,
-    }
+    },
     entries = {
       {
         label = addonTable.Locales.BOSS,
@@ -210,6 +215,12 @@ addonTable.CustomiseDialog.ColorsConfig = {
   },
   ["quest"] = {
     label = addonTable.Locales.QUEST,
+    default = {
+      kind = "quest",
+      colors = {
+        quest = GetColor("FFFFFF"),
+      },
+    },
     entries = {
       {
         label = addonTable.Locales.QUEST,
@@ -226,9 +237,10 @@ addonTable.CustomiseDialog.ColorsConfig = {
   ["guild"] = {
     label = addonTable.Locales.GUILD,
     default = {
+      kind = "guild",
       colors = {
         guild = GetColor("3bbc14")
-      }
+      },
     },
     entries = {
       {
@@ -245,12 +257,15 @@ addonTable.CustomiseDialog.ColorsConfig = {
   },
   ["classColors"] = {
     label = addonTable.Locales.CLASS_COLORS,
-    default = {},
+    default = {
+      kind = "classColors",
+    },
     entries = {},
   },
   ["reaction"] = {
     label = addonTable.Locales.REACTION,
     default = {
+      kind = "reaction",
       colors = {
         friendly = GetColor("00FF00"),
         neutral = GetColor("FFFF00"),
@@ -304,14 +319,15 @@ addonTable.CustomiseDialog.ColorsConfig = {
   ["difficulty"] = {
     label = addonTable.Locales.DIFFICULTY,
     default = {
+      kind = "difficulty",
       colors = {
         impossible = {r = 1.00, g = 0.10, b = 0.10},
         verydifficult = {r = 1.00, g = 0.50, b = 0.25},
         difficult = {r = 1.00, g = 0.82, b = 0.00},
         standard = {r = 0.25, g = 0.75, b = 0.25},
         trivial = {r = 0.50, g = 0.50, b = 0.50},
-      }
-    }
+      },
+    },
     entries = {
       {
         label = addonTable.Locales.TRIVIAL,
@@ -364,14 +380,15 @@ addonTable.CustomiseDialog.ColorsConfig = {
         end,
       },
     },
-  }
+  },
   ["fixed"] = {
     label = addonTable.Locales.FIXED,
     default = {
+      kind = "fixed",
       colors = {
         fixed = GetColor("FFFFFF"),
-      }
-    }
+      },
+    },
     entries = {
       {
         label = addonTable.Locales.FIXED,

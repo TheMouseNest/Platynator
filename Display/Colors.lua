@@ -27,7 +27,7 @@ local function GetPlayerRole()
   return roleMap[role]
 end
 
-local function addonTable.Display.DoesOtherTankHaveAggro(unit)
+local function DoesOtherTankHaveAggro(unit)
   return IsInRaid() and UnitGroupRolesAssigned(unit .. "target") == "TANK"
 end
 
@@ -43,7 +43,7 @@ else
 end
 
 local levelTracker = CreateFrame("Frame")
-levelTracker:RegisterEvent("PLAYER_INSTANCE_WORLD")
+levelTracker:RegisterEvent("PLAYER_ENTERING_WORLD")
 levelTracker:SetScript("OnEvent", function()
   if PLATYNATOR_LAST_INSTANCE == nil or IsInInstance() ~= PLATYNATOR_LAST_INSTANCE.inInstance or PLATYNATOR_LAST_INSTANCE.lastLFGInstanceID ~= select(10, GetInstanceInfo()) then
     PLATYNATOR_LAST_INSTANCE = {
@@ -53,6 +53,34 @@ levelTracker:SetScript("OnEvent", function()
     }
   end
 end)
+
+local kindToEvent = {
+  tapped = "UNIT_HEALTH",
+  target = "PLAYER_TARGET_CHANGED",
+  threat = "UNIT_THREAT_LIST_UPDATE",
+  quest = "QUEST_LOG_UPDATE",
+}
+
+function addonTable.Display.UnregisterForColorEvents(frame)
+  frame.ColorEventHandler = nil
+end
+
+function addonTable.Display.RegisterForColorEvents(frame, settings)
+  local events = {}
+  for _, s in ipairs(settings) do
+    local e = kindToEvent[s.kind]
+    if e then
+      events[e] = true
+      frame:RegisterEvent(e)
+    end
+  end
+
+  function frame:ColorEventHandler(eventName)
+    if events[eventName] then
+      self:SetColor(addonTable.Display.GetColor(settings, self.unit))
+    end
+  end
+end
 
 function addonTable.Display.GetColor(settings, unit)
   for _, s in ipairs(settings) do
@@ -69,7 +97,7 @@ function addonTable.Display.GetColor(settings, unit)
         return s.colors.focus
       end
     elseif s.kind == "threat" then
-      local threat = UnitThreatSituation("player", self.unit)
+      local threat = UnitThreatSituation("player", unit)
       local hostile = UnitCanAttack("player", unit) and UnitIsEnemy(unit, "player")
       local instance = IsInInstance()
       if (instance or not s.instanceOnly) and (threat or (hostile and not s.combatOnly)) then
@@ -100,32 +128,32 @@ function addonTable.Display.GetColor(settings, unit)
             return s.colors.melee
           end
         end
-      elseif s.kind == "quest" then
-        if C_QuestLog.UnitIsRelatedToActiveQuest and C_QuestLog.UnitIsRelatedToActiveQuest(unit) then
-          return s.colors.quest
+      end
+    elseif s.kind == "quest" then
+      if C_QuestLog.UnitIsRelatedToActiveQuest and C_QuestLog.UnitIsRelatedToActiveQuest(unit) then
+        return s.colors.quest
+      end
+    elseif s.kind == "guild" then
+      if UnitIsPlayer(unit) then
+        local playerGuild, _, _, playerRealm = GetGuildInfo("player")
+        local unitGuild, _, _, unitRealm = GetGuildInfo("unit")
+        if playerGuild == unitGuild and playerRealm == unitRealm then
+          return s.colors.guild
         end
-      elseif s.kind == "guild" then
-        if UnitIsPlayer(unit) then
-          local playerGuild, _, _, playerRealm = GetGuildInfo("player")
-          local unitGuild, _, _, unitRealm = GetGuildInfo("unit")
-          if playerGuild == unitGuild and playerRealm == unitRealm then
-            return s.colors.guild
-          end
-        end
-      elseif s.kind == "classColors" then
-        if UnitIsPlayer(unit) then
-          return RAID_CLASS_COLORS[UnitClassBase(unit)]
-        end
-      elseif s.kind == "reaction" then
-        if IsNeutral(unit) then
-          c = s.colors.neutral
-        elseif IsUnfriendly(unit) then
-          c = s.colors.unfriendly
-        elseif UnitIsFriend("player", unit) then
-          c = s.colors.friendly
-        else
-          c = s.colors.hostile
-        end
+      end
+    elseif s.kind == "classColors" then
+      if UnitIsPlayer(unit) then
+        return RAID_CLASS_COLORS[UnitClassBase(unit)]
+      end
+    elseif s.kind == "reaction" then
+      if IsNeutral(unit) then
+        return s.colors.neutral
+      elseif IsUnfriendly(unit) then
+        return s.colors.unfriendly
+      elseif UnitIsFriend("player", unit) then
+        return s.colors.friendly
+      else
+        return s.colors.hostile
       end
     elseif s.kind == "difficulty" then
       return s.colors.difficulty[addonTable.Display.Utilities.GetUnitDifficulty(unit)]
