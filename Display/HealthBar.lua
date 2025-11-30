@@ -77,8 +77,8 @@ local roleMap = {
   ["DAMAGER"] = roleType.Damage,
   ["TANK"] = roleType.Tank,
   ["HEALER"] = roleType.Healer,
-
 }
+
 function addonTable.Display.HealthBarMixin:GetRole()
   if not C_SpecializationInfo.GetSpecialization then
     return roleType.Damage

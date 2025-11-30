@@ -30,36 +30,7 @@ function addonTable.Display.LevelTextMixin:UpdateLevel()
     return
   end
 
-  local difficulty
-  if addonTable.Constants.IsRetail then
-    local rawDifficulty = C_PlayerInfo.GetContentDifficultyCreatureForPlayer(self.unit)
-    if rawDifficulty == Enum.RelativeContentDifficulty.Trivial then
-      difficulty =  "trivial"
-    elseif rawDifficulty == Enum.RelativeContentDifficulty.Easy then
-      difficulty = "standard"
-    elseif rawDifficulty == Enum.RelativeContentDifficulty.Fair then
-      difficulty = "difficult"
-    elseif rawDifficulty == Enum.RelativeContentDifficulty.Difficult then
-      difficulty = "verydifficult"
-    elseif rawDifficulty == Enum.RelativeContentDifficulty.Impossible then
-      difficulty = "impossible"
-    else
-      difficulty = "difficult"
-    end
-  else
-    local levelDiff = UnitLevel(self.unit) - UnitEffectiveLevel("player");
-    if levelDiff >= 5 then
-      difficulty = "impossible"
-    elseif levelDiff >= 3 then
-      difficulty = "verydifficult"
-    elseif levelDiff >= -2 then
-      difficulty = "difficult"
-    elseif -levelDiff <= GetQuestGreenRange() then
-      difficulty = "standard"
-    else
-      difficulty =  "trivial"
-    end
-  end
+  local difficulty = addonTable.Display.Utilities.GetUnitDifficulty(self.unit)
 
   local color = self.details.colors.difficulty[difficulty]
   self.text:SetTextColor(color.r, color.g, color.b)

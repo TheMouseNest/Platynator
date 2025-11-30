@@ -8,6 +8,82 @@ local function Announce()
   addonTable.CallbackRegistry:TriggerEvent("RefreshStateChange", {[addonTable.Constants.RefreshReason.Design] = true})
 end
 
+local function GetAutomaticColors(parent, lockedElements)
+  local selectedValue = ""
+
+  local container = CreateFrame("Frame", nil, parent)
+  container:SetAllPoints()
+
+  local colorsListContainer = CreateFrame("Frame", nil, container)
+
+  local inset = CreateFrame("Frame", nil, colorsListContainer, "InsetFrameTemplate")
+  inset:SetPoint("TOPLEFT")
+  inset:SetPoint("BOTTOMRIGHT", -15, 0)
+  addonTable.Skins.AddFrame("InsetFrame", inset)
+  colorsListContainer.ScrollBox = CreateFrame("Frame", nil, colorsListContainer, "WowScrollBoxList")
+  colorsListContainer.ScrollBox:SetPoint("TOPLEFT", 1, -3)
+  colorsListContainer.ScrollBox:SetPoint("BOTTOMRIGHT", -15, 3)
+
+  local scrollView = CreateScrollBoxListLinearView()
+  scrollView:SetElementExtents(40)
+  scrollView:SetElementInitializer("Button", function(frame, elementData)
+    if not frame.initialized then
+      frame.initialized = true
+      frame:SetNormalFontObject(GameFontHighlight)
+      frame:SetHighlightAtlas("Options_List_Hover")
+      frame.selectedTexture = frame:CreateTexture(nil, "ARTWORK")
+      frame.selectedTexture:SetAllPoints(true)
+      frame.selectedTexture:Hide()
+      frame.selectedTexture:SetAtlas("Options_List_Active")
+      frame:SetScript("OnClick", function(self, button)
+        UpdateSelected(self.value)
+      end)
+      frame:SetText(" ")
+      frame:GetFontString():SetWordWrap(false)
+      local button = CreateFrame("Button", nil, frame)
+      button:SetSize(28, 22)
+      local tex = button:CreateTexture(nil, "ARTWORK")
+      tex:SetTexture("Interface\\PaperDollInfoFrame\\statsortarrows")
+      tex:SetPoint("LEFT", 4, 0)
+      tex:SetSize(14, 14)
+      button:SetAlpha(0.8)
+      button:SetScript("OnEnter", function()
+        GameTooltip:SetOwner(button, "ANCHOR_RIGHT", -16, 0)
+        GameTooltip:SetText(addonTable.Locales.MOVE)
+        GameTooltip:Show()
+        button:SetAlpha(0.4)
+      end)
+      button:SetScript("OnLeave", function()
+        GameTooltip:Hide()
+        button:SetAlpha(0.8)
+      end)
+      button:SetScript("OnClick", function(self)
+        pickupCallback(self:GetParent().value, self:GetParent():GetText(), self:GetParent().indexValue)
+      end)
+      button:SetPoint("LEFT", 4, 1)
+
+      frame.repositionButton = button
+    end
+    frame.value = elementData.value
+    frame.selectedTexture:SetShown(frame.value == selectedValue)
+    frame:SetText(elementData.label)
+    frame:GetFontString():SetPoint("RIGHT", -8, 0)
+    frame:GetFontString():SetPoint("LEFT", 40, 0)
+    frame:GetFontString():SetJustifyH("LEFT")
+  end)
+
+  colorsListContainer.ScrollBar = CreateFrame("EventFrame", nil, colorsListContainer, "MinimalScrollBar")
+  colorsListContainer.ScrollBar:SetPoint("TOPRIGHT")
+  colorsListContainer.ScrollBar:SetPoint("BOTTOMRIGHT")
+  ScrollUtil.InitScrollBoxListWithScrollBar(colorsListContainer.ScrollBox, colorsListContainer.ScrollBar, scrollView)
+  addonTable.Skins.AddFrame("TrimScrollBar", colorsListContainer.ScrollBar)
+
+  colorsListContainer:SetPoint("TOPLEFT")
+  colorsListContainer:SetSize(250, 400)
+
+  local optionsContainer = CreateFrame("Frame", nil, container)
+end
+
 function addonTable.CustomiseDialog.GetMainDesigner(parent)
   local container = CreateFrame("Frame", nil, parent)
 
