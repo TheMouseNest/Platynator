@@ -100,6 +100,14 @@ function addonTable.Core.UpgradeDesign(design)
     end
   end
 
+  local function UpdateAutoColors(autoColors)
+    for _, ac in ipairs(autoColors) do
+      if ac.kind == "eliteType" then
+        ac.colors.trivial = GetColor("b28e55")
+      end
+    end
+  end
+
   for _, bar in ipairs(design.bars) do
     if bar.kind == "health" and not bar.absorb then
       local mode = addonTable.Assets.BarBorders[bar.border.asset].mode
@@ -157,6 +165,9 @@ function addonTable.Core.UpgradeDesign(design)
       }
       bar.colors = nil
     end
+    if bar.autoColors then
+      UpdateAutoColors(bar.autoColors)
+    end
   end
 
   for _, text in ipairs(design.texts) do
@@ -202,6 +213,9 @@ function addonTable.Core.UpgradeDesign(design)
       end
       text.applyDifficultyColors = nil
       text.colors = nil
+    end
+    if text.autoColors then
+      UpdateAutoColors(text.autoColors)
     end
   end
 

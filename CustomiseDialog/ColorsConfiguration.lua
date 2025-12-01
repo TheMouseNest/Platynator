@@ -156,6 +156,7 @@ addonTable.CustomiseDialog.ColorsConfig = {
         miniboss = GetColor("9000bc"),
         caster = GetColor("0074bc"),
         melee = GetColor("fcfcfc"),
+        trivial = GetColor("b28e55"),
       },
       instancesOnly = true,
     },
@@ -198,6 +199,16 @@ addonTable.CustomiseDialog.ColorsConfig = {
         end,
         getter = function(details)
           return details.colors.melee
+        end,
+      },
+      {
+        label = addonTable.Locales.TRIVIAL,
+        kind = "colorPicker",
+        setter = function(details, value)
+          details.colors.trivial = value
+        end,
+        getter = function(details)
+          return details.colors.trivial
         end,
       },
       { kind = "spacer" },

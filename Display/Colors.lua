@@ -101,7 +101,7 @@ function addonTable.Display.GetColor(settings, unit)
       local threat = UnitThreatSituation("player", unit)
       local hostile = UnitCanAttack("player", unit) and UnitIsEnemy(unit, "player")
       local instance = IsInInstance()
-      if (instance or not s.instanceOnly) and (threat or (hostile and not s.combatOnly)) then
+      if (instance or not s.instancesOnly) and (threat or (hostile and not s.combatOnly)) then
         local role = GetPlayerRole()
         if (role == roleType.Tank and (threat == 0 or threat == nil) and not DoesOtherTankHaveAggro(unit)) or (role ~= roleType.Tank and threat == 3) then
           return s.colors.warning
@@ -114,20 +114,25 @@ function addonTable.Display.GetColor(settings, unit)
         end
       end
     elseif s.kind == "eliteType" then
-      if IsInInstance() and UnitClassification(unit) == "elite" then
-        local level = UnitEffectiveLevel(unit)
-        local playerLevel = PLATYNATOR_LAST_INSTANCE.level
-        if level == playerLevel + 2 then
-          return s.colors.boss
-        elseif level == playerLevel + 1 then
-          return s.colors.miniboss
-        elseif level == playerLevel then
-          local class = UnitClassBase(unit)
-          if class == "PALADIN" then
-            return s.colors.caster
-          else
-            return s.colors.melee
+      if IsInInstance() or not s.instancesOnly then
+        local classification = UnitClassification(unit)
+        if classification == "elite" then
+          local level = UnitEffectiveLevel(unit)
+          local playerLevel = PLATYNATOR_LAST_INSTANCE.level
+          if level == playerLevel + 2 then
+            return s.colors.boss
+          elseif level == playerLevel + 1 then
+            return s.colors.miniboss
+          elseif level == playerLevel then
+            local class = UnitClassBase(unit)
+            if class == "PALADIN" then
+              return s.colors.caster
+            else
+              return s.colors.melee
+            end
           end
+        elseif classification == "normal" or classification == "trivial" then
+          return s.colors.trivial
         end
       end
     elseif s.kind == "quest" then
