@@ -62,10 +62,10 @@ addonTable.CustomiseDialog.ColorsConfig = {
         label = addonTable.Locales.FOCUS,
         kind = "colorPicker",
         setter = function(details, value)
-          details.colors.target = value
+          details.colors.focus = value
         end,
         getter = function(details)
-          return details.colors.target
+          return details.colors.focus
         end,
       },
     },

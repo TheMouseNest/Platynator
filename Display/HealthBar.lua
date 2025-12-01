@@ -52,5 +52,5 @@ function addonTable.Display.HealthBarMixin:OnEvent(eventName)
     self.statusBarAbsorb:SetValue(UnitGetTotalAbsorbs(self.unit))
   end
 
-  self:ColorEventHandler(self, eventName)
+  self:ColorEventHandler(eventName)
 end
