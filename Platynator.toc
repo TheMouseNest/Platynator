@@ -3,7 +3,7 @@
 ## Version: @project-version@
 ## Author: plusmouse
 ## SavedVariables: PLATYNATOR_CONFIG
-## SavedVariablesPerCharacter: PLATYNATOR_CURRENT_PROFILE
+## SavedVariablesPerCharacter: PLATYNATOR_CURRENT_PROFILE, PLATYNATOR_LAST_INSTANCE
 ## IconTexture: Interface\AddOns\Platynator\Assets\logo.tga
 
 ## Category: Unit Frames
@@ -36,6 +36,7 @@ Core/Initialize.lua
 
 Display/Initialize.lua
 Display/Utilities.lua
+Display/Colors.lua
 Display/Nameplate.lua
 Display/Auras.lua
 Display/HealthBar.lua
@@ -68,6 +69,7 @@ Design.lua
 Assets.lua
 
 CustomiseDialog/Components.lua
+CustomiseDialog/ColorsConfiguration.lua
 CustomiseDialog/AddWidgetsList.lua
 CustomiseDialog/WidgetsConfiguration.lua
 CustomiseDialog/Designer.lua

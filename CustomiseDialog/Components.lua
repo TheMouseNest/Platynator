@@ -207,16 +207,16 @@ function addonTable.CustomiseDialog.Components.GetColorSwatch(parent, callback)
   return colorSwatch
 end
 
-function addonTable.CustomiseDialog.Components.GetColorPicker(parent, label, callback)
+function addonTable.CustomiseDialog.Components.GetColorPicker(parent, label, offset, callback)
   local holder = CreateFrame("Frame", nil, parent)
   holder:SetHeight(40)
   holder:SetPoint("LEFT", parent, "LEFT", 30, 0)
   holder:SetPoint("RIGHT", parent, "RIGHT", -30, 0)
   local swatch = addonTable.CustomiseDialog.Components.GetColorSwatch(holder, callback)
 
-  swatch:SetPoint("LEFT", holder, "CENTER", -32, 0)
+  swatch:SetPoint("LEFT", holder, "CENTER", -4 - offset, 0)
   local text = holder:CreateFontString(nil, nil, "GameFontHighlight")
-  text:SetPoint("RIGHT", holder, "CENTER", -50, 0)
+  text:SetPoint("RIGHT", holder, "CENTER", -22 - offset, 0)
   text:SetText(label)
 
   function holder:SetValue(color)

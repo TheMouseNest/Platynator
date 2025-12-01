@@ -9,36 +9,16 @@ function addonTable.Display.CreatureTextMixin:SetUnit(unit)
     self:RegisterUnitEvent("UNIT_NAME_UPDATE", self.unit)
     self:RegisterUnitEvent("UNIT_HEALTH", self.unit)
     self.text:SetText(UnitName(self.unit))
-    self:UpdateColor()
+
+    self:SetColor(addonTable.Display.GetColor(self.details.autoColors, self.unit))
+    addonTable.Display.RegisterForColorEvents(self, self.details.autoColors)
+
     if self.details.showWhenWowDoes then
       self:SetShown(UnitShouldDisplayName(self.unit))
     end
   else
+    addonTable.Display.UnregisterForColorEvents(self)
     self:UnregisterAllEvents()
-  end
-end
-
-local IsTapped = addonTable.Display.Utilities.IsTappedUnit
-local IsNeutral = addonTable.Display.Utilities.IsNeutralUnit
-local IsUnfriendly = addonTable.Display.Utilities.IsUnfriendlyUnit
-
-function addonTable.Display.CreatureTextMixin:UpdateColor()
-  if self.details.applyClassColors then
-    local c
-    if UnitIsPlayer(self.unit) then
-      c = RAID_CLASS_COLORS[UnitClassBase(self.unit)]
-    elseif IsTapped(self.unit) then
-      c = self.details.colors.npc.tapped
-    elseif IsNeutral(self.unit) then
-      c = self.details.colors.npc.neutral
-    elseif IsUnfriendly(self.unit) then
-      c = self.details.colors.npc.unfriendly
-    elseif UnitIsFriend("player", self.unit) then
-      c = self.details.colors.npc.friendly
-    else
-      c = self.details.colors.npc.hostile
-    end
-    self.text:SetTextColor(c.r, c.g, c.b)
   end
 end
 
@@ -46,17 +26,28 @@ function addonTable.Display.CreatureTextMixin:Strip()
   local c = self.details.color
   self.text:SetTextColor(c.r, c.g, c.b)
   self.ApplyTarget = nil
+
+  addonTable.Display.UnregisterForColorEvents(self)
+  self:UnregisterAllEvents()
+end
+
+function addonTable.Display.CreatureTextMixin:SetColor(c)
+  if not c then
+    c = self.details.color
+  end
+  self.text:SetTextColor(c.r, c.g, c.b)
 end
 
 function addonTable.Display.CreatureTextMixin:OnEvent(eventName, ...)
   if eventName == "UNIT_HEALTH" then
-    self:UpdateColor()
     if self.details.showWhenWowDoes then
       self:SetShown(UnitShouldDisplayName(self.unit))
     end
   else
     self.text:SetText(UnitName(self.unit))
   end
+
+  self:ColorEventHandler(eventName)
 end
 
 function addonTable.Display.CreatureTextMixin:ApplyTarget()
