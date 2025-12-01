@@ -22,6 +22,14 @@ function addonTable.Display.LevelTextMixin:Strip()
   addonTable.Display.UnregisterForColorEvents(self)
 end
 
+function addonTable.Display.LevelTextMixin:SetColor(c)
+  if c then
+    self.text:SetTextColor(c.r, c.g, c.b)
+  else
+    self.text:SetTextColor(self.details.color.r, self.details.color.g, self.details.color.b)
+  end
+end
+
 function addonTable.Display.LevelTextMixin:UpdateLevel()
   local level = UnitLevel(self.unit)
   if level == -1 then
