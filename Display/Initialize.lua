@@ -610,11 +610,13 @@ function addonTable.Display.ManagerMixin:OnEvent(eventName, ...)
     self:UpdateShowState()
     self:UpdateNamePlateSize()
   elseif eventName == "UI_SCALE_CHANGED" then
-    if InCombatLockdown() then
-      self:RegisterEvent("PLAYER_REGEN_ENABLED")
-    else
-      self:UpdateNamePlateSize()
+    for unit, display in pairs(self.nameplateDisplays) do
+      display:UpdateVisual()
+      if display.stackRegion then
+        self:UpdateStackingRegion(nil, unit)
+      end
     end
+    self:UpdateNamePlateSize()
     C_Timer.After(0, function()
       self:ImportNameplateScaleModifier()
     end)
