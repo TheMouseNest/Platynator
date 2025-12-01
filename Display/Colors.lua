@@ -119,7 +119,7 @@ function addonTable.Display.GetColor(settings, unit)
         if classification == "elite" then
           local level = UnitEffectiveLevel(unit)
           local playerLevel = PLATYNATOR_LAST_INSTANCE.level
-          if level == playerLevel + 2 then
+          if level >= playerLevel + 2 then
             return s.colors.boss
           elseif level == playerLevel + 1 then
             return s.colors.miniboss
