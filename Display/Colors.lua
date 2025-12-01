@@ -103,13 +103,13 @@ function addonTable.Display.GetColor(settings, unit)
       local instance = IsInInstance()
       if (instance or not s.instanceOnly) and (threat or (hostile and not s.combatOnly)) then
         local role = GetPlayerRole()
-        if (role == roleType.Tank and (status == 0 or status == nil) and not DoesOtherTankHaveAggro(unit)) or (role ~= roleType.Tank and status == 3) then
+        if (role == roleType.Tank and (threat == 0 or threat == nil) and not DoesOtherTankHaveAggro(unit)) or (role ~= roleType.Tank and threat == 3) then
           return s.colors.warning
-        elseif status == 1 or status == 2 then
+        elseif threat == 1 or threat == 2 then
           return s.colors.transition
-        elseif (role == roleType.Tank and status == 3) or (role ~= roleType.Tank and (status == 0 or status == nil)) then
+        elseif (role == roleType.Tank and threat == 3) or (role ~= roleType.Tank and (threat == 0 or threat == nil)) then
           return s.colors.safe
-        elseif role == roleType.Tank and (status == 0 or status == nil) and DoesOtherTankHaveAggro(unit) then
+        elseif role == roleType.Tank and (threat == 0 or threat == nil) and DoesOtherTankHaveAggro(unit) then
           return s.colors.offtank
         end
       end
