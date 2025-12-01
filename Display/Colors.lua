@@ -136,7 +136,7 @@ function addonTable.Display.GetColor(settings, unit)
     elseif s.kind == "guild" then
       if UnitIsPlayer(unit) then
         local playerGuild, _, _, playerRealm = GetGuildInfo("player")
-        local unitGuild, _, _, unitRealm = GetGuildInfo("unit")
+        local unitGuild, _, _, unitRealm = GetGuildInfo(unit)
         if playerGuild == unitGuild and playerRealm == unitRealm then
           return s.colors.guild
         end
