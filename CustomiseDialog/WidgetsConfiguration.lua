@@ -219,7 +219,7 @@ addonTable.CustomiseDialog.WidgetsConfig = {
     },
     ["health"] = {
       {
-        label =addonTable.Locales.TEXTURES,
+        label = addonTable.Locales.TEXTURES,
         entries = {
           {
             label = addonTable.Locales.ABSORB,
@@ -250,94 +250,12 @@ addonTable.CustomiseDialog.WidgetsConfig = {
         label = addonTable.Locales.COLORS,
         entries = {
           {
-            label = addonTable.Locales.AGGRO_SAFE,
-            kind = "colorPicker",
-            setter = function(details, value)
-              details.colors.threat.safe = value
-            end,
+            label = "",
+            kind = "autoColors",
+            lockedElements = {reaction = true},
+            setter = function() end,
             getter = function(details)
-              return details.colors.threat.safe
-            end,
-          },
-          {
-            label = addonTable.Locales.AGGRO_OFFTANK,
-            kind = "colorPicker",
-            setter = function(details, value)
-              details.colors.threat.offtank = value
-            end,
-            getter = function(details)
-              return details.colors.threat.offtank
-            end,
-          },
-          {
-            label = addonTable.Locales.AGGRO_TRANSITION,
-            kind = "colorPicker",
-            setter = function(details, value)
-              details.colors.threat.transition = value
-            end,
-            getter = function(details)
-              return details.colors.threat.transition
-            end,
-          },
-          {
-            label = addonTable.Locales.AGGRO_WARNING,
-            kind = "colorPicker",
-            setter = function(details, value)
-              details.colors.threat.warning = value
-            end,
-            getter = function(details)
-              return details.colors.threat.warning
-            end,
-          },
-          { kind = "spacer" },
-          {
-            label = addonTable.Locales.FRIENDLY,
-            kind = "colorPicker",
-            setter = function(details, value)
-              details.colors.npc.friendly = value
-            end,
-            getter = function(details)
-              return details.colors.npc.friendly
-            end,
-          },
-          {
-            label = addonTable.Locales.NEUTRAL,
-            kind = "colorPicker",
-            setter = function(details, value)
-              details.colors.npc.neutral = value
-            end,
-            getter = function(details)
-              return details.colors.npc.neutral
-            end,
-          },
-          {
-            label = addonTable.Locales.UNFRIENDLY,
-            kind = "colorPicker",
-            setter = function(details, value)
-              details.colors.npc.unfriendly = value
-            end,
-            getter = function(details)
-              return details.colors.npc.unfriendly
-            end,
-          },
-          {
-            label = addonTable.Locales.HOSTILE,
-            kind = "colorPicker",
-            setter = function(details, value)
-              details.colors.npc.hostile = value
-            end,
-            getter = function(details)
-              return details.colors.npc.hostile
-            end,
-          },
-          {
-            label = addonTable.Locales.AGGRO_COLORS_ON_HOSTILES,
-            kind = "checkbox",
-            setter = function(details, value)
-              details.aggroColoursOnHostiles = value
-            end,
-            getter = function(details)
-              return details.aggroColoursOnHostiles
+              return details.autoColors
             end,
           },
         },
@@ -528,57 +446,15 @@ addonTable.CustomiseDialog.WidgetsConfig = {
         label = addonTable.Locales.COLORS,
         entries = {
           {
-            label = addonTable.Locales.CLASS_COLORED,
-            kind = "checkbox",
-            setter = function(details, value)
-              details.applyClassColors = value
-            end,
+            label = "",
+            kind = "autoColors",
+            lockedElements = {},
+            setter = function() end,
             getter = function(details)
-              return details.applyClassColors
+              return details.autoColors
             end,
           },
-          { kind = "spacer" },
-          {
-            label = addonTable.Locales.FRIENDLY,
-            kind = "colorPicker",
-            setter = function(details, value)
-              details.colors.npc.friendly = value
-            end,
-            getter = function(details)
-              return details.colors.npc.friendly
-            end,
-          },
-          {
-            label = addonTable.Locales.NEUTRAL,
-            kind = "colorPicker",
-            setter = function(details, value)
-              details.colors.npc.neutral = value
-            end,
-            getter = function(details)
-              return details.colors.npc.neutral
-            end,
-          },
-          {
-            label = addonTable.Locales.UNFRIENDLY,
-            kind = "colorPicker",
-            setter = function(details, value)
-              details.colors.npc.unfriendly = value
-            end,
-            getter = function(details)
-              return details.colors.npc.unfriendly
-            end,
-          },
-          {
-            label = addonTable.Locales.HOSTILE,
-            kind = "colorPicker",
-            setter = function(details, value)
-              details.colors.npc.hostile = value
-            end,
-            getter = function(details)
-              return details.colors.npc.hostile
-            end,
-          },
-        }
+        },
       }
     },
     ["target"] = {
@@ -620,67 +496,15 @@ addonTable.CustomiseDialog.WidgetsConfig = {
         label = addonTable.Locales.COLORS,
         entries = {
           {
-            label = addonTable.Locales.DIFFICULTY_COLORED,
-            kind = "checkbox",
-            setter = function(details, value)
-              details.applyDifficultyColors = value
-            end,
+            label = "",
+            kind = "autoColors",
+            lockedElements = {},
+            setter = function() end,
             getter = function(details)
-              return details.applyDifficultyColors
+              return details.autoColors
             end,
           },
-          { kind = "spacer" },
-          {
-            label = addonTable.Locales.TRIVIAL,
-            kind = "colorPicker",
-            setter = function(details, value)
-              details.colors.difficulty.trivial = value
-            end,
-            getter = function(details)
-              return details.colors.difficulty.trivial
-            end,
-          },
-          {
-            label = addonTable.Locales.STANDARD,
-            kind = "colorPicker",
-            setter = function(details, value)
-              details.colors.difficulty.standard = value
-            end,
-            getter = function(details)
-              return details.colors.difficulty.standard
-            end,
-          },
-          {
-            label = addonTable.Locales.DIFFICULT,
-            kind = "colorPicker",
-            setter = function(details, value)
-              details.colors.difficulty.difficult = value
-            end,
-            getter = function(details)
-              return details.colors.difficulty.difficult
-            end,
-          },
-          {
-            label = addonTable.Locales.VERY_DIFFICULT,
-            kind = "colorPicker",
-            setter = function(details, value)
-              details.colors.difficulty.verydifficult = value
-            end,
-            getter = function(details)
-              return details.colors.difficulty.verydifficult
-            end,
-          },
-          {
-            label = addonTable.Locales.IMPOSSIBLE,
-            kind = "colorPicker",
-            setter = function(details, value)
-              details.colors.difficulty.impossible = value
-            end,
-            getter = function(details)
-              return details.colors.difficulty.impossible
-            end,
-          },
-        }
+        },
       }
     },
     ["guild"] = {

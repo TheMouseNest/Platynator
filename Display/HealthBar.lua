@@ -8,13 +8,14 @@ function addonTable.Display.HealthBarMixin:SetUnit(unit)
   if self.unit then
     self:RegisterUnitEvent("UNIT_HEALTH", self.unit)
     self:RegisterUnitEvent("UNIT_MAXHEALTH", self.unit)
-    self:RegisterUnitEvent("UNIT_THREAT_LIST_UPDATE", self.unit)
     self:RegisterUnitEvent("UNIT_ABSORB_AMOUNT_CHANGED", self.unit)
     self.statusBar:SetMinMaxValues(0, UnitHealthMax(self.unit))
     self.statusBarAbsorb:SetMinMaxValues(self.statusBar:GetMinMaxValues())
     self.statusBarAbsorb:SetValue(UnitGetTotalAbsorbs(self.unit))
-    self:UpdateColor()
     self:UpdateHealth()
+
+    self:SetColor(addonTable.Display.GetColor(self.details.autoColors, self.unit))
+    addonTable.Display.RegisterForColorEvents(self, self.details.autoColors)
   else
     self:Strip()
   end
@@ -22,91 +23,15 @@ end
 
 function addonTable.Display.HealthBarMixin:Strip()
   self:UnregisterAllEvents()
+  addonTable.Display.UnregisterForColorEvents(self)
 end
 
-function addonTable.Display.HealthBarMixin:SetHealthColor(c)
+function addonTable.Display.HealthBarMixin:SetColor(c)
   self.statusBar:GetStatusBarTexture():SetVertexColor(c.r, c.g, c.b)
   if self.details.background.applyColor then
     self.background:SetVertexColor(c.r, c.g, c.b)
   end
   self.marker:SetVertexColor(c.r, c.g, c.b)
-end
-
-local IsTapped = addonTable.Display.Utilities.IsTappedUnit
-local IsNeutral = addonTable.Display.Utilities.IsNeutralUnit
-local IsUnfriendly = addonTable.Display.Utilities.IsUnfriendlyUnit
-
-function addonTable.Display.HealthBarMixin:UpdateColor()
-  local threat = UnitThreatSituation("player", self.unit)
-  local inInstance = IsInInstance()
-  if UnitIsPlayer(self.unit) then
-    local c = RAID_CLASS_COLORS[UnitClassBase(self.unit)]
-    self:SetHealthColor(c)
-  -- Tapped (no xp) unit (forced color)
-  elseif IsTapped(self.unit) then
-    local c = self.details.colors.npc.tapped
-    self:SetHealthColor(c)
-  elseif threat ~= nil then
-    self:ApplyThreat(threat)
-  elseif IsNeutral(self.unit) and (not inInstance or not UnitAffectingCombat(self.unit)) then
-    local c = self.details.colors.npc.neutral
-    self:SetHealthColor(c)
-  -- Reputation unfriendly, unable to interact, attack, etc.
-  elseif IsUnfriendly(self.unit) and (not inInstance or not UnitAffectingCombat(self.unit)) then
-    local c = self.details.colors.npc.unfriendly
-    self:SetHealthColor(c)
-  elseif UnitIsFriend("player", self.unit) then
-    local c = self.details.colors.npc.friendly
-    self:SetHealthColor(c)
-  -- Enemy
-  elseif (not UnitCanAttack("player", self.unit) or not self.details.aggroColoursOnHostiles) and (not inInstance or not UnitAffectingCombat(self.unit)) then
-    local c = self.details.colors.npc.hostile
-    self:SetHealthColor(c)
-  else
-    self:ApplyThreat(threat)
-  end
-end
-
-local roleType = {
-  Damage = 1,
-  Healer = 2,
-  Tank = 3,
-}
-
-local roleMap = {
-  ["DAMAGER"] = roleType.Damage,
-  ["TANK"] = roleType.Tank,
-  ["HEALER"] = roleType.Healer,
-
-}
-function addonTable.Display.HealthBarMixin:GetRole()
-  if not C_SpecializationInfo.GetSpecialization then
-    return roleType.Damage
-  end
-  local specIndex = C_SpecializationInfo.GetSpecialization()
-  local _, _, _, _, role = C_SpecializationInfo.GetSpecializationInfo(specIndex)
-
-  return roleMap[role]
-end
-
-function addonTable.Display.HealthBarMixin:DoesOtherTankHaveAggro()
-  return IsInRaid() and UnitGroupRolesAssigned(self.unit .. "target") == "TANK"
-end
-
-function addonTable.Display.HealthBarMixin:ApplyThreat(status)
-  if IsTapped(self.unit) then
-    return
-  end
-  local role = self:GetRole()
-  if (role == roleType.Tank and (status == 0 or status == nil) and not self:DoesOtherTankHaveAggro()) or (role ~= roleType.Tank and status == 3) then
-    self:SetHealthColor(self.details.colors.threat.warning)
-  elseif status == 1 or status == 2 then
-    self:SetHealthColor(self.details.colors.threat.transition)
-  elseif (role == roleType.Tank and status == 3) or (role ~= roleType.Tank and (status == 0 or status == nil)) then
-    self:SetHealthColor(self.details.colors.threat.safe)
-  elseif role == roleType.Tank and (status == 0 or status == nil) and self:DoesOtherTankHaveAggro() then
-    self:SetHealthColor(self.details.colors.threat.offtank)
-  end
 end
 
 function addonTable.Display.HealthBarMixin:UpdateHealth()
@@ -115,7 +40,6 @@ function addonTable.Display.HealthBarMixin:UpdateHealth()
   else
     self.statusBar:SetValue(UnitHealth(self.unit, true))
   end
-  self:UpdateColor()
 end
 
 function addonTable.Display.HealthBarMixin:OnEvent(eventName)
@@ -126,7 +50,7 @@ function addonTable.Display.HealthBarMixin:OnEvent(eventName)
     self.statusBarAbsorb:SetMinMaxValues(self.statusBar:GetMinMaxValues())
   elseif eventName == "UNIT_ABSORB_AMOUNT_CHANGED" then
     self.statusBarAbsorb:SetValue(UnitGetTotalAbsorbs(self.unit))
-  elseif eventName == "UNIT_THREAT_LIST_UPDATE" then
-    self:UpdateColor()
   end
+
+  self:ColorEventHandler(self, eventName)
 end

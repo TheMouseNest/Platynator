@@ -105,26 +105,13 @@ function addonTable.Core.UpgradeDesign(design)
   end
 
   for _, bar in ipairs(design.bars) do
-    if bar.kind == "health" and bar.aggroColoursOnHostiles == nil then
-      bar.aggroColoursOnHostiles = true
-    end
-    if bar.kind == "health" and (bar.colors.threat.offtank == nil or bar.colors.npc.tapped == nil) then
-      bar.colors.threat.offtank = GetColor("0FAAC8")
-      bar.colors.npc.tapped = GetColor("6E6E6E")
-    end
     if bar.kind == "health" and not bar.absorb then
       local mode = addonTable.Assets.BarBorders[bar.border.asset].mode
       local isNarrow = mode == addonTable.Assets.Mode.Percent50
       bar.absorb = {asset = isNarrow and "narrow/blizzard-absorb" or "wide/blizzard-absorb", color = {r = 1, g = 1, b = 1}}
     end
-    if bar.kind == "health" and not bar.colors.npc.unfriendly then
-      bar.colors.npc.unfriendly = GetColor("ff8100")
-    end
     if bar.kind == "health" and not bar.absorb.color then
       bar.absorb.color = GetColor("FFFFFF")
-    end
-    if bar.kind == "cast" and bar.colors.interrupted == nil then
-      bar.colors.interrupted = GetColor("FC36E0")
     end
     if bar.layer == nil then
       bar.layer = 1
@@ -151,46 +138,74 @@ function addonTable.Core.UpgradeDesign(design)
       end
       bar.border.asset = map[bar.border.asset]
     end
+    if bar.kind == "health" and not bar.autoColors then
+      local classColors = CopyTable(addonTable.CustomiseDialog.ColorsConfig["classColors"].default)
+      local tapped = CopyTable(addonTable.CustomiseDialog.ColorsConfig["tapped"].default)
+      if bar.colors and bar.colors.tapped then
+        tapped.colors.tapped = bar.colors.tapped
+      end
+      local threat = CopyTable(addonTable.CustomiseDialog.ColorsConfig["threat"].default)
+      Mixin(threat.colors, bar.colors and bar.colors.threat or {})
+      local reaction = CopyTable(addonTable.CustomiseDialog.ColorsConfig["reaction"].default)
+      Mixin(reaction.colors, bar.colors and bar.colors.npc or {})
+      reaction.colors.tapped = nil
+
+      threat.combatOnly = not bar.aggroColoursOnHostiles
+      bar.aggroColoursOnHostiles = nil
+
+      bar.autoColors = {
+        classColors,
+        tapped,
+        threat,
+        reaction
+      }
+      bar.colors = nil
+    end
   end
 
   for _, text in ipairs(design.texts) do
     if text.kind == "layer" then
       text.kind = "level"
     end
-    if (text.kind == "creatureName" or text.kind == "target") and text.applyClassColors == nil then
+    if text.kind == "target" and text.applyClassColors == nil then
       text.applyClassColors = false
-    end
-    if text.kind == "creatureName" and not text.colors then
-      text.colors = {
-        npc = {
-          friendly = GetColor("00FF00"),
-          neutral = GetColor("FFFF00"),
-          hostile = GetColor("FF0000"),
-          tapped = GetColor("6E6E6E"),
-        },
-      }
-    end
-    if text.kind == "creatureName" and not text.colors.npc.unfriendly then
-      text.colors.npc.unfriendly = GetColor("ff8100")
     end
     if (text.kind == "creatureName" or text.kind == "guild") and text.showWhenWowDoes == nil then
       text.showWhenWowDoes = false
     end
-    if text.kind == "level" and (text.colors == nil or text.applyDifficultyColors == nil) then
-      text.applyDifficultyColors = true
-      text.colors = {
-        difficulty = {
-          impossible = {r = 1.00, g = 0.10, b = 0.10},
-          verydifficult = {r = 1.00, g = 0.50, b = 0.25},
-          difficult = {r = 1.00, g = 0.82, b = 0.00},
-          standard = {r = 0.25, g = 0.75, b = 0.25},
-          trivial = {r = 0.50, g = 0.50, b = 0.50},
-        }
-      }
-    end
     if text.shorten ~= nil then
       text.shorten = nil
       text.truncate = text.truncate or text.shorten and true or false
+    end
+    if text.kind == "creatureName" and not text.autoColors then
+      if text.applyClassColors then
+        local classColors = CopyTable(addonTable.CustomiseDialog.ColorsConfig["classColors"].default)
+        local tapped = CopyTable(addonTable.CustomiseDialog.ColorsConfig["tapped"].default)
+        if text.colors and text.colors.tapped then
+          tapped.colors.tapped = text.colors.tapped
+        end
+        local reaction = CopyTable(addonTable.CustomiseDialog.ColorsConfig["reaction"].default)
+        Mixin(reaction.colors, text.colors and text.colors.npc or {})
+        reaction.colors.tapped = nil
+        text.autoColors = {classColors, tapped, reaction}
+      else
+        text.autoColors = {}
+      end
+      text.applyClassColors = nil
+      text.colors = nil
+    end
+    if text.kind == "level" and not text.autoColors then
+      if text.applyDifficultyColors then
+        local difficulty = CopyTable(addonTable.CustomiseDialog.ColorsConfig["difficulty"].default)
+        Mixin(difficulty.colors, text.colors and text.colors.difficulty or {})
+        text.autoColors = {
+          difficulty,
+        }
+      else
+        text.autoColors = {}
+      end
+      text.applyDifficultyColors = nil
+      text.colors = nil
     end
   end
 
