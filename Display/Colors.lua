@@ -57,6 +57,7 @@ end)
 local kindToEvent = {
   tapped = "UNIT_HEALTH",
   target = "PLAYER_TARGET_CHANGED",
+  focus = "PLAYER_FOCUS_CHANGED",
   threat = "UNIT_THREAT_LIST_UPDATE",
   quest = "QUEST_LOG_UPDATE",
 }
@@ -137,7 +138,7 @@ function addonTable.Display.GetColor(settings, unit)
       if UnitIsPlayer(unit) then
         local playerGuild, _, _, playerRealm = GetGuildInfo("player")
         local unitGuild, _, _, unitRealm = GetGuildInfo(unit)
-        if playerGuild == unitGuild and playerRealm == unitRealm then
+        if playerGuild ~= nil and playerGuild == unitGuild and playerRealm == unitRealm then
           return s.colors.guild
         end
       end
