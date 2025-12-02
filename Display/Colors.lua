@@ -108,7 +108,10 @@ function addonTable.Display.GetColor(settings, unit)
         elseif threat == 1 or threat == 2 then
           return s.colors.transition
         elseif (role == roleType.Tank and threat == 3) or (role ~= roleType.Tank and (threat == 0 or threat == nil)) then
-          return s.colors.safe
+          -- When user chooses to ignore the 'good' (safe) color, fall through to next rule instead of returning
+          if not s.ignoreGoodThreat then
+            return s.colors.safe
+          end
         elseif role == roleType.Tank and (threat == 0 or threat == nil) and DoesOtherTankHaveAggro(unit) then
           return s.colors.offtank
         end

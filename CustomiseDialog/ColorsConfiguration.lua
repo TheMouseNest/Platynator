@@ -82,6 +82,8 @@ addonTable.CustomiseDialog.ColorsConfig = {
       },
       instancesOnly = false,
       combatOnly = true,
+      -- When true, the "safe"/"good" threat color is ignored so the next color in the auto-color hierarchy is used
+      ignoreGoodThreat = false,
     },
     entries = {
       {
@@ -133,6 +135,16 @@ addonTable.CustomiseDialog.ColorsConfig = {
         end,
         getter = function(details)
           return details.combatOnly
+        end,
+      },
+      {
+        label = addonTable.Locales.IGNORE_GOOD_THREAT,
+        kind = "checkbox",
+        setter = function(details, value)
+          details.ignoreGoodThreat = value
+        end,
+        getter = function(details)
+          return details.ignoreGoodThreat
         end,
       },
       {
