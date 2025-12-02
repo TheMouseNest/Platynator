@@ -8,6 +8,264 @@ local function Announce()
   addonTable.CallbackRegistry:TriggerEvent("RefreshStateChange", {[addonTable.Constants.RefreshReason.Design] = true})
 end
 
+local function GetAutomaticColors(rootParent, lockedElements)
+  local selectedValue = ""
+  local UpdateSelected
+
+  local container = CreateFrame("Frame", nil, rootParent)
+  container:SetAllPoints()
+
+  local colorsListContainer = CreateFrame("Frame", nil, container)
+
+  local inset = CreateFrame("Frame", nil, colorsListContainer, "InsetFrameTemplate")
+  inset:SetPoint("TOPLEFT")
+  inset:SetPoint("BOTTOMRIGHT", -15, 0)
+  --addonTable.Skins.AddFrame("InsetFrame", inset)
+  colorsListContainer.ScrollBox = CreateFrame("Frame", nil, colorsListContainer, "WowScrollBoxList")
+  colorsListContainer.ScrollBox:SetPoint("TOPLEFT", 1, -3)
+  colorsListContainer.ScrollBox:SetPoint("BOTTOMRIGHT", -15, 3)
+
+  local scrollView = CreateScrollBoxListLinearView()
+  scrollView:SetElementExtent(40)
+  scrollView:SetElementInitializer("Button", function(frame, elementData)
+    if not frame.initialized then
+      frame.initialized = true
+      frame:SetNormalFontObject(GameFontHighlight)
+      frame:SetHighlightAtlas("Options_List_Hover")
+      frame.selectedTexture = frame:CreateTexture(nil, "ARTWORK")
+      frame.selectedTexture:SetAllPoints(true)
+      frame.selectedTexture:Hide()
+      frame.selectedTexture:SetAtlas("Options_List_Active")
+      frame:SetScript("OnClick", function(self, button)
+        UpdateSelected(self.value)
+      end)
+      frame:SetText(" ")
+      frame:GetFontString():SetWordWrap(false)
+      frame.shiftUp = CreateFrame("Button", nil, frame)
+      frame.shiftUp:SetSize(16, 20)
+      frame.shiftUp:SetNormalAtlas("bag-arrow")
+      frame.shiftUp:GetNormalTexture():SetRotation(- math.pi / 2)
+      frame.shiftUp:GetNormalTexture():SetSize(16, 10)
+      frame.shiftUp:SetScript("OnEnter", function()
+        frame.shiftUp:GetNormalTexture():SetAlpha(0.5)
+      end)
+      frame.shiftUp:SetScript("OnLeave", function()
+        frame.shiftUp:GetNormalTexture():SetAlpha(1)
+      end)
+      frame.shiftDown = CreateFrame("Button", nil, frame)
+      frame.shiftDown:SetSize(16, 20)
+      frame.shiftDown:SetNormalAtlas("bag-arrow")
+      frame.shiftDown:GetNormalTexture():SetRotation(math.pi / 2)
+      frame.shiftDown:GetNormalTexture():SetSize(16, 10)
+      frame.shiftDown:SetPoint("RIGHT", -5, 2)
+      frame.shiftDown:SetScript("OnEnter", function()
+        frame.shiftDown:GetNormalTexture():SetAlpha(0.5)
+      end)
+      frame.shiftDown:SetScript("OnLeave", function()
+        frame.shiftDown:GetNormalTexture():SetAlpha(1)
+      end)
+      frame.shiftUp:SetPoint("RIGHT", frame.shiftDown, "LEFT", -2, 0)
+
+      frame.shiftUp:SetScript("OnClick", function()
+        UpdateSelected(frame.value)
+        if frame.index > 1 then
+          local old = container.details[frame.index - 1]
+          if lockedElements[old.kind] then
+            return
+          end
+          container.details[frame.index - 1] = container.details[frame.index]
+          container.details[frame.index] = old
+          Announce()
+        end
+      end)
+
+      frame.shiftDown:SetScript("OnClick", function()
+        UpdateSelected(frame.value)
+        if frame.index < #container.details then
+          local old = container.details[frame.index + 1]
+          if lockedElements[old.kind] then
+            return
+          end
+          container.details[frame.index + 1] = container.details[frame.index]
+          container.details[frame.index] = old
+          Announce()
+        end
+      end)
+    end
+    frame.value = elementData.value
+    frame.index = elementData.index
+    frame.selectedTexture:SetShown(frame.value == selectedValue)
+    frame.shiftUp:SetShown(not lockedElements[frame.value] and frame.index > 1 and not lockedElements[container.details[frame.index - 1].kind])
+    frame.shiftDown:SetShown(not lockedElements[frame.value] and frame.index < #container.details and not lockedElements[container.details[frame.index + 1].kind])
+    frame:SetText(elementData.label)
+    frame:GetFontString():SetPoint("RIGHT", -8, 0)
+    frame:GetFontString():SetPoint("LEFT", 20, 0)
+    frame:GetFontString():SetJustifyH("LEFT")
+  end)
+
+  local colorsDropdown = CreateFrame("DropdownButton", nil, colorsListContainer, "WowStyle1DropdownTemplate")
+  colorsDropdown:SetWidth(250)
+  colorsDropdown:SetPoint("LEFT")
+  colorsDropdown:SetPoint("RIGHT")
+  colorsDropdown:SetPoint("TOP", colorsListContainer, "BOTTOM", 0, -5)
+  colorsDropdown:SetupMenu(function(menu, rootDescription)
+    if not container.details then
+      return
+    end
+    local seen = {}
+    for _, entry in ipairs(container.details) do
+      seen[entry.kind] = true
+    end
+    for _, kind in ipairs(addonTable.CustomiseDialog.ColorsConfigOrder) do
+      if not seen[kind] then
+        local details = addonTable.CustomiseDialog.ColorsConfig[kind]
+        rootDescription:CreateButton(details.label, function()
+          table.insert(container.details, 1, CopyTable(details.default))
+          Announce()
+        end)
+      end
+    end
+  end)
+  colorsDropdown:SetDefaultText(addonTable.Locales.ADD_COLORS)
+
+  colorsListContainer.ScrollBar = CreateFrame("EventFrame", nil, colorsListContainer, "MinimalScrollBar")
+  colorsListContainer.ScrollBar:SetPoint("TOPRIGHT")
+  colorsListContainer.ScrollBar:SetPoint("BOTTOMRIGHT")
+  ScrollUtil.InitScrollBoxListWithScrollBar(colorsListContainer.ScrollBox, colorsListContainer.ScrollBar, scrollView)
+  --addonTable.Skins.AddFrame("TrimScrollBar", colorsListContainer.ScrollBar)
+
+  colorsListContainer:SetPoint("TOPLEFT", 20, 0)
+  colorsListContainer:SetSize(200, 350)
+
+  local optionsContainer = CreateFrame("Frame", nil, container)
+  optionsContainer:SetPoint("TOPLEFT", colorsListContainer, "TOPRIGHT", 10, 0)
+  optionsContainer:SetPoint("BOTTOMRIGHT", container)
+
+  local configsByKind = {}
+  for kind, colorDetails in pairs(addonTable.CustomiseDialog.ColorsConfig) do
+    local allFrames = {}
+    local yOffset = 0
+    local parent = CreateFrame("Frame", nil, optionsContainer)
+    parent:SetAllPoints()
+
+    for _, e in ipairs(colorDetails.entries) do
+      local frame
+      local function Setter(value)
+        if not parent.details then
+          return
+        end
+        local oldValue = e.getter(parent.details)
+        e.setter(parent.details, value)
+        if oldValue ~= e.getter(parent.details) then
+          Announce()
+        end
+      end
+      local function Getter(value)
+        if not parent.details then
+          return
+        end
+        return e.getter(parent.details)
+      end
+
+      if e.kind == "checkbox" then
+        frame = addonTable.CustomiseDialog.Components.GetCheckbox(parent, e.label, -30, Setter)
+      elseif e.kind == "colorPicker" then
+        frame = addonTable.CustomiseDialog.Components.GetColorPicker(parent, e.label, -30, Setter)
+      end
+
+      if frame then
+        frame.kind = e.kind
+        frame.Getter = Getter
+        if #allFrames == 0 then
+          frame:SetPoint("TOP", 0, yOffset)
+        else
+          frame:SetPoint("TOP", allFrames[#allFrames], "BOTTOM", 0, yOffset)
+        end
+        table.insert(allFrames, frame)
+        yOffset = 0
+      elseif e.kind == "spacer" then
+        yOffset = -30
+      end
+    end
+
+    if not lockedElements[kind] then
+      local deleteButton = CreateFrame("Button", nil, parent, "UIPanelDynamicResizeButtonTemplate")
+      deleteButton:SetText(DELETE)
+      DynamicResizeButton_Resize(deleteButton)
+      if #allFrames > 0 then
+        deleteButton:SetPoint("BOTTOMRIGHT", -15, 0)
+      else
+        deleteButton:SetPoint("TOP", 0, -15)
+      end
+      deleteButton:SetScript("OnClick", function()
+        table.remove(container.details, tIndexOf(container.details, parent.details))
+        parent:Hide()
+        Announce()
+      end)
+    end
+
+    function parent:UpdateOptions(details)
+      parent.details = nil
+      for _, e in ipairs(details) do
+        if e.kind == kind then
+          parent.details = e
+          break
+        end
+      end
+      if not parent.details then
+        parent:Hide()
+        return
+      end
+      for _, f in ipairs(allFrames) do
+        f:SetValue(f.Getter())
+      end
+    end
+    parent:Hide()
+    configsByKind[kind] = parent
+  end
+
+  local function GetListing()
+    local listing = {}
+    for index, e in ipairs(container.details) do
+      table.insert(listing, {
+        label = addonTable.CustomiseDialog.ColorsConfig[e.kind].label,
+        value = e.kind,
+        index = index,
+      })
+    end
+
+    return listing
+  end
+
+  function container:SetValue(details)
+    container.details = details
+    colorsDropdown:GenerateMenu()
+
+    colorsListContainer.ScrollBox:SetDataProvider(CreateDataProvider(GetListing()))
+
+    for _, c in pairs(configsByKind) do
+      if c:IsShown() then
+        c:UpdateOptions(container.details)
+      end
+    end
+  end
+
+  UpdateSelected = function(value)
+    selectedValue = value
+    for kind, c in pairs(configsByKind) do
+      if kind == value then
+        c:Show()
+        c:UpdateOptions(container.details)
+      else
+        c:Hide()
+      end
+    end
+    colorsListContainer.ScrollBox:SetDataProvider(CreateDataProvider(GetListing()))
+  end
+
+  return container
+end
+
 function addonTable.CustomiseDialog.GetMainDesigner(parent)
   local container = CreateFrame("Frame", nil, parent)
 
@@ -445,11 +703,17 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
     for _, w in ipairs(widgets) do
       w:SetClampedToScreen(true)
       if w.kind == "bars" then
-        local defaultColor
-        if w.details.kind == "health" and w.details.aggroColoursOnHostiles then
-          defaultColor = w.details.colors.threat.warning
-        elseif w.details.kind == "health" then
-          defaultColor = w.details.colors.npc.hostile
+        local defaultColor = {1, 1, 1}
+        if w.details.kind == "health" then
+          for _, s in ipairs(w.details.autoColors) do
+            if s.kind == "threat" then
+              defaultColor = s.colors.warning
+              break
+            elseif s.kind == "reaction" then
+              defaultColor = s.colors.hostile
+              break
+            end
+          end
         else
           defaultColor = w.details.colors.normal
         end
@@ -484,6 +748,22 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
           if w.details.applyClassColors then
             local c = RAID_CLASS_COLORS["MAGE"]
             w.text:SetTextColor(c.r, c.g, c.b)
+          elseif w.details.autoColors then
+            for _, s in ipairs(w.details.autoColors) do
+              if s.kind == "classColors" then
+                local c = RAID_CLASS_COLORS["MAGE"]
+                w.text:SetTextColor(c.r, c.g, c.b)
+                break
+              elseif s.kind == "threat" then
+                local c = s.colors.warning
+                w.text:SetTextColor(c.r, c.g, c.b)
+                break
+              elseif s.kind == "reaction" then
+                local c = s.colors.hostile
+                w.text:SetTextColor(c.r, c.g, c.b)
+                break
+              end
+            end
           end
         elseif w.details.kind == "guild" then
           display = "Surge of Awesome"
@@ -619,7 +899,7 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
         yOffset = 0
         parent:SetPoint("LEFT")
         parent:SetPoint("RIGHT")
-        parent:SetHeight(300)
+        parent:SetHeight(350)
         parent:Hide()
         tab.kindSpecificSettings[kind] = parent
       end
@@ -662,7 +942,9 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
         elseif e.kind == "checkbox" then
           frame = addonTable.CustomiseDialog.Components.GetCheckbox(parent, e.label, 28, Setter)
         elseif e.kind == "colorPicker" then
-          frame = addonTable.CustomiseDialog.Components.GetColorPicker(parent, e.label, Setter)
+          frame = addonTable.CustomiseDialog.Components.GetColorPicker(parent, e.label, 28, Setter)
+        elseif e.kind == "autoColors" then
+          frame = GetAutomaticColors(parent, e.lockedElements)
         end
 
         if frame then

@@ -8,6 +8,9 @@ function addonTable.Display.LevelTextMixin:SetUnit(unit)
   if self.unit then
     self:RegisterUnitEvent("UNIT_LEVEL", self.unit)
     self:UpdateLevel()
+
+    self:SetColor(addonTable.Display.GetColor(self.details.autoColors, self.unit))
+    addonTable.Display.RegisterForColorEvents(self, self.details.autoColors)
   else
     self:Strip()
   end
@@ -16,6 +19,15 @@ end
 function addonTable.Display.LevelTextMixin:Strip()
   self.text:SetTextColor(self.details.color.r, self.details.color.g, self.details.color.b)
   self:UnregisterAllEvents()
+  addonTable.Display.UnregisterForColorEvents(self)
+end
+
+function addonTable.Display.LevelTextMixin:SetColor(c)
+  if c then
+    self.text:SetTextColor(c.r, c.g, c.b)
+  else
+    self.text:SetTextColor(self.details.color.r, self.details.color.g, self.details.color.b)
+  end
 end
 
 function addonTable.Display.LevelTextMixin:UpdateLevel()
@@ -25,46 +37,8 @@ function addonTable.Display.LevelTextMixin:UpdateLevel()
   else
     self.text:SetText(level)
   end
-
-  if not self.details.applyDifficultyColors then
-    return
-  end
-
-  local difficulty
-  if addonTable.Constants.IsRetail then
-    local rawDifficulty = C_PlayerInfo.GetContentDifficultyCreatureForPlayer(self.unit)
-    if rawDifficulty == Enum.RelativeContentDifficulty.Trivial then
-      difficulty =  "trivial"
-    elseif rawDifficulty == Enum.RelativeContentDifficulty.Easy then
-      difficulty = "standard"
-    elseif rawDifficulty == Enum.RelativeContentDifficulty.Fair then
-      difficulty = "difficult"
-    elseif rawDifficulty == Enum.RelativeContentDifficulty.Difficult then
-      difficulty = "verydifficult"
-    elseif rawDifficulty == Enum.RelativeContentDifficulty.Impossible then
-      difficulty = "impossible"
-    else
-      difficulty = "difficult"
-    end
-  else
-    local levelDiff = UnitLevel(self.unit) - UnitEffectiveLevel("player");
-    if levelDiff >= 5 then
-      difficulty = "impossible"
-    elseif levelDiff >= 3 then
-      difficulty = "verydifficult"
-    elseif levelDiff >= -2 then
-      difficulty = "difficult"
-    elseif -levelDiff <= GetQuestGreenRange() then
-      difficulty = "standard"
-    else
-      difficulty =  "trivial"
-    end
-  end
-
-  local color = self.details.colors.difficulty[difficulty]
-  self.text:SetTextColor(color.r, color.g, color.b)
 end
 
 function addonTable.Display.LevelTextMixin:OnEvent(eventName, ...)
-  self:UpdateLevel()
+  self:ColorEventHandler(eventName)
 end

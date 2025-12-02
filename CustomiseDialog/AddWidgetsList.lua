@@ -39,21 +39,12 @@ addonTable.CustomiseDialog.DesignWidgets = {
       marker = {
         asset = "none",
       },
-      colors = {
-        threat = {
-          safe = GetColor("0F96E6"),
-          transition = GetColor("FFA000"),
-          warning = GetColor("CC0000"),
-          offtank = GetColor("0FAAC8"),
-        },
-        npc = {
-          friendly = GetColor("00FF00"),
-          neutral = GetColor("FFFF00"),
-          unfriendly = GetColor("ff8100"),
-          hostile = GetColor("FF0000"),
-          tapped = GetColor("6E6E6E"),
-        },
-      },
+      autoColors = {
+        CopyTable(addonTable.CustomiseDialog.ColorsConfig["classColors"].default),
+        CopyTable(addonTable.CustomiseDialog.ColorsConfig["tapped"].default),
+        CopyTable(addonTable.CustomiseDialog.ColorsConfig["threat"].default),
+        CopyTable(addonTable.CustomiseDialog.ColorsConfig["reaction"].default),
+      }
     },
   },
   {
@@ -199,15 +190,7 @@ addonTable.CustomiseDialog.DesignWidgets = {
       align = "CENTER",
       shorten = "NONE",
       truncate = false,
-      applyClassColors = false,
-      colors = {
-        npc = {
-          friendly = GetColor("00FF00"),
-          neutral = GetColor("FFFF00"),
-          hostile = GetColor("FF0000"),
-          tapped = GetColor("6E6E6E"),
-        },
-      },
+      autoColors = {}
     },
   },
   {
@@ -274,16 +257,9 @@ addonTable.CustomiseDialog.DesignWidgets = {
       align = "CENTER",
       shorten = "NONE",
       truncate = false,
-      applyDifficultyColors = true,
-      colors = {
-        difficulty = {
-          impossible = {r = 1.00, g = 0.10, b = 0.10},
-          verydifficult = {r = 1.00, g = 0.50, b = 0.25},
-          difficult = {r = 1.00, g = 0.82, b = 0.00},
-          standard = {r = 0.25, g = 0.75, b = 0.25},
-          trivial = {r = 0.50, g = 0.50, b = 0.50},
-        }
-      },
+      autoColors = {
+        CopyTable(addonTable.CustomiseDialog.ColorsConfig["difficulty"].default),
+      }
     },
   },
   {
