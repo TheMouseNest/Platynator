@@ -97,7 +97,6 @@ end
 
 function addonTable.Display.CreatureTextMSPMixin:OnEvent(eventName, ...)
   if eventName == "UNIT_HEALTH" then
-    addonTable.Display.CreatureTextMixin.UpdateColor(self)
     if self.details.showWhenWowDoes then
       self:SetShown(UnitShouldDisplayName(self.unit))
     end
