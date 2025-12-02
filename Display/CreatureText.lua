@@ -43,7 +43,7 @@ function addonTable.Display.CreatureTextMixin:OnEvent(eventName, ...)
     if self.details.showWhenWowDoes then
       self:SetShown(UnitShouldDisplayName(self.unit))
     end
-  else
+  elseif eventName == "UNIT_NAME_UPDATE" then
     self.text:SetText(UnitName(self.unit))
   end
 
