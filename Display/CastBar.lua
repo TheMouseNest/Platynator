@@ -65,7 +65,8 @@ function addonTable.Display.CastBarMixin:ApplyColor(color)
   self.reverseStatusTexture:SetVertexColor(color.r, color.g, color.b)
   self.marker:SetVertexColor(color.r, color.g, color.b)
   if self.details.background.applyColor then
-    self.background:SetVertexColor(color.r, color.g, color.b)
+    local mod = self.details.background.color
+    self.background:SetVertexColor(mod.r * color.r, mod.r * color.g, mod.r * color.b, mod.a)
   end
 end
 

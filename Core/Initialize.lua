@@ -172,6 +172,11 @@ function addonTable.Core.UpgradeDesign(design)
     if bar.autoColors then
       UpdateAutoColors(bar.autoColors)
     end
+    if not bar.background.color then
+      bar.background.color = GetColor("FFFFFF")
+      bar.background.color.a = bar.background.alpha or 1
+      bar.background.alpha = nil
+    end
   end
 
   for _, text in ipairs(design.texts) do
