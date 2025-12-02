@@ -30,7 +30,10 @@ function addonTable.Display.CreatureTextMSPMixin:SetUnit(unit)
     self:RegisterUnitEvent("UNIT_NAME_UPDATE", self.unit)
     self:RegisterUnitEvent("UNIT_HEALTH", self.unit)
     self:UpdateName()
-    addonTable.Display.CreatureTextMixin.UpdateColor(self)
+
+    self:SetColor(addonTable.Display.GetColor(self.details.autoColors, self.unit))
+    addonTable.Display.RegisterForColorEvents(self, self.details.autoColors)
+
     if self.details.showWhenWowDoes then
       self:SetShown(UnitShouldDisplayName(self.unit))
     end
@@ -73,6 +76,13 @@ function addonTable.Display.CreatureTextMSPMixin:UnregisterCallback()
   end
 end
 
+function addonTable.Display.CreatureTextMSPMixin:SetColor(c)
+  if not c then
+    c = self.details.color
+  end
+  self.text:SetTextColor(c.r, c.g, c.b)
+end
+
 function addonTable.Display.CreatureTextMSPMixin:StripInternal()
   local c = self.details.color
   self.text:SetTextColor(c.r, c.g, c.b)
@@ -91,9 +101,11 @@ function addonTable.Display.CreatureTextMSPMixin:OnEvent(eventName, ...)
     if self.details.showWhenWowDoes then
       self:SetShown(UnitShouldDisplayName(self.unit))
     end
-  else
+  elseif eventName == "UNIT_NAME_UPDATE" then
     self:UpdateName()
   end
+
+  self:ColorEventHandler(eventName)
 end
 
 function addonTable.Display.CreatureTextMSPMixin:ApplyTarget()
