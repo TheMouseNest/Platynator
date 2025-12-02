@@ -104,6 +104,7 @@ L["CLASS_COLORS"] = "Class Colors"
 L["REACTION"] = "Reaction"
 L["ADD_COLORS"] = "Add Colors"
 L["DIFFICULTY"] = "Difficulty"
+L["AUTOMATIC"] = "Automatic"
 
 L["FOREGROUND"] = "Foreground"
 L["VISUAL"] = "Visual"

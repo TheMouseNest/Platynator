@@ -94,6 +94,21 @@ addonTable.CustomiseDialog.DesignWidgets = {
     special = "header",
   },
   {
+    name = addonTable.Locales.AUTOMATIC,
+    kind = "highlights",
+    default = {
+      anchor = {"TOPLEFT", -140, 50},
+      kind = "automatic",
+      asset = "wide/soft-glow",
+      color = GetColor("FFFFFF", 1),
+      autoColors = {
+        addonTable.CustomiseDialog.AddAlphaToColors(CopyTable(addonTable.CustomiseDialog.ColorsConfig["threat"].default)),
+      },
+      scale = 1,
+      layer = 3,
+    },
+  },
+  {
     name = addonTable.Locales.TARGETED,
     kind = "highlights",
     default = {
