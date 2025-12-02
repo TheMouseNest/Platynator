@@ -66,7 +66,7 @@ function addonTable.Display.CastBarMixin:ApplyColor(color)
   self.marker:SetVertexColor(color.r, color.g, color.b)
   if self.details.background.applyColor then
     local mod = self.details.background.color
-    self.background:SetVertexColor(mod.r * c.r, mod.r * c.g, mod.r * c.b, mod.a)
+    self.background:SetVertexColor(mod.r * color.r, mod.r * color.g, mod.r * color.b, mod.a)
   end
 end
 
