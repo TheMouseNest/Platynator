@@ -22,7 +22,7 @@ addonTable.CustomiseDialog.DesignWidgets = {
       aggroColoursOnHostiles = true,
       background = {
         asset = "wide/fade-bottom",
-        alpha = 0.5,
+        color = GetColor("FFFFFF", 1),
         applyColor = false,
       },
       foreground = {
@@ -63,7 +63,7 @@ addonTable.CustomiseDialog.DesignWidgets = {
       },
       background = {
         asset = "wide/fade-bottom",
-        alpha = 0.5,
+        color = GetColor("FFFFFF", 1),
         applyColor = false,
       },
       foreground = {

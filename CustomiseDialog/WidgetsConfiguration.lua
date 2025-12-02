@@ -183,15 +183,13 @@ addonTable.CustomiseDialog.WidgetsConfig = {
             end
           },
           {
-            label = addonTable.Locales.BACKGROUND_TRANSPARENCY,
-            kind = "slider",
-            min = 0, max = 100,
-            valuePattern = "%d%%",
+            label = addonTable.Locales.BACKGROUND_COLOR,
+            kind = "colorPicker",
             setter = function(details, value)
-              details.background.alpha = 1 - value / 100
+              details.background.color = value
             end,
             getter = function(details)
-              return (1 - details.background.alpha) * 100
+              return details.background.color
             end,
           },
           {
