@@ -721,7 +721,8 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
         w.statusBar:SetValue(70)
         w.statusBar:GetStatusBarTexture():SetVertexColor(defaultColor.r, defaultColor.g, defaultColor.b)
         if w.details.background.applyColor then
-          w.background:SetVertexColor(defaultColor.r, defaultColor.g, defaultColor.b)
+          local mod = w.details.background.color
+          w.background:SetVertexColor(defaultColor.r * mod.r, defaultColor.g * mod.g, defaultColor.b * mod.b, mod.a)
         end
         if w.details.kind == "health" then
           w.statusBarAbsorb:SetMinMaxValues(0, 100)
