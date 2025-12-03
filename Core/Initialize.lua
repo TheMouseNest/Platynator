@@ -52,9 +52,6 @@ function addonTable.Core.UpgradeDesign(design)
     if marker.layer == nil then
       marker.layer = 3
     end
-    if marker.asset == "normal/blizzard-rare-star" then
-      marker.asset = "normal/blizzard-rare-silver-star"
-    end
   end
   if not design.auras then
     design.auras = {
