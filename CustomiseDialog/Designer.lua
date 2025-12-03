@@ -120,7 +120,11 @@ local function GetAutomaticColors(rootParent, lockedElements)
       if not seen[kind] then
         local details = addonTable.CustomiseDialog.ColorsConfig[kind]
         rootDescription:CreateButton(details.label, function()
-          table.insert(container.details, 1, CopyTable(details.default))
+          if container.details.addAlpha then
+            table.insert(container.details, 1, CopyTable(details.default))
+          else
+            table.insert(container.details, 1, addonTable.CustomiseDialog.AddAlphaToColors(CopyTable(details.default)))
+          end
           Announce()
         end)
       end

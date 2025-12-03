@@ -776,6 +776,23 @@ addonTable.CustomiseDialog.WidgetsConfig = {
           },
         },
       },
+    },
+    ["automatic"] = {
+      {
+        label = addonTable.Locales.COLORS,
+        entries = {
+          {
+            label = "",
+            kind = "autoColors",
+            lockedElements = {},
+            addAlpha = true,
+            setter = function() end,
+            getter = function(details)
+              return details.autoColors
+            end,
+          },
+        },
+      },
     }
   },
   ["specialBars"] = {

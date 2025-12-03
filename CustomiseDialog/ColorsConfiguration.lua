@@ -6,6 +6,14 @@ local function GetColor(rgb)
   return {r = color.r, g = color.g, b = color.b}
 end
 
+function addonTable.CustomiseDialog.AddAlphaToColors(details)
+  for _, c in pairs(details.colors) do
+    c.a = 1
+  end
+
+  return details
+end
+
 addonTable.CustomiseDialog.ColorsConfig = {
   ["tapped"] = {
     label = addonTable.Locales.TAPPED,
