@@ -278,6 +278,7 @@ addonTable.CustomiseDialog.ColorsConfig = {
     label = addonTable.Locales.CLASS_COLORS,
     default = {
       kind = "classColors",
+      colors = {},
     },
     entries = {},
   },
