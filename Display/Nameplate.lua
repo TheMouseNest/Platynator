@@ -314,16 +314,17 @@ function addonTable.Display.NameplateMixin:UpdateVisual()
   local alpha = 1
   local isTarget = UnitIsUnit("target", self.unit)
   local ignoreScale = not issecretvalue or not issecretvalue(isTarget) or addonTable.Config.Get(addonTable.Config.Options.TARGET_BEHAVIOUR) ~= "enlarge"
+  local targetScale = addonTable.Config.Get(addonTable.Config.Options.TARGET_ENLARGE_SCALE) or 1.25
   self:SetIgnoreParentScale(ignoreScale)
   if ConvertSecret(isTarget) then
     local change = addonTable.Config.Get(addonTable.Config.Options.TARGET_BEHAVIOUR)
     if change == "enlarge" then
-      scale = 1.25
+      scale = targetScale
     end
   elseif self.casting then
     local change = addonTable.Config.Get(addonTable.Config.Options.TARGET_BEHAVIOUR)
     if change == "enlarge" then
-      scale = 1.1
+      scale = targetScale
     end
   else
     local change = addonTable.Config.Get(addonTable.Config.Options.NOT_TARGET_BEHAVIOUR)

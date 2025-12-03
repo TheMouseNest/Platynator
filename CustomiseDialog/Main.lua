@@ -224,6 +224,12 @@ local function SetupBehaviour(parent)
   end
   table.insert(allFrames, targetDropdown)
 
+  local targetScaleSlider = addonTable.CustomiseDialog.Components.GetSlider(container, addonTable.Locales.TARGET_SCALE, 80, 200, function(value) return addonTable.Locales.PERCENT_BRACKETS:format(value) end, function(value)
+    addonTable.Config.Set(addonTable.Config.Options.TARGET_ENLARGE_SCALE, value / 100)
+  end)
+  targetScaleSlider:SetPoint("TOP", allFrames[#allFrames], "BOTTOM", 0, 0)
+  table.insert(allFrames, targetScaleSlider)
+
   local notTargetDropdown = addonTable.CustomiseDialog.Components.GetBasicDropdown(container, addonTable.Locales.ON_NON_TARGET_AND_NON_CASTING, function(value)
     return addonTable.Config.Get(addonTable.Config.Options.NOT_TARGET_BEHAVIOUR) == value
   end, function(value)
@@ -404,6 +410,7 @@ local function SetupBehaviour(parent)
     clickRegionSliderY:SetValue(addonTable.Config.Get(addonTable.Config.Options.CLICK_REGION_SCALE_Y) * 100)
     stackRegionSliderX:SetValue(addonTable.Config.Get(addonTable.Config.Options.STACK_REGION_SCALE_X) * 100)
     stackRegionSliderY:SetValue(addonTable.Config.Get(addonTable.Config.Options.STACK_REGION_SCALE_Y) * 100)
+    targetScaleSlider:SetValue(addonTable.Config.Get(addonTable.Config.Options.TARGET_ENLARGE_SCALE) * 100)
 
     for _, f in ipairs(allFrames) do
       if f.SetValue then
