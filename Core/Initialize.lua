@@ -52,6 +52,9 @@ function addonTable.Core.UpgradeDesign(design)
     if marker.layer == nil then
       marker.layer = 3
     end
+    if marker.asset == "normal/blizzard-rare-star" then
+      marker.asset = "normal/blizzard-rare-silver-star"
+    end
   end
   if not design.auras then
     design.auras = {
@@ -106,7 +109,7 @@ function addonTable.Core.UpgradeDesign(design)
 
   local function UpdateAutoColors(autoColors)
     for _, ac in ipairs(autoColors) do
-      if ac.kind == "eliteType" then
+      if ac.kind == "eliteType" and ac.colors.trivial == nil then
         ac.colors.trivial = GetColor("b28e55")
       end
     end
