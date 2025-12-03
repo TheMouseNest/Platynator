@@ -679,7 +679,12 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
         end
       end)
       w:SetScript("OnLeave", function()
-        hoverMarker:Hide()
+        local foci = GetMouseFoci()
+        if foci[1] and foci[1]:GetParent() == preview then
+          foci[1]:GetScript("OnEnter")()
+        else
+          hoverMarker:Hide()
+        end
       end)
 
       w:SetMovable(true)
@@ -803,7 +808,12 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
         end
       end)
       w:SetScript("OnLeave", function()
-        hoverMarker:Hide()
+        local foci = GetMouseFoci()
+        if foci[1] and foci[1]:GetParent() == preview then
+          foci[1]:GetScript("OnEnter")()
+        else
+          hoverMarker:Hide()
+        end
       end)
 
       w:SetMovable(true)
