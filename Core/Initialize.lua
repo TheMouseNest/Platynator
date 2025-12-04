@@ -149,7 +149,15 @@ function addonTable.Core.UpgradeDesign(design)
         tapped.colors.tapped = bar.colors.tapped
       end
       local threat = CopyTable(addonTable.CustomiseDialog.ColorsConfig["threat"].default)
-      Mixin(threat.colors, bar.colors and bar.colors.threat or {})
+      local barThreat = bar.colors and bar.colors.threat or {}
+      -- Copy non-color top-level keys (e.g., instancesOnly, combatOnly, ignoreGoodThreat) so bar-level overrides are supported without clobbering the colors table
+      for k, v in pairs(barThreat) do
+        if k ~= "colors" then
+          threat[k] = v
+        end
+      end
+      -- Merge color tables
+      Mixin(threat.colors, barThreat.colors or {})
       local reaction = CopyTable(addonTable.CustomiseDialog.ColorsConfig["reaction"].default)
       Mixin(reaction.colors, bar.colors and bar.colors.npc or {})
       reaction.colors.tapped = nil
