@@ -26,13 +26,13 @@ function addonTable.Display.CastTargetTextMixin:Strip()
 end
 
 function addonTable.Display.CastTargetTextMixin:UpdateTarget()
-  if UnitSpellTargetName then
-    self.target = UnitSpellTargetName(self.unit)
-    self.targetClass = UnitSpellTargetClass(self.unit)
-  else
-    local _, spellInfo = UnitCastingInfo(self.unit)
-    local _, channelInfo = UnitChannelInfo(self.unit)
-    if spellInfo or channelInfo then
+  local _, spellInfo = UnitCastingInfo(self.unit)
+  local _, channelInfo = UnitChannelInfo(self.unit)
+  if spellInfo or channelInfo then
+    if UnitSpellTargetName then
+      self.target = UnitSpellTargetName(self.unit)
+      self.targetClass = UnitSpellTargetClass(self.unit)
+    else
       self.target = UnitName(self.unit .. "target")
       self.targetClass = UnitClassBase(self.unit .. "target")
     end
