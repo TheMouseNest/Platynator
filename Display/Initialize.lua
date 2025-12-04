@@ -122,6 +122,9 @@ function addonTable.Display.ManagerMixin:OnLoad()
     if nameplate and unit and unit ~= "preview" and (addonTable.Constants.IsMidnight or not UnitIsUnit("player", unit)) then
       nameplate.UnitFrame:SetParent(addonTable.hiddenFrame)
       nameplate.UnitFrame:UnregisterAllEvents()
+      if nameplate.UnitFrame.castBar then
+        nameplate.UnitFrame.castBar:UnregisterAllEvents()
+      end
       if addonTable.Constants.IsMidnight then
 
         nameplate.UnitFrame:RegisterUnitEvent("UNIT_AURA", unit)
