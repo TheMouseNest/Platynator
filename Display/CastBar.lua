@@ -41,7 +41,9 @@ function addonTable.Display.CastBarMixin:OnEvent(eventName, ...)
   if eventName == "UNIT_SPELLCAST_INTERRUPTED" then
     self.interrupted = true
     self:Show()
+    self:SetCannotInterrupt(false)
     self:ApplyColor(self.details.colors.interrupted)
+    self.statusBar:SetMinMaxValues(0, 1)
     self.timer = C_Timer.NewTimer(0.8, function()
       if self.interrupted then
         self.interrupted = nil
@@ -49,12 +51,15 @@ function addonTable.Display.CastBarMixin:OnEvent(eventName, ...)
       end
     end)
   elseif eventName == "UNIT_SPELLCAST_NOT_INTERRUPTIBLE" or eventName == "UNIT_SPELLCAST_INTERRUPTIBLE" then
-    self:UpdateColorForInterruptible()
-    C_Timer.After(0, function()
-      if self.unit then
-        self:UpdateColorForInterruptible()
-      end
-    end)
+    local name, text, texture, startTime, endTime, _, _, notInterruptible, _ = UnitCastingInfo(self.unit)
+    local isChanneled = false
+
+    if type(name) == "nil" then
+      name, text, texture, startTime, endTime, _, notInterruptible, _ = UnitChannelInfo(self.unit)
+      isChanneled = true
+    end
+
+    self:SetCannotInterrupt(notInterruptible)
   else
     self:ApplyCasting()
   end
@@ -68,24 +73,6 @@ function addonTable.Display.CastBarMixin:ApplyColor(color)
     local mod = self.details.background.color
     self.background:SetVertexColor(mod.r * color.r, mod.r * color.g, mod.r * color.b, mod.a)
   end
-end
-
-function addonTable.Display.CastBarMixin:UpdateColorForInterruptible(notInterruptible, isChanneled)
-  local color
-  if isChanneled then
-    color = self.details.colors.normalChannel
-  else
-    color = self.details.colors.normal
-  end
-  local nameplate = C_NamePlate.GetNamePlateForUnit(self.unit, issecure())
-  if nameplate and nameplate.UnitFrame and nameplate.UnitFrame.castBar then
-    if nameplate.UnitFrame.castBar.barType == "uninterruptable" then
-      color = self.details.colors.uninterruptable
-    end
-  elseif notInterruptible then
-    color = self.details.colors.uninterruptable
-  end
-  self:ApplyColor(color)
 end
 
 function addonTable.Display.CastBarMixin:ApplyCasting()
@@ -114,15 +101,15 @@ function addonTable.Display.CastBarMixin:ApplyCasting()
       self:SetScript("OnUpdate", function()
         self.statusBar:SetValue(GetTime() - startTime / 1000)
       end)
-      self.statusBar:SetValue(GetTime())
+      self.statusBar:SetValue(GetTime() - startTime / 1000)
     end
-    self:UpdateColorForInterruptible(notInterruptible, isChanneled)
-    C_Timer.After(0, function()
-      if self.unit then
-        self:UpdateColorForInterruptible(notInterruptible, isChanneled)
-      end
-    end)
-    self.statusBar:SetValue(GetTime() * 1000)
+
+    if isChanneled then
+      self:ApplyColor(self.details.colors.normalChannel)
+    else
+      self:ApplyColor(self.details.colors.normal)
+    end
+    self:SetCannotInterrupt(notInterruptible)
   else
     self:SetScript("OnUpdate", nil)
     if not self.interrupted then
