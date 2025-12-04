@@ -1,17 +1,6 @@
 ---@class addonTablePlatynator
 local addonTable = select(2, ...)
 
-local ConvertSecret
-if issecretvalue then
-  ConvertSecret = function(state)
-    return not issecretvalue(state) and state or false
-  end
-else
-  ConvertSecret = function(state)
-    return state
-  end
-end
-
 local specializationToPower = {
   --Rogue (all specs)
   [259] = Enum.PowerType.ComboPoints,
@@ -113,7 +102,7 @@ function addonTable.Display.PowerBarMixin:SetUnit(unit)
 end
 
 function addonTable.Display.PowerBarMixin:ApplyTarget()
-  if powerKind and ConvertSecret(UnitIsUnit("target", self.unit)) and UnitCanAttack("player", self.unit) then
+  if powerKind and UnitIsUnit("target", self.unit) and UnitCanAttack("player", self.unit) then
     self:Show()
 
     local maxPower = UnitPowerMax("player", powerKind)

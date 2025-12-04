@@ -291,21 +291,9 @@ function addonTable.Display.NameplateMixin:UpdateForFocus()
   self:UpdateVisual()
 end
 
-local ConvertSecret
-if issecretvalue then
-  ConvertSecret = function(state)
-    return not issecretvalue(state) and state or false
-  end
-else
-  ConvertSecret = function(state)
-    return state
-  end
-end
-
 function addonTable.Display.NameplateMixin:UpdateVisual()
   if not self.unit then
     self.overrideAlpha = 1
-    self:SetIgnoreParentScale(true)
     self:SetScale(addonTable.Config.Get(addonTable.Config.Options.GLOBAL_SCALE) * UIParent:GetEffectiveScale())
     return
   end
@@ -313,9 +301,7 @@ function addonTable.Display.NameplateMixin:UpdateVisual()
   local scale = 1
   local alpha = 1
   local isTarget = UnitIsUnit("target", self.unit)
-  local ignoreScale = not issecretvalue or not issecretvalue(isTarget) or addonTable.Config.Get(addonTable.Config.Options.TARGET_BEHAVIOUR) ~= "enlarge"
-  self:SetIgnoreParentScale(ignoreScale)
-  if ConvertSecret(isTarget) then
+  if isTarget then
     local change = addonTable.Config.Get(addonTable.Config.Options.TARGET_BEHAVIOUR)
     if change == "enlarge" then
       scale = 1.25
@@ -331,12 +317,7 @@ function addonTable.Display.NameplateMixin:UpdateVisual()
       alpha = 0.5
     end
   end
-  if ignoreScale then
-    self:SetScale(scale * addonTable.Config.Get(addonTable.Config.Options.GLOBAL_SCALE) * UIParent:GetEffectiveScale())
-    self.overrideScale = nil
-  else
-    self.overrideScale = scale * addonTable.Config.Get(addonTable.Config.Options.GLOBAL_SCALE)
-  end
+  self:SetScale(scale * addonTable.Config.Get(addonTable.Config.Options.GLOBAL_SCALE) * UIParent:GetEffectiveScale())
   self.overrideAlpha = alpha
 end
 
@@ -346,9 +327,9 @@ function addonTable.Display.NameplateMixin:UpdateSoftInteract()
   local doFriendIcon = GetCVarBool("SoftTargetIconFriend")
   local doInteractIcon = GetCVarBool("SoftTargetIconInteract")
   local hasCursorTexture = false
-  if ((doEnemyIcon and ConvertSecret(UnitIsUnit(self.interactUnit, "softenemy"))) or
-    (doFriendIcon and ConvertSecret(UnitIsUnit(self.interactUnit, "softfriend"))) or
-    (doInteractIcon and ConvertSecret(UnitIsUnit(self.interactUnit, "softinteract")))
+  if ((doEnemyIcon and UnitIsUnit(self.interactUnit, "softenemy")) or
+    (doFriendIcon and UnitIsUnit(self.interactUnit, "softfriend")) or
+    (doInteractIcon and UnitIsUnit(self.interactUnit, "softinteract"))
     ) then
     hasCursorTexture = SetUnitCursorTexture(self.SoftTargetIcon, self.interactUnit)
   end
