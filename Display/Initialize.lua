@@ -1,17 +1,6 @@
 ---@class addonTablePlatynator
 local addonTable = select(2, ...)
 
-local ConvertSecret
-if issecretvalue then
-  ConvertSecret = function(state)
-    return not issecretvalue(state) and state or false
-  end
-else
-  ConvertSecret = function(state)
-    return state
-  end
-end
-
 function addonTable.Display.Initialize()
 
   local manager = CreateFrame("Frame")
@@ -74,9 +63,6 @@ function addonTable.Display.ManagerMixin:OnLoad()
       display:SetAlpha(nameplate:GetAlpha() * display.overrideAlpha)
       if display:GetFrameLevel() ~= nameplate:GetFrameLevel() then
         display:SetFrameLevel(nameplate:GetFrameLevel())
-      end
-      if display.overrideScale then
-        display:SetScale(nameplate:GetScale() * display.overrideScale * self.overrideScaleModifier)
       end
     end
   end)
@@ -569,7 +555,7 @@ function addonTable.Display.ManagerMixin:OnEvent(eventName, ...)
     local unit
     for i = 1, 40 do
       unit = "nameplate" .. i
-      if ConvertSecret(UnitIsUnit(unit, "softinteract")) or ConvertSecret(UnitIsUnit(unit, "softenemy")) or ConvertSecret(UnitIsUnit(unit, "softfriend")) then
+      if UnitIsUnit(unit, "softinteract") or UnitIsUnit(unit, "softenemy") or UnitIsUnit(unit, "softfriend") then
         break
       else
         unit = nil
@@ -585,7 +571,7 @@ function addonTable.Display.ManagerMixin:OnEvent(eventName, ...)
     local unit
     for i = 1, 40 do
       unit = "nameplate" .. i
-      if ConvertSecret(UnitIsUnit(unit, "target")) then
+      if UnitIsUnit(unit, "target") then
         break
       else
         unit = nil

@@ -31,17 +31,6 @@ local function DoesOtherTankHaveAggro(unit)
   return IsInRaid() and UnitGroupRolesAssigned(unit .. "target") == "TANK"
 end
 
-local ConvertSecret
-if issecretvalue then
-  ConvertSecret = function(state)
-    return not issecretvalue(state) and state or false
-  end
-else
-  ConvertSecret = function(state)
-    return state
-  end
-end
-
 local levelTracker = CreateFrame("Frame")
 levelTracker:RegisterEvent("PLAYER_ENTERING_WORLD")
 levelTracker:SetScript("OnEvent", function()
@@ -90,11 +79,11 @@ function addonTable.Display.GetColor(settings, unit)
         return s.colors.tapped
       end
     elseif s.kind == "target" then
-      if ConvertSecret(UnitIsUnit("target", unit)) then
+      if UnitIsUnit("target", unit) then
         return s.colors.target
       end
     elseif s.kind == "focus" then
-      if ConvertSecret(UnitIsUnit("focus", unit)) then
+      if UnitIsUnit("focus", unit) then
         return s.colors.focus
       end
     elseif s.kind == "threat" then

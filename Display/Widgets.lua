@@ -172,12 +172,20 @@ function addonTable.Display.GetCastBar(frame, parent)
 
   function frame:SetReverseFill(value)
     if value then
-      frame.statusBar:SetFillStyle("REVERSE")
+      if addonTable.Constants.IsMidnight then
+        frame.statusBar:SetFillStyle(Enum.StatusBarFillStyle.Reverse)
+      else
+        frame.statusBar:SetFillStyle("REVERSE")
+      end
       frame.marker:SetPoint("CENTER", frame.reverseStatusTexture, "RIGHT")
       self.statusBar:GetStatusBarTexture():SetColorTexture(1, 1, 1, 0)
       self.reverseStatusTexture:Show()
     else
-      frame.statusBar:SetFillStyle("STANDARD")
+      if addonTable.Constants.IsMidnight then
+        frame.statusBar:SetFillStyle(Enum.StatusBarFillStyle.Standard)
+      else
+        frame.statusBar:SetFillStyle("STANDARD")
+      end
       frame.marker:SetPoint("CENTER", frame.statusBar:GetStatusBarTexture(), "RIGHT")
       self.statusBar:SetStatusBarTexture(addonTable.Assets.BarBackgrounds[frame.details.foreground.asset].file)
       self.reverseStatusTexture:Hide()
@@ -239,7 +247,11 @@ function addonTable.Display.GetPower(frame, parent)
 
   frame.background = CreateFrame("StatusBar", nil, frame)
   frame.background:SetAllPoints()
-  frame.background:SetFillStyle("CENTER")
+  if addonTable.Constants.IsMidnight then
+    frame.background:SetFillStyle(Enum.StatusBarFillStyle.Center)
+  else
+    frame.background:SetFillStyle("CENTER")
+  end
   frame.background:SetMinMaxValues(0, 7)
 
   frame.main = CreateFrame("StatusBar", nil, frame)
