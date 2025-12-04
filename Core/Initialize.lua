@@ -173,6 +173,9 @@ function addonTable.Core.UpgradeDesign(design)
       bar.background.color.a = bar.background.alpha or 1
       bar.background.alpha = nil
     end
+    if bar.kind == "cast" and bar.colors.normalChannel == nil then
+      bar.colors.normalChannel = GetColor("3ec637")
+    end
   end
 
   for _, text in ipairs(design.texts) do

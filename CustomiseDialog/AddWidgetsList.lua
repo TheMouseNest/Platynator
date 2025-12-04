@@ -55,6 +55,7 @@ addonTable.CustomiseDialog.DesignWidgets = {
       anchor = {"TOPLEFT", -140, 50},
       colors = {
         normal = GetColor("FC8C00"),
+        normalChannel = GetColor("3ec637"),
         uninterruptable = GetColor("83C0C3"),
         interrupted = CreateColorFromRGBHexString("FC36E0"),
       },

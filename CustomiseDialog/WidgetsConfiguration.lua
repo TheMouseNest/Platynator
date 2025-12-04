@@ -274,7 +274,17 @@ addonTable.CustomiseDialog.WidgetsConfig = {
             end,
           },
           {
-            label = addonTable.Locales.UNINTERRUPTABLE_CAST_COLOR,
+            label = addonTable.Locales.NORMAL_CHANNEL_COLOR,
+            kind = "colorPicker",
+            setter = function(details, value)
+              details.colors.normalChannel = value
+            end,
+            getter = function(details)
+              return details.colors.normalChannel
+            end,
+          },
+          {
+            label = addonTable.Locales.UNINTERRUPTABLE_COLOR,
             kind = "colorPicker",
             setter = function(details, value)
               details.colors.uninterruptable = value

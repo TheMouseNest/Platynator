@@ -70,8 +70,13 @@ function addonTable.Display.CastBarMixin:ApplyColor(color)
   end
 end
 
-function addonTable.Display.CastBarMixin:UpdateColorForInterruptible(notInterruptible)
-  local color = self.details.colors.normal
+function addonTable.Display.CastBarMixin:UpdateColorForInterruptible(notInterruptible, isChanneled)
+  local color
+  if isChanneled then
+    color = self.details.colors.normalChannel
+  else
+    color = self.details.colors.normal
+  end
   local nameplate = C_NamePlate.GetNamePlateForUnit(self.unit, issecure())
   if nameplate and nameplate.UnitFrame and nameplate.UnitFrame.castBar then
     if nameplate.UnitFrame.castBar.barType == "uninterruptable" then
@@ -111,10 +116,10 @@ function addonTable.Display.CastBarMixin:ApplyCasting()
       end)
       self.statusBar:SetValue(GetTime())
     end
-    self:UpdateColorForInterruptible(notInterruptible)
+    self:UpdateColorForInterruptible(notInterruptible, isChanneled)
     C_Timer.After(0, function()
       if self.unit then
-        self:UpdateColorForInterruptible(notInterruptible)
+        self:UpdateColorForInterruptible(notInterruptible, isChanneled)
       end
     end)
     self.statusBar:SetValue(GetTime() * 1000)
