@@ -5,7 +5,6 @@ addonTable.Display.AutomaticHighlightMixin = {}
 
 function addonTable.Display.AutomaticHighlightMixin:SetUnit(unit)
   self.unit = unit
-  self.highlight:SetChecked(false)
   if self.unit then
     self:SetColor(addonTable.Display.GetColor(self.details.autoColors, self.unit))
     addonTable.Display.RegisterForColorEvents(self, self.details.autoColors)
@@ -15,15 +14,15 @@ function addonTable.Display.AutomaticHighlightMixin:SetUnit(unit)
 end
 
 function addonTable.Display.AutomaticHighlightMixin:Strip()
-  self.highlight:GetCheckedTexture():SetVertexColor(1, 1, 1, 1)
+  self.highlight:SetVertexColor(1, 1, 1, 1)
   self:UnregisterAllEvents()
   addonTable.Display.UnregisterForColorEvents(self)
 end
 
 function addonTable.Display.AutomaticHighlightMixin:SetColor(c)
-  self.highlight:SetChecked(c ~= nil)
+  self:SetShown(c ~= nil)
   if c then
-    self.highlight:GetCheckedTexture():SetVertexColor(c.r, c.g, c.b, c.a)
+    self.highlight:SetVertexColor(c.r, c.g, c.b, c.a)
   end
 end
 

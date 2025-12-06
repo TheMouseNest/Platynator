@@ -377,10 +377,8 @@ end
 function addonTable.Display.GetHighlight(frame, parent)
   frame = frame or CreateFrame("Frame", nil, parent or UIParent)
 
-  frame.highlight = CreateFrame("CheckButton", nil, frame)
+  frame.highlight = frame:CreateTexture()
   frame.highlight:SetAllPoints()
-  frame.highlight:Disable()
-  frame.highlight:EnableMouse(false)
 
   function frame:Init(details)
     ApplyAnchor(frame, details.anchor)
@@ -388,12 +386,12 @@ function addonTable.Display.GetHighlight(frame, parent)
     local highlightDetails = addonTable.Assets.Highlights[details.asset]
     frame.details = details
 
-    frame.highlight:SetCheckedTexture(highlightDetails.file)
-    frame.highlight:GetCheckedTexture():SetVertexColor(details.color.r, details.color.g, details.color.b, details.color.a)
+    frame.highlight:SetTexture(highlightDetails.file)
+    frame.highlight:SetVertexColor(details.color.r, details.color.g, details.color.b, details.color.a)
     frame:SetSize(highlightDetails.width * details.scale, highlightDetails.height * details.scale)
 
-    frame.highlight:GetCheckedTexture():SetSnapToPixelGrid(false)
-    frame.highlight:GetCheckedTexture():SetTexelSnappingBias(0)
+    frame.highlight:SetSnapToPixelGrid(false)
+    frame.highlight:SetTexelSnappingBias(0)
 
     if details.kind == "target" then
       Mixin(frame, addonTable.Display.TargetHighlightMixin)

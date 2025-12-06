@@ -814,7 +814,7 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
           w.marker:SetTexture(asset.preview)
         end
       elseif w.kind == "highlights" then
-        w.highlight:SetChecked(true)
+        w:Show(true)
       end
 
       w:SetScript("OnEnter", function()

@@ -5,7 +5,6 @@ addonTable.Display.TargetHighlightMixin = {}
 
 function addonTable.Display.TargetHighlightMixin:SetUnit(unit)
   self.unit = unit
-  self.highlight:SetChecked(false)
 end
 
 function addonTable.Display.TargetHighlightMixin:Strip()
@@ -13,5 +12,5 @@ function addonTable.Display.TargetHighlightMixin:Strip()
 end
 
 function addonTable.Display.TargetHighlightMixin:ApplyTarget()
-  self.highlight:SetChecked(UnitIsUnit("target", self.unit))
+  self:SetShown(UnitIsUnit("target", self.unit))
 end
