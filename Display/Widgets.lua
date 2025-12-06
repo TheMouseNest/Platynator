@@ -401,6 +401,8 @@ function addonTable.Display.GetHighlight(frame, parent)
       Mixin(frame, addonTable.Display.MouseoverHighlightMixin)
     elseif details.kind == "automatic" then
       Mixin(frame, addonTable.Display.AutomaticHighlightMixin)
+    elseif details.kind == "fixed" then
+      Mixin(frame, addonTable.Display.FixedHighlightMixin)
     else
       assert(false)
     end

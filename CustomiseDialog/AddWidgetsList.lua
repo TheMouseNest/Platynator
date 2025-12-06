@@ -146,6 +146,18 @@ addonTable.CustomiseDialog.DesignWidgets = {
     },
   },
   {
+    name = addonTable.Locales.FIXED,
+    kind = "highlights",
+    default = {
+      anchor = {"TOPLEFT", -140, 50},
+      kind = "fixed",
+      asset = "125/feathered",
+      color = GetColor("AAAAAA", 1),
+      scale = 1,
+      layer = 0,
+    },
+  },
+  {
     name = addonTable.Locales.AURAS,
     special = "header",
   },

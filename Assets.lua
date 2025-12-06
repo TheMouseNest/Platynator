@@ -239,6 +239,14 @@ addonTable.Assets.Highlights = {
 
   ["wide/arrows"] = {file = "Interface/AddOns/Platynator/Assets/%s/Highlights/arrows.png", width = 1230, height = 164, has4k = true, mode = mode.Percent100, tag = "arrows"},
   ["wide/double-arrows"] = {file = "Interface/AddOns/Platynator/Assets/%s/Highlights/double-arrows.png", width = 1351, height = 173, has4k = true, mode = mode.Percent100, tag = "arrows"},
+
+  ["200/feathered"] = {file = "Interface/AddOns/Platynator/Assets/%s/Highlights/feathered-200.png", width = 1000, height = 250, has4k = true, masked = true, mode = mode.Percent200, tag = "feathered"},
+  ["175/feathered"] = {file = "Interface/AddOns/Platynator/Assets/%s/Highlights/feathered-175.png", width = 1000, height = 219, has4k = true, masked = true, mode = mode.Percent175, tag = "feathered"},
+  ["150/feathered"] = {file = "Interface/AddOns/Platynator/Assets/%s/Highlights/feathered-150.png", width = 1000, height = 189, has4k = true, masked = true, mode = mode.Percent150, tag = "feathered"},
+  ["125/feathered"] = {file = "Interface/AddOns/Platynator/Assets/%s/Highlights/feathered-125.png", width = 1000, height = 157, has4k = true, masked = true, mode = mode.Percent125, tag = "feathered"},
+  ["100/feathered"] = {file = "Interface/AddOns/Platynator/Assets/%s/Highlights/feathered-100.png", width = 1000, height = 125, has4k = true, masked = true, mode = mode.Percent100, tag = "feathered"},
+  ["75/feathered"] = {file = "Interface/AddOns/Platynator/Assets/%s/Highlights/feathered-75.png", width = 1000, height = 94, has4k = true, masked = true, mode = mode.Percent75, tag = "feathered"},
+  ["50/feathered"] = {file = "Interface/AddOns/Platynator/Assets/%s/Highlights/feathered-50.png", width = 1000, height = 63, has4k = true, masked = true, mode = mode.Percent50, tag = "feathered"},
 }
 
 addonTable.Assets.BarPositionHighlights = {
