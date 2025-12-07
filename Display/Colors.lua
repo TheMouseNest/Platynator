@@ -31,14 +31,18 @@ local function DoesOtherTankHaveAggro(unit)
   return IsInRaid() and UnitGroupRolesAssigned(unit .. "target") == "TANK"
 end
 
-local levelTracker = CreateFrame("Frame")
-levelTracker:RegisterEvent("PLAYER_ENTERING_WORLD")
-levelTracker:SetScript("OnEvent", function()
-  if PLATYNATOR_LAST_INSTANCE == nil or IsInInstance() ~= PLATYNATOR_LAST_INSTANCE.inInstance or PLATYNATOR_LAST_INSTANCE.lastLFGInstanceID ~= select(10, GetInstanceInfo()) then
+local inRelevantInstance = false
+
+local instanceTracker = CreateFrame("Frame")
+instanceTracker:RegisterEvent("PLAYER_ENTERING_WORLD")
+instanceTracker:SetScript("OnEvent", function()
+  local _, instanceType = GetInstanceInfo()
+  inRelevantInstance = instanceType == "raid" or instanceType == "party" or instanceType == "arenas"
+  if PLATYNATOR_LAST_INSTANCE == nil or inRelevantInstance ~= PLATYNATOR_LAST_INSTANCE.inInstance or PLATYNATOR_LAST_INSTANCE.lastLFGInstanceID ~= select(10, GetInstanceInfo()) then
     PLATYNATOR_LAST_INSTANCE = {
       level = UnitEffectiveLevel("player"),
       lastLFGInstanceID = select(10, GetInstanceInfo()),
-      inInstance = IsInInstance(),
+      inInstance = inRelevantInstance,
     }
   end
 end)
@@ -89,8 +93,7 @@ function addonTable.Display.GetColor(settings, unit)
     elseif s.kind == "threat" then
       local threat = UnitThreatSituation("player", unit)
       local hostile = UnitCanAttack("player", unit) and UnitIsEnemy(unit, "player")
-      local instance = IsInInstance()
-      if (instance or not s.instancesOnly) and (threat or (hostile and not s.combatOnly)) then
+      if (inRelevantInstance or not s.instancesOnly) and (threat or (hostile and not s.combatOnly)) then
         local role = GetPlayerRole()
         if (role == roleType.Tank and (threat == 0 or threat == nil) and not DoesOtherTankHaveAggro(unit)) or (role ~= roleType.Tank and threat == 3) then
           return s.colors.warning
@@ -103,7 +106,7 @@ function addonTable.Display.GetColor(settings, unit)
         end
       end
     elseif s.kind == "eliteType" then
-      if IsInInstance() or not s.instancesOnly then
+      if inRelevantInstance or not s.instancesOnly then
         local classification = UnitClassification(unit)
         if classification == "elite" then
           local level = UnitEffectiveLevel(unit)
