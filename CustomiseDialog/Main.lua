@@ -137,11 +137,28 @@ local function SetupGeneral(parent)
     exportButton:SetText(addonTable.Locales.EXPORT)
     DynamicResizeButton_Resize(exportButton)
     exportButton:SetScript("OnClick", function()
-      local design = CopyTable(addonTable.Core.GetDesignByName(addonTable.Config.Get(addonTable.Config.Options.STYLE)))
-      design.addon = "Platynator"
-      design.version = 1
-      design.kind = "style"
-      addonTable.Dialogs.ShowCopy(C_EncodingUtil.SerializeJSON(design):gsub("%|%|", "|"):gsub("%|", "||"))
+      addonTable.Dialogs.ShowDualChoice(addonTable.Locales.WHAT_TO_EXPORT, addonTable.Locales.STYLE, addonTable.Locales.PROFILE,
+        function()
+          local design = CopyTable(addonTable.Core.GetDesignByName(addonTable.Config.Get(addonTable.Config.Options.STYLE)))
+          design.addon = "Platynator"
+          design.version = 1
+          design.kind = "style"
+          addonTable.Dialogs.ShowCopy(C_EncodingUtil.SerializeJSON(design):gsub("%|%|", "|"):gsub("%|", "||"))
+        end, function()
+          local designs = {}
+          for _, style in pairs(addonTable.Config.Get(addonTable.Config.Options.DESIGNS_ASSIGNED)) do
+            if not style:match("^_") then
+              designs[style] = CopyTable(addonTable.Core.GetDesignByName(style))
+            end
+          end
+          local options = addonTable.Config.DumpCurrentProfile()
+          options.designs = designs
+          options.addon = "Platynator"
+          options.version = 1
+          options.kind = "profile"
+          addonTable.Dialogs.ShowCopy(C_EncodingUtil.SerializeJSON(options):gsub("%|%|", "|"):gsub("%|", "||"))
+        end
+      )
     end)
     --addonTable.Skins.AddFrame("Button", exportButton)
 
@@ -151,10 +168,15 @@ local function SetupGeneral(parent)
     DynamicResizeButton_Resize(importButton)
     importButton:SetScript("OnClick", function()
       addonTable.CustomiseDialog.ShowImportDialog(function(text)
-        local import = C_EncodingUtil.DeserializeJSON(text)
+        local status, import = pcall(C_EncodingUtil.DeserializeJSON, text)
+        if not status or import.addon ~= "Platynator" then
+          addonTable.Dialogs.ShowAcknowledge(addonTable.Locales.INVALID_IMPORT)
+          return
+        end
         import.version = nil
         import.addon = nil
         if import.kind == nil or import.kind == "style" then
+          import.kind = nil
           addonTable.Core.UpgradeDesign(import)
           addonTable.Dialogs.ShowEditBox(addonTable.Locales.ENTER_THE_NEW_STYLE_NAME, OKAY, CANCEL, function(value)
             local designs = addonTable.Config.Get(addonTable.Config.Options.DESIGNS)
@@ -165,6 +187,32 @@ local function SetupGeneral(parent)
               addonTable.Config.Set(addonTable.Config.Options.STYLE, value)
             end
           end)
+        elseif import.kind == "profile" then
+          import.kind = nil
+          addonTable.Dialogs.ShowDualChoice(addonTable.Locales.OVERWRITE_CURRENT_PROFILE, addonTable.Locales.OVERWRITE, addonTable.Locales.MAKE_NEW,
+            function()
+              local oldDesigns = PLATYNATOR_CONFIG.Profiles[PLATYNATOR_CURRENT_PROFILE].designs
+              PLATYNATOR_CONFIG.Profiles[PLATYNATOR_CURRENT_PROFILE] = import
+              local designs = PLATYNATOR_CONFIG.Profiles[PLATYNATOR_CURRENT_PROFILE].designs
+              for key, design in pairs(oldDesigns) do
+                if designs[key] == nil then
+                  designs[key] = design
+                end
+              end
+              addonTable.Config.ChangeProfile(PLATYNATOR_CURRENT_PROFILE)
+            end,
+            function()
+              addonTable.Dialogs.ShowEditBox(addonTable.Locales.ENTER_THE_NEW_PROFILE_NAME, OKAY, CANCEL, function(value)
+                if PLATYNATOR_CONFIG.Profiles[value] == nil then
+                  addonTable.Config.MakeProfile(value, false)
+                  PLATYNATOR_CONFIG.Profiles[PLATYNATOR_CURRENT_PROFILE] = import
+                  addonTable.Config.ChangeProfile(PLATYNATOR_CURRENT_PROFILE)
+                else
+                  addonTable.Dialogs.ShowAcknowledge(addonTable.Locales.THAT_PROFILE_NAME_ALREADY_EXISTS)
+                end
+              end)
+            end
+          )
         end
       end)
     end)

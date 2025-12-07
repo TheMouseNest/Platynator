@@ -230,6 +230,10 @@ function addonTable.Config.DeleteProfile(profileName)
   PLATYNATOR_CONFIG.Profiles[profileName] = nil
 end
 
+function addonTable.Config.DumpCurrentProfile()
+  return CopyTable(PLATYNATOR_CONFIG.Profiles[PLATYNATOR_CURRENT_PROFILE])
+end
+
 function addonTable.Config.ChangeProfile(newProfileName)
   assert(tIndexOf(addonTable.Config.GetProfileNames(), newProfileName) ~= nil, "Invalid Profile")
 
