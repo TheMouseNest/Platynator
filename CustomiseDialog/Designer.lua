@@ -745,6 +745,9 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
         else
           defaultColor = w.details.colors.normal
         end
+        if w.details.kind == "cast" then
+          w:SetCannotInterrupt(false)
+        end
         w.statusBar:SetMinMaxValues(0, 100)
         w.statusBar:SetValue(70)
         w.statusBar:GetStatusBarTexture():SetVertexColor(defaultColor.r, defaultColor.g, defaultColor.b)

@@ -249,19 +249,17 @@ function addonTable.Display.GetCastBar(frame, parent)
     local foregroundDetails = addonTable.Assets.BarBackgrounds[details.foreground.asset]
     frame.reverseStatusTexture:Hide()
     frame.reverseStatusTexture:SetTexture(foregroundDetails.file)
-    frame.reverseStatusTexture:SetHeight(foregroundDetails.height)
+    frame.reverseStatusTexture:SetHeight(frame:GetHeight())
     frame.reverseStatusTexture:SetPoint("RIGHT", frame.statusBar:GetStatusBarTexture(), "LEFT")
     frame.reverseStatusTexture:SetHorizTile(true)
 
     frame.cannotInterruptStatusTexture:SetTexture(foregroundDetails.file)
-    frame.cannotInterruptStatusTexture:SetHeight(foregroundDetails.height)
     frame.cannotInterruptStatusTexture:SetAllPoints(frame.statusBar:GetStatusBarTexture())
     frame.cannotInterruptStatusTexture:SetHorizTile(true)
     frame.cannotInterruptStatusTexture:SetVertexColor(details.colors.uninterruptable.r, details.colors.uninterruptable.g, details.colors.uninterruptable.b)
 
-    frame.cannotInterruptReverseStatusTexture:SetScale(details.scale)
     frame.cannotInterruptReverseStatusTexture:SetTexture(foregroundDetails.file)
-    frame.cannotInterruptReverseStatusTexture:SetHeight(foregroundDetails.height)
+    frame.cannotInterruptReverseStatusTexture:SetHeight(frame:GetHeight())
     frame.cannotInterruptReverseStatusTexture:SetPoint("RIGHT", frame.statusBar:GetStatusBarTexture(), "LEFT")
     frame.cannotInterruptReverseStatusTexture:SetHorizTile(true)
     frame.cannotInterruptReverseStatusTexture:SetVertexColor(details.colors.uninterruptable.r, details.colors.uninterruptable.g, details.colors.uninterruptable.b)
@@ -280,6 +278,12 @@ function addonTable.Display.GetCastBar(frame, parent)
     local backgroundDetails = addonTable.Assets.BarBackgrounds[details.background.asset]
     frame.cannotInterruptBackground:SetTexture(backgroundDetails.file)
     frame.cannotInterruptBackground:SetSize(frame:GetSize())
+    local mod = details.background.color
+    if details.background.applyColor then
+      frame.cannotInterruptBackground:SetVertexColor(mod.r * details.colors.uninterruptable.r, mod.g * details.colors.uninterruptable.g, mod.b * details.colors.uninterruptable.b, mod.a)
+    else
+      frame.cannotInterruptBackground:SetVertexColor(mod.r, mod.g, mod.b, mod.a)
+    end
 
     frame.reverseStatusTexture:RemoveMaskTexture(frame.mask)
     frame.cannotInterruptStatusTexture:RemoveMaskTexture(frame.mask)
