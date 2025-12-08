@@ -292,6 +292,22 @@ function addonTable.Display.ManagerMixin:UpdateStacking()
   end
 end
 
+local function GetCVarsForNameplates()
+  if C_CVar.GetCVarInfo("nameplateShowFriendlyPlayers") ~= nil then
+    return {
+      player = "nameplateShowFriendlyPlayers",
+      npc = "nameplateShowFriendlyNpcs",
+      enemy = "nameplateShowEnemies",
+    }
+  else
+    return {
+      player = "nameplateShowFriends",
+      npc = "nameplateShowFriendlyNPCs",
+      enemy = "nameplateShowEnemies",
+    }
+  end
+end
+
 function addonTable.Display.ManagerMixin:UpdateShowState()
   if InCombatLockdown() then
     self:RegisterCallback("PLAYER_REGEN_ENABLED")
@@ -300,20 +316,8 @@ function addonTable.Display.ManagerMixin:UpdateShowState()
 
   local currentShow = addonTable.Config.Get(addonTable.Config.Options.SHOW_NAMEPLATES)
 
-  local values
-  if C_CVar.GetCVarInfo("nameplateShowFriendlyPlayers") ~= nil then
-    values = {
-      player = "nameplateShowFriendlyPlayers",
-      npc = "nameplateShowFriendlyNpcs",
-      enemy = "nameplateShowEnemies",
-    }
-  else
-    values = {
-      player = "nameplateShowFriends",
-      npc = "nameplateShowFriendlyNPCs",
-      enemy = "nameplateShowEnemies",
-    }
-
+  local values = GetCVarsForNameplates()
+  if C_CVar.GetCVarInfo("nameplateShowFriends") ~= nil then -- Check for the entangled cvars for friendly npcs
     if self.oldShowState then
       if currentShow.npc and not currentShow.player and not self.oldShowState.player then
         currentShow.player = true
@@ -330,13 +334,42 @@ function addonTable.Display.ManagerMixin:UpdateShowState()
     local newValue = state and "1" or "0"
     C_CVar.SetCVar(values[key], newValue)
   end
+  self.hiddenFriendly = false
 
-  if IsInInstance() and not addonTable.Config.Get(addonTable.Config.Options.SHOW_FRIENDLY_IN_INSTANCES) then
-    local _, instanceType = GetInstanceInfo()
-    if instanceType == "raid" or instanceType == "party" or instanceType == "arenas" then
+  self:UpdateInstanceShowState()
+end
+
+function addonTable.Display.ManagerMixin:UpdateInstanceShowState()
+  -- Avoid changing nameplate visibility if we don't need to (so the Blizz hotkeys persist)
+  if addonTable.Config.Get(addonTable.Config.Options.SHOW_FRIENDLY_IN_INSTANCES) then
+    return
+  end
+
+  if InCombatLockdown() then
+    self:RegisterCallback("PLAYER_REGEN_ENABLED")
+    return
+  end
+
+  local values = GetCVarsForNameplates()
+  local currentShow = addonTable.Config.Get(addonTable.Config.Options.SHOW_NAMEPLATES)
+
+  local _, instanceType = GetInstanceInfo()
+  if not self.hiddenFriendly and (instanceType == "raid" or instanceType == "party" or instanceType == "arenas") then
+    if currentShow.player then
       C_CVar.SetCVar(values.player, "0")
+    end
+    if currentShow.npc then
       C_CVar.SetCVar(values.npc, "0")
     end
+    self.hiddenFriendly = true
+  elseif self.hiddenFriendly then
+    if currentShow.player then
+      C_CVar.SetCVar(values.player, "1")
+    end
+    if currentShow.npc then
+      C_CVar.SetCVar(values.npc, "1")
+    end
+    self.hiddenFriendly = false
   end
 end
 
@@ -610,7 +643,7 @@ function addonTable.Display.ManagerMixin:OnEvent(eventName, ...)
       self:ImportNameplateScaleModifier()
     end)
   elseif eventName == "PLAYER_ENTERING_WORLD" then
-    self:UpdateShowState()
+    self:UpdateInstanceShowState()
     self:UpdateNamePlateSize()
     C_Timer.After(0, function()
       self:ImportNameplateScaleModifier(true)
