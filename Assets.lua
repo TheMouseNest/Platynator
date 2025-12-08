@@ -239,6 +239,9 @@ addonTable.Assets.Highlights = {
 
   ["wide/arrows"] = {file = "Interface/AddOns/Platynator/Assets/%s/Highlights/arrows.png", width = 1230, height = 164, has4k = true, mode = mode.Percent100, tag = "arrows"},
   ["wide/double-arrows"] = {file = "Interface/AddOns/Platynator/Assets/%s/Highlights/double-arrows.png", width = 1351, height = 173, has4k = true, mode = mode.Percent100, tag = "arrows"},
+  ["normal/double-arrows-down"] = {file = "Interface/AddOns/Platynator/Assets/%s/Highlights/double-arrows-down.png", width = 173, height = 153, has4k = true, mode = mode.Percent100, tag = "arrows"},
+  ["normal/solid-arrows"] = {file = "Interface/AddOns/Platynator/Assets/%s/Highlights/arrows-solid.png", width = 1265, height = 173, has4k = true, mode = mode.Percent100, tag = "arrows"},
+  ["normal/solid-arrow-down"] = {file = "Interface/AddOns/Platynator/Assets/%s/Highlights/arrow-solid-down.png", width = 207, height = 132, has4k = true, mode = mode.Percent100, tag = "arrows"},
 
   ["200/feathered"] = {file = "Interface/AddOns/Platynator/Assets/%s/Highlights/feathered-200.png", width = 1000, height = 250, has4k = true, masked = true, mode = mode.Percent200, tag = "feathered"},
   ["175/feathered"] = {file = "Interface/AddOns/Platynator/Assets/%s/Highlights/feathered-175.png", width = 1000, height = 219, has4k = true, masked = true, mode = mode.Percent175, tag = "feathered"},

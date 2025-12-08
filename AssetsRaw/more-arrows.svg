@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="60mm"
+   height="7.5mm"
+   viewBox="0 0 60 7.5"
+   version="1.1"
+   id="svg1"
+   inkscape:version="1.4.2 (ebf0e940d0, 2025-05-08)"
+   sodipodi:docname="more-arrows.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#000000"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="mm"
+     inkscape:zoom="2"
+     inkscape:cx="55.75"
+     inkscape:cy="7.5"
+     inkscape:window-width="2560"
+     inkscape:window-height="1366"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1" />
+  <defs
+     id="defs1">
+    <filter
+       style="color-interpolation-filters:sRGB;"
+       inkscape:label="Blur"
+       id="filter3"
+       x="-0.046913533"
+       y="-0.28963683"
+       width="1.0938271"
+       height="1.5792737">
+      <feGaussianBlur
+         stdDeviation="1 1"
+         result="blur"
+         id="feGaussianBlur3" />
+    </filter>
+    <filter
+       style="color-interpolation-filters:sRGB;"
+       inkscape:label="Feather"
+       id="filter14"
+       x="-0.04"
+       y="-0.32"
+       width="1.08"
+       height="1.64">
+      <feGaussianBlur
+         stdDeviation="1"
+         result="blur"
+         id="feGaussianBlur12" />
+      <feComposite
+         in="SourceGraphic"
+         in2="blur"
+         operator="atop"
+         result="composite1"
+         id="feComposite12" />
+      <feComposite
+         in2="composite1"
+         operator="in"
+         result="composite2"
+         id="feComposite13" />
+      <feComposite
+         in2="composite2"
+         operator="in"
+         result="composite3"
+         id="feComposite14" />
+    </filter>
+  </defs>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <path
+       id="rect1"
+       style="fill:#ffffff;stroke:#000000;stroke-width:0.417432;stroke-linecap:round;stroke-dasharray:none;stroke-opacity:1"
+       d="M -7.6566146,7.302385 -6.2216835,8.6497363 -1.6351669,3.766397 -1.6524239,3.75 -1.6351669,3.733603 -6.2216843,-1.1497365 -7.6566146,0.19761497 -4.3199465,3.7499971 Z"
+       inkscape:export-filename="arrows-solid.png"
+       inkscape:export-xdpi="423.33334"
+       inkscape:export-ydpi="423.33334" />
+    <path
+       id="rect1-9"
+       style="fill:#ffffff;stroke:#000000;stroke-width:0.417432;stroke-linecap:round;stroke-dasharray:none;stroke-opacity:1"
+       d="m 67.656615,0.19761547 -1.434932,-1.34735137 -4.586515,4.8833394 0.01726,0.016397 -0.01726,0.016397 4.586516,4.8833391 1.434931,-1.3473513 -3.336669,-3.552382 z"
+       inkscape:export-filename="arrow-down-solid.png"
+       inkscape:export-xdpi="423.33334"
+       inkscape:export-ydpi="423.33334" />
+    <g
+       id="g1"
+       transform="rotate(90,98.774413,13.924154)"
+       inkscape:export-filename="double-arrows-down.png"
+       inkscape:export-xdpi="423.33334"
+       inkscape:export-ydpi="423.33334">
+      <path
+         style="fill:#ffffff;stroke:#ffffff;stroke-width:0.4623;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1"
+         d="m 65.894569,99.137206 4.504153,3.788574 -4.504153,3.78858 2.675359,-3.78858 z"
+         id="path1"
+         sodipodi:nodetypes="ccccc"
+         inkscape:export-filename="arrow-highlight.png"
+         inkscape:export-xdpi="423.33334"
+         inkscape:export-ydpi="423.33334" />
+      <path
+         style="fill:#ffffff;stroke:#ffffff;stroke-width:0.565;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1"
+         d="m 61.751565,98.163277 3.63802,4.762503 -3.63802,4.96094 2.149741,-4.96094 z"
+         id="path1-3-2-6"
+         sodipodi:nodetypes="ccccc" />
+    </g>
+    <path
+       id="rect1-2"
+       style="fill:#ffffff;stroke:#000000;stroke-width:0.5;stroke-linecap:round;stroke-dasharray:none;stroke-opacity:1"
+       d="m 29.483877,-22.268466 -1.613855,1.718758 5.849255,5.493721 0.01964,-0.02067 0.01964,0.02067 5.849255,-5.493722 -1.613855,-1.718758 -4.255037,3.996656 z"
+       inkscape:export-filename="arrow-down-solid.png"
+       inkscape:export-xdpi="423.33334"
+       inkscape:export-ydpi="423.33334" />
+  </g>
+</svg>
