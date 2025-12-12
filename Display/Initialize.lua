@@ -141,6 +141,15 @@ function addonTable.Display.ManagerMixin:OnLoad()
             RelayoutAuras(list, self.DebuffFilter)
           end)
           hooksecurefunc(af.CrowdControlListFrame, "Layout", RelayoutAuras)
+          local locked = false
+          hooksecurefunc(nameplate.UnitFrame, "SetAlpha", function(UF)
+            if locked or UF:IsForbidden() then
+              return
+            end
+            locked = true
+            UF:SetAlpha(0)
+            locked = false
+          end)
         end
       end
       if nameplate.UnitFrame.WidgetContainer then
