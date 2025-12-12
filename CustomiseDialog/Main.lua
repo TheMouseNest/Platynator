@@ -464,6 +464,16 @@ local function SetupBehaviour(parent)
     end
   end)
 
+  local applyCvarsCheckbox = addonTable.CustomiseDialog.Components.GetCheckbox(container, addonTable.Locales.APPLY_OTHER_CVARS, 28, function(value)
+    if InCombatLockdown() then
+      return
+    end
+    addonTable.Config.Set(addonTable.Config.Options.APPLY_CVARS, value)
+  end)
+  applyCvarsCheckbox.option = addonTable.Config.Options.APPLY_CVARS
+  applyCvarsCheckbox:SetPoint("TOP", allFrames[#allFrames], "BOTTOM", 0, -30)
+  table.insert(allFrames, applyCvarsCheckbox)
+
   return container
 end
 

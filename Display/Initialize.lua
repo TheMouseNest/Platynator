@@ -261,6 +261,8 @@ function addonTable.Display.ManagerMixin:OnLoad()
       end
       self:UpdateNamePlateSize()
       self:UpdateStacking()
+    elseif settingName == addonTable.Config.Options.APPLY_CVARS then
+      addonTable.Display.SetCVars()
     end
   end)
 end
@@ -416,9 +418,13 @@ end
 function addonTable.Display.ManagerMixin:UpdateStackingRegion(nameplate, unit)
   nameplate = nameplate or C_NamePlate.GetNamePlateForUnit(unit, issecure())
   local stackRegion = self.nameplateDisplays[unit].stackRegion
-  stackRegion:SetScale(addonTable.Config.Get(addonTable.Config.Options.GLOBAL_SCALE))
-  stackRegion:SetPoint("BOTTOMLEFT", nameplate, "CENTER", addonTable.StackRect.left * addonTable.Config.Get(addonTable.Config.Options.CLICK_REGION_SCALE_X), addonTable.StackRect.bottom * addonTable.Config.Get(addonTable.Config.Options.CLICK_REGION_SCALE_Y))
-  stackRegion:SetSize(addonTable.StackRect.width * addonTable.Config.Get(addonTable.Config.Options.STACK_REGION_SCALE_X), addonTable.StackRect.height * 1 * addonTable.Config.Get(addonTable.Config.Options.STACK_REGION_SCALE_Y))
+  local stackRegionVisual = self.nameplateDisplays[unit].stackRegionVisual
+  local newWidth = addonTable.StackRect.width * addonTable.Config.Get(addonTable.Config.Options.STACK_REGION_SCALE_X) * addonTable.Config.Get(addonTable.Config.Options.GLOBAL_SCALE)
+  local newHeight = addonTable.StackRect.height * addonTable.Config.Get(addonTable.Config.Options.STACK_REGION_SCALE_Y) * addonTable.Config.Get(addonTable.Config.Options.GLOBAL_SCALE)
+  stackRegion:SetPoint("BOTTOMLEFT", nameplate, "CENTER", addonTable.StackRect.left - (newWidth - addonTable.StackRect.width)/2, addonTable.StackRect.bottom - (newHeight - addonTable.StackRect.height)/2)
+  stackRegionVisual:SetPoint("BOTTOMLEFT", nameplate, "CENTER", addonTable.StackRect.left - (newWidth - addonTable.StackRect.width)/2, addonTable.StackRect.bottom - (newHeight - addonTable.StackRect.height)/2)
+  stackRegion:SetSize(newWidth, newHeight)
+  stackRegionVisual:SetSize(newWidth, newHeight)
 
   local stackFor = addonTable.Config.Get(addonTable.Config.Options.STACK_APPLIES_TO)
   local isMinor = UnitClassification(unit) == "minus"
@@ -452,7 +458,12 @@ function addonTable.Display.ManagerMixin:Install(unit, nameplate)
         newDisplay.stackRegion = nameplate:CreateTexture()
         newDisplay.stackRegion:SetIgnoreParentScale(true)
         newDisplay.stackRegion:SetColorTexture(1, 0, 0, 0)
+        newDisplay.stackRegionVisual = nameplate:CreateTexture()
+        newDisplay.stackRegionVisual:SetIgnoreParentScale(true)
+        newDisplay.stackRegionVisual:SetScale(addonTable.Config.Get(addonTable.Config.Options.GLOBAL_SCALE) * UIParent:GetScale())
+        newDisplay.stackRegionVisual:SetColorTexture(1, 1, 0, 0.5)
       end
+      newDisplay.stackRegion:SetIgnoreParentScale(true)
       newDisplay.stackRegion:SetParent(nameplate)
       self:UpdateStackingRegion(nameplate, unit)
     end
@@ -643,6 +654,7 @@ function addonTable.Display.ManagerMixin:OnEvent(eventName, ...)
       --SetCVarBitfield(NamePlateConstants.ENEMY_PLAYER_AURA_DISPLAY_CVAR, Enum.NamePlateEnemyPlayerAuraDisplay.LossOfControl, true);
       C_CVar.SetCVar("nameplateMinScale", 1)
     end
+    addonTable.Display.SetCVars()
 
     self:UpdateStacking()
     self:UpdateShowState()

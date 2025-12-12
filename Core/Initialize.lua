@@ -362,7 +362,7 @@ local function UpdateRect(design)
 
   for _, textDetails in ipairs(design.texts) do
     if textDetails.kind == "creatureName" then
-      local rect = GetRect({width = textDetails.widthLimit, height = 10}, textDetails.scale, textDetails.anchor)
+      local rect = GetRect({width = textDetails.widthLimit, height = 10 * textDetails.scale}, 1, textDetails.anchor)
       CacheSize(rect)
     end
   end

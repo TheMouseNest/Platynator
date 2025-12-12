@@ -1,0 +1,43 @@
+---@class addonTablePlatynator
+local addonTable = select(2, ...)
+
+local cvars = {
+  ["nameplateGlobalScale"] = "1",
+  ["NamePlateHorizontalScale"] = "1",
+  ["NamePlateVerticalScale"] = "1",
+  ["nameplateLargeBottomInset"] = "0.15",
+  ["nameplateLargerScale"] = "1",
+  ["nameplateMaxAlpha"] = "1",
+  ["nameplateMaxAlphaDistance"] = "40",
+  ["nameplateMinAlpha"] = "0.6",
+  ["nameplateMinAlphaDistance"] = "-100000",
+  ["nameplateMaxDistance"] = "60",
+  ["nameplateMaxScale"] = "1",
+  ["nameplateMinScale"] = "1",
+  ["nameplateMotionSpeed"] = "0.025",
+  ["nameplateOccludedAlphaMult"] = "0.4",
+  ["nameplatePlayerLargerScale"] = "1",
+  ["nameplateSelectedScale"] = "1.2",
+  ["nameplateShowAll"] = "1",
+  ["nameplateTargetBehindMaxDistance"] = "30",
+  ["nameplateTargetRadialPosition"] = "1",
+}
+
+if addonTable.Constants.IsMidnight then
+  cvars["nameplateStyle"] = "0"
+  cvars["nameplateOverlapH"] = "1"
+  cvars["nameplateOverlapV"] = "1"
+  cvars["nameplateShowCastBars"] = "0"
+  cvars["nameplateSize"] = "1"
+end
+
+function addonTable.Display.SetCVars()
+  if not addonTable.Config.Get(addonTable.Config.Options.APPLY_CVARS) then
+    return
+  end
+  for name, value in pairs(cvars) do
+    if C_CVar.GetCVarInfo(name) then
+      C_CVar.SetCVar(name, value)
+    end
+  end
+end

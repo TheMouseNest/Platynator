@@ -36,6 +36,7 @@ Core/Initialize.lua
 
 Display/Initialize.lua
 Display/Utilities.lua
+Display/CVars.lua
 Display/Colors.lua
 Display/Nameplate.lua
 Display/Auras.lua

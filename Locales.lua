@@ -131,6 +131,7 @@ L["STACKING_NAMEPLATES"] = "Stacking nameplates"
 L["SHOW_FRIENDLY_IN_INSTANCES"] = "Show friendly in instances"
 L["TAPPED"] = "Tapped"
 L["FOCUS"] = "Focus"
+L["APPLY_OTHER_CVARS"] = "Apply other CVars"
 
 L["ENTER_PROFILE_NAME"] = "Enter Profile Name:"
 L["PROFILES"] = "Profiles"

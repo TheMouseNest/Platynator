@@ -27,6 +27,8 @@ local settings = {
   SHOW_NAMEPLATES = {key = "show_nameplates", default = {npc = true, player = true, enemy = true}, refresh = {addonTable.Constants.RefreshReason.ShowBehaviour}},
   STACK_APPLIES_TO = {key = "stack_applies_to", default = {normal = true, minion = false, minor = false}},
   SHOW_FRIENDLY_IN_INSTANCES = {key = "show_friendly_in_instances", default = true, refresh = {addonTable.Constants.RefreshReason.ShowBehaviour}},
+
+  APPLY_CVARS = {key = "apply_cvars", default = true},
 }
 
 addonTable.Config.RefreshType = {}
