@@ -51,7 +51,7 @@ function addonTable.Display.HealthTextMixin:UpdateText()
     }
     local types = self.details.displayTypes 
     if UnitHealthPercent then -- Midnight APIs
-      values.percentage = string.format("%d%%", UnitHealthPercent(self.unit, true, true))
+      values.percentage = string.format("%d%%", UnitHealthPercent(self.unit, true, CurveConstants.ScaleTo100))
     else
       values.percentage = math.ceil(UnitHealth(self.unit, true)/UnitHealthMax(self.unit)*100) .. "%"
     end
