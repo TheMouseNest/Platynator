@@ -91,11 +91,13 @@ function addonTable.Display.CastBarMixin:ApplyCasting()
     self:Show()
 
     if issecretvalue and issecretvalue(startTime) then
-      self.statusBar:SetMinMaxValues(startTime, endTime)
-      self:SetScript("OnUpdate", function()
-        self.statusBar:SetValue(GetTime() * 1000)
-      end)
-      self.statusBar:SetValue(GetTime() * 1000)
+      local duration
+      if isChanneled then
+        duration = UnitChannelDuration(self.unit)
+      else
+        duration = UnitCastingDuration(self.unit)
+      end
+      self.statusBar:SetTimerDuration(duration)
     else
       self.statusBar:SetMinMaxValues(0, (endTime - startTime) / 1000)
       self:SetScript("OnUpdate", function()
