@@ -267,10 +267,10 @@ addonTable.CustomiseDialog.WidgetsConfig = {
             label = addonTable.Locales.NORMAL_CAST_COLOR,
             kind = "colorPicker",
             setter = function(details, value)
-              details.colors.normal = value
+              details.colors.normalCast = value
             end,
             getter = function(details)
-              return details.colors.normal
+              return details.colors.normalCast
             end,
           },
           {
@@ -284,16 +284,6 @@ addonTable.CustomiseDialog.WidgetsConfig = {
             end,
           },
           {
-            label = addonTable.Locales.UNINTERRUPTABLE_COLOR,
-            kind = "colorPicker",
-            setter = function(details, value)
-              details.colors.uninterruptable = value
-            end,
-            getter = function(details)
-              return details.colors.uninterruptable
-            end,
-          },
-          {
             label = addonTable.Locales.INTERRUPTED_CAST_COLOR,
             kind = "colorPicker",
             setter = function(details, value)
@@ -301,6 +291,40 @@ addonTable.CustomiseDialog.WidgetsConfig = {
             end,
             getter = function(details)
               return details.colors.interrupted
+            end,
+          },
+          { kind = "spacer" },
+          {
+            label = addonTable.Locales.IMPORTANT_CAST_COLOR,
+            kind = "colorPicker",
+            setter = function(details, value)
+              details.colors.importantCast = value
+            end,
+            getter = function(details)
+              return details.colors.importantCast
+            end,
+            hide = not C_Spell.IsSpellImportant,
+          },
+          {
+            label = addonTable.Locales.IMPORTANT_CHANNEL_COLOR,
+            kind = "colorPicker",
+            setter = function(details, value)
+              details.colors.importantChannel = value
+            end,
+            getter = function(details)
+              return details.colors.importantChannel
+            end,
+            hide = not C_Spell.IsSpellImportant,
+          },
+          { kind = "spacer" },
+          {
+            label = addonTable.Locales.UNINTERRUPTABLE_COLOR,
+            kind = "colorPicker",
+            setter = function(details, value)
+              details.colors.uninterruptable = value
+            end,
+            getter = function(details)
+              return details.colors.uninterruptable
             end,
           },
         },

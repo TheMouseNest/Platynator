@@ -54,8 +54,10 @@ addonTable.CustomiseDialog.DesignWidgets = {
       kind = "cast",
       anchor = {"TOPLEFT", -140, 50},
       colors = {
-        normal = GetColor("FC8C00"),
+        normalCast = GetColor("FC8C00"),
         normalChannel = GetColor("3ec637"),
+        importantCast = GetColor("ff1827"),
+        importantChannel = GetColor("0a43ff"),
         uninterruptable = GetColor("83C0C3"),
         interrupted = GetColor("FC36E0"),
       },

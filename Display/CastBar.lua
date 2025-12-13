@@ -3,6 +3,17 @@ local addonTable = select(2, ...)
 
 addonTable.Display.CastBarMixin = {}
 
+local ConvertColor = addonTable.Display.Utilities.ConvertColor
+
+function addonTable.Display.CastBarMixin:PostInit()
+  self.colors = {
+    importantCast = ConvertColor(self.details.colors.importantCast),
+    importantChannel = ConvertColor(self.details.colors.importantChannel),
+    normalCast = ConvertColor(self.details.colors.normalCast),
+    normalChannel = ConvertColor(self.details.colors.normalChannel),
+  }
+end
+
 function addonTable.Display.CastBarMixin:SetUnit(unit)
   self.unit = unit
   if self.unit then
@@ -75,12 +86,25 @@ function addonTable.Display.CastBarMixin:ApplyColor(color)
   end
 end
 
+function addonTable.Display.CastBarMixin:ApplyColorImportant(spellID, normalColor, importantColor)
+  local isImportant = C_Spell.IsSpellImportant(spellID)
+  self.statusBar:GetStatusBarTexture():SetVertexColorFromBoolean(isImportant, importantColor, normalColor)
+  self.reverseStatusTexture:SetVertexColorFromBoolean(isImportant, importantColor, normalColor)
+  self.marker:SetVertexColorFromBoolean(isImportant, importantColor, normalColor)
+  if self.details.background.applyColor then
+    local mod = self.details.background.color
+    local normal = CreateColor(mod.r * normalColor.r, mod.g * normalColor.g, mod.r * normalColor.b, mod.a)
+    local important = CreateColor(mod.r * importantColor.r, mod.g * importantColor.g, mod.r * importantColor.b, mod.a)
+    self.background:SetVertexColorFromBoolean(isImportant, important, normal)
+  end
+end
+
 function addonTable.Display.CastBarMixin:ApplyCasting()
-  local name, text, texture, startTime, endTime, _, _, notInterruptible, _ = UnitCastingInfo(self.unit)
+  local name, text, texture, startTime, endTime, _, _, notInterruptible, spellID = UnitCastingInfo(self.unit)
   local isChanneled = false
 
   if type(name) == "nil" then
-    name, text, texture, startTime, endTime, _, notInterruptible, _ = UnitChannelInfo(self.unit)
+    name, text, texture, startTime, endTime, _, notInterruptible, spellID = UnitChannelInfo(self.unit)
     isChanneled = true
   end
 
@@ -106,10 +130,18 @@ function addonTable.Display.CastBarMixin:ApplyCasting()
       self.statusBar:SetValue(GetTime() - startTime / 1000)
     end
 
-    if isChanneled then
-      self:ApplyColor(self.details.colors.normalChannel)
+    if C_Spell.IsSpellImportant then
+      if isChanneled then
+        self:ApplyColorImportant(spellID, self.colors.normalChannel, self.colors.importantChannel)
+      else
+        self:ApplyColorImportant(spellID, self.colors.normalCast, self.colors.importantCast)
+      end
     else
-      self:ApplyColor(self.details.colors.normal)
+      if isChanneled then
+        self:ApplyColor(self.details.colors.normalChannel)
+      else
+        self:ApplyColor(self.details.colors.normal)
+      end
     end
     self:SetCannotInterrupt(notInterruptible)
   else

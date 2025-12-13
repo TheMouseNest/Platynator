@@ -743,7 +743,7 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
             end
           end
         else
-          defaultColor = w.details.colors.normal
+          defaultColor = w.details.colors.normalCast
         end
         if w.details.kind == "cast" then
           w:SetCannotInterrupt(false)

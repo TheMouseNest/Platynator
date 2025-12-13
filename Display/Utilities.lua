@@ -54,3 +54,7 @@ function addonTable.Display.Utilities.GetUnitDifficulty(unit)
     end
   end
 end
+
+function addonTable.Display.Utilities.ConvertColor(color)
+  return CreateColor(color.r, color.g, color.b, color.a)
+end
