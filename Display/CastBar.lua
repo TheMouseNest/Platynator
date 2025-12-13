@@ -140,7 +140,7 @@ function addonTable.Display.CastBarMixin:ApplyCasting()
       if isChanneled then
         self:ApplyColor(self.details.colors.normalChannel)
       else
-        self:ApplyColor(self.details.colors.normal)
+        self:ApplyColor(self.details.colors.normalCast)
       end
     end
     self:SetCannotInterrupt(notInterruptible)
