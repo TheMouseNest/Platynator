@@ -7,11 +7,16 @@ function addonTable.Display.CastTargetTextMixin:SetUnit(unit)
   self.unit = unit
   if self.unit then
     self:RegisterUnitEvent("UNIT_SPELLCAST_START", self.unit)
-    self:RegisterUnitEvent("UNIT_SPELLCAST_CHANNEL_START", self.unit)
     self:RegisterUnitEvent("UNIT_SPELLCAST_STOP", self.unit)
-    self:RegisterUnitEvent("UNIT_SPELLCAST_FAILED", self.unit)
-    self:RegisterUnitEvent("UNIT_SPELLCAST_INTERRUPTED", self.unit)
+    self:RegisterUnitEvent("UNIT_SPELLCAST_DELAYED", self.unit)
+
+    self:RegisterUnitEvent("UNIT_SPELLCAST_CHANNEL_START", self.unit)
     self:RegisterUnitEvent("UNIT_SPELLCAST_CHANNEL_STOP", self.unit)
+    self:RegisterUnitEvent("UNIT_SPELLCAST_CHANNEL_UPDATE", self.unit)
+
+    self:RegisterUnitEvent("UNIT_SPELLCAST_INTERRUPTED", self.unit)
+    self:RegisterUnitEvent("UNIT_SPELLCAST_FAILED", self.unit)
+
     self:UpdateTarget()
     self:UpdateText()
   else
@@ -55,7 +60,13 @@ function addonTable.Display.CastTargetTextMixin:UpdateText()
 end
 
 function addonTable.Display.CastTargetTextMixin:OnEvent(eventName, ...)
-  if eventName ~= "UNIT_SPELLCAST_START" and eventName ~= "UNIT_SPELLCAST_CHANNEL_START" then
+  local name = UnitCastingInfo(self.unit)
+
+  if type(name) == "nil" then
+    name = UnitChannelInfo(self.unit)
+  end
+
+  if type(name) == "nil" then
     self.target = nil
     self.targetClass = nil
   else

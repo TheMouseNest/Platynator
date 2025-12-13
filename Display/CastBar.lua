@@ -20,9 +20,11 @@ function addonTable.Display.CastBarMixin:SetUnit(unit)
     self.interrupted = nil
     self:RegisterUnitEvent("UNIT_SPELLCAST_START", self.unit)
     self:RegisterUnitEvent("UNIT_SPELLCAST_STOP", self.unit)
+    self:RegisterUnitEvent("UNIT_SPELLCAST_DELAYED", self.unit)
 
     self:RegisterUnitEvent("UNIT_SPELLCAST_CHANNEL_START", self.unit)
     self:RegisterUnitEvent("UNIT_SPELLCAST_CHANNEL_STOP", self.unit)
+    self:RegisterUnitEvent("UNIT_SPELLCAST_CHANNEL_UPDATE", self.unit)
 
     self:RegisterUnitEvent("UNIT_SPELLCAST_INTERRUPTED", self.unit)
     self:RegisterUnitEvent("UNIT_SPELLCAST_FAILED", self.unit)
@@ -108,7 +110,7 @@ function addonTable.Display.CastBarMixin:ApplyCasting()
     isChanneled = true
   end
 
-  if type(startTime) ~= "nil" and type(endTime) ~= "nil" then
+  if type(name) ~= "nil" then
     self.interrupted = nil
 
     self:SetReverseFill(isChanneled)

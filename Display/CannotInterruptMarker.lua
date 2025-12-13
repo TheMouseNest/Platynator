@@ -8,12 +8,15 @@ function addonTable.Display.CannotInterruptMarkerMixin:SetUnit(unit)
   if self.unit then
     self:RegisterUnitEvent("UNIT_SPELLCAST_START", self.unit)
     self:RegisterUnitEvent("UNIT_SPELLCAST_STOP", self.unit)
+    self:RegisterUnitEvent("UNIT_SPELLCAST_DELAYED", self.unit)
 
     self:RegisterUnitEvent("UNIT_SPELLCAST_CHANNEL_START", self.unit)
     self:RegisterUnitEvent("UNIT_SPELLCAST_CHANNEL_STOP", self.unit)
+    self:RegisterUnitEvent("UNIT_SPELLCAST_CHANNEL_UPDATE", self.unit)
 
-    self:RegisterUnitEvent("UNIT_SPELLCAST_INTERRUPTIBLE", self.unit)
-    self:RegisterUnitEvent("UNIT_SPELLCAST_NOT_INTERRUPTIBLE", self.unit)
+    self:RegisterUnitEvent("UNIT_SPELLCAST_INTERRUPTED", self.unit)
+    self:RegisterUnitEvent("UNIT_SPELLCAST_FAILED", self.unit)
+
 
     self:ApplyCasting()
   else
