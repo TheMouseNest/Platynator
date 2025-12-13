@@ -27,6 +27,7 @@ function addonTable.Display.CastTimeLeftTextMixin:Strip()
     self.timer:Cancel()
     self.timer = nil
   end
+  self:SetScript("OnUpdate", nil)
   self.duration = nil
   self.endTime = nil
   self:UnregisterAllEvents()
