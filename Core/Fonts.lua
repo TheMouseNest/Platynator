@@ -102,7 +102,7 @@ function addonTable.Core.CreateFont(assetKey, outline, shadow, useDefault)
     for _, a in ipairs(alphabet) do
       local font = fontFamily:GetFontObjectForAlphabet(a)
       font:SetShadowOffset(1, -1)
-      font:SetShadowColor(0, 0, 0, 0.8)
+      font:SetShadowColor(0, 0, 0, 1)
     end
   end
 end
