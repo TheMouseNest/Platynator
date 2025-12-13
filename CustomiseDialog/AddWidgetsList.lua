@@ -275,6 +275,19 @@ addonTable.CustomiseDialog.DesignWidgets = {
     },
   },
   {
+    name = addonTable.Locales.CAST_TIME_LEFT,
+    kind = "texts",
+    default = {
+      kind = "castTimeLeft",
+      scale = 1,
+      layer = 2,
+      anchor = {"TOPLEFT", -140, 50},
+      color = GetColor("FFFFFF"),
+      align = "CENTER",
+      shorten = "NONE",
+    },
+  },
+  {
     name = addonTable.Locales.LEVEL,
     kind = "texts",
     default = {

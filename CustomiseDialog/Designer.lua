@@ -797,6 +797,8 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
               end
             end
           end
+        elseif w.details.kind == "castTimeLeft" then
+          w.text:SetText("1.2")
         elseif w.details.kind == "guild" then
           display = "Surge of Awesome"
         elseif w.details.kind == "castSpellName" then
