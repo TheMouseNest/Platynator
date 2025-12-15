@@ -1,6 +1,9 @@
 ---@class addonTablePlatynator
 local addonTable = select(2, ...)
 
+local specializationToDivisor = {
+  [267] = 10,
+}
 local specializationToPower = {
   --Rogue (all specs)
   [259] = Enum.PowerType.ComboPoints,
@@ -14,8 +17,8 @@ local specializationToPower = {
   [252] = Enum.PowerType.Runes,
   --Warlock (all specs)
   [265] = Enum.PowerType.SoulShards,
-  [266] = Enum.PowerType.SoulShards,
-  [267] = Enum.PowerType.SoulShards,
+  [266] = addonTable.Constants.IsRetail and Enum.PowerType.SoulShards or nil,
+  [267] = addonTable.Constants.IsMists and Enum.PowerType.BurningEmbers or Enum.PowerType.SoulShards,
   --Paladin (all specs)
   [65] = Enum.PowerType.HolyPower,
   [66] = Enum.PowerType.HolyPower,
@@ -67,7 +70,7 @@ local specializationToColor = {
   [1473] = CreateColorFromRGBHexString("37e5fc"),
 }
 
-local powerKind, powerColor
+local powerKind, powerColor, powerDivisor
 
 local specializationMonitor = CreateFrame("Frame")
 specializationMonitor:RegisterEvent("PLAYER_LOGIN")
@@ -90,6 +93,7 @@ specializationMonitor:SetScript("OnEvent", function()
 
   powerKind = specializationToPower[specID]
   powerColor = specializationToColor[specID]
+  powerDivisor = specializationToDivisor[specID]
 end)
 
 addonTable.Display.PowerBarMixin = {}
@@ -106,7 +110,6 @@ function addonTable.Display.PowerBarMixin:ApplyTarget()
     self:Show()
 
     local maxPower = UnitPowerMax("player", powerKind)
-    self.background:SetValue(maxPower)
     local currentPower = 0
     if powerKind == Enum.PowerType.Runes then
       for index = 1, addonTable.Constants.DeathKnightMaxRunes do
@@ -117,7 +120,12 @@ function addonTable.Display.PowerBarMixin:ApplyTarget()
       end
     else
       currentPower = UnitPower("player", powerKind)
+      if powerDivisor then
+        currentPower = currentPower / powerDivisor
+        maxPower = maxPower / powerDivisor
+      end
     end
+    self.background:SetValue(maxPower)
     self.main:SetValue(currentPower)
     self.main:GetStatusBarTexture():SetVertexColor(powerColor.r, powerColor.g, powerColor.b)
   else
