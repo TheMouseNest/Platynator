@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="3mm"
+   height="3mm"
+   viewBox="0 0 3 3"
+   version="1.1"
+   id="svg1"
+   inkscape:export-filename="slight-square-mask.png"
+   inkscape:export-xdpi="423.32999"
+   inkscape:export-ydpi="423.32999"
+   inkscape:version="1.4.2 (ebf0e940d0, 2025-05-08)"
+   sodipodi:docname="slight-bar-square.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#01262a"
+     inkscape:document-units="mm"
+     inkscape:zoom="16.722213"
+     inkscape:cx="19.554828"
+     inkscape:cy="5.5614649"
+     inkscape:window-width="2560"
+     inkscape:window-height="1366"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1" />
+  <defs
+     id="defs1">
+    <filter
+       style="color-interpolation-filters:sRGB"
+       inkscape:label="Greyscale"
+       id="filter4"
+       x="0"
+       y="0"
+       width="1"
+       height="1">
+      <feColorMatrix
+         values="0.21 0.72 0.072 -0.1 0 0.21 0.72 0.072 -0.1 0 0.21 0.72 0.072 -0.1 0 0 0 0 1 0 "
+         id="feColorMatrix4" />
+    </filter>
+    <filter
+       style="color-interpolation-filters:sRGB"
+       inkscape:label="Greyscale"
+       id="filter4-9"
+       x="0"
+       y="0"
+       width="1"
+       height="1">
+      <feColorMatrix
+         values="0.21 0.72 0.072 -0.1 0 0.21 0.72 0.072 -0.1 0 0.21 0.72 0.072 -0.1 0 0 0 0 1 0 "
+         id="feColorMatrix4-2"
+         result="fbSourceGraphic" />
+      <feColorMatrix
+         result="fbSourceGraphicAlpha"
+         in="fbSourceGraphic"
+         values="0 0 0 -1 0 0 0 0 -1 0 0 0 0 -1 0 0 0 0 1 0"
+         id="feColorMatrix1" />
+      <feColorMatrix
+         id="feColorMatrix2"
+         values="0.21 0.72 0.072 -0.2 0 0.21 0.72 0.072 -0.2 0 0.21 0.72 0.072 -0.2 0 0 0 0 1 0 "
+         in="fbSourceGraphic"
+         result="fbSourceGraphic" />
+      <feColorMatrix
+         result="fbSourceGraphicAlpha"
+         in="fbSourceGraphic"
+         values="0 0 0 -1 0 0 0 0 -1 0 0 0 0 -1 0 0 0 0 1 0"
+         id="feColorMatrix3" />
+      <feColorMatrix
+         id="feColorMatrix5"
+         values="0.21 0.72 0.072 -0.2 0 0.21 0.72 0.072 -0.2 0 0.21 0.72 0.072 -0.2 0 0 0 0 1 0 "
+         in="fbSourceGraphic" />
+    </filter>
+    <filter
+       style="color-interpolation-filters:sRGB"
+       inkscape:label="Greyscale"
+       id="filter4-7"
+       x="0"
+       y="0"
+       width="1"
+       height="1">
+      <feColorMatrix
+         values="0.21 0.72 0.072 -0.1 0 0.21 0.72 0.072 -0.1 0 0.21 0.72 0.072 -0.1 0 0 0 0 1 0 "
+         id="feColorMatrix4-0" />
+    </filter>
+    <filter
+       inkscape:label="Evanescent"
+       inkscape:menu="Blurs"
+       inkscape:menu-tooltip="Blur the contents of objects, preserving the outline and adding progressive transparency at edges"
+       style="color-interpolation-filters:sRGB"
+       id="filter203"
+       x="-0.10383211"
+       y="-0.91820209"
+       width="1.2076642"
+       height="2.8364042">
+      <feGaussianBlur
+         stdDeviation="2.5"
+         id="feGaussianBlur255" />
+    </filter>
+    <filter
+       style="color-interpolation-filters:sRGB"
+       inkscape:label="Greyscale"
+       id="filter4-92"
+       x="0"
+       y="0"
+       width="1"
+       height="1">
+      <feColorMatrix
+         values="0.21 0.72 0.072 -0.1 0 0.21 0.72 0.072 -0.1 0 0.21 0.72 0.072 -0.1 0 0 0 0 1 0 "
+         id="feColorMatrix4-28" />
+    </filter>
+  </defs>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-110.4657,-176.04862)">
+    <path
+       style="baseline-shift:baseline;display:inline;overflow:visible;opacity:1;vector-effect:none;fill:#ffffff;fill-opacity:1;enable-background:accumulate;stop-color:#000000;stop-opacity:1"
+       d="m 114.4262,176.44022 v 2.99857 h 2.99812 v -2.99857 z m 0.69922,0.69922 h 1.59968 v 1.60013 h -1.59968 z"
+       id="rect1"
+       sodipodi:nodetypes="cccccccccc" />
+    <rect
+       style="fill:#ffffff;fill-opacity:1;stroke-width:0.499999;stroke-linecap:round"
+       id="rect2"
+       width="2.3258734"
+       height="2.3416955"
+       x="110.80276"
+       y="176.37778" />
+  </g>
+</svg>

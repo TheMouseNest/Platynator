@@ -110,8 +110,8 @@ function addonTable.Core.UpgradeDesign(design)
 
   for _, bar in ipairs(design.bars) do
     if bar.kind == "health" and not bar.absorb then
-      local mode = addonTable.Assets.BarBorders[bar.border.asset].mode
-      local isNarrow = mode == addonTable.Assets.Mode.Percent50
+      local mode = (bar.border.height or addonTable.Assets.BarBordersLegacy[bar.border.asset].mode) * 100
+      local isNarrow = mode < 75
       bar.absorb = {asset = isNarrow and "narrow/blizzard-absorb" or "wide/blizzard-absorb", color = {r = 1, g = 1, b = 1}}
     end
     if bar.kind == "health" and not bar.absorb.color then
@@ -181,6 +181,24 @@ function addonTable.Core.UpgradeDesign(design)
       bar.colors.importantChannel = GetColor("0a43ff")
       bar.colors.normalCast = bar.colors.normal
       bar.colors.normal = nil
+    end
+    if not addonTable.Assets.BarBordersSliced[bar.border.asset] then
+      local size = addonTable.Assets.BarBordersLegacy[bar.border.asset].mode
+      bar.border.asset = addonTable.Assets.BarBordersLegacy[bar.border.asset].tag
+      bar.border.width = 1
+      bar.border.height = size ~= 50 and size/100 or 3.8/7.5
+
+      if bar.border.asset == "blizzard-classic-level" then
+        bar.border.asset = "blizzard-classic"
+        table.insert(design.highlights, {
+          kind = "fixed",
+          asset = "100/classic-level",
+          layer = bar.layer + 1,
+          scale = bar.scale,
+          color = CopyTable(bar.border.color),
+          anchor = {"RIGHT", 83 * bar.scale, 0}
+        })
+      end
     end
   end
 
@@ -346,19 +364,7 @@ local function UpdateRect(design)
 
   for index, barDetails in ipairs(design.bars) do
     if barDetails.kind == "health" then
-      local foregroundDetails = addonTable.Assets.BarBackgrounds[barDetails.foreground.asset]
-      local borderDetails = addonTable.Assets.BarBorders[barDetails.border.asset]
-      local borderMaskDetails = addonTable.Assets.BarMasks[barDetails.border.asset]
-      local width, height = foregroundDetails.width, foregroundDetails.height
-      if borderDetails.mode and borderDetails.mode ~= foregroundDetails.mode then
-        if borderMaskDetails and (borderMaskDetails.mode > 0 and borderMaskDetails.mode <= 100) then
-          width, height = math.min(borderMaskDetails.width, width), math.min(borderMaskDetails.height, height)
-        elseif borderMaskDetails then
-          width, height = math.min(borderMaskDetails.width, width), math.max(borderMaskDetails.height, height)
-        else
-          width, height = math.min(borderDetails.width, width), math.min(borderDetails.height, height)
-        end
-      end
+      local width, height = barDetails.border.width * addonTable.Assets.BarBordersSize.width, barDetails.border.height * addonTable.Assets.BarBordersSize.height
       local rect = GetRect({width = width, height = height}, barDetails.scale, barDetails.anchor)
       CacheSize(rect)
     end

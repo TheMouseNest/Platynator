@@ -99,32 +99,25 @@ addonTable.CustomiseDialog.WidgetsConfig = {
           {
             label = addonTable.Locales.HEIGHT,
             kind = "slider",
-            min = minSize, max = maxSize,
-            formatter = sizeFormatter,
+            min = 50, max = 200,
+            formatter = function(value) return value .. "%" end,
             setter = function(details, value)
-              local newMode = sizes[value] 
-
-              local asset = addonTable.Assets.BarBorders[details.border.asset]
-              local mode = asset.mode
-              local tag = asset.tag
-              for key, alt in pairs(addonTable.Assets.BarBorders) do
-                if alt.tag == tag and alt.mode == newMode then
-                  details.border.asset = key
-                  return
-                end
-              end
-
-              for key, alt in pairs(addonTable.Assets.BarBorders) do
-                if alt.tag == "soft" and alt.mode == newMode then
-                  details.border.asset = key
-                  break
-                end
-              end
+              details.border.height = value / 100
             end,
             getter = function(details)
-              local mode = addonTable.Assets.BarBorders[details.border.asset].mode
-              assert(mode)
-              return tIndexOf(sizes, mode) or 3
+              return details.border.height * 100
+            end,
+          },
+          {
+            label = addonTable.Locales.WIDTH,
+            kind = "slider",
+            min = 50, max = 200,
+            formatter = function(value) return value .. "%" end,
+            setter = function(details, value)
+              details.border.width = value / 100
+            end,
+            getter = function(details)
+              return details.border.width * 100
             end,
           },
         },
@@ -136,8 +129,7 @@ addonTable.CustomiseDialog.WidgetsConfig = {
             label = addonTable.Locales.BORDER,
             kind = "dropdown",
             getInitData = function(details)
-              local height = addonTable.Assets.BarBorders[details.border.asset].mode
-              return GetLabelsValues(addonTable.Assets.BarBorders, function(asset) return asset.mode == height end)
+              return GetLabelsValues(addonTable.Assets.BarBordersSliced)
             end,
             setter = function(details, value)
               details.border.asset = value

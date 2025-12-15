@@ -15,6 +15,8 @@ end
 
 local ApplyAnchor = addonTable.Display.ApplyAnchor
 
+local extraScale = 0.3
+
 local function InitBar(frame, details)
   if frame.Strip then
     frame:Strip()
@@ -22,39 +24,32 @@ local function InitBar(frame, details)
 
   ApplyAnchor(frame, details.anchor)
 
-  local foregroundDetails = addonTable.Assets.BarBackgrounds[details.foreground.asset]
-  local borderDetails = addonTable.Assets.BarBorders[details.border.asset]
-  local borderMaskDetails = addonTable.Assets.BarMasks[details.border.asset]
-  local width, height = foregroundDetails.width, foregroundDetails.height
-  if borderDetails.mode and borderDetails.mode ~= foregroundDetails.mode then
-    if borderMaskDetails and (borderMaskDetails.mode > 0 and borderMaskDetails.mode <= 100) then
-      width, height = math.min(borderMaskDetails.width, width), math.min(borderMaskDetails.height, height)
-    elseif borderMaskDetails then
-      width, height = math.min(borderMaskDetails.width, width), math.max(borderMaskDetails.height, height)
-    else
-      width, height = math.min(borderDetails.width, width), math.min(borderDetails.height, height)
-    end
-  end
-  frame:SetSize(width * details.scale, height * details.scale)
+  local width, height = details.border.width * addonTable.Assets.BarBordersSize.width * details.scale, details.border.height * addonTable.Assets.BarBordersSize.height * details.scale
+  local borderDetails = addonTable.Assets.BarBordersSliced[details.border.asset]
+  frame:SetSize(width, height)
 
+  local foregroundDetails = addonTable.Assets.BarBackgrounds[details.foreground.asset]
   frame.statusBar:SetStatusBarTexture(foregroundDetails.file)
   frame.statusBar:GetStatusBarTexture():SetDrawLayer("ARTWORK")
   frame.statusBar:GetStatusBarTexture():SetSnapToPixelGrid(false)
   frame.statusBar:GetStatusBarTexture():SetTexelSnappingBias(0)
+  frame.statusBar:SetScale(extraScale)
 
   local backgroundDetails = addonTable.Assets.BarBackgrounds[details.background.asset]
   frame.background:SetTexture(backgroundDetails.file)
-  frame.background:SetSize(width * details.scale, height * details.scale)
+  frame.background:SetAllPoints()
+  frame.background:SetScale(extraScale)
   frame.background:SetVertexColor(details.background.color.r, details.background.color.g, details.background.color.b, details.background.color.a)
-  local borderDetails = addonTable.Assets.BarBorders[details.border.asset]
   frame.border:SetTexture(borderDetails.file)
-  frame.border:SetSize(borderDetails.width * details.scale, borderDetails.height * details.scale)
+  frame.border:SetScale(extraScale)
+  frame.border:SetSize((width + borderDetails.extra / 2) * 1/extraScale, (height + borderDetails.extra / 2) * 1/extraScale)
   frame.border:SetVertexColor(details.border.color.r, details.border.color.g, details.border.color.b, details.border.color.a)
+  frame.border:SetTextureSliceMargins(borderDetails.width * borderDetails.margin, borderDetails.height * borderDetails.margin, borderDetails.width * borderDetails.margin, borderDetails.height * borderDetails.margin)
   if details.marker.asset ~= "none" then
     frame.marker:Show()
     local markerDetails = addonTable.Assets.BarPositionHighlights[details.marker.asset]
     frame.marker:SetTexture(markerDetails.file)
-    frame.marker:SetSize(markerDetails.width * details.scale, frame:GetHeight())
+    frame.marker:SetSize(markerDetails.width * details.scale * 1/extraScale, height * 1/extraScale)
     frame.marker:SetPoint("CENTER", frame.statusBar:GetStatusBarTexture(), "RIGHT")
   else
     frame.marker:Hide()
@@ -64,11 +59,12 @@ local function InitBar(frame, details)
   frame.background:RemoveMaskTexture(frame.mask)
   frame.marker:RemoveMaskTexture(frame.mask)
 
-  local maskInfo = addonTable.Assets.BarMasks[details.border.asset]
-  if maskInfo then
+  local maskDetails = addonTable.Assets.BarMasks[details.border.asset]
+  if maskDetails then
     frame.mask:SetBlockingLoadsRequested(true)
-    frame.mask:SetTexture(maskInfo.file, "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
-    frame.mask:SetSize(maskInfo.width * details.scale, maskInfo.height * details.scale)
+    frame.mask:SetSize(width, height)
+    frame.mask:SetTexture(maskDetails.file, "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
+    frame.mask:SetTextureSliceMargins(maskDetails.width * maskDetails.margin, maskDetails.height * maskDetails.margin * details.border.height, maskDetails.width * maskDetails.margin, maskDetails.height * maskDetails.margin * details.border.height)
     frame.mask:SetSnapToPixelGrid(false)
     frame.mask:SetTexelSnappingBias(0)
 
