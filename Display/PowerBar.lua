@@ -2,7 +2,7 @@
 local addonTable = select(2, ...)
 
 local specializationToDivisor = {
-  [265] = addonTable.Constants.IsMists and 100 or nil
+  [265] = addonTable.Constants.IsMists and 100 or nil,
   [267] = 10,
 }
 local specializationToPower = {
