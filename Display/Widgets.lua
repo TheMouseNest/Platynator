@@ -60,9 +60,10 @@ local function InitBar(frame, details)
   local maskDetails = addonTable.Assets.BarMasks[details.border.asset]
   if maskDetails then
     frame.mask:SetBlockingLoadsRequested(true)
-    frame.mask:SetSize(width * details.scale, height * details.scale)
+    frame.mask:SetSize(width, height)
+    frame.mask:SetScale(details.scale)
     frame.mask:SetTexture(maskDetails.file, "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
-    frame.mask:SetTextureSliceMargins(maskDetails.width * maskDetails.margin, maskDetails.height * maskDetails.margin * details.border.height, maskDetails.width * maskDetails.margin, maskDetails.height * maskDetails.margin * details.border.height)
+    frame.mask:SetTextureSliceMargins(maskDetails.width * maskDetails.margin, maskDetails.height * maskDetails.margin, maskDetails.width * maskDetails.margin, maskDetails.height * maskDetails.margin)
     frame.mask:SetSnapToPixelGrid(false)
     frame.mask:SetTexelSnappingBias(0)
 
@@ -110,6 +111,8 @@ function addonTable.Display.GetHealthBar(frame, parent)
   function frame:Init(details)
     InitBar(frame, details)
 
+    local borderDetails = addonTable.Assets.BarBordersSliced[details.border.asset]
+
     frame.statusBarAbsorb:SetFrameLevel(frame:GetFrameLevel() + 1)
     frame.statusBar:SetFrameLevel(frame:GetFrameLevel() + 2)
     borderHolder:SetFrameLevel(frame:GetFrameLevel() + 4)
@@ -117,8 +120,9 @@ function addonTable.Display.GetHealthBar(frame, parent)
     frame.statusBarAbsorb:SetStatusBarTexture(addonTable.Assets.BarBackgrounds[details.absorb.asset].file)
     frame.statusBarAbsorb:GetStatusBarTexture():SetVertexColor(details.absorb.color.r, details.absorb.color.g, details.absorb.color.b, details.absorb.color.a)
     frame.statusBarAbsorb:SetPoint("LEFT", frame.statusBar:GetStatusBarTexture(), "RIGHT")
-    frame.statusBarAbsorb:SetHeight(frame:GetHeight())
-    frame.statusBarAbsorb:SetWidth(frame:GetWidth())
+    frame.statusBarAbsorb:SetHeight(frame:GetHeight() * borderDetails.lowerScale)
+    frame.statusBarAbsorb:SetScale(1/borderDetails.lowerScale * details.scale)
+    frame.statusBarAbsorb:SetWidth(frame:GetWidth() * borderDetails.lowerScale)
     frame.statusBarAbsorb:GetStatusBarTexture():RemoveMaskTexture(frame.mask)
     frame.statusBarAbsorb:GetStatusBarTexture():SetSnapToPixelGrid(false)
     frame.statusBarAbsorb:GetStatusBarTexture():SetTexelSnappingBias(0)
@@ -237,13 +241,15 @@ function addonTable.Display.GetCastBar(frame, parent)
   function frame:Init(details)
     InitBar(frame, details)
 
+    local borderDetails = addonTable.Assets.BarBordersSliced[details.border.asset]
+
     frame.statusBar:SetFrameLevel(frame:GetFrameLevel() + 2)
     borderHolder:SetFrameLevel(frame:GetFrameLevel() + 4)
 
     local foregroundDetails = addonTable.Assets.BarBackgrounds[details.foreground.asset]
     frame.reverseStatusTexture:Hide()
     frame.reverseStatusTexture:SetTexture(foregroundDetails.file)
-    frame.reverseStatusTexture:SetHeight(frame:GetHeight())
+    frame.reverseStatusTexture:SetHeight(frame:GetHeight() * borderDetails.lowerScale)
     frame.reverseStatusTexture:SetPoint("RIGHT", frame.statusBar:GetStatusBarTexture(), "LEFT")
     frame.reverseStatusTexture:SetHorizTile(true)
 
@@ -253,7 +259,7 @@ function addonTable.Display.GetCastBar(frame, parent)
     frame.cannotInterruptStatusTexture:SetVertexColor(details.colors.uninterruptable.r, details.colors.uninterruptable.g, details.colors.uninterruptable.b)
 
     frame.cannotInterruptReverseStatusTexture:SetTexture(foregroundDetails.file)
-    frame.cannotInterruptReverseStatusTexture:SetHeight(frame:GetHeight())
+    frame.cannotInterruptReverseStatusTexture:SetHeight(frame:GetHeight() * borderDetails.lowerScale)
     frame.cannotInterruptReverseStatusTexture:SetPoint("RIGHT", frame.statusBar:GetStatusBarTexture(), "LEFT")
     frame.cannotInterruptReverseStatusTexture:SetHorizTile(true)
     frame.cannotInterruptReverseStatusTexture:SetVertexColor(details.colors.uninterruptable.r, details.colors.uninterruptable.g, details.colors.uninterruptable.b)
@@ -262,7 +268,7 @@ function addonTable.Display.GetCastBar(frame, parent)
       frame.cannotInterruptMarker:Show()
       local markerDetails = addonTable.Assets.BarPositionHighlights[details.marker.asset]
       frame.cannotInterruptMarker:SetTexture(markerDetails.file)
-      frame.cannotInterruptMarker:SetSize(markerDetails.width * details.scale, frame:GetHeight())
+      frame.cannotInterruptMarker:SetSize(markerDetails.width * borderDetails.lowerScale * details.scale, frame:GetHeight() * borderDetails.lowerScale)
       frame.cannotInterruptMarker:SetPoint("CENTER", frame.statusBar:GetStatusBarTexture(), "RIGHT")
       frame.cannotInterruptMarker:SetVertexColor(details.colors.uninterruptable.r, details.colors.uninterruptable.g, details.colors.uninterruptable.b)
     else
@@ -271,7 +277,7 @@ function addonTable.Display.GetCastBar(frame, parent)
 
     local backgroundDetails = addonTable.Assets.BarBackgrounds[details.background.asset]
     frame.cannotInterruptBackground:SetTexture(backgroundDetails.file)
-    frame.cannotInterruptBackground:SetSize(frame:GetSize())
+    frame.cannotInterruptBackground:SetAllPoints(frame.statusBar)
     local mod = details.background.color
     if details.background.applyColor then
       frame.cannotInterruptBackground:SetVertexColor(mod.r * details.colors.uninterruptable.r, mod.g * details.colors.uninterruptable.g, mod.b * details.colors.uninterruptable.b, mod.a)
