@@ -45,7 +45,7 @@ addonTable.Assets.BarBordersSliced = {
   ["slight"] = {file = "Interface/AddOns/Platynator/Assets/%s/BarBorders/slight-square.png", width = 20, height = 20, has4k = true, masked = true, tag = "slight", margin = 0.3, extra = 0, minSize = 50, modifier = 0.35},
   ["1px"] = {file = "Interface/AddOns/Platynator/Assets/%s/BarBorders/1px-square.png", width = 20, height = 20, has4k = true, masked = true, tag = "slight", margin = 0.3, extra = 0, minSize = 50, modifier = 0.35},
 
-  ["blizzard-health"] = {file = "Interface/AddOns/Platynator/Assets/%s/BarBorders/blizzard-health-square.png", width = 40, height = 40, has4k = true, masked = true, tag = "blizzard-health", margin = 0.3, extra = 0, minSize = 100, modifier = 0.4},
+  ["blizzard-health"] = {file = "Interface/AddOns/Platynator/Assets/%s/BarBorders/blizzard-health-square.png", width = 40, height = 40, has4k = true, masked = true, tag = "blizzard-health", margin = 0.4, extra = 0, minSize = 100, modifier = 0.4},
   ["blizzard-classic"] = {file = "Interface/AddOns/Platynator/Assets/%s/BarBorders/blizzard-classic-square.png", width = 40, height = 40, has4k = true, masked = true, tag = "blizzard-classic", margin = 0.4, extra = 0, minSize = 100, modifier = 0.4},
   ["blizzard-cast-bar"] = {file = "Interface/AddOns/Platynator/Assets/%s/BarBorders/blizzard-cast-bar-square.png", width = 32, height = 32, has4k = true, masked = true, tag = "blizzard-cast-bar", margin = 0.35, extra = 0, minSize = 50, modifier = 0.35},
 }
