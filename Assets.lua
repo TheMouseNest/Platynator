@@ -308,7 +308,7 @@ addonTable.Assets.SpecialEliteMarkers = {
 
 function addonTable.Assets.ApplyScale()
   local DPIScale = "DPI144"
-  if GetScreenDPIScale() < 1.4 then
+  if GetScreenDPIScale() < 1.4 or true then
     DPIScale = "DPI96"
   end
 
@@ -317,18 +317,29 @@ function addonTable.Assets.ApplyScale()
       if entry.has4k then
         entry.file = entry.file:format(DPIScale)
       end
-      if scale then
-        entry.width = entry.width / 8
-        entry.height = entry.height / 8
+      entry.width = entry.width / scale
+      entry.height = entry.height / scale
+      if entry.extra then
+        entry.extra = entry.extra / scale
       end
     end
   end
 
-  Iterate(addonTable.Assets.BarBordersSliced)
-  Iterate(addonTable.Assets.BarBackgrounds, true)
-  Iterate(addonTable.Assets.BarMasks)
-  Iterate(addonTable.Assets.Highlights, true)
-  Iterate(addonTable.Assets.BarPositionHighlights, true)
-  Iterate(addonTable.Assets.PowerBars, true)
-  Iterate(addonTable.Assets.Markers, true)
+  local lowerScale = 1
+  if DPIScale == "DPI96" then
+    lowerScale = 2
+  end
+  Iterate(addonTable.Assets.BarBordersSliced, lowerScale)
+  for _, entry in pairs(addonTable.Assets.BarBordersSliced) do
+    entry.lowerScale = 1 / lowerScale / 0.3
+  end
+  Iterate(addonTable.Assets.BarBackgrounds, 8)
+  Iterate(addonTable.Assets.BarMasks, lowerScale)
+  for _, entry in pairs(addonTable.Assets.BarMasks) do
+    entry.lowerScale = 1 / lowerScale / 0.3
+  end
+  Iterate(addonTable.Assets.Highlights, 8)
+  Iterate(addonTable.Assets.BarPositionHighlights, 8)
+  Iterate(addonTable.Assets.PowerBars, 8)
+  Iterate(addonTable.Assets.Markers, 8)
 end

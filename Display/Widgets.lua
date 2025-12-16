@@ -15,8 +15,6 @@ end
 
 local ApplyAnchor = addonTable.Display.ApplyAnchor
 
-local extraScale = 0.3
-
 local function InitBar(frame, details)
   if frame.Strip then
     frame:Strip()
@@ -33,23 +31,23 @@ local function InitBar(frame, details)
   frame.statusBar:GetStatusBarTexture():SetDrawLayer("ARTWORK")
   frame.statusBar:GetStatusBarTexture():SetSnapToPixelGrid(false)
   frame.statusBar:GetStatusBarTexture():SetTexelSnappingBias(0)
-  frame.statusBar:SetScale(extraScale)
+  frame.statusBar:SetScale(1/borderDetails.lowerScale)
 
   local backgroundDetails = addonTable.Assets.BarBackgrounds[details.background.asset]
   frame.background:SetTexture(backgroundDetails.file)
   frame.background:SetAllPoints()
-  frame.background:SetScale(extraScale)
+  frame.background:SetScale(1/borderDetails.lowerScale)
   frame.background:SetVertexColor(details.background.color.r, details.background.color.g, details.background.color.b, details.background.color.a)
   frame.border:SetTexture(borderDetails.file)
-  frame.border:SetScale(extraScale)
-  frame.border:SetSize((width + borderDetails.extra / 2) * 1/extraScale, (height + borderDetails.extra / 2) * 1/extraScale)
+  frame.border:SetScale(1/borderDetails.lowerScale)
+  frame.border:SetSize((width + borderDetails.extra / 2) * borderDetails.lowerScale, (height + borderDetails.extra / 2) * borderDetails.lowerScale)
   frame.border:SetVertexColor(details.border.color.r, details.border.color.g, details.border.color.b, details.border.color.a)
   frame.border:SetTextureSliceMargins(borderDetails.width * borderDetails.margin, borderDetails.height * borderDetails.margin, borderDetails.width * borderDetails.margin, borderDetails.height * borderDetails.margin)
   if details.marker.asset ~= "none" then
     frame.marker:Show()
     local markerDetails = addonTable.Assets.BarPositionHighlights[details.marker.asset]
     frame.marker:SetTexture(markerDetails.file)
-    frame.marker:SetSize(markerDetails.width * details.scale * 1/extraScale, height * 1/extraScale)
+    frame.marker:SetSize(markerDetails.width * details.scale * borderDetails.lowerScale, height * borderDetails.lowerScale)
     frame.marker:SetPoint("CENTER", frame.statusBar:GetStatusBarTexture(), "RIGHT")
   else
     frame.marker:Hide()
