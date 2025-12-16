@@ -99,7 +99,7 @@ addonTable.CustomiseDialog.WidgetsConfig = {
           {
             label = addonTable.Locales.HEIGHT,
             kind = "slider",
-            min = 50, max = 200,
+            min = 50, max = 300,
             formatter = function(value) return value .. "%" end,
             setter = function(details, value)
               details.border.height = value / 100
@@ -111,7 +111,7 @@ addonTable.CustomiseDialog.WidgetsConfig = {
           {
             label = addonTable.Locales.WIDTH,
             kind = "slider",
-            min = 50, max = 200,
+            min = 50, max = 300,
             formatter = function(value) return value .. "%" end,
             setter = function(details, value)
               details.border.width = value / 100

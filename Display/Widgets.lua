@@ -22,24 +22,24 @@ local function InitBar(frame, details)
 
   ApplyAnchor(frame, details.anchor)
 
-  local width, height = details.border.width * addonTable.Assets.BarBordersSize.width * details.scale, details.border.height * addonTable.Assets.BarBordersSize.height * details.scale
+  local width, height = details.border.width * addonTable.Assets.BarBordersSize.width, details.border.height * addonTable.Assets.BarBordersSize.height
   local borderDetails = addonTable.Assets.BarBordersSliced[details.border.asset]
-  frame:SetSize(width, height)
+  frame:SetSize(width * details.scale, height * details.scale)
 
   local foregroundDetails = addonTable.Assets.BarBackgrounds[details.foreground.asset]
   frame.statusBar:SetStatusBarTexture(foregroundDetails.file)
   frame.statusBar:GetStatusBarTexture():SetDrawLayer("ARTWORK")
   frame.statusBar:GetStatusBarTexture():SetSnapToPixelGrid(false)
   frame.statusBar:GetStatusBarTexture():SetTexelSnappingBias(0)
-  frame.statusBar:SetScale(1/borderDetails.lowerScale)
+  frame.statusBar:SetScale(1/borderDetails.lowerScale * details.scale)
 
   local backgroundDetails = addonTable.Assets.BarBackgrounds[details.background.asset]
   frame.background:SetTexture(backgroundDetails.file)
   frame.background:SetAllPoints()
-  frame.background:SetScale(1/borderDetails.lowerScale)
+  frame.background:SetScale(1/borderDetails.lowerScale * details.scale)
   frame.background:SetVertexColor(details.background.color.r, details.background.color.g, details.background.color.b, details.background.color.a)
   frame.border:SetTexture(borderDetails.file)
-  frame.border:SetScale(1/borderDetails.lowerScale)
+  frame.border:SetScale(1/borderDetails.lowerScale * details.scale)
   frame.border:SetSize((width + borderDetails.extra / 2) * borderDetails.lowerScale, (height + borderDetails.extra / 2) * borderDetails.lowerScale)
   frame.border:SetVertexColor(details.border.color.r, details.border.color.g, details.border.color.b, details.border.color.a)
   frame.border:SetTextureSliceMargins(borderDetails.width * borderDetails.margin, borderDetails.height * borderDetails.margin, borderDetails.width * borderDetails.margin, borderDetails.height * borderDetails.margin)
@@ -60,7 +60,7 @@ local function InitBar(frame, details)
   local maskDetails = addonTable.Assets.BarMasks[details.border.asset]
   if maskDetails then
     frame.mask:SetBlockingLoadsRequested(true)
-    frame.mask:SetSize(width, height)
+    frame.mask:SetSize(width * details.scale, height * details.scale)
     frame.mask:SetTexture(maskDetails.file, "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
     frame.mask:SetTextureSliceMargins(maskDetails.width * maskDetails.margin, maskDetails.height * maskDetails.margin * details.border.height, maskDetails.width * maskDetails.margin, maskDetails.height * maskDetails.margin * details.border.height)
     frame.mask:SetSnapToPixelGrid(false)
