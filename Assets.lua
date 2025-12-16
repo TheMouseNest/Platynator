@@ -308,7 +308,7 @@ addonTable.Assets.SpecialEliteMarkers = {
 
 function addonTable.Assets.ApplyScale()
   local DPIScale = "DPI144"
-  if GetScreenDPIScale() < 1.4 or true then
+  if GetScreenDPIScale() < 1.4 then
     DPIScale = "DPI96"
   end
 
