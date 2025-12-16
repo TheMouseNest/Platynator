@@ -110,9 +110,10 @@ function addonTable.Display.PowerBarMixin:ApplyTarget()
   if powerKind and UnitIsUnit("target", self.unit) and UnitCanAttack("player", self.unit) then
     self:Show()
 
-    local maxPower = UnitPowerMax("player", powerKind)
+    local maxPower
     local currentPower = 0
     if powerKind == Enum.PowerType.Runes then
+      maxPower = addonTable.Constants.DeathKnightMaxRunes
       for index = 1, addonTable.Constants.DeathKnightMaxRunes do
         local _, _, ready = GetRuneCooldown(index)
         if ready then
@@ -120,6 +121,7 @@ function addonTable.Display.PowerBarMixin:ApplyTarget()
         end
       end
     else
+      maxPower = UnitPowerMax("player", powerKind)
       currentPower = UnitPower("player", powerKind)
       if powerDivisor then
         currentPower = currentPower / powerDivisor
