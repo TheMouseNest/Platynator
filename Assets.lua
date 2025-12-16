@@ -45,8 +45,8 @@ addonTable.Assets.BarBordersSliced = {
   ["slight"] = {file = "Interface/AddOns/Platynator/Assets/%s/BarBorders/slight-square.png", width = 20, height = 20, has4k = true, masked = true, tag = "slight", margin = 0.3, extra = 0, minSize = 50},
   ["1px"] = {file = "Interface/AddOns/Platynator/Assets/%s/BarBorders/1px-square.png", width = 20, height = 20, has4k = true, masked = true, tag = "slight", margin = 0.3, extra = 0, minSize = 50},
 
-  ["blizzard-health"] = {file = "Interface/AddOns/Platynator/Assets/%s/BarBorders/blizzard-health-square.png", width = 40, height = 40, has4k = true, masked = true, tag = "blizzard-health", margin = 0.3, extra = 0, minSize = 100, scaleModifier = 0.7},
-  ["blizzard-classic"] = {file = "Interface/AddOns/Platynator/Assets/%s/BarBorders/blizzard-classic-square.png", width = 40, height = 40, has4k = true, masked = true, tag = "blizzard-classic", margin = 0.4, extra = 0, minSize = 100},
+  ["blizzard-health"] = {file = "Interface/AddOns/Platynator/Assets/%s/BarBorders/blizzard-health-square.png", width = 40, height = 40, has4k = true, masked = true, tag = "blizzard-health", margin = 0.3, extra = 0, minSize = 100, modifier = 0.4},
+  ["blizzard-classic"] = {file = "Interface/AddOns/Platynator/Assets/%s/BarBorders/blizzard-classic-square.png", width = 40, height = 40, has4k = true, masked = true, tag = "blizzard-classic", margin = 0.4, extra = 0, minSize = 100, modifier = 0.4},
   ["blizzard-cast-bar"] = {file = "Interface/AddOns/Platynator/Assets/%s/BarBorders/blizzard-cast-bar-square.png", width = 32, height = 32, has4k = true, masked = true, tag = "blizzard-cast-bar", margin = 0.35, extra = 0, minSize = 50},
 }
 
@@ -333,12 +333,12 @@ function addonTable.Assets.ApplyScale()
   end
   Iterate(addonTable.Assets.BarBordersSliced, lowerScale)
   for _, entry in pairs(addonTable.Assets.BarBordersSliced) do
-    entry.lowerScale = 1 / lowerScale / 0.3
+    entry.lowerScale = 1 / lowerScale / (entry.modifier or 0.3)
   end
   Iterate(addonTable.Assets.BarBackgrounds, 8)
   Iterate(addonTable.Assets.BarMasks, lowerScale)
   for _, entry in pairs(addonTable.Assets.BarMasks) do
-    entry.lowerScale = 1 / lowerScale / 0.3
+    entry.lowerScale = 1 / lowerScale / (entry.modifier or 0.3)
   end
   Iterate(addonTable.Assets.Highlights, 8)
   Iterate(addonTable.Assets.BarPositionHighlights, 8)
