@@ -132,16 +132,10 @@ function addonTable.Display.ManagerMixin:OnLoad()
       if addonTable.Constants.IsMidnight then
         nameplate.UnitFrame:RegisterUnitEvent("UNIT_AURA", unit)
         nameplate.UnitFrame.AurasFrame:SetParent(nameplate)
+        nameplate.UnitFrame.AurasFrame:SetAlpha(0)
         nameplate.UnitFrame.AurasFrame:SetIgnoreParentScale(true)
         if not self.HookedUFs[nameplate.UnitFrame] then
           self.HookedUFs[nameplate.UnitFrame] = true
-          local af = nameplate.UnitFrame.AurasFrame
-          hooksecurefunc(af.BuffListFrame, "Layout", RelayoutAuras)
-          hooksecurefunc(af.DebuffListFrame, "Layout", function(list)
-            RelayoutAuras(list, self.DebuffFilter)
-          end)
-          hooksecurefunc(af.CrowdControlListFrame, "Layout", RelayoutAuras)
-          local locked = false
           hooksecurefunc(nameplate.UnitFrame, "SetAlpha", function(UF)
             if locked or UF:IsForbidden() then
               return
@@ -164,28 +158,9 @@ function addonTable.Display.ManagerMixin:OnLoad()
       -- Restore original anchors and parents to various things we changed
       if UF.HitTestFrame then
         UF.AurasFrame:SetParent(UF)
+        UF.AurasFrame:SetAlpha(1)
         UF.AurasFrame:SetIgnoreParentAlpha(false)
         UF.AurasFrame:SetIgnoreParentScale(false)
-        local debuffPadding = tonumber(GetCVar(NamePlateConstants.DEBUFF_PADDING_CVAR)) or 0
-        local namePlateStyle = GetCVar(NamePlateConstants.STYLE_CVAR)
-        local unitNameInsideHealthBar = namePlateStyle == Enum.NamePlateStyle.Default or namePlateStyle == Enum.NamePlateStyle.Block
-        UF.AurasFrame.DebuffListFrame:ClearAllPoints()
-        if unitNameInsideHealthBar then
-          UF.AurasFrame.DebuffListFrame:SetPoint("BOTTOM", UF.HealthBarsContainer.healthBar, "TOP", 0, debuffPadding);
-        else
-          UF.AurasFrame.DebuffListFrame:SetPoint("BOTTOM", UF.name, "TOP", 0, debuffPadding);
-        end
-        UF.AurasFrame.DebuffListFrame:SetPoint("LEFT", UF.HealthBarsContainer)
-        UF.AurasFrame.DebuffListFrame:SetParent(UF.AurasFrame)
-        UF.AurasFrame.DebuffListFrame:SetScale(1)
-        UF.AurasFrame.BuffListFrame:ClearAllPoints()
-        UF.AurasFrame.BuffListFrame:SetPoint("RIGHT", UF.ClassificationFrame, "LEFT", -5, 0);
-        UF.AurasFrame.BuffListFrame:SetParent(UF.AurasFrame)
-        UF.AurasFrame.BuffListFrame:SetScale(1)
-        UF.AurasFrame.CrowdControlListFrame:ClearAllPoints()
-        UF.AurasFrame.CrowdControlListFrame:SetPoint("LEFT", UF.HealthBarsContainer.healthBar, "RIGHT", 5, 0);
-        UF.AurasFrame.CrowdControlListFrame:SetParent(UF.AurasFrame)
-        UF.AurasFrame.CrowdControlListFrame:SetScale(1)
         UF.AurasFrame.LossOfControlFrame:ClearAllPoints()
         UF.AurasFrame.LossOfControlFrame:SetPoint("LEFT", UF.HealthBarsContainer.healthBar, "RIGHT", 5, 0);
         UF.AurasFrame.LossOfControlFrame:SetParent(UF.AurasFrame)
@@ -223,7 +198,7 @@ function addonTable.Display.ManagerMixin:OnLoad()
             self:UpdateStackingRegion(nameplate, unit)
           end
           display:InitializeWidgets(addonTable.Core.GetDesign(display.kind))
-          self:PositionBuffs(display)
+          self:ListenToBuffs(display, unit)
           display:SetUnit(unit)
         end
         if self.lastInteract and self.lastInteract.interactUnit then
@@ -376,31 +351,33 @@ function addonTable.Display.ManagerMixin:UpdateInstanceShowState()
   end
 end
 
-function addonTable.Display.ManagerMixin:PositionBuffs(display)
-  if addonTable.Constants.IsMidnight and self.ModifiedUFs[display.unit] then
-    local unit = display.unit
+function addonTable.Display.ManagerMixin:ListenToBuffs(display, unit)
+  if addonTable.Constants.IsMidnight and self.ModifiedUFs[unit or display.unit] then
+    local DebuffListFrame = self.ModifiedUFs[unit].AurasFrame.DebuffListFrame
+    local BuffListFrame = self.ModifiedUFs[unit].AurasFrame.BuffListFrame
+    local CrowdControlListFrame = self.ModifiedUFs[unit].AurasFrame.CrowdControlListFrame
+
+    display.AurasManager:SetGetImportantAuras(function()
+      local important, crowdControl = {}, {}
+
+      for _, child in ipairs(DebuffListFrame:GetLayoutChildren()) do
+        important[child.auraInstanceID] = true
+      end
+      for _, child in ipairs(BuffListFrame:GetLayoutChildren()) do
+        important[child.auraInstanceID] = true
+      end
+      for _, child in ipairs(CrowdControlListFrame:GetLayoutChildren()) do
+        crowdControl[child.auraInstanceID] = true
+      end
+
+      return important, crowdControl
+    end)
+
+
     local auras = addonTable.Core.GetDesign(display.kind).auras
     local designInfo = {}
     for _, a in ipairs(auras) do
       designInfo[a.kind] = a
-    end
-    local DebuffListFrame = self.ModifiedUFs[unit].AurasFrame.DebuffListFrame
-    DebuffListFrame:SetParent(display.DebuffDisplay)
-    if designInfo.debuffs then
-      DebuffListFrame:SetScale(designInfo.debuffs.scale)
-      self.RelayoutAuras(DebuffListFrame, self.DebuffFilter)
-    end
-    local BuffListFrame = self.ModifiedUFs[unit].AurasFrame.BuffListFrame
-    BuffListFrame:SetParent(display.BuffDisplay)
-    if designInfo.buffs then
-      BuffListFrame:SetScale(designInfo.buffs.scale)
-      self.RelayoutAuras(BuffListFrame)
-    end
-    local CrowdControlListFrame = self.ModifiedUFs[unit].AurasFrame.CrowdControlListFrame
-    CrowdControlListFrame:SetParent(display.CrowdControlDisplay)
-    if designInfo.crowdControl then
-      CrowdControlListFrame:SetScale(designInfo.crowdControl.scale)
-      self.RelayoutAuras(CrowdControlListFrame)
     end
     local LossOfControlFrame = self.ModifiedUFs[unit].AurasFrame.LossOfControlFrame
     LossOfControlFrame:SetParent(display.CrowdControlDisplay)
@@ -466,8 +443,8 @@ function addonTable.Display.ManagerMixin:Install(unit, nameplate)
       newDisplay:InitializeWidgets(addonTable.Core.GetDesign(newDisplay.kind))
       newDisplay.styleIndex = self.styleIndex
     end
+    self:ListenToBuffs(newDisplay, unit)
     newDisplay:SetUnit(unit)
-    self:PositionBuffs(newDisplay)
   end
 end
 

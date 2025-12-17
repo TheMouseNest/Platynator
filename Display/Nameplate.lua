@@ -18,99 +18,97 @@ function addonTable.Display.NameplateMixin:OnLoad()
   self.CrowdControlDisplay = CreateFrame("Frame", nil, self)
   self.CrowdControlDisplay:SetSize(10, 10)
 
-  if not addonTable.Constants.IsMidnight then
-    self.AurasManager = addonTable.Utilities.InitFrameWithMixin(self, addonTable.Display.AurasForNameplateMixin)
-    self.AurasPool = CreateFramePool("Frame", self, "PlatynatorNameplateBuffButtonTemplate", nil, false, function(frame)
-      frame.Cooldown:SetCountdownAbbrevThreshold(20)
-      frame.Cooldown.Text = frame.Cooldown:GetRegions()
-    end)
+  self.AurasManager = addonTable.Utilities.InitFrameWithMixin(self, addonTable.Display.AurasManagerMixin)
+  self.AurasPool = CreateFramePool("Frame", self, "PlatynatorNameplateBuffButtonTemplate", nil, false, function(frame)
+    frame.Cooldown:SetCountdownAbbrevThreshold(20)
+    frame.Cooldown.Text = frame.Cooldown:GetRegions()
+  end)
 
-    local function GetCallback(frame)
-      return function(data)
-        local keys = GetKeysArray(data)
-        table.sort(keys)
-        if frame.items then
-          for _, item in ipairs(frame.items) do
-            self.AurasPool:Release(item)
-          end
-          frame.items = nil
+  local function GetCallback(frame)
+    return function(data)
+      if frame.items then
+        for _, item in ipairs(frame.items) do
+          self.AurasPool:Release(item)
+        end
+        frame.items = nil
+      end
+
+      if not frame:GetParent():IsShown() then
+        return
+      end
+
+      local currentX = 0
+      local currentY = 0
+      local xOffset = 0
+      local yOffset = 0
+      local details = frame:GetParent().details
+      if details.direction == "LEFT" then
+        xOffset = -22
+      elseif details.direction == "RIGHT" then
+        xOffset = 22
+      else -- CENTER
+        xOffset = 22
+        currentX = #keys * 22 / 2
+      end
+      local anchor = details.anchor[1]
+      if type(anchor) ~= "string" then
+        anchor = "CENTER"
+      end
+
+      frame.items = {}
+      local texBase = 0.95 * (1 - details.height) / 2
+      for _, auraInstanceID in ipairs(data) do
+        local aura = self.AurasManager:GetByInstanceID(auraInstanceID)
+        local buff = self.AurasPool:Acquire()
+        table.insert(frame.items, buff)
+        buff:SetParent(frame)
+        buff.auraInstanceID = auraInstanceID
+
+        buff.Icon:SetTexture(aura.icon);
+        buff.CountFrame.Count:SetText(aura.applicationsString)
+        buff.CountFrame.Count:SetFontObject(addonTable.CurrentFont)
+        buff.CountFrame.Count:SetTextScale(11/12 * details.textScale)
+        buff.CountFrame.Count:Show();
+
+        buff.Cooldown:SetHideCountdownNumbers(not details.showCountdown)
+
+        if details.showCountdown then
+          buff.Cooldown.Text:SetFontObject(addonTable.CurrentFont)
+          buff.Cooldown.Text:SetTextScale(14/12 * details.textScale)
         end
 
-        if not frame:GetParent():IsShown() then
-          return
-        end
+        buff:SetHeight(20 * details.height)
+        buff.Icon:SetHeight(19 * details.height)
+        buff.Icon:SetTexCoord(0.05, 0.95, 0.05 + texBase, 0.95 - texBase)
 
-        local currentX = 0
-        local currentY = 0
-        local xOffset = 0
-        local yOffset = 0
-        local details = frame:GetParent().details
-        if details.direction == "LEFT" then
-          xOffset = -22
-        elseif details.direction == "RIGHT" then
-          xOffset = 22
-        else -- CENTER
-          xOffset = 22
-          currentX = #keys * 22 / 2
-        end
-        local anchor = details.anchor[1]
-        if type(anchor) ~= "string" then
-          anchor = "CENTER"
-        end
-
-        frame.items = {}
-        local texBase = 0.95 * (1 - details.height) / 2
-        for _, auraInstanceID in ipairs(keys) do
-          local aura = data[auraInstanceID]
-          local buff = self.AurasPool:Acquire()
-          table.insert(frame.items, buff)
-          buff:SetParent(frame)
-          buff.auraInstanceID = auraInstanceID
-          buff.isBuff = aura.isHelpful;
-          buff.spellID = aura.spellId;
-
-          buff.Icon:SetTexture(aura.icon);
-          if (aura.applications > 1) then
-            buff.CountFrame.Count:SetText(aura.applications);
-            buff.CountFrame.Count:SetFontObject(addonTable.CurrentFont)
-            buff.CountFrame.Count:SetTextScale(11/12 * details.textScale)
-            buff.CountFrame.Count:Show();
-          else
-            buff.CountFrame.Count:Hide();
-          end
-          buff.Cooldown:SetHideCountdownNumbers(not details.showCountdown)
-          if details.showCountdown then
-            buff.Cooldown.Text:SetFontObject(addonTable.CurrentFont)
-            buff.Cooldown.Text:SetTextScale(14/12 * details.textScale)
-          end
-          buff:SetHeight(20 * details.height)
-          buff.Icon:SetHeight(19 * details.height)
-          buff.Icon:SetTexCoord(0.05, 0.95, 0.05 + texBase, 0.95 - texBase)
+        if aura.durationSecret then
+          buff.Cooldown:SetCooldownFromDurationObject(aura.durationSecret)
+        else
           CooldownFrame_Set(buff.Cooldown, aura.expirationTime - aura.duration, aura.duration, aura.duration > 0, true);
-
-          buff:Show();
-
-          buff:SetPoint(anchor, currentX, currentY)
-          currentX = currentX + xOffset
         end
+
+        buff:Show();
+
+        buff:SetPoint(anchor, currentX, currentY)
+        currentX = currentX + xOffset
       end
     end
-
-    self.BuffDisplay.Wrapped = CreateFrame("Frame", nil, self.BuffDisplay)
-    self.BuffDisplay.Wrapped:SetSize(10, 10)
-    self.DebuffDisplay.Wrapped = CreateFrame("Frame", nil, self.DebuffDisplay)
-    self.DebuffDisplay.Wrapped:SetSize(10, 10)
-    self.CrowdControlDisplay.Wrapped = CreateFrame("Frame", nil, self.CrowdControlDisplay)
-    self.CrowdControlDisplay.Wrapped:SetSize(10, 10)
-
-    self.DebuffDisplay:Hide()
-    self.BuffDisplay:Hide()
-    self.CrowdControlDisplay:Hide()
-
-    self.AurasManager:SetDebuffsCallback(GetCallback(self.DebuffDisplay.Wrapped))
-    self.AurasManager:SetBuffsCallback(GetCallback(self.BuffDisplay.Wrapped))
-    self.AurasManager:SetCrowdControlCallback(GetCallback(self.CrowdControlDisplay.Wrapped))
   end
+
+  self.BuffDisplay.Wrapped = CreateFrame("Frame", nil, self.BuffDisplay)
+  self.BuffDisplay.Wrapped:SetSize(10, 10)
+  self.DebuffDisplay.Wrapped = CreateFrame("Frame", nil, self.DebuffDisplay)
+  self.DebuffDisplay.Wrapped:SetSize(10, 10)
+  self.CrowdControlDisplay.Wrapped = CreateFrame("Frame", nil, self.CrowdControlDisplay)
+  self.CrowdControlDisplay.Wrapped:SetSize(10, 10)
+
+  self.DebuffDisplay:Hide()
+  self.BuffDisplay:Hide()
+  self.CrowdControlDisplay:Hide()
+
+  self.AurasManager:SetDebuffsCallback(GetCallback(self.DebuffDisplay.Wrapped))
+  self.AurasManager:SetBuffsCallback(GetCallback(self.BuffDisplay.Wrapped))
+  self.AurasManager:SetCrowdControlCallback(GetCallback(self.CrowdControlDisplay.Wrapped))
 
   self:SetScript("OnEvent", self.OnEvent)
 
@@ -178,6 +176,8 @@ function addonTable.Display.NameplateMixin:InitializeWidgets(design)
     self.CrowdControlDisplay:SetSize(defaultSize * designInfo.crowdControl.scale, defaultSize * designInfo.crowdControl.scale)
     addonTable.Display.ApplyAnchor(self.CrowdControlDisplay, designInfo.crowdControl.anchor)
   end
+
+  self.AurasManager:PostInit(designInfo.buffs, designInfo.debuffs, designInfo.crowdControl)
 end
 
 function addonTable.Display.NameplateMixin:Install(nameplate)

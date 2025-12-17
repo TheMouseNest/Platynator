@@ -98,6 +98,30 @@ function addonTable.Core.UpgradeDesign(design)
     if not aura.textScale then
       aura.textScale = 1
     end
+    if aura.kind == "debuffs" and not aura.filters then
+      aura.showPandemic = true
+      aura.filters = {
+        important = true,
+        fromYou = true,
+      }
+    end
+    if aura.kind == "buffs" and not aura.filters then
+      aura.filters = {
+        dispelable = true,
+        important = true,
+      }
+    end
+    if aura.kind == "crowdControl" and not aura.filters then
+      aura.filters = {
+        fromYou = false,
+      }
+    end
+    if not aura.sorting then
+      aura.sorting = {
+        kind = "duration",
+        reversed = false,
+      }
+    end
   end
 
   local function UpdateAutoColors(autoColors)

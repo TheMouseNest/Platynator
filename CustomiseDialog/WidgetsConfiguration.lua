@@ -696,6 +696,128 @@ addonTable.CustomiseDialog.WidgetsConfig = {
           },
         },
       },
+      {
+        label = addonTable.Locales.SORTING,
+        entries = {
+          {
+            label = addonTable.Locales.METHOD,
+            kind = "dropdown",
+            getInitData = function()
+              return {
+                addonTable.Locales.BLIZZARD,
+                addonTable.Locales.DURATION,
+              }, {
+                "blizzard",
+                "duration",
+              }
+            end,
+            setter = function(details, value)
+              details.sorting.kind = value
+            end,
+            getter = function(details)
+              return details.sorting.kind
+            end
+          },
+          {
+            label = addonTable.Locales.REVERSED,
+            kind = "checkbox",
+            setter = function(details, value)
+              details.sorting.reversed = value
+            end,
+            getter = function(details)
+              return details.sorting.reversed
+            end,
+          },
+        }
+      }
+    },
+    ["debuffs"] = {
+      {
+        label = addonTable.Locales.GENERAL,
+        entries = {
+          {
+            label = addonTable.Locales.SHOW_PANDEMIC,
+            kind = "checkbox",
+            hide = true,
+            setter = function(details, value)
+              details.showPandemic = value
+            end,
+            getter = function(details)
+              return details.showPandemic
+            end,
+          },
+        },
+      },
+      {
+        label = addonTable.Locales.FILTERS,
+        entries = {
+          {
+            label = addonTable.Locales.IMPORTANT,
+            kind = "checkbox",
+            setter = function(details, value)
+              details.filters.important = value
+            end,
+            getter = function(details)
+              return details.filters.important
+            end,
+            hide = not addonTable.Constants.IsMidnight,
+          },
+          {
+            label = addonTable.Locales.FROM_YOU,
+            kind = "checkbox",
+            setter = function(details, value)
+              details.filters.fromYou = value
+            end,
+            getter = function(details)
+              return details.filters.fromYou
+            end,
+          },
+        }
+      }
+    },
+    ["buffs"] = {
+      {
+        label = addonTable.Locales.FILTERS,
+        entries = {
+          {
+            label = addonTable.Locales.IMPORTANT,
+            kind = "checkbox",
+            setter = function(details, value)
+              details.filters.important = value
+            end,
+            getter = function(details)
+              return details.filters.important
+            end,
+          },
+          {
+            label = addonTable.Locales.DISPELABLE,
+            kind = "checkbox",
+            setter = function(details, value)
+              details.filters.dispelable = value
+            end,
+            getter = function(details)
+              return details.filters.fromYou
+            end,
+          },
+        }
+      }
+    },
+    ["crowdControl"] = {
+      {
+        label = addonTable.Locales.FILTERS,
+        entries = {
+          {
+            label = addonTable.Locales.FROM_YOU,
+            kind = "checkbox",
+            setter = function(details, value)
+              details.filters.fromYou = value
+            end,
+            getter = function(details)
+              return details.filters.fromYou
+            end,
+          },
+        }
+      }
     },
   },
   ["highlights"] = {
