@@ -270,41 +270,56 @@ function addonTable.Display.AurasManagerMixin:FullRefresh()
     end
   else
     if self.buffsDetails then
-      local all = C_UnitAuras.GetUnitAuras(self.unit, self.buffFilter)
       self.buffs = {}
-      for _, aura in ipairs(all) do
+      local index = 1
+      while true do
+        local aura = C_UnitAuras.GetAuraDataByIndex(self.unit, index, self.buffFilter)
+        if not aura then
+          break
+        end
         if not legacy.blacklistedBuffs[aura.spellId] and ((not self.buffsDetails.dispelable and not self.buffsDetails.important) or type(aura.dispelName) ~= "nil") then
           table.insert(self.buffs, aura.auraInstanceID)
           aura.applicationsString = aura.applications > 1 and tostring(aura.applications) or ""
           aura.kind = "buffs"
           self.auraData[aura.auraInstanceID] = aura
         end
+        index = index + 1
       end
       table.sort(self.buffs, self.buffSortFunc)
     end
     if self.debuffsDetails then
-      local all = C_UnitAuras.GetUnitAuras(self.unit, self.debuffFilter)
       self.debuffs = {}
-      for _, aura in ipairs(all) do
+      local index = 1
+      while true do
+        local aura = C_UnitAuras.GetAuraDataByIndex(self.unit, index, self.debuffFilter)
+        if not aura then
+          break
+        end
         if aura.isHarmful and (aura.nameplateShowPersonal or legacy.whitelistedDebuffs[aura.spellId] or addonTable.Constants.IsClassic) and not legacy.crowdControlSpells[aura.spellId] then
           table.insert(self.debuffs, aura.auraInstanceID)
           aura.applicationsString = aura.applications > 1 and tostring(aura.applications) or ""
           aura.kind = "debuffs"
           self.auraData[aura.auraInstanceID] = aura
         end
+        index = index + 1
       end
       table.sort(self.debuffs, self.debuffSortFunc)
     end
     if self.crowdControlDetails then
-      local all = C_UnitAuras.GetUnitAuras(self.unit, self.crowdControlFilter)
       self.crowdControl = {}
-      for _, aura in ipairs(all) do
+      local index = 1
+      while true do
+        local aura = C_UnitAuras.GetAuraDataByIndex(self.unit, index, self.crowdControlFilter)
+        if not aura then
+          break
+        end
         if legacy.crowdControlSpells[aura.spellId] then
           table.insert(self.crowdControl, aura.auraInstanceID)
           aura.applicationsString = aura.applications > 1 and tostring(aura.applications) or ""
           aura.kind = "debuffs"
           self.auraData[aura.auraInstanceID] = aura
         end
+        index = index + 1
       end
       table.sort(self.debuffs, self.crowdControlSortFunc)
     end
