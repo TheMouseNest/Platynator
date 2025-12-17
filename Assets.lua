@@ -39,13 +39,13 @@ addonTable.Assets.BarBackgrounds = {
 addonTable.Assets.BarBordersSliced = {
   ["transparent"] = {file = "Interface/AddOns/Platynator/Assets/Special/transparent.png", width = 20, height = 20, isTransparent = true, masked = false, tag = "transparent", margin = 0.5, extra = 0, minSize = 1, modifier = 1},
 
-  ["bold"] = {file = "Interface/AddOns/Platynator/Assets/%s/BarBorders/bold-square.png", width = 20, height = 20, has4k = true, masked = true, tag = "bold", margin = 0.45, extra = 0, minSize = 50, modifier = 0.35},
-  ["thin"] = {file = "Interface/AddOns/Platynator/Assets/%s/BarBorders/thin-square.png", width = 20, height = 20, has4k = true, masked = true, tag = "thin", margin = 0.2, extra = 0, minSize = 50, modifier = 0.35},
-  ["slight"] = {file = "Interface/AddOns/Platynator/Assets/%s/BarBorders/slight-square.png", width = 20, height = 20, has4k = true, masked = true, tag = "slight", margin = 0.3, extra = 0, minSize = 50, modifier = 0.35},
-  ["1px"] = {file = "Interface/AddOns/Platynator/Assets/%s/BarBorders/1px-square.png", width = 20, height = 20, has4k = true, masked = true, tag = "slight", margin = 0.3, extra = 0, minSize = 50, modifier = 0.35},
+  ["bold"] = {file = "Interface/AddOns/Platynator/Assets/%s/BarBorders/bold-square.png", width = 20, height = 20, has4k = true, masked = true, tag = "bold", margin = 0.45, extra = 0, minSize = 50, modifier = 0.35, DPIScale = 1/2},
+  ["thin"] = {file = "Interface/AddOns/Platynator/Assets/%s/BarBorders/thin-square.png", width = 20, height = 20, has4k = true, masked = true, tag = "thin", margin = 0.2, extra = 0, minSize = 50, modifier = 0.35, DPIScale = 1/2},
+  ["slight"] = {file = "Interface/AddOns/Platynator/Assets/%s/BarBorders/slight-square.png", width = 20, height = 20, has4k = true, masked = true, tag = "slight", margin = 0.3, extra = 0, minSize = 50, modifier = 0.35, DPIScale = 1/2},
+  ["1px"] = {file = "Interface/AddOns/Platynator/Assets/%s/BarBorders/1px-square.png", width = 20, height = 20, has4k = true, masked = true, tag = "slight", margin = 0.3, extra = 0, minSize = 50, modifier = 0.35, DPIScale = 1/2},
 
-  ["soft"] = {file = "Interface/AddOns/Platynator/Assets/DPI144/BarBorders/soft-square.png", width = 44, height = 44, has4k = false, masked = true, tag = "soft", margin = 0.33, extra = 8, minSize = 50, modifier = 0.25},
-  ["blizzard-health"] = {file = "Interface/AddOns/Platynator/Assets/DPI144/BarBorders/blizzard-health-square.png", width = 40, height = 40, has4k = false, masked = true, tag = "blizzard-health", margin = 0.4, extra = 0, minSize = 100, modifier = 0.4},
+  ["soft"] = {file = "Interface/AddOns/Platynator/Assets/%s/BarBorders/soft-square.png", width = 66, height = 66, has4k = true, masked = true, tag = "soft", margin = 0.33, extra = 18, minSize = 50, modifier = 0.25, DPIScale = 4/6},
+  ["blizzard-health"] = {file = "Interface/AddOns/Platynator/Assets/%s/BarBorders/blizzard-health-square.png", width = 48, height = 48, has4k = true, masked = true, tag = "blizzard-health", margin = 0.4, extra = 0, minSize = 100, modifier = 0.4, DPIScale = 40/48},
   ["blizzard-classic"] = {file = "Interface/AddOns/Platynator/Assets/DPI144/BarBorders/blizzard-classic-square.png", width = 40, height = 40, has4k = false, masked = true, tag = "blizzard-classic", margin = 0.4, extra = 0, minSize = 100, modifier = 0.4},
   ["blizzard-cast-bar"] = {file = "Interface/AddOns/Platynator/Assets/DPI144/BarBorders/blizzard-cast-bar-square.png", width = 32, height = 32, has4k = false, masked = true, tag = "blizzard-cast-bar", margin = 0.35, extra = 0, minSize = 50, modifier = 0.35},
 }
@@ -119,7 +119,7 @@ addonTable.Assets.BarMasks = {
 
   ["soft"] = {file = "Interface/AddOns/Platynator/Assets/DPI144/BarBorders/soft-square-mask.png", width = 32, height = 32, has4k = false, margin = 0.33},
 
-  ["blizzard-health"] = {file = "Interface/AddOns/Platynator/Assets/DPI144/BarBorders/blizzard-health-square-mask.png", width = 40, height = 40, has4k = false, margin = 0.49},
+  ["blizzard-health"] = {file = "Interface/AddOns/Platynator/Assets/%s/BarBorders/blizzard-health-square-mask.png", width = 48, height = 48, has4k = true, margin = 0.49},
   ["blizzard-classic"] = {file = "Interface/AddOns/Platynator/Assets/DPI144/BarBorders/blizzard-classic-square-mask.png", width = 40, height = 40, has4k = false, margin = 0.35},
   ["blizzard-cast-bar"] = {file = "Interface/AddOns/Platynator/Assets/DPI144/BarBorders/blizzard-cast-bar-square-mask.png", width = 32, height = 32, has4k = false, margin = 0.35},
 }
@@ -326,16 +326,21 @@ function addonTable.Assets.ApplyScale()
     end
   end
 
-  local function IterateSlices(list, scale)
+  local function IterateSlices(list)
     for key, entry in pairs(list) do
       if entry.has4k then
+        local root = addonTable.Assets.BarBordersSliced[key]
         entry.file = entry.file:format(DPIScale)
-        entry.width = entry.width / scale
-        entry.height = entry.height / scale
-        if entry.extra then
-          entry.extra = entry.extra / scale
+        local scale = root.DPIScale
+        if DPIScale == "DPI144" then
+          scale = 1
         end
-        entry.lowerScale = 1 / scale / addonTable.Assets.BarBordersSliced[key].modifier
+        entry.width = entry.width * scale
+        entry.height = entry.height * scale
+        if entry.extra then
+          entry.extra = entry.extra * scale
+        end
+        entry.lowerScale = 1 * scale / root.modifier
       else
         entry.lowerScale = 1 / addonTable.Assets.BarBordersSliced[key].modifier
       end
