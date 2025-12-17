@@ -424,6 +424,9 @@ function addonTable.Display.ManagerMixin:Install(unit, nameplate)
     else
       newDisplay = self.enemyDisplayPool:Acquire()
     end
+    if C_NamePlateManager and C_NamePlateManager.SetNamePlateSimplified then
+      C_NamePlateManager.SetNamePlateSimplified(unit, false)
+    end
     self.nameplateDisplays[unit] = newDisplay
     self.unitToNameplate[unit] = nameplate
     local UF = self.ModifiedUFs[unit]

@@ -193,9 +193,6 @@ function addonTable.Display.NameplateMixin:SetUnit(unit)
   if unit and (not UnitNameplateShowsWidgetsOnly or not UnitNameplateShowsWidgetsOnly(unit)) and not UnitIsGameObject(unit) then
     self.unit = unit
     self:Show()
-    if addonTable.Constants.IsMidnight then
-      C_NamePlateManager.SetNamePlateSimplified(self.unit, false)
-    end
 
     for _, w in ipairs(self.widgets) do
       w:Show()
