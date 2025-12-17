@@ -3,7 +3,7 @@ local addonTable = select(2, ...)
 
 local specializationToDivisor = {
   [265] = addonTable.Constants.IsMists and 100 or nil,
-  [267] = 10,
+  [267] = addonTable.Constants.IsMists and 10 or nil,
 }
 local specializationToPower = {
   --Rogue (all specs)
