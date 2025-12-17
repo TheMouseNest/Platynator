@@ -122,18 +122,6 @@ function addonTable.Display.ManagerMixin:OnLoad()
     if nameplate and unit and unit ~= "preview" and (addonTable.Constants.IsMidnight or not UnitIsUnit("player", unit)) then
       if addonTable.Constants.IsMidnight then
         nameplate.UnitFrame:SetAlpha(0)
-      else
-        nameplate.UnitFrame:Hide()
-      end
-      nameplate.UnitFrame:UnregisterAllEvents()
-      if nameplate.UnitFrame.castBar then
-        nameplate.UnitFrame.castBar:UnregisterAllEvents()
-      end
-      if addonTable.Constants.IsMidnight then
-        nameplate.UnitFrame:RegisterUnitEvent("UNIT_AURA", unit)
-        nameplate.UnitFrame.AurasFrame:SetParent(nameplate)
-        nameplate.UnitFrame.AurasFrame:SetAlpha(0)
-        nameplate.UnitFrame.AurasFrame:SetIgnoreParentScale(true)
         if not self.HookedUFs[nameplate.UnitFrame] then
           self.HookedUFs[nameplate.UnitFrame] = true
           hooksecurefunc(nameplate.UnitFrame, "SetAlpha", function(UF)
@@ -145,6 +133,18 @@ function addonTable.Display.ManagerMixin:OnLoad()
             locked = false
           end)
         end
+      else
+        nameplate.UnitFrame:SetParent(addonTable.hiddenFrame)
+      end
+      nameplate.UnitFrame:UnregisterAllEvents()
+      if nameplate.UnitFrame.castBar then
+        nameplate.UnitFrame.castBar:UnregisterAllEvents()
+      end
+      if addonTable.Constants.IsMidnight then
+        nameplate.UnitFrame:RegisterUnitEvent("UNIT_AURA", unit)
+        nameplate.UnitFrame.AurasFrame:SetParent(nameplate)
+        nameplate.UnitFrame.AurasFrame:SetAlpha(0)
+        nameplate.UnitFrame.AurasFrame:SetIgnoreParentScale(true)
       end
       if nameplate.UnitFrame.WidgetContainer then
         nameplate.UnitFrame.WidgetContainer:SetParent(nameplate)
