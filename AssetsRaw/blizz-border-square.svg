@@ -11,8 +11,8 @@
    inkscape:version="1.4.2 (ebf0e940d0, 2025-05-08)"
    sodipodi:docname="blizz-border-square.svg"
    inkscape:export-filename="blizzard-health-square-mask.png"
-   inkscape:export-xdpi="423.33334"
-   inkscape:export-ydpi="423.33334"
+   inkscape:export-xdpi="508"
+   inkscape:export-ydpi="508"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns="http://www.w3.org/2000/svg"
@@ -27,9 +27,9 @@
      inkscape:deskcolor="#1e5cf3"
      inkscape:document-units="mm"
      showguides="false"
-     inkscape:zoom="8.0000004"
-     inkscape:cx="-30.562499"
-     inkscape:cy="33.749998"
+     inkscape:zoom="22.627418"
+     inkscape:cx="4.9276501"
+     inkscape:cy="19.136076"
      inkscape:window-width="2560"
      inkscape:window-height="1366"
      inkscape:window-x="0"
@@ -119,7 +119,7 @@
        inkscape:export-xdpi="423.33334"
        inkscape:export-ydpi="423.33334" /><g
        id="g3-9"
-       transform="translate(-7.1201392,-8.7871456)"><path
+       transform="translate(-17.426057,-5.107854)"><path
          id="path1-1"
          style="fill:none;stroke:#222222;stroke-width:0.731195;stroke-miterlimit:3.3;stroke-dasharray:none;stroke-opacity:1;filter:url(#filter1-3)"
          d="M 1.2667116,0.04930841 H 3.8131371 L 4.9624018,1.0117146 V 4.65014 L 3.8131371,5.6780437 H 1.2667116 L 0.06909437,4.65014 V 1.0117146 Z"
@@ -136,7 +136,6 @@
          inkscape:export-filename="blizzard-border-square.png"
          inkscape:export-xdpi="423.33334"
          inkscape:export-ydpi="423.33334" /></g><path
-       style="fill:#ffffff;fill-opacity:1;stroke-width:0.499999;stroke-linecap:round"
-       d="m 10.877509,4.759068 1.283254,-1.1985368 3.192201,-0.00585 1.297927,1.110839 0,3.4845265 -1.274541,1.1809971 -3.133735,0.011693 -1.388492,-1.169304 z"
-       id="path2"
-       sodipodi:nodetypes="ccccccccc" /></g></svg>
+       style="fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.860999;stroke-linecap:round;stroke-opacity:1"
+       d="M 0.25798188,1.3395881 1.4740581,0.29890747 4.4791698,0.32229357 5.7420181,1.3746672 5.6718599,4.7071839 4.5259418,5.6543203 1.4857512,5.7010925 0.293061,4.6604117 Z"
+       id="path1" /></g></svg>
