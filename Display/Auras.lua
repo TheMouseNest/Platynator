@@ -380,16 +380,16 @@ function addonTable.Display.AurasManagerMixin:OnEvent(_, _, refreshData)
     else
       for _, aura in ipairs(refreshData.addedAuras) do
         local keep = false
-        if aura.isHelpful and
+        if self.buffsDetails and aura.isHelpful and
           not legacy.blacklistedBuffs[aura.spellId] and ((not self.buffsDetails.dispelable and not self.buffsDetails.important) or type(aura.dispelName) ~= "nil") then
           keep = true
           table.insert(self.buffs, aura.auraInstanceID)
           aura.kind = "buffs"
-        elseif legacy.crowdControlSpells[aura.spellId] then
+        elseif self.crowdControlDetails and legacy.crowdControlSpells[aura.spellId] then
           keep = true
           table.insert(self.crowdControl, aura.auraInstanceID)
           aura.kind = "crowdControl"
-        elseif aura.isHarmful and (aura.nameplateShowPersonal or legacy.whitelistedDebuffs[aura.spellId] or addonTable.Constants.IsClassic) and aura.sourceUnit == "player" then
+        elseif self.debuffsDetails and aura.isHarmful and (aura.nameplateShowPersonal or legacy.whitelistedDebuffs[aura.spellId] or addonTable.Constants.IsClassic) and aura.sourceUnit == "player" then
           keep = true
           table.insert(self.debuffs, aura.auraInstanceID)
           aura.kind = "debuffs"
