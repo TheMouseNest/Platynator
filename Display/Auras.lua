@@ -316,12 +316,12 @@ function addonTable.Display.AurasManagerMixin:FullRefresh()
         if legacy.crowdControlSpells[aura.spellId] then
           table.insert(self.crowdControl, aura.auraInstanceID)
           aura.applicationsString = aura.applications > 1 and tostring(aura.applications) or ""
-          aura.kind = "debuffs"
+          aura.kind = "crowdControl"
           self.auraData[aura.auraInstanceID] = aura
         end
         index = index + 1
       end
-      table.sort(self.debuffs, self.crowdControlSortFunc)
+      table.sort(self.crowdControl, self.crowdControlSortFunc)
     end
   end
 
