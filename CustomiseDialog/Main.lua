@@ -368,38 +368,6 @@ local function SetupBehaviour(parent)
   table.insert(allFrames, stackingNameplatesCheckbox)
 
   if addonTable.Constants.IsMidnight then
-    local stackAppliesToDropdown = addonTable.CustomiseDialog.Components.GetBasicDropdown(container, addonTable.Locales.STACKING_APPLIES_TO)
-    stackAppliesToDropdown:SetPoint("TOP", allFrames[#allFrames], "BOTTOM", 0, 0)
-    do
-      local values = {
-        "normal",
-        "minion",
-        "minor",
-      }
-      local labels = {
-        addonTable.Locales.NORMAL,
-        addonTable.Locales.MINION,
-        addonTable.Locales.MINOR,
-      }
-
-      stackAppliesToDropdown.DropDown:SetDefaultText(NONE)
-      stackAppliesToDropdown.DropDown:SetupMenu(function(_, rootDescription)
-        for index, l in ipairs(labels) do
-          rootDescription:CreateCheckbox(l, function()
-            return addonTable.Config.Get(addonTable.Config.Options.STACK_APPLIES_TO)[values[index]]
-          end, function()
-            if InCombatLockdown() then
-              return
-            end
-            local current = addonTable.Config.Get(addonTable.Config.Options.STACK_APPLIES_TO)[values[index]]
-            addonTable.Config.Get(addonTable.Config.Options.STACK_APPLIES_TO)[values[index]] = not current
-            addonTable.CallbackRegistry:TriggerEvent("RefreshStateChange", {[addonTable.Constants.RefreshReason.StackingBehaviour] = true})
-          end)
-        end
-      end)
-    end
-    table.insert(allFrames, stackAppliesToDropdown)
-
     local simplifiedPlatesDropdown = addonTable.CustomiseDialog.Components.GetBasicDropdown(container, addonTable.Locales.SIMPLIFIED_NAMEPLATES)
     simplifiedPlatesDropdown:SetPoint("TOP", allFrames[#allFrames], "BOTTOM", 0, 0)
     do

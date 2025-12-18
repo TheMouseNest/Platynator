@@ -413,19 +413,6 @@ function addonTable.Display.ManagerMixin:UpdateStackingRegion(nameplate, unit)
   local newHeight = addonTable.StackRect.height * addonTable.Config.Get(addonTable.Config.Options.STACK_REGION_SCALE_Y) * addonTable.Config.Get(addonTable.Config.Options.GLOBAL_SCALE)
   stackRegion:SetPoint("BOTTOMLEFT", nameplate, "CENTER", addonTable.StackRect.left - (newWidth - addonTable.StackRect.width)/2, addonTable.StackRect.bottom - (newHeight - addonTable.StackRect.height)/2)
   stackRegion:SetSize(newWidth, newHeight)
-
-  local stackFor = addonTable.Config.Get(addonTable.Config.Options.STACK_APPLIES_TO)
-  local isMinor = UnitClassification(unit) == "minus"
-  local isMinion = UnitIsMinion(unit)
-  if not isMinor and not isMinion and stackFor.normal then
-    stackRegion:Show()
-  elseif isMinor and stackFor.minor then
-    stackRegion:Show()
-  elseif isMinion and stackFor.minion then
-    stackRegion:Show()
-  else
-    stackRegion:Hide()
-  end
 end
 
 function addonTable.Display.ManagerMixin:Install(unit, nameplate)
