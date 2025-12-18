@@ -336,7 +336,7 @@ local function SetStyle()
   if mapping["friend"] == mapping["enemy"] then
     mapping["friend"] = styleName
     mapping["enemy"] = styleName
-  elseif mapping["friend"] ~= styleName and mapping["enemy"] ~= styleName then
+  elseif mapping["friend"] ~= styleName and mapping["enemy"] ~= styleName and mapping["enemySimplified"] ~= styleName then
     mapping["enemy"] = styleName
   end
   if styleName:match("^_") then
