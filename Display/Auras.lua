@@ -355,17 +355,17 @@ function addonTable.Display.AurasManagerMixin:OnEvent(_, _, refreshData)
       local important, crowdControl = self.GetImportantAuras()
       for _, aura in ipairs(refreshData.addedAuras) do
         local keep = false
-        if not C_UnitAuras.IsAuraFilteredOutByInstanceID(self.unit, aura.auraInstanceID, self.buffFilter) and 
+        if self.buffsDetails and not C_UnitAuras.IsAuraFilteredOutByInstanceID(self.unit, aura.auraInstanceID, self.buffFilter) and 
           (not self.buffsDetails.filters.important or important[aura.auraInstanceID]) and (not self.buffsDetails.dispelable or type(aura.dispelName) ~= "nil") then
           keep = true
           table.insert(self.buffs, aura.auraInstanceID)
           aura.kind = "buffs"
-        elseif not C_UnitAuras.IsAuraFilteredOutByInstanceID(self.unit, aura.auraInstanceID, self.debuffFilter) and
+        elseif self.debuffsDetails and not C_UnitAuras.IsAuraFilteredOutByInstanceID(self.unit, aura.auraInstanceID, self.debuffFilter) and
           (not self.debuffsDetails.filters.important or important[aura.auraInstanceID]) and not crowdControl[aura.auraInstanceID] then
           keep = true
           table.insert(self.debuffs, aura.auraInstanceID)
           aura.kind = "debuffs"
-        elseif crowdControl[aura.auraInstanceID] then
+        elseif self.crowdControlDetails and crowdControl[aura.auraInstanceID] then
           keep = true
           table.insert(self.crowdControl, aura.auraInstanceID)
           aura.kind = "crowdControl"
