@@ -63,16 +63,20 @@ local function InitBar(frame, details)
   if maskDetails then
     frame.mask:SetBlockingLoadsRequested(true)
     frame.mask:SetSize(width, height)
-    frame.mask:SetScale(details.scale)
     frame.mask:SetTexture(maskDetails.file, "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
     frame.mask:SetTextureSliceMargins(maskDetails.width * maskDetails.margin, maskDetails.height * maskDetails.margin, maskDetails.width * maskDetails.margin, maskDetails.height * maskDetails.margin)
-    frame.mask:SetSnapToPixelGrid(false)
-    frame.mask:SetTexelSnappingBias(0)
-
-    frame.statusBar:GetStatusBarTexture():AddMaskTexture(frame.mask)
-    frame.background:AddMaskTexture(frame.mask)
-    frame.marker:AddMaskTexture(frame.mask)
+  else
+    frame.mask:SetSize(width, height)
+    frame.mask:SetTexture("Interface/AddOns/Platynator/Assets/Special/white.png", "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
+    frame.mask:SetTextureSliceMargins(1, 1, 1, 1)
   end
+  frame.mask:SetScale(details.scale)
+  frame.mask:SetSnapToPixelGrid(false)
+  frame.mask:SetTexelSnappingBias(0)
+
+  frame.statusBar:GetStatusBarTexture():AddMaskTexture(frame.mask)
+  frame.background:AddMaskTexture(frame.mask)
+  frame.marker:AddMaskTexture(frame.mask)
 
   frame.details = details
 
@@ -126,13 +130,11 @@ function addonTable.Display.GetHealthBar(frame, parent)
     frame.statusBarAbsorb:SetScale(1/borderDetails.lowerScale * details.scale)
     frame.statusBarAbsorb:SetWidth(frame.rawWidth * borderDetails.lowerScale)
     frame.statusBarAbsorb:GetStatusBarTexture():RemoveMaskTexture(frame.mask)
+
+    frame.statusBarAbsorb:GetStatusBarTexture():AddMaskTexture(frame.mask)
+
     frame.statusBarAbsorb:GetStatusBarTexture():SetSnapToPixelGrid(false)
     frame.statusBarAbsorb:GetStatusBarTexture():SetTexelSnappingBias(0)
-
-    local maskInfo = addonTable.Assets.BarMasks[details.border.asset]
-    if maskInfo then
-      frame.statusBarAbsorb:GetStatusBarTexture():AddMaskTexture(frame.mask)
-    end
 
     if details.kind == "health" then
       Mixin(frame, addonTable.Display.HealthBarMixin)
