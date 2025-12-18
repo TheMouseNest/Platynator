@@ -21,6 +21,11 @@ function addonTable.Display.ManagerMixin:OnLoad()
     frame.kind = "enemy"
     frame:OnLoad()
   end)
+  self.enemySimplifiedDisplayPool = CreateFramePool("Frame", UIParent, nil, nil, false, function(frame)
+    Mixin(frame, addonTable.Display.NameplateMixin)
+    frame.kind = "enemySimplified"
+    frame:OnLoad()
+  end)
   self.nameplateDisplays = {}
 
   self.MouseoverMonitor = nil
@@ -224,6 +229,15 @@ function addonTable.Display.ManagerMixin:OnLoad()
       end
     elseif state[addonTable.Constants.RefreshReason.ShowBehaviour] then
       self:UpdateShowState()
+    elseif state[addonTable.Constants.RefreshReason.Simplified] then
+      local allUnits = GetKeysArray(self.nameplateDisplays)
+      for _, unit in ipairs(allUnits) do
+        self:Uninstall(unit)
+        local nameplate = C_NamePlate.GetNamePlateForUnit(unit, issecure())
+        if nameplate then
+          self:Install(unit, nameplate)
+        end
+      end
     end
   end)
 
@@ -418,14 +432,21 @@ function addonTable.Display.ManagerMixin:Install(unit, nameplate)
   local nameplate = C_NamePlate.GetNamePlateForUnit(unit, issecure())
   -- NOTE: the nameplate _name_ does not correspond to the unit
   if nameplate and unit and unit ~= "preview" and (addonTable.Constants.IsMidnight or not UnitIsUnit("player", unit)) then
+    local shouldSimplify = false
     local newDisplay
     if not UnitCanAttack("player", unit) then
       newDisplay = self.friendDisplayPool:Acquire()
     else
-      newDisplay = self.enemyDisplayPool:Acquire()
+      local simplifiedSettings = addonTable.Config.Get(addonTable.Config.Options.SIMPLIFIED_NAMEPLATES)
+      shouldSimplify = simplifiedSettings.minor and UnitClassification(unit) == "minus" or simplifiedSettings.minion and UnitIsMinion and UnitIsMinion(unit)
+      if shouldSimplify then
+        newDisplay = self.enemySimplifiedDisplayPool:Acquire()
+      else
+        newDisplay = self.enemyDisplayPool:Acquire()
+      end
     end
     if C_NamePlateManager and C_NamePlateManager.SetNamePlateSimplified then
-      C_NamePlateManager.SetNamePlateSimplified(unit, false)
+      C_NamePlateManager.SetNamePlateSimplified(unit, shouldSimplify)
     end
     self.nameplateDisplays[unit] = newDisplay
     self.unitToNameplate[unit] = nameplate
@@ -460,6 +481,8 @@ function addonTable.Display.ManagerMixin:Uninstall(unit)
     end
     if display.kind == "friend" then
       self.friendDisplayPool:Release(display)
+    elseif display.kind == "enemySimplified" then
+      self.enemySimplifiedDisplayPool:Release(display)
     else
       self.enemyDisplayPool:Release(display)
     end

@@ -11,7 +11,7 @@ local settings = {
   LEGACY_DESIGN = {key = "design_all", default = {}},
 
   DESIGNS = {key = "designs", default = {}, refresh = {addonTable.Constants.RefreshReason.Design}},
-  DESIGNS_ASSIGNED = {key = "designs_assigned", default = {["friend"] = "_name-only", ["enemy"] = "_hare"}},
+  DESIGNS_ASSIGNED = {key = "designs_assigned", default = {["friend"] = "_name-only", ["enemy"] = "_hare", ["enemySimplified"] = "_hare_simplified"}},
 
   TARGET_BEHAVIOUR = {key = "target_behaviour", default = "enlarge", refresh = {addonTable.Constants.RefreshReason.TargetBehaviour}},
   NOT_TARGET_BEHAVIOUR = {key = "not_target_behaviour", default = "none", refresh = {addonTable.Constants.RefreshReason.TargetBehaviour}},
@@ -27,6 +27,7 @@ local settings = {
   SHOW_NAMEPLATES = {key = "show_nameplates", default = {npc = true, player = true, enemy = true}, refresh = {addonTable.Constants.RefreshReason.ShowBehaviour}},
   STACK_APPLIES_TO = {key = "stack_applies_to", default = {normal = true, minion = false, minor = false}},
   SHOW_FRIENDLY_IN_INSTANCES = {key = "show_friendly_in_instances", default = true, refresh = {addonTable.Constants.RefreshReason.ShowBehaviour}},
+  SIMPLIFIED_NAMEPLATES = {key = "simplified_nameplates", default = {minion = true, minor = true}},
 
   APPLY_CVARS = {key = "apply_cvars", default = true},
 }

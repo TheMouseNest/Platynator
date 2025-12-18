@@ -253,6 +253,18 @@ local function SetupBehaviour(parent)
   enemyStyleDropdown:SetPoint("TOP", allFrames[#allFrames], "BOTTOM")
   table.insert(allFrames, enemyStyleDropdown)
 
+  local simplifiedStyleDropdown
+  if C_NamePlateManager and C_NamePlateManager.SetNamePlateSimplified then
+    simplifiedStyleDropdown = addonTable.CustomiseDialog.Components.GetBasicDropdown(container, addonTable.Locales.SIMPLIFIED_STYLE, function(value)
+      return addonTable.Config.Get(addonTable.Config.Options.DESIGNS_ASSIGNED)["enemySimplified"] == value
+    end, function(value)
+      addonTable.Config.Get(addonTable.Config.Options.DESIGNS_ASSIGNED)["enemySimplified"] = value
+      addonTable.CallbackRegistry:TriggerEvent("RefreshStateChange", {[addonTable.Constants.RefreshReason.Design] = true})
+    end)
+    simplifiedStyleDropdown:SetPoint("TOP", allFrames[#allFrames], "BOTTOM")
+    table.insert(allFrames, simplifiedStyleDropdown)
+  end
+
   local targetDropdown = addonTable.CustomiseDialog.Components.GetBasicDropdown(container, addonTable.Locales.ON_TARGET_OR_CASTING, function(value)
     return addonTable.Config.Get(addonTable.Config.Options.TARGET_BEHAVIOUR) == value
   end, function(value)
@@ -387,6 +399,33 @@ local function SetupBehaviour(parent)
       end)
     end
     table.insert(allFrames, stackAppliesToDropdown)
+
+    local simplifiedPlatesDropdown = addonTable.CustomiseDialog.Components.GetBasicDropdown(container, addonTable.Locales.SIMPLIFIED_NAMEPLATES)
+    simplifiedPlatesDropdown:SetPoint("TOP", allFrames[#allFrames], "BOTTOM", 0, 0)
+    do
+      local values = {
+        "minion",
+        "minor",
+      }
+      local labels = {
+        addonTable.Locales.MINION,
+        addonTable.Locales.MINOR,
+      }
+
+      simplifiedPlatesDropdown.DropDown:SetDefaultText(NONE)
+      simplifiedPlatesDropdown.DropDown:SetupMenu(function(_, rootDescription)
+        for index, l in ipairs(labels) do
+          rootDescription:CreateCheckbox(l, function()
+            return addonTable.Config.Get(addonTable.Config.Options.SIMPLIFIED_NAMEPLATES)[values[index]]
+          end, function()
+            local current = addonTable.Config.Get(addonTable.Config.Options.SIMPLIFIED_NAMEPLATES)[values[index]]
+            addonTable.Config.Get(addonTable.Config.Options.SIMPLIFIED_NAMEPLATES)[values[index]] = not current
+            addonTable.CallbackRegistry:TriggerEvent("RefreshStateChange", {[addonTable.Constants.RefreshReason.Simplified] = true})
+          end)
+        end
+      end)
+    end
+    table.insert(allFrames, simplifiedPlatesDropdown)
   end
 
   if C_CVar.GetCVarInfo("nameplateOtherTopInset") then
@@ -425,6 +464,16 @@ local function SetupBehaviour(parent)
   stackRegionSliderY:SetPoint("TOP", allFrames[#allFrames], "BOTTOM", 0, 0)
   table.insert(allFrames, stackRegionSliderY)
 
+  local applyCvarsCheckbox = addonTable.CustomiseDialog.Components.GetCheckbox(container, addonTable.Locales.APPLY_OTHER_CVARS, 28, function(value)
+    if InCombatLockdown() then
+      return
+    end
+    addonTable.Config.Set(addonTable.Config.Options.APPLY_CVARS, value)
+  end)
+  applyCvarsCheckbox.option = addonTable.Config.Options.APPLY_CVARS
+  applyCvarsCheckbox:SetPoint("TOP", allFrames[#allFrames], "BOTTOM", 0, 0)
+  table.insert(allFrames, applyCvarsCheckbox)
+
   container:SetScript("OnShow", function()
     local styles = {}
     for key, value in pairs(addonTable.Config.Get(addonTable.Config.Options.DESIGNS)) do
@@ -447,6 +496,9 @@ local function SetupBehaviour(parent)
 
     friendlyStyleDropdown:Init(labels, values)
     enemyStyleDropdown:Init(labels, values)
+    if simplifiedStyleDropdown then
+      simplifiedStyleDropdown:Init(labels, values)
+    end
 
     clickRegionSliderX:SetValue(addonTable.Config.Get(addonTable.Config.Options.CLICK_REGION_SCALE_X) * 100)
     clickRegionSliderY:SetValue(addonTable.Config.Get(addonTable.Config.Options.CLICK_REGION_SCALE_Y) * 100)
@@ -463,16 +515,6 @@ local function SetupBehaviour(parent)
       end
     end
   end)
-
-  local applyCvarsCheckbox = addonTable.CustomiseDialog.Components.GetCheckbox(container, addonTable.Locales.APPLY_OTHER_CVARS, 28, function(value)
-    if InCombatLockdown() then
-      return
-    end
-    addonTable.Config.Set(addonTable.Config.Options.APPLY_CVARS, value)
-  end)
-  applyCvarsCheckbox.option = addonTable.Config.Options.APPLY_CVARS
-  applyCvarsCheckbox:SetPoint("TOP", allFrames[#allFrames], "BOTTOM", 0, -30)
-  table.insert(allFrames, applyCvarsCheckbox)
 
   return container
 end
