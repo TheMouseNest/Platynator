@@ -220,7 +220,7 @@ function addonTable.Core.UpgradeDesign(design)
           layer = bar.layer + 1,
           scale = bar.scale,
           color = CopyTable(bar.border.color),
-          anchor = {"RIGHT", 83 * bar.scale, 0}
+          anchor = {"RIGHT", 84 * bar.scale, 0}
         })
       end
     end
