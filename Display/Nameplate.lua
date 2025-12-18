@@ -118,7 +118,8 @@ function addonTable.Display.NameplateMixin:OnLoad()
   self.casting = false
 end
 
-function addonTable.Display.NameplateMixin:InitializeWidgets(design)
+function addonTable.Display.NameplateMixin:InitializeWidgets(design, scale)
+  self.scale = scale or 1
   if self.widgets then
     addonTable.Display.ReleaseWidgets(self.widgets)
     self.widgets = nil
@@ -291,7 +292,7 @@ end
 function addonTable.Display.NameplateMixin:UpdateVisual()
   if not self.unit then
     self.overrideAlpha = 1
-    self:SetScale(addonTable.Config.Get(addonTable.Config.Options.GLOBAL_SCALE) * UIParent:GetEffectiveScale())
+    self:SetScale(self.scale * addonTable.Config.Get(addonTable.Config.Options.GLOBAL_SCALE) * UIParent:GetEffectiveScale())
     return
   end
 
@@ -314,7 +315,7 @@ function addonTable.Display.NameplateMixin:UpdateVisual()
       alpha = 0.5
     end
   end
-  self:SetScale(scale * addonTable.Config.Get(addonTable.Config.Options.GLOBAL_SCALE) * UIParent:GetEffectiveScale())
+  self:SetScale(self.scale * scale * addonTable.Config.Get(addonTable.Config.Options.GLOBAL_SCALE) * UIParent:GetEffectiveScale())
   self.overrideAlpha = alpha
 end
 

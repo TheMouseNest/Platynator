@@ -202,7 +202,7 @@ function addonTable.Display.ManagerMixin:OnLoad()
           if UF and UF.HitTestFrame then
             self:UpdateStackingRegion(nameplate, unit)
           end
-          display:InitializeWidgets(addonTable.Core.GetDesign(display.kind))
+          display:InitializeWidgets(addonTable.Core.GetDesign(display.kind), addonTable.Core.GetDesignScale(display.kind))
           self:ListenToBuffs(display, unit)
           display:SetUnit(unit)
         end
@@ -464,7 +464,7 @@ function addonTable.Display.ManagerMixin:Install(unit, nameplate)
 
     newDisplay:Install(nameplate)
     if newDisplay.styleIndex ~= self.styleIndex then
-      newDisplay:InitializeWidgets(addonTable.Core.GetDesign(newDisplay.kind))
+      newDisplay:InitializeWidgets(addonTable.Core.GetDesign(newDisplay.kind), addonTable.Core.GetDesignScale(newDisplay.kind))
       newDisplay.styleIndex = self.styleIndex
     end
     self:ListenToBuffs(newDisplay, unit)

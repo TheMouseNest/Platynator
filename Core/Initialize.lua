@@ -429,6 +429,14 @@ function addonTable.Core.GetDesign(kind)
   return addonTable.Core.GetDesignByName(name)
 end
 
+function addonTable.Core.GetDesignScale(kind)
+  if kind:find("Simplified") then
+    return 0.3
+  else
+    return 1
+  end
+end
+
 function addonTable.Core.Initialize()
   addonTable.Config.InitializeData()
   addonTable.SlashCmd.Initialize()
