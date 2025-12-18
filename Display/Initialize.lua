@@ -425,7 +425,7 @@ function addonTable.Display.ManagerMixin:Install(unit, nameplate)
       newDisplay = self.friendDisplayPool:Acquire()
     else
       local simplifiedSettings = addonTable.Config.Get(addonTable.Config.Options.SIMPLIFIED_NAMEPLATES)
-      shouldSimplify = C_NamePlateManager and C_NamePlateManager.SetNamePlateSimplified and simplifiedSettings.minor and UnitClassification(unit) == "minus" or simplifiedSettings.minion and UnitIsMinion and UnitIsMinion(unit)
+      shouldSimplify = C_NamePlateManager and C_NamePlateManager.SetNamePlateSimplified and (simplifiedSettings.minor and UnitClassification(unit) == "minus" or simplifiedSettings.minion and UnitIsMinion and UnitIsMinion(unit))
       if shouldSimplify then
         newDisplay = self.enemySimplifiedDisplayPool:Acquire()
       else
