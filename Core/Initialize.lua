@@ -326,6 +326,11 @@ function addonTable.Core.MigrateSettings()
     mapping["enemySimplified"] = "_hare_simplified"
   end
 
+  local simplified = addonTable.Config.Get(addonTable.Config.Options.SIMPLIFIED_NAMEPLATES)
+  if not simplified["instancesNormal"] then
+    simplified["instancesNormal"] = true
+  end
+
   for _, design in pairs(addonTable.Config.Get(addonTable.Config.Options.DESIGNS)) do
     addonTable.Core.UpgradeDesign(design)
   end

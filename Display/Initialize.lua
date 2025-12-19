@@ -396,6 +396,7 @@ function addonTable.Display.ManagerMixin:ListenToBuffs(display, unit)
     local LossOfControlFrame = self.ModifiedUFs[unit].AurasFrame.LossOfControlFrame
     LossOfControlFrame:SetParent(display.CrowdControlDisplay)
     if designInfo.crowdControl then
+      LossOfControlFrame:ClearAllPoints()
       if type(designInfo.crowdControl.anchor[1]) == "string" then
         LossOfControlFrame:SetPoint(designInfo.crowdControl.anchor[1], display.CrowdControlDisplay)
       else
@@ -425,7 +426,12 @@ function addonTable.Display.ManagerMixin:Install(unit, nameplate)
       newDisplay = self.friendDisplayPool:Acquire()
     else
       local simplifiedSettings = addonTable.Config.Get(addonTable.Config.Options.SIMPLIFIED_NAMEPLATES)
-      shouldSimplify = C_NamePlateManager and C_NamePlateManager.SetNamePlateSimplified and (simplifiedSettings.minor and UnitClassification(unit) == "minus" or simplifiedSettings.minion and UnitIsMinion and UnitIsMinion(unit))
+      local classification = UnitClassification(unit)
+      shouldSimplify = C_NamePlateManager and C_NamePlateManager.SetNamePlateSimplified and (
+        simplifiedSettings.instancesNormal and classification == "normal" and addonTable.Display.Utilities.IsInRelevantInstance() or
+        simplifiedSettings.minor and classification == "minus" or
+        simplifiedSettings.minion and UnitIsMinion and UnitIsMinion(unit)
+      )
       if shouldSimplify then
         newDisplay = self.enemySimplifiedDisplayPool:Acquire()
       else

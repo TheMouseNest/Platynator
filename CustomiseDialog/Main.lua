@@ -372,10 +372,12 @@ local function SetupBehaviour(parent)
     simplifiedPlatesDropdown:SetPoint("TOP", allFrames[#allFrames], "BOTTOM", 0, 0)
     do
       local values = {
+        "instancesNormal",
         "minion",
         "minor",
       }
       local labels = {
+        addonTable.Locales.NORMAL_INSTANCES_ONLY,
         addonTable.Locales.MINION,
         addonTable.Locales.MINOR,
       }

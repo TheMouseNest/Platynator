@@ -36,8 +36,7 @@ local inRelevantInstance = false
 local instanceTracker = CreateFrame("Frame")
 instanceTracker:RegisterEvent("PLAYER_ENTERING_WORLD")
 instanceTracker:SetScript("OnEvent", function()
-  local _, instanceType = GetInstanceInfo()
-  inRelevantInstance = instanceType == "raid" or instanceType == "party" or instanceType == "arenas"
+  inRelevantInstance = addonTable.Display.Utilities.IsInRelevantInstance()
   if PLATYNATOR_LAST_INSTANCE == nil or inRelevantInstance ~= PLATYNATOR_LAST_INSTANCE.inInstance or PLATYNATOR_LAST_INSTANCE.lastLFGInstanceID ~= select(10, GetInstanceInfo()) then
     PLATYNATOR_LAST_INSTANCE = {
       level = UnitEffectiveLevel("player"),
