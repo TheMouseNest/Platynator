@@ -269,7 +269,7 @@ function addonTable.Display.AurasManagerMixin:FullRefresh()
       end
     end
   else
-    if self.buffsDetails then
+    if self.buffsDetails and not self.isPlayer then
       self.buffs = {}
       local index = 1
       while true do
