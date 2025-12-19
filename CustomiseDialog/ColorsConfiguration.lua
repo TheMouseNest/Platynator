@@ -153,6 +153,16 @@ addonTable.CustomiseDialog.ColorsConfig = {
           return details.instancesOnly
         end,
       },
+      {
+        label = addonTable.Locales.USE_SAFE_COLOR,
+        kind = "checkbox",
+        setter = function(details, value)
+          details.useSafeColor = value
+        end,
+        getter = function(details)
+          return details.useSafeColor
+        end,
+      },
     },
   },
   ["eliteType"] = {
