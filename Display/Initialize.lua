@@ -137,6 +137,14 @@ function addonTable.Display.ManagerMixin:OnLoad()
             UF:SetAlpha(0)
             locked = false
           end)
+          hooksecurefunc(nameplate.UnitFrame.AurasFrame, "RefreshAuras", function(af, data)
+            if not af:IsForbidden() then
+              local display = self.nameplateDisplays[af:GetParent().unit]
+              if display then
+                display.AurasManager:OnEvent("", "", data)
+              end
+            end
+          end)
         end
       else
         nameplate.UnitFrame:SetParent(addonTable.hiddenFrame)
@@ -147,9 +155,6 @@ function addonTable.Display.ManagerMixin:OnLoad()
       end
       if addonTable.Constants.IsMidnight then
         nameplate.UnitFrame:RegisterUnitEvent("UNIT_AURA", unit)
-        nameplate.UnitFrame.AurasFrame:SetParent(nameplate)
-        nameplate.UnitFrame.AurasFrame:SetAlpha(0)
-        nameplate.UnitFrame.AurasFrame:SetIgnoreParentScale(true)
       end
       if nameplate.UnitFrame.WidgetContainer then
         nameplate.UnitFrame.WidgetContainer:SetParent(nameplate)
@@ -162,10 +167,6 @@ function addonTable.Display.ManagerMixin:OnLoad()
       local UF = self.ModifiedUFs[unit]
       -- Restore original anchors and parents to various things we changed
       if UF.HitTestFrame then
-        UF.AurasFrame:SetParent(UF)
-        UF.AurasFrame:SetAlpha(1)
-        UF.AurasFrame:SetIgnoreParentAlpha(false)
-        UF.AurasFrame:SetIgnoreParentScale(false)
         UF.AurasFrame.LossOfControlFrame:ClearAllPoints()
         UF.AurasFrame.LossOfControlFrame:SetPoint("LEFT", UF.HealthBarsContainer.healthBar, "RIGHT", 5, 0);
         UF.AurasFrame.LossOfControlFrame:SetParent(UF.AurasFrame)
@@ -366,23 +367,21 @@ function addonTable.Display.ManagerMixin:UpdateInstanceShowState()
 end
 
 function addonTable.Display.ManagerMixin:ListenToBuffs(display, unit)
-  if addonTable.Constants.IsMidnight and self.ModifiedUFs[unit or display.unit] then
-    local DebuffListFrame = self.ModifiedUFs[unit].AurasFrame.DebuffListFrame
-    local BuffListFrame = self.ModifiedUFs[unit].AurasFrame.BuffListFrame
-    local CrowdControlListFrame = self.ModifiedUFs[unit].AurasFrame.CrowdControlListFrame
+  if addonTable.Constants.IsMidnight and self.ModifiedUFs[unit] then
+    local AurasFrame = self.ModifiedUFs[unit].AurasFrame
 
     display.AurasManager:SetGetImportantAuras(function()
       local important, crowdControl = {}, {}
 
-      for _, child in ipairs(DebuffListFrame:GetLayoutChildren()) do
-        important[child.auraInstanceID] = true
-      end
-      for _, child in ipairs(BuffListFrame:GetLayoutChildren()) do
-        important[child.auraInstanceID] = true
-      end
-      for _, child in ipairs(CrowdControlListFrame:GetLayoutChildren()) do
-        crowdControl[child.auraInstanceID] = true
-      end
+      AurasFrame.buffList:Iterate(function(auraInstanceID)
+        important[auraInstanceID] = true
+      end)
+      AurasFrame.debuffList:Iterate(function(auraInstanceID)
+        important[auraInstanceID] = true
+      end)
+      AurasFrame.crowdControlList:Iterate(function(auraInstanceID)
+        crowdControl[auraInstanceID] = true
+      end)
 
       return important, crowdControl
     end)

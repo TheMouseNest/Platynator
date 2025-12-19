@@ -11,7 +11,9 @@ function addonTable.Display.AurasManagerMixin:OnLoad()
   self.OnCrowdControlUpdate = function() end
   self.OnBuffsUpdate = function() end
 
-  self:SetScript("OnEvent", self.OnEvent)
+  if not addonTable.Constants.IsMidnight then -- XXX: Until Blizzard adds in important aura filtering we call this differently
+    self:SetScript("OnEvent", self.OnEvent)
+  end
 
   self:Reset()
 end
@@ -385,10 +387,12 @@ function addonTable.Display.AurasManagerMixin:OnEvent(_, _, refreshData)
           keep = true
           table.insert(self.buffs, aura.auraInstanceID)
           aura.kind = "buffs"
-        elseif self.crowdControlDetails and legacy.crowdControlSpells[aura.spellId] then
-          keep = true
-          table.insert(self.crowdControl, aura.auraInstanceID)
-          aura.kind = "crowdControl"
+        elseif legacy.crowdControlSpells[aura.spellId] then
+          if self.crowdControlDetails then  -- Prevents CC placing in the debuffs if CC is disabled
+            keep = true
+            table.insert(self.crowdControl, aura.auraInstanceID)
+            aura.kind = "crowdControl"
+          end
         elseif self.debuffsDetails and aura.isHarmful and (aura.nameplateShowPersonal or legacy.whitelistedDebuffs[aura.spellId] or addonTable.Constants.IsClassic) and aura.sourceUnit == "player" then
           keep = true
           table.insert(self.debuffs, aura.auraInstanceID)
@@ -417,15 +421,8 @@ function addonTable.Display.AurasManagerMixin:OnEvent(_, _, refreshData)
             aura.applicationsString = aura.applications > 1 and tostring(aura.applications) or ""
           end
           self.auraData[auraInstanceID] = aura
-        else
-          self.auraData[auraInstanceID] = nil
-          local list = self[stored.kind]
-          local index = tIndexOf(list, auraInstanceID)
-          if index then
-            table.remove(list, index)
-          end
+          changes[stored.kind] = true
         end
-        changes[stored.kind] = true
       end
     end
   end
@@ -439,9 +436,8 @@ function addonTable.Display.AurasManagerMixin:OnEvent(_, _, refreshData)
 
         local list = self[stored.kind]
         local index = tIndexOf(list, auraInstanceID)
-        if index then
-          table.remove(list, index)
-        end
+        assert(index)
+        table.remove(list, index)
       end
     end
   end

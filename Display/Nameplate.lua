@@ -213,9 +213,7 @@ function addonTable.Display.NameplateMixin:SetUnit(unit)
     self.DebuffDisplay:SetShown(self.DebuffDisplay.enabled)
     self.CrowdControlDisplay:SetShown(self.CrowdControlDisplay.enabled)
 
-    if self.AurasManager then
-      self.AurasManager:SetUnit(self.unit)
-    end
+    self.AurasManager:SetUnit(self.unit)
 
     if UnitCanAttack("player", self.unit) then
       self:RegisterUnitEvent("UNIT_SPELLCAST_START", self.unit)
@@ -234,9 +232,7 @@ function addonTable.Display.NameplateMixin:SetUnit(unit)
     self.DebuffDisplay:Hide()
     self.CrowdControlDisplay:Hide()
 
-    if self.AurasManager then
-      self.AurasManager:SetUnit()
-    end
+    self.AurasManager:SetUnit()
 
     self:UnregisterAllEvents()
     self.casting = false
