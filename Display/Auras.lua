@@ -380,7 +380,7 @@ function addonTable.Display.AurasManagerMixin:OnEvent(_, _, refreshData)
     else
       for _, aura in ipairs(refreshData.addedAuras) do
         local keep = false
-        if self.buffsDetails and aura.isHelpful and
+        if not self.isPlayer and self.buffsDetails and aura.isHelpful and
           not legacy.blacklistedBuffs[aura.spellId] and ((not self.buffsDetails.dispelable and not self.buffsDetails.important) or type(aura.dispelName) ~= "nil") then
           keep = true
           table.insert(self.buffs, aura.auraInstanceID)
