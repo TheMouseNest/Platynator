@@ -228,8 +228,9 @@ function addonTable.Display.AurasManagerMixin:GetByInstanceID(auraInstanceID)
 end
 
 function addonTable.Display.AurasManagerMixin:FullRefresh()
+  self.auraData = {}
+
   if C_UnitAuras.GetUnitAuraInstanceIDs then
-    self.auraData = {}
     local important, crowdControl = self.GetImportantAuras()
     if self.buffsDetails then
       local all = C_UnitAuras.GetUnitAuras(self.unit, self.buffFilter, nil, self.buffSort, self.buffOrder)
