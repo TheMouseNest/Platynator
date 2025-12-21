@@ -42,7 +42,9 @@ function addonTable.Display.ManagerMixin:OnLoad()
   self:RegisterEvent("PLAYER_FOCUS_CHANGED")
   self:RegisterEvent("PLAYER_LOGIN")
   self:RegisterEvent("PLAYER_ENTERING_WORLD")
-  self:RegisterEvent("GARRISON_UPDATE")
+  if C_EventUtils.IsEventValid("GARRISON_UPDATE") then
+    self:RegisterEvent("GARRISON_UPDATE")
+  end
   self:RegisterEvent("UI_SCALE_CHANGED")
 
   self:RegisterEvent("PLAYER_SOFT_INTERACT_CHANGED")
