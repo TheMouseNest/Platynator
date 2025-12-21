@@ -228,13 +228,12 @@ function addonTable.Display.AurasManagerMixin:GetByInstanceID(auraInstanceID)
 end
 
 function addonTable.Display.AurasManagerMixin:FullRefresh()
-  self.auraData = {}
+  self:Reset()
 
   if C_UnitAuras.GetUnitAuraInstanceIDs then
     local important, crowdControl = self.GetImportantAuras()
     if self.buffsDetails then
       local all = C_UnitAuras.GetUnitAuras(self.unit, self.buffFilter, nil, self.buffSort, self.buffOrder)
-      self.buffs = {}
       for _, aura in ipairs(all) do
         if (not self.buffsDetails.filters.important or important[aura.auraInstanceID]) and (not self.buffsDetails.dispelable or type(aura.dispelName) ~= "nil") then
           table.insert(self.buffs, aura.auraInstanceID)
@@ -247,7 +246,6 @@ function addonTable.Display.AurasManagerMixin:FullRefresh()
     end
     if self.debuffsDetails then
       local all = C_UnitAuras.GetUnitAuras(self.unit, self.debuffFilter, nil, self.debuffSort, self.debuffOrder)
-      self.debuffs = {}
       for _, aura in ipairs(all) do
         if (not self.debuffsDetails.filters.important or important[aura.auraInstanceID]) and not crowdControl[aura.auraInstanceID] then
           table.insert(self.debuffs, aura.auraInstanceID)
@@ -260,7 +258,6 @@ function addonTable.Display.AurasManagerMixin:FullRefresh()
     end
     if self.crowdControlDetails then
       local all = C_UnitAuras.GetUnitAuras(self.unit, self.crowdControlFilter, nil, self.crowdControlSort, self.crowdControlOrder)
-      self.crowdControl = {}
       for _, aura in ipairs(all) do
         if crowdControl[aura.auraInstanceID] then
           table.insert(self.crowdControl, aura.auraInstanceID)
@@ -273,7 +270,6 @@ function addonTable.Display.AurasManagerMixin:FullRefresh()
     end
   else
     if self.buffsDetails and not self.isPlayer then
-      self.buffs = {}
       local index = 1
       while true do
         local aura = C_UnitAuras.GetAuraDataByIndex(self.unit, index, self.buffFilter)
@@ -291,7 +287,6 @@ function addonTable.Display.AurasManagerMixin:FullRefresh()
       table.sort(self.buffs, self.buffSortFunc)
     end
     if self.debuffsDetails then
-      self.debuffs = {}
       local index = 1
       while true do
         local aura = C_UnitAuras.GetAuraDataByIndex(self.unit, index, self.debuffFilter)
@@ -309,7 +304,6 @@ function addonTable.Display.AurasManagerMixin:FullRefresh()
       table.sort(self.debuffs, self.debuffSortFunc)
     end
     if self.crowdControlDetails then
-      self.crowdControl = {}
       local index = 1
       while true do
         local aura = C_UnitAuras.GetAuraDataByIndex(self.unit, index, self.crowdControlFilter)
