@@ -42,6 +42,7 @@ function addonTable.Display.ManagerMixin:OnLoad()
   self:RegisterEvent("PLAYER_FOCUS_CHANGED")
   self:RegisterEvent("PLAYER_LOGIN")
   self:RegisterEvent("PLAYER_ENTERING_WORLD")
+  self:RegisterEvent("GARRISON_UPDATE")
   self:RegisterEvent("UI_SCALE_CHANGED")
 
   self:RegisterEvent("PLAYER_SOFT_INTERACT_CHANGED")
@@ -619,6 +620,8 @@ function addonTable.Display.ManagerMixin:OnEvent(eventName, ...)
   elseif eventName == "PLAYER_ENTERING_WORLD" then
     self:UpdateInstanceShowState()
     self:UpdateNamePlateSize()
+  elseif eventName == "GARRISON_UPDATE" then
+    self:UpdateInstanceShowState()
   elseif eventName == "PLAYER_LOGIN" then
     local design = addonTable.Core.GetDesign("enemy")
 
