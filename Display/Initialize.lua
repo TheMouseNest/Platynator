@@ -348,14 +348,16 @@ function addonTable.Display.ManagerMixin:UpdateInstanceShowState()
   local currentShow = addonTable.Config.Get(addonTable.Config.Options.SHOW_NAMEPLATES)
 
   local _, instanceType = GetInstanceInfo()
-  if not self.hiddenFriendly and (instanceType == "raid" or instanceType == "party" or instanceType == "arenas") then
-    if currentShow.player then
-      C_CVar.SetCVar(values.player, "0")
+  if instanceType == "raid" or instanceType == "party" or instanceType == "arenas" then
+    if not self.hiddenFriendly then
+      if currentShow.player then
+        C_CVar.SetCVar(values.player, "0")
+      end
+      if currentShow.npc then
+        C_CVar.SetCVar(values.npc, "0")
+      end
+      self.hiddenFriendly = true
     end
-    if currentShow.npc then
-      C_CVar.SetCVar(values.npc, "0")
-    end
-    self.hiddenFriendly = true
   elseif self.hiddenFriendly then
     if currentShow.player then
       C_CVar.SetCVar(values.player, "1")
