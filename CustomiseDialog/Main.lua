@@ -147,7 +147,7 @@ local function SetupGeneral(parent)
         end, function()
           local designs = {}
           for _, style in pairs(addonTable.Config.Get(addonTable.Config.Options.DESIGNS_ASSIGNED)) do
-            if not style:match("^_") then
+            if not style:match("^_") or style == addonTable.Constants.CustomName then
               designs[style] = CopyTable(addonTable.Core.GetDesignByName(style))
             end
           end
