@@ -53,7 +53,15 @@ function addonTable.Display.ManagerMixin:OnLoad()
   self:RegisterEvent("RUNE_POWER_UPDATE")
   self:RegisterEvent("UNIT_FACTION")
 
-  self:RegisterEvent("UNIT_SPELLCAST_SUCCEEDED") -- Used for transitioning mobs to attackable
+  C_Timer.NewTicker(0.1, function() -- Used for transitioning mobs to attackable
+    for unit, display in pairs(self.nameplateDisplays) do
+      local display = self.nameplateDisplays[unit]
+      if display and ((display.kind == "friend" and UnitCanAttack("player", unit)) or (display.kind == "enemy" and not UnitCanAttack("player", unit))) then
+        self:Uninstall(unit)
+        self:Install(unit, nameplate)
+      end
+    end
+  end)
 
   NamePlateDriverFrame:UnregisterEvent("DISPLAY_SIZE_CHANGED")
   if not addonTable.Constants.IsMidnight then
@@ -600,7 +608,7 @@ function addonTable.Display.ManagerMixin:OnEvent(eventName, ...)
     if self.nameplateDisplays[unit] then
       self.nameplateDisplays[unit]:UpdateForTarget()
     end
-  elseif eventName == "UNIT_FACTION" or eventName == "UNIT_SPELLCAST_SUCCEEDED" then
+  elseif eventName == "UNIT_FACTION" then
     local unit = ...
     local display = self.nameplateDisplays[unit]
     if display and ((display.kind == "friend" and UnitCanAttack("player", unit)) or (display.kind == "enemy" and not UnitCanAttack("player", unit))) then
