@@ -327,7 +327,7 @@ function addonTable.Core.MigrateSettings()
   end
 
   local simplified = addonTable.Config.Get(addonTable.Config.Options.SIMPLIFIED_NAMEPLATES)
-  if not simplified["instancesNormal"] then
+  if simplified["instancesNormal"] == nil then
     simplified["instancesNormal"] = true
   end
 
