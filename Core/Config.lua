@@ -13,8 +13,10 @@ local settings = {
   DESIGNS = {key = "designs", default = {}, refresh = {addonTable.Constants.RefreshReason.Design}},
   DESIGNS_ASSIGNED = {key = "designs_assigned", default = {["friend"] = "_name-only", ["enemy"] = "_hare", ["enemySimplified"] = "_hare_simplified"}},
 
-  TARGET_BEHAVIOUR = {key = "target_behaviour", default = "enlarge", refresh = {addonTable.Constants.RefreshReason.TargetBehaviour}},
-  NOT_TARGET_BEHAVIOUR = {key = "not_target_behaviour", default = "none", refresh = {addonTable.Constants.RefreshReason.TargetBehaviour}},
+  TARGET_SCALE = {key = "target_scale", default = 1.2, refresh = {addonTable.Constants.RefreshReason.TargetBehaviour}},
+  CAST_SCALE = {key = "cast_scale", default = 1.1, refresh = {addonTable.Constants.RefreshReason.TargetBehaviour}},
+  CAST_ALPHA = {key = "cast_alpha", default = 1, refresh = {addonTable.Constants.RefreshReason.TargetBehaviour}},
+  NOT_TARGET_ALPHA = {key = "not_target_alpha", default = 1, refresh = {addonTable.Constants.RefreshReason.TargetBehaviour}},
 
   STACKING_NAMEPLATES = {key = "stacking_nameplates", default = true, refresh = {addonTable.Constants.RefreshReason.StackingBehaviour}},
   CLOSER_TO_SCREEN_EDGES = {key = "closer_to_screen_edges", default = true, refresh = {addonTable.Constants.RefreshReason.StackingBehaviour}},
@@ -24,9 +26,10 @@ local settings = {
   STACK_REGION_SCALE_X = {key = "stack_region_scale_x", default = 1.2, refresh = {addonTable.Constants.RefreshReason.StackingBehaviour}},
   STACK_REGION_SCALE_Y = {key = "stack_region_scale_y", default = 1.1, refresh = {addonTable.Constants.RefreshReason.StackingBehaviour}},
 
+  SHOW_NAMEPLATES_ONLY_NEEDED = {key = "show_nameplates_only_needed", default = false, refresh = {addonTable.Constants.RefreshReason.ShowBehaviour}},
   SHOW_NAMEPLATES = {key = "show_nameplates", default = {npc = true, player = true, enemy = true}, refresh = {addonTable.Constants.RefreshReason.ShowBehaviour}},
-  SHOW_FRIENDLY_IN_INSTANCES = {key = "show_friendly_in_instances", default = true, refresh = {addonTable.Constants.RefreshReason.ShowBehaviour}},
-  SIMPLIFIED_NAMEPLATES = {key = "simplified_nameplates", default = {minion = true, minor = true}},
+  SHOW_FRIENDLY_IN_INSTANCES = {key = "show_friendly_in_instances_1", default = "always", refresh = {addonTable.Constants.RefreshReason.ShowBehaviour}},
+  SIMPLIFIED_NAMEPLATES = {key = "simplified_nameplates", default = {minion = true, minor = true, instancesNormal = true}},
 
   APPLY_CVARS = {key = "apply_cvars", default = true},
 }

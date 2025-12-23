@@ -234,6 +234,7 @@ function addonTable.Display.ManagerMixin:OnLoad()
         end
       end
       self:UpdateNamePlateSize()
+      self:UpdateTargetScale()
     elseif state[addonTable.Constants.RefreshReason.StackingBehaviour] then
       self:UpdateStacking()
       for unit, display in pairs(self.nameplateDisplays) do
@@ -298,6 +299,15 @@ function addonTable.Display.ManagerMixin:UpdateStacking()
   end
 end
 
+function addonTable.Display.ManagerMixin:UpdateTargetScale()
+  if InCombatLockdown() then
+    self:RegisterEvent("PLAYER_REGEN_ENABLED")
+    return
+  end
+
+  C_CVar.SetCVar("nameplateSelectedScale", addonTable.Config.Get(addonTable.Config.Options.TARGET_SCALE))
+end
+
 local function GetCVarsForNameplates()
   if C_CVar.GetCVarInfo("nameplateShowFriendlyPlayers") ~= nil then
     return {
@@ -320,6 +330,8 @@ function addonTable.Display.ManagerMixin:UpdateShowState()
     return
   end
 
+  C_CVar.SetCVar("nameplateShowAll", addonTable.Config.Get(addonTable.Config.Options.SHOW_NAMEPLATES_ONLY_NEEDED) and "0" or "1")
+
   local currentShow = addonTable.Config.Get(addonTable.Config.Options.SHOW_NAMEPLATES)
 
   local values = GetCVarsForNameplates()
@@ -335,6 +347,9 @@ function addonTable.Display.ManagerMixin:UpdateShowState()
 
     self.oldShowState = CopyTable(currentShow)
   end
+  if state == "name_only" and C_CVar.GetCVarInfo("nameplateShowOnlyNameForFriendlyPlayerUnits") then
+    C_CVar.SetCVar("nameplateShowOnlyNameForFriendlyPlayerUnits", "1")
+  end
 
   for key, state in pairs(currentShow) do
     local newValue = state and "1" or "0"
@@ -346,13 +361,18 @@ function addonTable.Display.ManagerMixin:UpdateShowState()
 end
 
 function addonTable.Display.ManagerMixin:UpdateInstanceShowState()
+  local state = addonTable.Config.Get(addonTable.Config.Options.SHOW_FRIENDLY_IN_INSTANCES)
   -- Avoid changing nameplate visibility if we don't need to (so the Blizz hotkeys persist)
-  if addonTable.Config.Get(addonTable.Config.Options.SHOW_FRIENDLY_IN_INSTANCES) then
+  if state == "always" then
     return
   end
 
+  if state == "name_only" and C_CVar.GetCVarInfo("nameplateShowOnlyNameForFriendlyPlayerUnits") then
+    C_CVar.SetCVar("nameplateShowOnlyNameForFriendlyPlayerUnits", "1")
+  end
+
   if InCombatLockdown() then
-    self:RegisterCallback("PLAYER_REGEN_ENABLED")
+    self:RegisterEvent("PLAYER_REGEN_ENABLED")
     return
   end
 
@@ -362,7 +382,7 @@ function addonTable.Display.ManagerMixin:UpdateInstanceShowState()
   local _, instanceType = GetInstanceInfo()
   if instanceType == "raid" or instanceType == "party" or instanceType == "arenas" then
     if not self.hiddenFriendly then
-      if currentShow.player then
+      if currentShow.player and state ~= "name_only" then
         C_CVar.SetCVar(values.player, "0")
       end
       if currentShow.npc then
@@ -623,6 +643,7 @@ function addonTable.Display.ManagerMixin:OnEvent(eventName, ...)
     self:UpdateStacking()
     self:UpdateShowState()
     self:UpdateNamePlateSize()
+    self:UpdateTargetScale()
   elseif eventName == "UI_SCALE_CHANGED" then
     for unit, display in pairs(self.nameplateDisplays) do
       display:UpdateVisual()
@@ -663,5 +684,6 @@ function addonTable.Display.ManagerMixin:OnEvent(eventName, ...)
 
     self:UpdateStacking()
     self:UpdateShowState()
+    self:UpdateTargetScale()
   end
 end
