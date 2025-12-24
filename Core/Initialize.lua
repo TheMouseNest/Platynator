@@ -136,7 +136,7 @@ function addonTable.Core.UpgradeDesign(design)
 
   for _, bar in ipairs(design.bars) do
     if bar.kind == "health" and not bar.absorb then
-      local mode = (bar.border.height or addonTable.Assets.BarBordersLegacy[bar.border.asset].mode) * 100
+      local mode = bar.border.height and bar.border.height * 100 or addonTable.Assets.BarBordersLegacy[bar.border.asset].mode
       local isNarrow = mode < 75
       bar.absorb = {asset = isNarrow and "narrow/blizzard-absorb" or "wide/blizzard-absorb", color = {r = 1, g = 1, b = 1}}
     end
@@ -283,6 +283,24 @@ function addonTable.Core.UpgradeDesign(design)
     end
     if highlight.color.a == nil then
       highlight.color.a = 1
+    end
+
+    if not addonTable.Assets.Highlights[highlight.asset] then
+      local old = addonTable.Assets.HighlightsLegacy[highlight.asset]
+      highlight.asset = addonTable.Assets.HighlightsLegacy[highlight.asset].tag
+      local new = addonTable.Assets.Highlights[highlight.asset]
+
+      if new.mode == addonTable.Assets.RenderMode.Sliced then
+        local baseWidth, baseHeight = 125, 15.625
+        highlight.width = old.width / baseWidth
+        highlight.height = old.height / baseHeight
+      elseif new.mode == addonTable.Assets.RenderMode.Stretch then
+        highlight.width = old.width / new.width
+        highlight.height = old.height / new.height
+      else
+        highlight.width = 1
+        highlight.height = 1
+      end
     end
   end
 

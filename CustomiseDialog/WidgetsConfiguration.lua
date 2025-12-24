@@ -828,7 +828,7 @@ addonTable.CustomiseDialog.WidgetsConfig = {
           {
             label = addonTable.Locales.SCALE,
             kind = "slider",
-            min = 1, max = 300,
+            min = 50, max = 300,
             valuePattern = "%d%%",
             setter = function(details, value)
               details.scale = value / 100
@@ -853,43 +853,48 @@ addonTable.CustomiseDialog.WidgetsConfig = {
           {
             label = addonTable.Locales.HEIGHT,
             kind = "slider",
-            min = minSize, max = maxSize,
-            formatter = sizeFormatter,
+            min = 50, max = 300,
+            valuePattern = "%d%%",
             setter = function(details, value)
-              local newMode = sizes[value]
-
               local asset = addonTable.Assets.Highlights[details.asset]
-              local mode = asset.mode
-              local tag = asset.tag
-              for key, alt in pairs(addonTable.Assets.Highlights) do
-                if alt.tag == tag and alt.mode == newMode then
-                  details.asset = key
-                  return
-                end
+              if asset.mode == addonTable.Assets.RenderMode.Fixed then
+                return
               end
-
-              for key, alt in pairs(addonTable.Assets.Highlights) do
-                if alt.tag == "soft-glow" and alt.mode == newMode then
-                  details.asset = key
-                  break
-                end
-              end
+              details.height = value / 100
             end,
             getter = function(details)
-              local mode = addonTable.Assets.Highlights[details.asset].mode
-              assert(mode)
-              return tIndexOf(sizes, mode) or 3
+              return details.height * 100
+            end,
+          },
+          {
+            label = addonTable.Locales.WIDTH,
+            kind = "slider",
+            min = 1, max = 300,
+            valuePattern = "%d%%",
+            setter = function(details, value)
+              local asset = addonTable.Assets.Highlights[details.asset]
+              if asset.mode == addonTable.Assets.RenderMode.Fixed then
+                return
+              end
+              details.width = value / 100
+            end,
+            getter = function(details)
+              return details.width * 100
             end,
           },
           {
             label = addonTable.Locales.VISUAL,
             kind = "dropdown",
             getInitData = function(details)
-              local height = addonTable.Assets.Highlights[details.asset].mode
-              return GetLabelsValues(addonTable.Assets.Highlights, function(asset) return asset.mode == height or (asset.tag == "arrows") end)
+              return GetLabelsValues(addonTable.Assets.Highlights)
             end,
             setter = function(details, value)
               details.asset = value
+              local asset = addonTable.Assets.Highlights[details.asset]
+              if asset.mode == addonTable.Assets.RenderMode.Fixed then
+                details.width = 1
+                details.height = 1
+              end
             end,
             getter = function(details)
               return details.asset

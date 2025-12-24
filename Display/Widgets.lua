@@ -396,7 +396,19 @@ function addonTable.Display.GetHighlight(frame, parent)
 
     frame.highlight:SetTexture(highlightDetails.file)
     frame.highlight:SetVertexColor(details.color.r, details.color.g, details.color.b, details.color.a)
-    frame:SetSize(highlightDetails.width * details.scale, highlightDetails.height * details.scale)
+
+    if highlightDetails.mode == addonTable.Assets.RenderMode.Sliced then
+      local width, height = details.width * addonTable.Assets.BarBordersSize.width, details.height * addonTable.Assets.BarBordersSize.height
+      frame:SetSize(width, height)
+      frame.highlight:SetTextureSliceMargins(highlightDetails.width * highlightDetails.margin, highlightDetails.height * highlightDetails.margin, highlightDetails.width * highlightDetails.margin, highlightDetails.height * highlightDetails.margin)
+      frame.highlight:SetScale(1/highlightDetails.lowerScale)
+    elseif highlightDetails.mode == addonTable.Assets.RenderMode.Fixed then
+      frame:SetSize(highlightDetails.width * details.scale, highlightDetails.height * details.scale)
+      frame.highlight:ClearTextureSlice()
+    elseif highlightDetails.mode == addonTable.Assets.RenderMode.Stretch then
+      frame:SetSize(highlightDetails.width * details.scale * details.width, highlightDetails.height * details.scale * details.height)
+      frame.highlight:ClearTextureSlice()
+    end
 
     frame.highlight:SetSnapToPixelGrid(false)
     frame.highlight:SetTexelSnappingBias(0)
