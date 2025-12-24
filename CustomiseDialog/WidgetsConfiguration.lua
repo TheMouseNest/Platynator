@@ -869,7 +869,7 @@ addonTable.CustomiseDialog.WidgetsConfig = {
           {
             label = addonTable.Locales.WIDTH,
             kind = "slider",
-            min = 1, max = 300,
+            min = 50, max = 300,
             valuePattern = "%d%%",
             setter = function(details, value)
               local asset = addonTable.Assets.Highlights[details.asset]
