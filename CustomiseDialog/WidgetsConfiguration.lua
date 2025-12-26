@@ -796,7 +796,7 @@ addonTable.CustomiseDialog.WidgetsConfig = {
               details.filters.dispelable = value
             end,
             getter = function(details)
-              return details.filters.fromYou
+              return details.filters.dispelable
             end,
           },
         }
