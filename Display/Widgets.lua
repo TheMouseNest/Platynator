@@ -42,7 +42,7 @@ local function InitBar(frame, details)
   frame.background:SetVertexColor(details.background.color.r, details.background.color.g, details.background.color.b, details.background.color.a)
   frame.border:SetTexture(borderDetails.file)
   frame.border:SetScale(1/borderDetails.lowerScale * details.scale)
-  frame.border:SetSize((width + borderDetails.extra / 2) * borderDetails.lowerScale, (height + borderDetails.extra / 2) * borderDetails.lowerScale)
+  frame.border:SetSize((width + borderDetails.extra / 2 + borderDetails.padding / 2) * borderDetails.lowerScale, (height + borderDetails.extra / 2 + borderDetails.padding / 2) * borderDetails.lowerScale)
   frame.border:SetVertexColor(details.border.color.r, details.border.color.g, details.border.color.b, details.border.color.a)
   frame.border:SetTextureSliceMargins(borderDetails.width * borderDetails.margin, borderDetails.height * borderDetails.margin, borderDetails.width * borderDetails.margin, borderDetails.height * borderDetails.margin)
   if details.marker.asset ~= "none" then
@@ -386,7 +386,7 @@ function addonTable.Display.GetHighlight(frame, parent)
   frame = frame or CreateFrame("Frame", nil, parent or UIParent)
 
   frame.highlight = frame:CreateTexture()
-  frame.highlight:SetAllPoints()
+  frame.highlight:SetPoint("CENTER")
 
   function frame:Init(details)
     ApplyAnchor(frame, details.anchor)
@@ -396,17 +396,21 @@ function addonTable.Display.GetHighlight(frame, parent)
 
     frame.highlight:SetTexture(highlightDetails.file)
     frame.highlight:SetVertexColor(details.color.r, details.color.g, details.color.b, details.color.a)
+    frame.highlight:SetScale(1)
 
     if highlightDetails.mode == addonTable.Assets.RenderMode.Sliced then
       local width, height = details.width * addonTable.Assets.BarBordersSize.width, details.height * addonTable.Assets.BarBordersSize.height
       frame:SetSize(width, height)
+      frame.highlight:SetSize((width + highlightDetails.extra / 2 + highlightDetails.padding / 2) * highlightDetails.lowerScale, (height + highlightDetails.extra / 2 + highlightDetails.padding / 2) * highlightDetails.lowerScale)
       frame.highlight:SetTextureSliceMargins(highlightDetails.width * highlightDetails.margin, highlightDetails.height * highlightDetails.margin, highlightDetails.width * highlightDetails.margin, highlightDetails.height * highlightDetails.margin)
       frame.highlight:SetScale(1/highlightDetails.lowerScale)
     elseif highlightDetails.mode == addonTable.Assets.RenderMode.Fixed then
       frame:SetSize(highlightDetails.width * details.scale, highlightDetails.height * details.scale)
+      frame.highlight:SetSize(frame:GetSize())
       frame.highlight:ClearTextureSlice()
     elseif highlightDetails.mode == addonTable.Assets.RenderMode.Stretch then
       frame:SetSize(highlightDetails.width * details.scale * details.width, highlightDetails.height * details.scale * details.height)
+      frame.highlight:SetSize(frame:GetSize())
       frame.highlight:ClearTextureSlice()
     end
 
