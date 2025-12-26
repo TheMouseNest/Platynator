@@ -137,13 +137,14 @@ addonTable.Assets.BarMasks = {
 addonTable.Assets.Highlights = {
   ["bold"] = {file = "Interface/AddOns/Platynator/Assets/%s/BarBorders/bold-square.png", width = 50, height = 50, has4k = true, masked = true, tag = "bold", margin = 0.49, extra = 0, padding = 23, minSize = 50, modifier = 0.35, DPIScale = 1/2, mode = renderMode.Sliced},
   ["slight"] = {file = "Interface/AddOns/Platynator/Assets/%s/BarBorders/slight-square.png", width = 50, height = 50, has4k = true, masked = true, tag = "slight", margin = 0.45, extra = 0, padding = 23, minSize = 50, modifier = 0.35, DPIScale = 1/2, mode = renderMode.Sliced},
-  ["soft"] = {file = "Interface/AddOns/Platynator/Assets/%s/BarBorders/soft-square.png", width = 66, height = 66, has4k = true, masked = true, tag = "soft", margin = 0.33, extra = 9, minSize = 50, modifier = 0.25, DPIScale = 4/6, mode = renderMode.Sliced},
-  ["blizzard-bold-health"] = {file = "Interface/AddOns/Platynator/Assets/%s/Highlights/blizzard-health-bold-square.png", width = 48, height = 48, has4k = true, masked = true, tag = "blizzard-bold-health", margin = 0.4, extra = 0, minSize = 100, modifier = 0.3, DPIScale = 1/2, mode = renderMode.Sliced},
+  ["soft"] = {file = "Interface/AddOns/Platynator/Assets/%s/BarBorders/soft-square.png", width = 66, height = 66, has4k = true, masked = true, tag = "soft", margin = 0.33, extra = 9, padding = 0, minSize = 50, modifier = 0.25, DPIScale = 4/6, mode = renderMode.Sliced},
+  ["blizzard-bold-health"] = {file = "Interface/AddOns/Platynator/Assets/%s/Highlights/blizzard-health-bold-square.png", width = 48, height = 48, has4k = true, masked = true, tag = "blizzard-bold-health", margin = 0.4, extra = 0, padding = 0, minSize = 100, modifier = 0.3, DPIScale = 1/2, mode = renderMode.Sliced},
 
-  ["soft-glow"] = {file = "Interface/AddOns/Platynator/Assets/%s/Highlights/soft-glow-square.png", width = 59, height = 59, has4k = true, masked = true, tag = "soft", margin = 0.4, extra = 11, minSize = 50, modifier = 0.3, DPIScale = 1/2, mode = renderMode.Sliced},
-  ["feathered"] = {file = "Interface/AddOns/Platynator/Assets/%s/Highlights/feathered-square.png", width = 60, height = 60, has4k = true, masked = true, tag = "soft", margin = 0.48, extra = 0, minSize = 50, modifier = 0.25, DPIScale = 1/2, mode = renderMode.Sliced},
+  ["soft-glow"] = {file = "Interface/AddOns/Platynator/Assets/%s/Highlights/soft-glow-square.png", width = 59, height = 59, has4k = true, masked = true, tag = "soft", margin = 0.4, extra = 11, padding = 0, minSize = 50, modifier = 0.3, DPIScale = 1/2, mode = renderMode.Sliced},
+  ["feathered"] = {file = "Interface/AddOns/Platynator/Assets/%s/Highlights/feathered-square.png", width = 60, height = 60, has4k = true, masked = true, tag = "soft", margin = 0.48, extra = 0, padding = 0, minSize = 50, modifier = 0.25, DPIScale = 1/2, mode = renderMode.Sliced},
 
-  ["white"] = {file = "Interface/AddOns/Platynator/Assets/Special/white.png", width = 1000, height = 125, mode = renderMode.Stretch, tag = "white"},
+  ["white"] = {file = "Interface/AddOns/Platynator/Assets/Special/white.png", width = 20, height = 20, mode = renderMode.Sliced, tag = "white", margin = 0.4, extra = 0, padding = 0, modifier = 1, minSize = 1, modifier = 1},
+
   ["glow"] = {file = "Interface/AddOns/Platynator/Assets/%s/Highlights/glow-100.png", width = 1563, height = 680, has4k = true, mode = renderMode.Stretch, tag = "glow"},
   ["striped"] = {file = "Interface/AddOns/Platynator/Assets/%s/Highlights/striped.png", width = 1000, height = 125, has4k = true, mode = renderMode.Stretch, tag = "striped"},
   ["striped-reverse"] = {file = "Interface/AddOns/Platynator/Assets/%s/Highlights/striped-reverse.png", width = 1000, height = 125, has4k = true, mode = renderMode.Stretch, tag = "striped-reverse"},
@@ -374,9 +375,6 @@ function addonTable.Assets.ApplyScale()
         end
         entry.width = entry.width * scale
         entry.height = entry.height * scale
-        if entry.extra then
-          entry.extra = entry.extra * scale
-        end
         entry.lowerScale = 1 * scale / root.modifier
       else
         entry.lowerScale = 1 / rootTable[key].modifier
