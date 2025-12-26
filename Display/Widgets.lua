@@ -42,7 +42,7 @@ local function InitBar(frame, details)
   frame.background:SetVertexColor(details.background.color.r, details.background.color.g, details.background.color.b, details.background.color.a)
   frame.border:SetTexture(borderDetails.file)
   frame.border:SetScale(1/borderDetails.lowerScale * details.scale)
-  frame.border:SetSize((width + borderDetails.extra / 2 + borderDetails.padding / 2) * borderDetails.lowerScale, (height + borderDetails.extra / 2 + borderDetails.padding / 2) * borderDetails.lowerScale)
+  frame.border:SetSize((width + borderDetails.extra / 2 + borderDetails.padding) * borderDetails.lowerScale, (height + borderDetails.extra / 2 + borderDetails.padding) * borderDetails.lowerScale)
   frame.border:SetVertexColor(details.border.color.r, details.border.color.g, details.border.color.b, details.border.color.a)
   frame.border:SetTextureSliceMargins(borderDetails.width * borderDetails.margin, borderDetails.height * borderDetails.margin, borderDetails.width * borderDetails.margin, borderDetails.height * borderDetails.margin)
   if details.marker.asset ~= "none" then
@@ -401,7 +401,7 @@ function addonTable.Display.GetHighlight(frame, parent)
     if highlightDetails.mode == addonTable.Assets.RenderMode.Sliced then
       local width, height = details.width * addonTable.Assets.BarBordersSize.width, details.height * addonTable.Assets.BarBordersSize.height
       frame:SetSize(width * details.scale, height * details.scale)
-      frame.highlight:SetSize((width + highlightDetails.extra / 2 + highlightDetails.padding / 2) * highlightDetails.lowerScale, (height + highlightDetails.extra / 2 + highlightDetails.padding / 2) * highlightDetails.lowerScale)
+      frame.highlight:SetSize((width + highlightDetails.extra / 2 + highlightDetails.padding) * highlightDetails.lowerScale, (height + highlightDetails.extra / 2 + highlightDetails.padding) * highlightDetails.lowerScale)
       frame.highlight:SetTextureSliceMargins(highlightDetails.width * highlightDetails.margin, highlightDetails.height * highlightDetails.margin, highlightDetails.width * highlightDetails.margin, highlightDetails.height * highlightDetails.margin)
       frame.highlight:SetScale(1/highlightDetails.lowerScale * details.scale)
     elseif highlightDetails.mode == addonTable.Assets.RenderMode.Fixed then
