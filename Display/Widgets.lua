@@ -29,6 +29,7 @@ local function InitBar(frame, details)
   frame.rawHeight = height
 
   local foregroundDetails = addonTable.Assets.BarBackgrounds[details.foreground.asset]
+  frame.statusBar:SetSize(width * borderDetails.lowerScale, height * borderDetails.lowerScale)
   frame.statusBar:SetStatusBarTexture(foregroundDetails.file)
   frame.statusBar:GetStatusBarTexture():SetDrawLayer("ARTWORK")
   frame.statusBar:GetStatusBarTexture():SetSnapToPixelGrid(false)
@@ -95,7 +96,7 @@ function addonTable.Display.GetHealthBar(frame, parent)
   frame.statusBarAbsorb:SetClipsChildren(true)
 
   frame.statusBar = CreateFrame("StatusBar", nil, frame)
-  frame.statusBar:SetAllPoints()
+  frame.statusBar:SetPoint("CENTER")
   frame.statusBar:SetClipsChildren(true)
 
   frame.marker = frame.statusBar:CreateTexture()
@@ -156,7 +157,7 @@ function addonTable.Display.GetCastBar(frame, parent)
   frame = frame or CreateFrame("Frame", nil, parent or UIParent)
 
   frame.statusBar = CreateFrame("StatusBar", nil, frame)
-  frame.statusBar:SetAllPoints()
+  frame.statusBar:SetPoint("CENTER")
   frame.statusBar:SetClipsChildren(true)
 
   frame.reverseStatusTexture = frame.statusBar:CreateTexture()
