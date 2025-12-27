@@ -12,7 +12,7 @@ end
 local frame = CreateFrame("Frame")
 frame:RegisterEvent("PLAYER_LOGIN")
 frame:SetScript("OnEvent", function()
-  if msp and msp_RPAddOn then
+  if msp and msp_RPAddOn and not TRP3_Platynator then
     table.insert(msp.callback.updated, MSPCallback)
 
     msp_RPNameplatesAddOn = "Platynator"
