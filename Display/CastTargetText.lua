@@ -38,7 +38,7 @@ function addonTable.Display.CastTargetTextMixin:UpdateTarget()
       self.target = UnitSpellTargetName(self.unit)
       self.targetClass = UnitSpellTargetClass(self.unit)
     else
-      self.target = UnitName(self.unit .. "target")
+      self.target = addonTable.Config.Get(addonTable.Config.Options.SHOW_TITLES) and UnitPVPName(self.unit .. "target") or UnitName(self.unit .. "target")
       self.targetClass = UnitClassBase(self.unit .. "target")
     end
   end

@@ -7,7 +7,7 @@ function addonTable.Display.CreatureTextMixin:SetUnit(unit)
   self.unit = unit
   if self.unit then
     self:RegisterUnitEvent("UNIT_NAME_UPDATE", self.unit)
-    self.text:SetText(UnitName(self.unit))
+    self.text:SetText(addonTable.Config.Get(addonTable.Config.Options.SHOW_TITLES) and UnitPVPName(self.unit) or UnitName(self.unit))
 
     self:SetColor(addonTable.Display.GetColor(self.details.autoColors, self.unit))
     addonTable.Display.RegisterForColorEvents(self, self.details.autoColors)
@@ -44,7 +44,7 @@ function addonTable.Display.CreatureTextMixin:OnEvent(eventName, ...)
       self:SetShown(UnitShouldDisplayName(self.unit))
     end
   elseif eventName == "UNIT_NAME_UPDATE" then
-    self.text:SetText(UnitName(self.unit))
+    self.text:SetText(addonTable.Config.Get(addonTable.Config.Options.SHOW_TITLES) and UnitPVPName(self.unit) or UnitName(self.unit))
   end
 
   self:ColorEventHandler(eventName)

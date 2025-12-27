@@ -28,6 +28,7 @@ local settings = {
 
   SHOW_NAMEPLATES_ONLY_NEEDED = {key = "show_nameplates_only_needed", default = false, refresh = {addonTable.Constants.RefreshReason.ShowBehaviour}},
   SHOW_NAMEPLATES = {key = "show_nameplates", default = {npc = true, player = true, enemy = true}, refresh = {addonTable.Constants.RefreshReason.ShowBehaviour}},
+  SHOW_TITLES = {key = "show_titles", default = false, refresh = {addonTable.Constants.RefreshReason.Simplified}},
   SHOW_FRIENDLY_IN_INSTANCES = {key = "show_friendly_in_instances_1", default = "always", refresh = {addonTable.Constants.RefreshReason.ShowBehaviour}},
   SIMPLIFIED_NAMEPLATES = {key = "simplified_nameplates", default = {minion = true, minor = true, instancesNormal = true}},
 

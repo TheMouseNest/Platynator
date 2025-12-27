@@ -43,7 +43,7 @@ function addonTable.Display.CreatureTextMSPMixin:SetUnit(unit)
 end
 
 function addonTable.Display.CreatureTextMSPMixin:UpdateName()
-  local originalName, realm = UnitName(self.unit)
+  local originalName, realm = addonTable.Config.Get(addonTable.Config.Options.SHOW_TITLES) and UnitPVPName(self.unit) or UnitName(self.unit)
   if UnitIsPlayer(self.unit) and (not issecretvalue or not issecretvalue(originalName)) then
     if realm == nil then
       realm = GetNormalizedRealmName()

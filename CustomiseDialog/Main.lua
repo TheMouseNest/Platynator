@@ -245,6 +245,14 @@ local function SetupBehaviour(parent)
   applyCvarsCheckbox:SetPoint("TOP")
   table.insert(allFrames, applyCvarsCheckbox)
 
+  local titleCheckbox = addonTable.CustomiseDialog.Components.GetCheckbox(container, addonTable.Locales.SHOW_TITLES, 28, function(value)
+    addonTable.Config.Set(addonTable.Config.Options.SHOW_TITLES, value)
+    addonTable.CallbackRegistry:TriggerEvent("RefreshStateChange", {[addonTable.Constants.RefreshReason.Simplified] = true})
+  end)
+  titleCheckbox.option = addonTable.Config.Options.SHOW_TITLES
+  titleCheckbox:SetPoint("TOP", allFrames[#allFrames], "BOTTOM", 0, -30)
+  table.insert(allFrames, titleCheckbox)
+
   local applyNameplatesDropdown = addonTable.CustomiseDialog.Components.GetBasicDropdown(container, addonTable.Locales.USE_NAMEPLATES_FOR)
   applyNameplatesDropdown:SetPoint("TOP", allFrames[#allFrames], "BOTTOM", 0, -30)
   do

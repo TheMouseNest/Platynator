@@ -20,7 +20,7 @@ end
 
 function addonTable.Display.UnitTargetTextMixin:UpdateText()
   local targetUnit = self.unit .. "target"
-  local target = UnitName(targetUnit)
+  local target = addonTable.Config.Get(addonTable.Config.Options.SHOW_TITLES) and UnitPVPName(targetUnit) or UnitName(targetUnit)
   if type(target) ~= "nil" then
     self.text:SetText(target)
     if self.details.applyClassColors and UnitIsPlayer(targetUnit) then
