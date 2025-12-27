@@ -60,37 +60,39 @@ function addonTable.Display.NameplateMixin:OnLoad()
       for _, auraInstanceID in ipairs(data) do
         local aura = self.AurasManager:GetByInstanceID(auraInstanceID)
         local buff = self.AurasPool:Acquire()
-        table.insert(frame.items, buff)
-        buff:SetParent(frame)
-        buff.auraInstanceID = auraInstanceID
+        if (aura ~= nil and buff ~= nil) then          
+          table.insert(frame.items, buff)
+          buff:SetParent(frame)
+          buff.auraInstanceID = auraInstanceID
 
-        buff.Icon:SetTexture(aura.icon);
-        buff.CountFrame.Count:SetText(aura.applicationsString)
-        buff.CountFrame.Count:SetFontObject(addonTable.CurrentFont)
-        buff.CountFrame.Count:SetTextScale(11/12 * details.textScale)
-        buff.CountFrame.Count:Show();
+          buff.Icon:SetTexture(aura.icon);
+          buff.CountFrame.Count:SetText(aura.applicationsString)
+          buff.CountFrame.Count:SetFontObject(addonTable.CurrentFont)
+          buff.CountFrame.Count:SetTextScale(11/12 * details.textScale)
+          buff.CountFrame.Count:Show();
 
-        buff.Cooldown:SetHideCountdownNumbers(not details.showCountdown)
+          buff.Cooldown:SetHideCountdownNumbers(not details.showCountdown)
 
-        if details.showCountdown then
-          buff.Cooldown.Text:SetFontObject(addonTable.CurrentFont)
-          buff.Cooldown.Text:SetTextScale(14/12 * details.textScale)
+          if details.showCountdown then
+            buff.Cooldown.Text:SetFontObject(addonTable.CurrentFont)
+            buff.Cooldown.Text:SetTextScale(14/12 * details.textScale)
+          end
+
+          buff:SetHeight(20 * details.height)
+          buff.Icon:SetHeight(19 * details.height)
+          buff.Icon:SetTexCoord(0.05, 0.95, 0.05 + texBase, 0.95 - texBase)
+
+          if aura.durationSecret then
+            buff.Cooldown:SetCooldownFromDurationObject(aura.durationSecret)
+          else
+            CooldownFrame_Set(buff.Cooldown, aura.expirationTime - aura.duration, aura.duration, aura.duration > 0, true);
+          end
+
+          buff:Show();
+
+          buff:SetPoint(anchor, currentX, currentY)
+          currentX = currentX + xOffset
         end
-
-        buff:SetHeight(20 * details.height)
-        buff.Icon:SetHeight(19 * details.height)
-        buff.Icon:SetTexCoord(0.05, 0.95, 0.05 + texBase, 0.95 - texBase)
-
-        if aura.durationSecret then
-          buff.Cooldown:SetCooldownFromDurationObject(aura.durationSecret)
-        else
-          CooldownFrame_Set(buff.Cooldown, aura.expirationTime - aura.duration, aura.duration, aura.duration > 0, true);
-        end
-
-        buff:Show();
-
-        buff:SetPoint(anchor, currentX, currentY)
-        currentX = currentX + xOffset
       end
     end
   end
