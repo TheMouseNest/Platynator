@@ -6,6 +6,10 @@ function addonTable.Display.Initialize()
   local manager = CreateFrame("Frame")
   Mixin(manager, addonTable.Display.ManagerMixin)
   manager:OnLoad()
+
+  function Platynator_GetDisplayByUnit(unit)
+    return manager.nameplateDisplays[unit]
+  end
 end
 
 addonTable.Display.ManagerMixin = {}
@@ -217,6 +221,8 @@ function addonTable.Display.ManagerMixin:OnLoad()
         end
         self:UpdateNamePlateSize()
         self:UpdateStacking()
+
+        EventRegistry:TriggerEvent("Platynator.DesignChanged"); --For other addons
       end)
     elseif state[addonTable.Constants.RefreshReason.Scale] or state[addonTable.Constants.RefreshReason.TargetBehaviour] then
       for unit, display in pairs(self.nameplateDisplays) do
