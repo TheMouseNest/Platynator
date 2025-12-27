@@ -130,6 +130,11 @@ function addonTable.Core.UpgradeDesign(design)
         ac.colors.trivial = GetColor("b28e55")
       elseif ac.kind == "threat" and ac.useSafeColor == nil then
         ac.useSafeColor = true
+      elseif ac.kind == "quest" and ac.colors.hostile == nil then
+        ac.colors.hostile = ac.colors.quest
+        ac.colors.neutral = ac.colors.quest
+        ac.colors.friendly = ac.colors.quest
+        ac.colors.quest = nil
       end
     end
   end

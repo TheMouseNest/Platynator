@@ -247,18 +247,40 @@ addonTable.CustomiseDialog.ColorsConfig = {
     default = {
       kind = "quest",
       colors = {
-        quest = GetColor("FFFFFF"),
+        friendly = GetColor("E0FF00"),
+        neutral = GetColor("FFEC4A"),
+        hostile = GetColor("FFB963"),
       },
     },
     entries = {
       {
-        label = addonTable.Locales.QUEST,
+        label = addonTable.Locales.FRIENDLY,
         kind = "colorPicker",
         setter = function(details, value)
-          details.colors.quest = value
+          details.colors.friendly = value
         end,
         getter = function(details)
-          return details.colors.quest
+          return details.colors.friendly
+        end,
+      },
+      {
+        label = addonTable.Locales.NEUTRAL,
+        kind = "colorPicker",
+        setter = function(details, value)
+          details.colors.neutral = value
+        end,
+        getter = function(details)
+          return details.colors.neutral
+        end,
+      },
+      {
+        label = addonTable.Locales.HOSTILE,
+        kind = "colorPicker",
+        setter = function(details, value)
+          details.colors.hostile = value
+        end,
+        getter = function(details)
+          return details.colors.hostile
         end,
       },
     },

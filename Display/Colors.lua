@@ -128,7 +128,13 @@ function addonTable.Display.GetColor(settings, unit)
       end
     elseif s.kind == "quest" then
       if C_QuestLog.UnitIsRelatedToActiveQuest and C_QuestLog.UnitIsRelatedToActiveQuest(unit) then
-        return s.colors.quest
+        if IsNeutral(unit) then
+          return s.colors.neutral
+        elseif UnitIsFriend("player", unit) then
+          return s.colors.friendly
+        else
+          return s.colors.hostile
+        end
       end
     elseif s.kind == "guild" then
       if UnitIsPlayer(unit) then
