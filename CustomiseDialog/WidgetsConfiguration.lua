@@ -32,9 +32,6 @@ local function GetLabelsValues(allAssets, filter, showHeight)
         width = 180
       end
       local text = "|T".. (details.preview or details.file) .. ":" .. height .. ":" .. width .. "|t"
-      if details.displayPadding and details.displayPadding > 0 then
-        text = "|T".. (details.preview or details.file) .. ":" .. height .. ":" .. width .. ":0:0:" .. details.width .. ":" .. details.height .. ":" .. details.displayPadding/2 .. ":" .. (details.width - details.displayPadding/2) .. ":" .. details.displayPadding/2 .. ":" .. (details.height - details.displayPadding/2) .. "|t"
-      end
       if details.isTransparent then
         text = addonTable.Locales.NONE
       end

@@ -5,9 +5,9 @@ function addonTable.Display.ApplyAnchor(frame, anchor)
   if #anchor == 0 then
     frame:SetPoint("CENTER")
   elseif #anchor == 3 then
-    frame:SetPoint(anchor[1], frame:GetParent(), "CENTER", anchor[2], anchor[3])
+    PixelUtil.SetPoint(frame, anchor[1], frame:GetParent(), "CENTER", anchor[2], anchor[3])
   elseif #anchor == 2 then
-    frame:SetPoint("CENTER", frame:GetParent(), "CENTER", anchor[1], anchor[2])
+    PixelUtil.SetPoint(frame, "CENTER", frame:GetParent(), "CENTER", anchor[1], anchor[2])
   elseif #anchor == 1 then
     frame:SetPoint("TOP", frame:GetParent(), "CENTER")
   end
@@ -24,17 +24,15 @@ local function InitBar(frame, details)
 
   local width, height = details.border.width * addonTable.Assets.BarBordersSize.width, details.border.height * addonTable.Assets.BarBordersSize.height
   local borderDetails = addonTable.Assets.BarBordersSliced[details.border.asset]
-  frame:SetSize(width * details.scale, height * details.scale)
+  PixelUtil.SetSize(frame, width * details.scale, height * details.scale)
   frame.rawWidth = width
   frame.rawHeight = height
 
   local foregroundDetails = addonTable.Assets.BarBackgrounds[details.foreground.asset]
-  frame.statusBar:SetSize(width * borderDetails.lowerScale, height * borderDetails.lowerScale)
+  frame.statusBar:SetScale(1/borderDetails.lowerScale * details.scale)
+  PixelUtil.SetSize(frame.statusBar, width * borderDetails.lowerScale, height * borderDetails.lowerScale)
   frame.statusBar:SetStatusBarTexture(foregroundDetails.file)
   frame.statusBar:GetStatusBarTexture():SetDrawLayer("ARTWORK")
-  frame.statusBar:GetStatusBarTexture():SetSnapToPixelGrid(false)
-  frame.statusBar:GetStatusBarTexture():SetTexelSnappingBias(0)
-  frame.statusBar:SetScale(1/borderDetails.lowerScale * details.scale)
 
   local backgroundDetails = addonTable.Assets.BarBackgrounds[details.background.asset]
   frame.background:SetTexture(backgroundDetails.file)
@@ -43,14 +41,14 @@ local function InitBar(frame, details)
   frame.background:SetVertexColor(details.background.color.r, details.background.color.g, details.background.color.b, details.background.color.a)
   frame.border:SetTexture(borderDetails.file)
   frame.border:SetScale(1/borderDetails.lowerScale * details.scale)
-  frame.border:SetSize((width + borderDetails.extra / 2 + borderDetails.padding) * borderDetails.lowerScale, (height + borderDetails.extra / 2 + borderDetails.padding) * borderDetails.lowerScale)
+  PixelUtil.SetSize(frame.border, (width + borderDetails.extra / 2) * borderDetails.lowerScale, (height + borderDetails.extra / 2) * borderDetails.lowerScale)
   frame.border:SetVertexColor(details.border.color.r, details.border.color.g, details.border.color.b, details.border.color.a)
   frame.border:SetTextureSliceMargins(borderDetails.width * borderDetails.margin, borderDetails.height * borderDetails.margin, borderDetails.width * borderDetails.margin, borderDetails.height * borderDetails.margin)
   if details.marker.asset ~= "none" then
     frame.marker:Show()
     local markerDetails = addonTable.Assets.BarPositionHighlights[details.marker.asset]
     frame.marker:SetTexture(markerDetails.file)
-    frame.marker:SetSize(markerDetails.width * details.scale * borderDetails.lowerScale, height * borderDetails.lowerScale)
+    PixelUtil.SetSize(frame.marker, markerDetails.width * details.scale * borderDetails.lowerScale, height * borderDetails.lowerScale)
     frame.marker:SetPoint("CENTER", frame.statusBar:GetStatusBarTexture(), "RIGHT")
   else
     frame.marker:Hide()
@@ -63,17 +61,15 @@ local function InitBar(frame, details)
   local maskDetails = addonTable.Assets.BarMasks[details.border.asset]
   if maskDetails then
     frame.mask:SetBlockingLoadsRequested(true)
-    frame.mask:SetSize(width, height)
+    PixelUtil.SetSize(frame.mask, width, height)
     frame.mask:SetTexture(maskDetails.file, "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
     frame.mask:SetTextureSliceMargins(maskDetails.width * maskDetails.margin, maskDetails.height * maskDetails.margin, maskDetails.width * maskDetails.margin, maskDetails.height * maskDetails.margin)
   else
-    frame.mask:SetSize(width, height)
+    PixelUtil.SetSize(frame.mask, width, height)
     frame.mask:SetTexture("Interface/AddOns/Platynator/Assets/Special/white.png", "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
     frame.mask:SetTextureSliceMargins(1, 1, 1, 1)
   end
   frame.mask:SetScale(details.scale)
-  frame.mask:SetSnapToPixelGrid(false)
-  frame.mask:SetTexelSnappingBias(0)
 
   frame.statusBar:GetStatusBarTexture():AddMaskTexture(frame.mask)
   frame.background:AddMaskTexture(frame.mask)
@@ -81,12 +77,7 @@ local function InitBar(frame, details)
 
   frame.details = details
 
-  frame.marker:SetTexelSnappingBias(0)
   frame.marker:SetDrawLayer("ARTWORK", 2)
-  frame.border:SetSnapToPixelGrid(false)
-  frame.border:SetTexelSnappingBias(0)
-  frame.background:SetSnapToPixelGrid(false)
-  frame.background:SetTexelSnappingBias(0)
 end
 
 function addonTable.Display.GetHealthBar(frame, parent)
@@ -133,9 +124,6 @@ function addonTable.Display.GetHealthBar(frame, parent)
     frame.statusBarAbsorb:GetStatusBarTexture():RemoveMaskTexture(frame.mask)
 
     frame.statusBarAbsorb:GetStatusBarTexture():AddMaskTexture(frame.mask)
-
-    frame.statusBarAbsorb:GetStatusBarTexture():SetSnapToPixelGrid(false)
-    frame.statusBarAbsorb:GetStatusBarTexture():SetTexelSnappingBias(0)
 
     if details.kind == "health" then
       Mixin(frame, addonTable.Display.HealthBarMixin)
@@ -273,7 +261,7 @@ function addonTable.Display.GetCastBar(frame, parent)
       frame.cannotInterruptMarker:Show()
       local markerDetails = addonTable.Assets.BarPositionHighlights[details.marker.asset]
       frame.cannotInterruptMarker:SetTexture(markerDetails.file)
-      frame.cannotInterruptMarker:SetSize(markerDetails.width * details.scale, frame.rawHeight * borderDetails.lowerScale)
+      PixelUtil.SetSize(frame.cannotInterruptMarker, markerDetails.width * details.scale, frame.rawHeight * borderDetails.lowerScale)
       frame.cannotInterruptMarker:SetPoint("CENTER", frame.statusBar:GetStatusBarTexture(), "RIGHT")
       frame.cannotInterruptMarker:SetVertexColor(details.colors.uninterruptable.r, details.colors.uninterruptable.g, details.colors.uninterruptable.b)
     else
@@ -307,17 +295,6 @@ function addonTable.Display.GetCastBar(frame, parent)
 
     frame.details = details
 
-    frame.reverseStatusTexture:SetSnapToPixelGrid(false)
-    frame.reverseStatusTexture:SetTexelSnappingBias(0)
-    frame.cannotInterruptStatusTexture:SetSnapToPixelGrid(false)
-    frame.cannotInterruptStatusTexture:SetTexelSnappingBias(0)
-    frame.cannotInterruptReverseStatusTexture:SetSnapToPixelGrid(false)
-    frame.cannotInterruptReverseStatusTexture:SetTexelSnappingBias(0)
-    frame.cannotInterruptMarker:SetSnapToPixelGrid(false)
-    frame.cannotInterruptMarker:SetTexelSnappingBias(0)
-    frame.cannotInterruptBackground:SetSnapToPixelGrid(false)
-    frame.cannotInterruptBackground:SetTexelSnappingBias(0)
-
     if details.kind == "cast" then
       Mixin(frame, addonTable.Display.CastBarMixin)
     else
@@ -350,7 +327,7 @@ function addonTable.Display.GetPower(frame, parent)
   frame.main:SetMinMaxValues(0, 7)
 
   frame:SetScript("OnSizeChanged", function()
-    frame.main:SetSize(frame:GetSize())
+    PixelUtil.SetSize(frame.main, frame:GetSize())
   end)
 
   function frame:Init(details)
@@ -367,11 +344,7 @@ function addonTable.Display.GetPower(frame, parent)
     self.main:SetStatusBarTexture(addonTable.Assets.PowerBars[details.filled].file)
     self.main:SetPoint("LEFT", frame.background:GetStatusBarTexture())
     self.main:SetWidth(self.background:GetWidth())
-    self.main:GetStatusBarTexture():SetSnapToPixelGrid(false)
-    self.main:GetStatusBarTexture():SetTexelSnappingBias(0)
-    self.background:GetStatusBarTexture():SetSnapToPixelGrid(false)
-    self.background:GetStatusBarTexture():SetTexelSnappingBias(0)
-    frame:SetSize(blankDetails.width * details.scale, blankDetails.height * details.scale)
+    PixelUtil.SetSize(frame, blankDetails.width * details.scale, blankDetails.height * details.scale)
 
     Mixin(frame, addonTable.Display.PowerBarMixin)
 
@@ -387,7 +360,7 @@ function addonTable.Display.GetHighlight(frame, parent)
   frame = frame or CreateFrame("Frame", nil, parent or UIParent)
 
   frame.highlight = frame:CreateTexture()
-  frame.highlight:SetPoint("CENTER")
+  frame.highlight:SetAllPoints()
 
   function frame:Init(details)
     ApplyAnchor(frame, details.anchor)
@@ -401,22 +374,19 @@ function addonTable.Display.GetHighlight(frame, parent)
 
     if highlightDetails.mode == addonTable.Assets.RenderMode.Sliced then
       local width, height = details.width * addonTable.Assets.BarBordersSize.width, details.height * addonTable.Assets.BarBordersSize.height
-      frame:SetSize(width * details.scale, height * details.scale)
-      frame.highlight:SetSize((width + highlightDetails.extra / 2 + highlightDetails.padding) * highlightDetails.lowerScale, (height + highlightDetails.extra / 2 + highlightDetails.padding) * highlightDetails.lowerScale)
-      frame.highlight:SetTextureSliceMargins(highlightDetails.width * highlightDetails.margin, highlightDetails.height * highlightDetails.margin, highlightDetails.width * highlightDetails.margin, highlightDetails.height * highlightDetails.margin)
+      PixelUtil.SetSize(frame, width * details.scale, height * details.scale)
       frame.highlight:SetScale(1/highlightDetails.lowerScale * details.scale)
+      PixelUtil.SetSize(frame.highlight, (width + highlightDetails.extra / 2) * highlightDetails.lowerScale, (height + highlightDetails.extra / 2) * highlightDetails.lowerScale)
+      frame.highlight:SetTextureSliceMargins(highlightDetails.width * highlightDetails.margin, highlightDetails.height * highlightDetails.margin, highlightDetails.width * highlightDetails.margin, highlightDetails.height * highlightDetails.margin)
     elseif highlightDetails.mode == addonTable.Assets.RenderMode.Fixed then
-      frame:SetSize(highlightDetails.width * details.scale, highlightDetails.height * details.scale)
-      frame.highlight:SetSize(frame:GetSize())
+      PixelUtil.SetSize(frame, highlightDetails.width * details.scale, highlightDetails.height * details.scale)
+      PixelUtil.SetSize(frame.highlight, frame:GetSize())
       frame.highlight:ClearTextureSlice()
     elseif highlightDetails.mode == addonTable.Assets.RenderMode.Stretch then
-      frame:SetSize(highlightDetails.width * details.width * details.scale, highlightDetails.height * details.height * details.scale)
-      frame.highlight:SetSize(frame:GetSize())
+      PixelUtil.SetSize(frame, highlightDetails.width * details.width * details.scale, highlightDetails.height * details.height * details.scale)
+      PixelUtil.SetSize(frame.highlight, frame:GetSize())
       frame.highlight:ClearTextureSlice()
     end
-
-    frame.highlight:SetSnapToPixelGrid(false)
-    frame.highlight:SetTexelSnappingBias(0)
 
     if details.kind == "target" then
       Mixin(frame, addonTable.Display.TargetHighlightMixin)
@@ -461,9 +431,7 @@ function addonTable.Display.GetMarker(frame, parent)
     else
       frame.marker:SetVertexColor(1, 1, 1)
     end
-    frame.marker:SetSnapToPixelGrid(false)
-    frame.marker:SetTexelSnappingBias(0)
-    frame:SetSize(markerDetails.width * details.scale, markerDetails.height * details.scale)
+    PixelUtil.SetSize(frame, markerDetails.width * details.scale, markerDetails.height * details.scale)
 
     if details.kind == "quest" then
       Mixin(frame, addonTable.Display.QuestMarkerMixin)
@@ -501,12 +469,12 @@ function addonTable.Display.GetText(frame, parent)
   frame.text:SetText(" ")
   hooksecurefunc(frame.text, "SetText", function(_, value)
     if addonTable.Constants.IsMidnight and issecretvalue(frame.text:GetStringHeight()) then
-      frame:SetSize(1, 1)
+      PixelUtil.SetSize(frame, 1, 1)
       return
     end
-    frame:SetSize(frame.text:GetSize())
+    PixelUtil.SetSize(frame, frame.text:GetSize())
   end)
-  frame:SetSize(1, 1)
+  PixelUtil.SetSize(frame, 1, 1)
 
   function frame:Init(details)
     if frame.Strip then

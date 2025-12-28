@@ -228,7 +228,8 @@ function addonTable.Display.ManagerMixin:OnLoad()
       end)
     elseif state[addonTable.Constants.RefreshReason.Scale] or state[addonTable.Constants.RefreshReason.TargetBehaviour] then
       for unit, display in pairs(self.nameplateDisplays) do
-        display:UpdateVisual()
+        display:InitializeWidgets(display.design, display.scale)
+        display:SetUnit(display.unit)
         if display.stackRegion then
           self:UpdateStackingRegion(nil, unit)
         end
@@ -646,7 +647,10 @@ function addonTable.Display.ManagerMixin:OnEvent(eventName, ...)
     self:UpdateTargetScale()
   elseif eventName == "UI_SCALE_CHANGED" then
     for unit, display in pairs(self.nameplateDisplays) do
-      display:UpdateVisual()
+      display:SetUnit(nil)
+      display:Install(C_NamePlate.GetNamePlateForUnit(unit))
+      display:InitializeWidgets(display.design, display.scale)
+      display:SetUnit(display.unit)
       if display.stackRegion then
         self:UpdateStackingRegion(nil, unit)
       end

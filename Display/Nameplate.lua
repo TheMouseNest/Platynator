@@ -5,6 +5,9 @@ addonTable.Display.NameplateMixin = {}
 function addonTable.Display.NameplateMixin:OnLoad()
   self:SetFlattensRenderLayers(true)
   self:SetIgnoreParentScale(true)
+  self:SetCollapsesLayout(true)
+
+  self.widgets = {}
 
   self.SoftTargetIcon = self:CreateTexture(nil, "OVERLAY")
   self.SoftTargetIcon:SetSize(34, 34)
@@ -113,13 +116,16 @@ function addonTable.Display.NameplateMixin:OnLoad()
   self:SetScript("OnEvent", self.OnEvent)
 
   self:SetSize(10, 10)
-  self:SetPoint("CENTER")
 
   self.casting = false
 end
 
 function addonTable.Display.NameplateMixin:InitializeWidgets(design, scale)
   self.scale = scale or 1
+
+  self.unit = nil
+  self:UpdateVisual()
+
   if self.widgets then
     addonTable.Display.ReleaseWidgets(self.widgets)
     self.widgets = nil
@@ -185,6 +191,7 @@ function addonTable.Display.NameplateMixin:Install(nameplate)
   self:Show()
   self:SetFrameStrata("BACKGROUND")
   self:SetPoint("CENTER", nameplate)
+  self:SetSize(10, 10)
 end
 
 function addonTable.Display.NameplateMixin:SetUnit(unit)
