@@ -380,11 +380,11 @@ function addonTable.Display.GetHighlight(frame, parent)
       frame.highlight:SetTextureSliceMargins(highlightDetails.width * highlightDetails.margin, highlightDetails.height * highlightDetails.margin, highlightDetails.width * highlightDetails.margin, highlightDetails.height * highlightDetails.margin)
     elseif highlightDetails.mode == addonTable.Assets.RenderMode.Fixed then
       PixelUtil.SetSize(frame, highlightDetails.width * details.scale, highlightDetails.height * details.scale)
-      PixelUtil.SetSize(frame.highlight, frame:GetSize())
+      PixelUtil.SetSize(frame.highlight, highlightDetails.width, highlightDetails.height)
       frame.highlight:ClearTextureSlice()
     elseif highlightDetails.mode == addonTable.Assets.RenderMode.Stretch then
       PixelUtil.SetSize(frame, highlightDetails.width * details.width * details.scale, highlightDetails.height * details.height * details.scale)
-      PixelUtil.SetSize(frame.highlight, frame:GetSize())
+      PixelUtil.SetSize(frame.highlight, highlightDetails.width * details.width, highlightDetails.height * details.height)
       frame.highlight:ClearTextureSlice()
     end
 
