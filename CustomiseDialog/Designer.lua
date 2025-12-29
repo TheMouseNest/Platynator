@@ -877,7 +877,8 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
       container.auras[1].CountFrame.Count:SetFontObject(addonTable.CurrentFont)
       container.auras[1].CountFrame.Count:SetTextScale(11/12 * details.textScale)
       container.auras[1].CountFrame.Count:Show();
-      container:SetSize(22 * container.count * details.scale, 20 * details.scale)
+      container:SetSize(22 * container.count * details.scale, 20 * details.height * details.scale)
+      container.Wrapper:SetHeight(20 * details.height)
       container.Wrapper:SetScale(details.scale)
       container.details = details
       local texBase = 0.95 * (1 - details.height) / 2
