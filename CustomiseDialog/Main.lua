@@ -153,6 +153,7 @@ local function SetupGeneral(parent)
           end
           local options = addonTable.Config.DumpCurrentProfile()
           options.designs = designs
+          options.style = addonTable.Config.Get(addonTable.Config.Options.DESIGNS_ASSIGNED)["enemy"]
           options.addon = "Platynator"
           options.version = 1
           options.kind = "profile"
@@ -199,6 +200,9 @@ local function SetupGeneral(parent)
                   designs[key] = design
                 end
               end
+              if import.style and not import.designs[import.style] then
+                import.style = import.designs_assigned["enemy"]
+              end
               addonTable.Config.ChangeProfile(PLATYNATOR_CURRENT_PROFILE)
             end,
             function()
@@ -206,6 +210,9 @@ local function SetupGeneral(parent)
                 if PLATYNATOR_CONFIG.Profiles[value] == nil then
                   addonTable.Config.MakeProfile(value, false)
                   PLATYNATOR_CONFIG.Profiles[PLATYNATOR_CURRENT_PROFILE] = import
+                  if import.style and not import.designs[import.style] then
+                    import.style = import.designs_assigned["enemy"]
+                  end
                   addonTable.Config.ChangeProfile(PLATYNATOR_CURRENT_PROFILE)
                 else
                   addonTable.Dialogs.ShowAcknowledge(addonTable.Locales.THAT_PROFILE_NAME_ALREADY_EXISTS)
