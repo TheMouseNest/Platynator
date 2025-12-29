@@ -65,6 +65,7 @@ end
 
 function addonTable.Display.GuildTextMixin:Strip()
   self.ApplyTarget = nil
+  self.ApplyTextOverride = nil
 end
 
 function addonTable.Display.GuildTextMixin:OnEvent()
@@ -74,5 +75,12 @@ end
 function addonTable.Display.GuildTextMixin:ApplyTarget()
   if self.details.showWhenWowDoes then
     self:SetShown(UnitShouldDisplayName(self.unit))
+  end
+end
+
+function addonTable.Display.GuildTextMixin:ApplyTextOverride()
+  local override = addonTable.API.TextOverrides.guild[self.unit]
+  if override then
+    self.text:SetText(override)
   end
 end

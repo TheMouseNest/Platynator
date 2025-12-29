@@ -214,6 +214,9 @@ function addonTable.Display.NameplateMixin:SetUnit(unit)
       if w.ApplyFocus then
         w:ApplyFocus()
       end
+      if addonTable.API.TextOverrides.isActive and w.ApplyTextOverride then
+        w:ApplyTextOverride()
+      end
     end
 
     self.BuffDisplay:SetShown(self.BuffDisplay.enabled)
@@ -228,6 +231,17 @@ function addonTable.Display.NameplateMixin:SetUnit(unit)
       self:RegisterUnitEvent("UNIT_SPELLCAST_STOP", self.unit)
       self:RegisterUnitEvent("UNIT_SPELLCAST_CHANNEL_STOP", self.unit)
     end
+
+    addonTable.CallbackRegistry:RegisterCallback("TextOverrideUpdated", function(_, unit)
+      if unit ~= self.unit then
+        return
+      end
+      for _, w in ipairs(self.widgets) do
+        if w.ApplyTextOverride then
+          w:ApplyTextOverride()
+        end
+      end
+    end, self)
   else
     self.unit = nil
     for _, w in ipairs(self.widgets) do
@@ -243,6 +257,8 @@ function addonTable.Display.NameplateMixin:SetUnit(unit)
 
     self:UnregisterAllEvents()
     self.casting = false
+
+    addonTable.CallbackRegistry:UnregisterCallback("TextOverrideUpdated", self)
   end
 
   self.interactUnit = unit

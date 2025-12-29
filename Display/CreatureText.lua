@@ -26,6 +26,7 @@ function addonTable.Display.CreatureTextMixin:Strip()
   local c = self.details.color
   self.text:SetTextColor(c.r, c.g, c.b)
   self.ApplyTarget = nil
+  self.ApplyTextOverride = nil
 
   addonTable.Display.UnregisterForColorEvents(self)
   self:UnregisterAllEvents()
@@ -53,5 +54,12 @@ end
 function addonTable.Display.CreatureTextMixin:ApplyTarget()
   if self.details.showWhenWowDoes then
     self:SetShown(UnitShouldDisplayName(self.unit))
+  end
+end
+
+function addonTable.Display.CreatureTextMixin:ApplyTextOverride()
+  local override = addonTable.API.TextOverrides.name[self.unit]
+  if override then
+    self.text:SetText(override)
   end
 end
