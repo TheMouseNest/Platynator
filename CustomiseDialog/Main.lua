@@ -145,15 +145,7 @@ local function SetupGeneral(parent)
           design.kind = "style"
           addonTable.Dialogs.ShowCopy(C_EncodingUtil.SerializeJSON(design):gsub("%|%|", "|"):gsub("%|", "||"))
         end, function()
-          local designs = {}
-          for _, style in pairs(addonTable.Config.Get(addonTable.Config.Options.DESIGNS_ASSIGNED)) do
-            if not style:match("^_") or style == addonTable.Constants.CustomName then
-              designs[style] = CopyTable(addonTable.Core.GetDesignByName(style))
-            end
-          end
           local options = addonTable.Config.DumpCurrentProfile()
-          options.designs = designs
-          options.style = addonTable.Config.Get(addonTable.Config.Options.DESIGNS_ASSIGNED)["enemy"]
           options.addon = "Platynator"
           options.version = 1
           options.kind = "profile"
