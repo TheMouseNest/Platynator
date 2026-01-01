@@ -531,7 +531,11 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
       newCursorY = newCursorY / preview:GetEffectiveScale()
       for _, index in ipairs(backupSelectionIndexes) do
         local w = widgets[index]
-        w:AdjustPointsOffset(newCursorX - cursorX, newCursorY - cursorY)
+        if w.kind == "texts" then -- Because the Wrapper determines the base position
+          w.Wrapper:AdjustPointsOffset(newCursorX - cursorX, newCursorY - cursorY)
+        else
+          w:AdjustPointsOffset(newCursorX - cursorX, newCursorY - cursorY)
+        end
       end
       cursorX = newCursorX
       cursorY = newCursorY
@@ -809,6 +813,7 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
         if display then
           w.text:SetText(display)
         end
+
       elseif w.kind == "specialBars" and w.details.kind == "power" then
         w.main:GetStatusBarTexture():SetVertexColor(234/255, 61/255, 247/255)
         w.main:SetValue(4)

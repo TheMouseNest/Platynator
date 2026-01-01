@@ -155,6 +155,16 @@ function addonTable.Display.NameplateMixin:OnLoad()
   self:SetSize(10, 10)
 
   self.casting = false
+
+  self:SetScript("OnSizeChanged", function()
+    if not self.widgets or not self:IsVisible() then
+      return
+    end
+    for _, w in ipairs(self.widgets) do
+      w:ApplyAnchor()
+      w:ApplySize()
+    end
+  end)
 end
 
 function addonTable.Display.NameplateMixin:InitializeWidgets(design, scale)
