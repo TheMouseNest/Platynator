@@ -619,17 +619,8 @@ function addonTable.Display.ManagerMixin:OnEvent(eventName, ...)
       self.lastInteract = nil
     end
   elseif eventName == "UNIT_POWER_UPDATE" or eventName == "RUNE_POWER_UPDATE" then
-    local unit
-    for i = 1, 40 do
-      unit = "nameplate" .. i
-      if UnitIsUnit(unit, "target") then
-        break
-      else
-        unit = nil
-      end
-    end
-    if self.nameplateDisplays[unit] then
-      self.nameplateDisplays[unit]:UpdateForTarget()
+    for _, display in pairs(self.nameplateDisplays) do
+      display:UpdateForTarget()
     end
   elseif eventName == "UNIT_FACTION" then
     local unit = ...

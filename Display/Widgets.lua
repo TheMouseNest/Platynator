@@ -369,7 +369,6 @@ function addonTable.Display.GetPower(frame, parent)
     self.background:SetStatusBarTexture(blankDetails.file)
     self.main:SetStatusBarTexture(addonTable.Assets.PowerBars[details.filled].file)
     self.main:SetPoint("LEFT", frame.background:GetStatusBarTexture())
-    self.main:SetWidth(self.background:GetWidth())
 
     Mixin(frame, addonTable.Display.PowerBarMixin)
 
@@ -388,6 +387,7 @@ function addonTable.Display.GetPower(frame, parent)
     local details = frame.details
     local blankDetails = addonTable.Assets.PowerBars[frame.details.blank]
     PixelUtil.SetSize(frame, blankDetails.width * details.scale, blankDetails.height * details.scale)
+    PixelUtil.SetSize(self.main, self.background:GetSize())
   end
 end
 
