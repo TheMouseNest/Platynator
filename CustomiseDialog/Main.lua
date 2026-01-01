@@ -185,6 +185,7 @@ local function SetupGeneral(parent)
           addonTable.Dialogs.ShowDualChoice(addonTable.Locales.OVERWRITE_CURRENT_PROFILE, addonTable.Locales.OVERWRITE, addonTable.Locales.MAKE_NEW,
             function()
               local oldDesigns = PLATYNATOR_CONFIG.Profiles[PLATYNATOR_CURRENT_PROFILE].designs
+              local old = addonTable.Config.CurrentProfile
               PLATYNATOR_CONFIG.Profiles[PLATYNATOR_CURRENT_PROFILE] = import
               local designs = PLATYNATOR_CONFIG.Profiles[PLATYNATOR_CURRENT_PROFILE].designs
               for key, design in pairs(oldDesigns) do
@@ -195,17 +196,18 @@ local function SetupGeneral(parent)
               if import.style and not import.designs[import.style] then
                 import.style = import.designs_assigned["enemy"]
               end
-              addonTable.Config.ChangeProfile(PLATYNATOR_CURRENT_PROFILE)
+              addonTable.Config.ChangeProfile(PLATYNATOR_CURRENT_PROFILE, old)
             end,
             function()
               addonTable.Dialogs.ShowEditBox(addonTable.Locales.ENTER_THE_NEW_PROFILE_NAME, OKAY, CANCEL, function(value)
                 if PLATYNATOR_CONFIG.Profiles[value] == nil then
                   addonTable.Config.MakeProfile(value, false)
+                  local old = addonTable.Config.CurrentProfile
                   PLATYNATOR_CONFIG.Profiles[PLATYNATOR_CURRENT_PROFILE] = import
                   if import.style and not import.designs[import.style] then
                     import.style = import.designs_assigned["enemy"]
                   end
-                  addonTable.Config.ChangeProfile(PLATYNATOR_CURRENT_PROFILE)
+                  addonTable.Config.ChangeProfile(PLATYNATOR_CURRENT_PROFILE, old)
                 else
                   addonTable.Dialogs.ShowAcknowledge(addonTable.Locales.THAT_PROFILE_NAME_ALREADY_EXISTS)
                 end

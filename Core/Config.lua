@@ -29,7 +29,7 @@ local settings = {
   SHOW_NAMEPLATES_ONLY_NEEDED = {key = "show_nameplates_only_needed", default = false, refresh = {addonTable.Constants.RefreshReason.ShowBehaviour}},
   SHOW_NAMEPLATES = {key = "show_nameplates", default = {npc = true, player = true, enemy = true}, refresh = {addonTable.Constants.RefreshReason.ShowBehaviour}},
   SHOW_FRIENDLY_IN_INSTANCES = {key = "show_friendly_in_instances_1", default = "always", refresh = {addonTable.Constants.RefreshReason.ShowBehaviour}},
-  SIMPLIFIED_NAMEPLATES = {key = "simplified_nameplates", default = {minion = true, minor = true, instancesNormal = true}},
+  SIMPLIFIED_NAMEPLATES = {key = "simplified_nameplates", default = {minion = true, minor = true, instancesNormal = true}, refresh = {addonTable.Constants.RefreshReason.Simplified}},
 
   APPLY_CVARS = {key = "apply_cvars", default = true},
 }
@@ -239,14 +239,15 @@ function addonTable.Config.DumpCurrentProfile()
   return CopyTable(PLATYNATOR_CONFIG.Profiles[PLATYNATOR_CURRENT_PROFILE])
 end
 
-function addonTable.Config.ChangeProfile(newProfileName)
+function addonTable.Config.ChangeProfile(newProfileName, comparisonData)
   assert(tIndexOf(addonTable.Config.GetProfileNames(), newProfileName) ~= nil, "Invalid Profile")
 
   local changedOptions = {}
   local refreshState = {}
   local newProfile = PLATYNATOR_CONFIG.Profiles[newProfileName]
+  oldProfile = comparisonData or addonTable.Config.CurrentProfile
 
-  for name, value in pairs(addonTable.Config.CurrentProfile) do
+  for name, value in pairs(oldProfile) do
     if value ~= newProfile[name] then
       table.insert(changedOptions, name)
       Mixin(refreshState, addonTable.Config.RefreshType[name] or {})
@@ -268,8 +269,6 @@ function addonTable.Config.ChangeProfile(newProfileName)
   addonTable.CallbackRegistry:TriggerEvent("RefreshStateChange", refreshState)
 end
 
--- characterName is optional, only use if need a character specific setting for
--- a character other than the current one.
 function addonTable.Config.Get(name)
   -- This is ONLY if a config is asked for before variables are loaded
   if addonTable.Config.CurrentProfile == nil then

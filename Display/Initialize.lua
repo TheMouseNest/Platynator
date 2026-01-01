@@ -226,7 +226,8 @@ function addonTable.Display.ManagerMixin:OnLoad()
         self:UpdateNamePlateSize()
         self:UpdateStacking()
       end)
-    elseif state[addonTable.Constants.RefreshReason.Scale] or state[addonTable.Constants.RefreshReason.TargetBehaviour] then
+    end
+    if state[addonTable.Constants.RefreshReason.Scale] or state[addonTable.Constants.RefreshReason.TargetBehaviour] then
       for unit, display in pairs(self.nameplateDisplays) do
         display:InitializeWidgets(addonTable.Core.GetDesign(display.kind), display.scale)
         display:SetUnit(unit)
@@ -236,16 +237,19 @@ function addonTable.Display.ManagerMixin:OnLoad()
       end
       self:UpdateNamePlateSize()
       self:UpdateTargetScale()
-    elseif state[addonTable.Constants.RefreshReason.StackingBehaviour] then
+    end
+    if state[addonTable.Constants.RefreshReason.StackingBehaviour] then
       self:UpdateStacking()
       for unit, display in pairs(self.nameplateDisplays) do
         if display.stackRegion then
           self:UpdateStackingRegion(nil, unit)
         end
       end
-    elseif state[addonTable.Constants.RefreshReason.ShowBehaviour] then
+    end
+    if state[addonTable.Constants.RefreshReason.ShowBehaviour] then
       self:UpdateShowState()
-    elseif state[addonTable.Constants.RefreshReason.Simplified] then
+    end
+    if state[addonTable.Constants.RefreshReason.Simplified] then
       local allUnits = GetKeysArray(self.nameplateDisplays)
       for _, unit in ipairs(allUnits) do
         self:Uninstall(unit)
