@@ -822,6 +822,9 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
         if asset.preview then
           w.marker:SetTexture(asset.preview)
         end
+        if w.details.kind == "cast" and w.details.square then
+          w.background:Show()
+        end
       elseif w.kind == "highlights" then
         w:Show(true)
       end

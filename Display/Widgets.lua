@@ -504,6 +504,9 @@ function addonTable.Display.GetMarker(frame, parent)
 
   function frame:ApplyAnchor()
     ApplyAnchor(frame, frame.details.anchor)
+    if frame.PostApplyAnchor then
+      frame:PostApplyAnchor()
+    end
   end
 
   function frame:ApplySize()

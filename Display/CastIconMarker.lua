@@ -12,9 +12,12 @@ function addonTable.Display.CastIconMarkerMixin:PostInit()
     self.background = borderPool:Acquire()
     self.background:SetParent(self)
     self.background:ClearAllPoints()
-    self.background:SetPoint("TOPLEFT", -1, 1)
-    self.background:SetPoint("BOTTOMRIGHT", 1, -1)
     self.marker:SetTexCoord(0.1, 0.9, 0.1, 0.9)
+
+    self.PostApplyAnchor = function()
+      PixelUtil.SetPoint(self.background, "TOPLEFT", self, "TOPLEFT", -1, 1)
+      PixelUtil.SetPoint(self.background, "BOTTOMRIGHT", self, "BOTTOMRIGHT", 1, -1)
+    end
   end
 end
 
@@ -43,6 +46,7 @@ function addonTable.Display.CastIconMarkerMixin:Strip()
     borderPool:Release(self.background)
     self.background = nil
   end
+  self.PostApplyAnchor = nil
 end
 
 function addonTable.Display.CastIconMarkerMixin:OnEvent(eventName, ...)
