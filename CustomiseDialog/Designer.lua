@@ -589,9 +589,8 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
 
   local titleText = container:CreateFontString(nil, nil, "GameFontHighlightLarge")
   titleText:SetPoint("TOP", previewInset, "BOTTOM", 0, -15)
-  titleText:SetPoint("LEFT", 40, 0)
-  titleText:SetJustifyH("CENTER")
-  titleText:SetPoint("RIGHT", -20, 0)
+  titleText:SetJustifyH("RIGHT")
+  titleText:SetPoint("RIGHT", -40, 0)
   titleText:SetShadowOffset(1, -1)
 
   local function OffsetWidgets(x, y)
@@ -1117,6 +1116,7 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
             tabButton:Hide()
           end
         end
+        titleText:SetPoint("LEFT", lastTab, "RIGHT", 10, 0)
         tabManager:SetTab(tabs[settingsContainer.tabIndex].button.label)
       end
       if details["*"] then
