@@ -404,20 +404,22 @@ end
 
 function addonTable.Display.ManagerMixin:ListenToBuffs(display, unit)
   if addonTable.Constants.IsMidnight and self.ModifiedUFs[unit] then
-    local AurasFrame = self.ModifiedUFs[unit].AurasFrame
+    local DebuffListFrame = self.ModifiedUFs[unit].AurasFrame.DebuffListFrame
+    local BuffListFrame = self.ModifiedUFs[unit].AurasFrame.BuffListFrame
+    local CrowdControlListFrame = self.ModifiedUFs[unit].AurasFrame.CrowdControlListFrame
 
     display.AurasManager:SetGetImportantAuras(function()
       local important, crowdControl = {}, {}
 
-      AurasFrame.buffList:Iterate(function(auraInstanceID)
-        important[auraInstanceID] = true
-      end)
-      AurasFrame.debuffList:Iterate(function(auraInstanceID)
-        important[auraInstanceID] = true
-      end)
-      AurasFrame.crowdControlList:Iterate(function(auraInstanceID)
-        crowdControl[auraInstanceID] = true
-      end)
+      for _, child in ipairs(DebuffListFrame:GetLayoutChildren()) do
+        important[child.auraInstanceID] = true
+      end
+      for _, child in ipairs(BuffListFrame:GetLayoutChildren()) do
+        important[child.auraInstanceID] = true
+      end
+      for _, child in ipairs(CrowdControlListFrame:GetLayoutChildren()) do
+        crowdControl[child.auraInstanceID] = true
+      end
 
       return important, crowdControl
     end)
