@@ -118,8 +118,8 @@ function addonTable.Display.NameplateMixin:OnLoad()
           auraFrame.Cooldown.Text:SetTextScale(14/12 * details.textScale)
         end
 
-        PixelUtil.SetSize(auraFrame, 20 * details.height, 20)
-        PixelUtil.SetSize(auraFrame.Icon, 19 * details.height, 19)
+        PixelUtil.SetSize(auraFrame, 20, 20 * details.height)
+        PixelUtil.SetSize(auraFrame.Icon, 19, 19 * details.height)
         auraFrame.Icon:SetTexCoord(0.05, 0.95, 0.05 + texBase, 0.95 - texBase)
 
         if aura.durationSecret then
