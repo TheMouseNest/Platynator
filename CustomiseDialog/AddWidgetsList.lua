@@ -184,6 +184,15 @@ addonTable.CustomiseDialog.DesignWidgets = {
       height = 1,
       showCountdown = true,
       direction = "RIGHT",
+      textScale = 1,
+      sorting = {
+        kind = "duration",
+        reversed = false,
+      },
+      filters = {
+        important = true,
+        fromYou = true,
+      },
     },
   },
   {
@@ -197,6 +206,15 @@ addonTable.CustomiseDialog.DesignWidgets = {
       height = 1,
       showCountdown = true,
       direction = "LEFT",
+      textScale = 1,
+      sorting = {
+        kind = "duration",
+        reversed = false,
+      },
+      filters = {
+        dispelable = true,
+        important = true,
+      },
     },
   },
   {
@@ -210,6 +228,14 @@ addonTable.CustomiseDialog.DesignWidgets = {
       height = 1,
       showCountdown = true,
       direction = "RIGHT",
+      textScale = 1,
+      sorting = {
+        kind = "duration",
+        reversed = false,
+      },
+      filters = {
+        fromYou = false,
+      },
     },
   },
   {
