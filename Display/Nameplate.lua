@@ -75,18 +75,19 @@ function addonTable.Display.NameplateMixin:OnLoad()
         return
       end
 
+      local step = PixelUtil.ConvertPixelsToUIForRegion(22, frame)
       local currentX = 0
       local currentY = 0
       local xOffset = 0
       local yOffset = 0
       local details = frame:GetParent().details
       if details.direction == "LEFT" then
-        xOffset = -22
+        xOffset = -step
       elseif details.direction == "RIGHT" then
-        xOffset = 22
+        xOffset = step
       else -- CENTER
-        xOffset = 22
-        currentX = #keys * 22 / 2
+        xOffset = step
+        currentX = #keys * step / 2
       end
       local anchor = details.anchor[1]
       if type(anchor) ~= "string" then
@@ -117,8 +118,8 @@ function addonTable.Display.NameplateMixin:OnLoad()
           auraFrame.Cooldown.Text:SetTextScale(14/12 * details.textScale)
         end
 
-        auraFrame:SetHeight(20 * details.height)
-        auraFrame.Icon:SetHeight(19 * details.height)
+        PixelUtil.SetSize(auraFrame, 20 * details.height, 20)
+        PixelUtil.SetSize(auraFrame.Icon, 19 * details.height, 19)
         auraFrame.Icon:SetTexCoord(0.05, 0.95, 0.05 + texBase, 0.95 - texBase)
 
         if aura.durationSecret then
@@ -129,7 +130,7 @@ function addonTable.Display.NameplateMixin:OnLoad()
 
         auraFrame:Show();
 
-        auraFrame:SetPoint(anchor, currentX, currentY)
+        PixelUtil.SetPoint(auraFrame, anchor, frame, anchor, currentX, currentY)
         currentX = currentX + xOffset
       end
     end
@@ -199,7 +200,7 @@ function addonTable.Display.NameplateMixin:InitializeWidgets(design, scale)
       self.DebuffDisplay.Wrapped:SetPoint(designInfo.debuffs.anchor[1] or "CENTER")
       self.DebuffDisplay.Wrapped:SetScale(designInfo.debuffs.scale)
     end
-    self.DebuffDisplay:SetSize(defaultSize * designInfo.debuffs.scale, defaultSize * designInfo.debuffs.scale)
+    PixelUtil.SetSize(self.DebuffDisplay, defaultSize * designInfo.debuffs.scale, defaultSize * designInfo.debuffs.scale)
     addonTable.Display.ApplyAnchor(self.DebuffDisplay, designInfo.debuffs.anchor)
   end
   if designInfo.buffs then
@@ -213,7 +214,7 @@ function addonTable.Display.NameplateMixin:InitializeWidgets(design, scale)
       self.BuffDisplay.Wrapped:SetScale(designInfo.buffs.scale)
       self.BuffDisplay.Wrapped:SetPoint(designInfo.buffs.anchor[1] or "CENTER")
     end
-    self.BuffDisplay:SetSize(defaultSize * designInfo.buffs.scale, defaultSize * designInfo.buffs.scale)
+    PixelUtil.SetSize(self.BuffDisplay, defaultSize * designInfo.buffs.scale, defaultSize * designInfo.buffs.scale)
     addonTable.Display.ApplyAnchor(self.BuffDisplay, designInfo.buffs.anchor)
   end
   if designInfo.crowdControl then
@@ -227,7 +228,7 @@ function addonTable.Display.NameplateMixin:InitializeWidgets(design, scale)
       self.CrowdControlDisplay.Wrapped:SetScale(designInfo.crowdControl.scale)
       self.CrowdControlDisplay.Wrapped:SetPoint(designInfo.crowdControl.anchor[1] or "CENTER")
     end
-    self.CrowdControlDisplay:SetSize(defaultSize * designInfo.crowdControl.scale, defaultSize * designInfo.crowdControl.scale)
+    PixelUtil.SetSize(self.CrowdControlDisplay, defaultSize * designInfo.crowdControl.scale, defaultSize * designInfo.crowdControl.scale)
     addonTable.Display.ApplyAnchor(self.CrowdControlDisplay, designInfo.crowdControl.anchor)
   end
 
