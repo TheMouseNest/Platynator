@@ -25,10 +25,45 @@ function addonTable.Display.NameplateMixin:OnLoad()
   self.AurasPool = CreateFramePool("Frame", self, "PlatynatorNameplateBuffButtonTemplate", nil, false, function(frame)
     frame.Cooldown:SetCountdownAbbrevThreshold(20)
     frame.Cooldown.Text = frame.Cooldown:GetRegions()
+    frame:SetScript("OnEnter", function()
+      GameTooltip_SetDefaultAnchor(GameTooltip, frame)
+      if GameTooltip.SetUnitAuraByAuraInstanceID then
+        GameTooltip:SetUnitAuraByAuraInstanceID(self.unit, frame.auraInstanceID)
+        GameTooltip:Show()
+      elseif frame.auraIndex then
+        if frame.auraIndex ~= -1 then
+          GameTooltip:SetUnitAura(self.unit, frame.auraIndex, frame.auraFilter)
+          GameTooltip:Show()
+        end
+      else
+        local index = 1
+        while true do
+          local aura = C_UnitAuras.GetAuraDataByIndex(self.unit, index, frame.auraFilter)
+          if not aura then
+            break
+          end
+          if aura.auraInstanceID == frame.auraInstanceID then
+            frame.auraIndex = index
+            break
+          end
+          index = index + 1
+        end
+
+        if frame.auraIndex then
+          GameTooltip:SetUnitAura(self.unit, frame.auraIndex, frame.auraFilter)
+          GameTooltip:Show()
+        else
+          frame.auraIndex = -1
+        end
+      end
+    end)
+    frame:SetScript("OnLeave", function()
+      GameTooltip:Hide()
+    end)
   end)
 
   local function GetCallback(frame)
-    return function(data)
+    return function(data, auraFilter)
       if frame.items then
         for _, item in ipairs(frame.items) do
           self.AurasPool:Release(item)
@@ -62,37 +97,39 @@ function addonTable.Display.NameplateMixin:OnLoad()
       local texBase = 0.95 * (1 - details.height) / 2
       for _, auraInstanceID in ipairs(data) do
         local aura = self.AurasManager:GetByInstanceID(auraInstanceID)
-        local buff = self.AurasPool:Acquire()
-        table.insert(frame.items, buff)
-        buff:SetParent(frame)
-        buff.auraInstanceID = auraInstanceID
+        local auraFrame = self.AurasPool:Acquire()
+        table.insert(frame.items, auraFrame)
+        auraFrame:SetParent(frame)
+        auraFrame.auraInstanceID = auraInstanceID
+        auraFrame.auraIndex = nil
+        auraFrame.auraFilter = auraFilter
 
-        buff.Icon:SetTexture(aura.icon);
-        buff.CountFrame.Count:SetText(aura.applicationsString)
-        buff.CountFrame.Count:SetFontObject(addonTable.CurrentFont)
-        buff.CountFrame.Count:SetTextScale(11/12 * details.textScale)
-        buff.CountFrame.Count:Show();
+        auraFrame.Icon:SetTexture(aura.icon);
+        auraFrame.CountFrame.Count:SetText(aura.applicationsString)
+        auraFrame.CountFrame.Count:SetFontObject(addonTable.CurrentFont)
+        auraFrame.CountFrame.Count:SetTextScale(11/12 * details.textScale)
+        auraFrame.CountFrame.Count:Show();
 
-        buff.Cooldown:SetHideCountdownNumbers(not details.showCountdown)
+        auraFrame.Cooldown:SetHideCountdownNumbers(not details.showCountdown)
 
         if details.showCountdown then
-          buff.Cooldown.Text:SetFontObject(addonTable.CurrentFont)
-          buff.Cooldown.Text:SetTextScale(14/12 * details.textScale)
+          auraFrame.Cooldown.Text:SetFontObject(addonTable.CurrentFont)
+          auraFrame.Cooldown.Text:SetTextScale(14/12 * details.textScale)
         end
 
-        buff:SetHeight(20 * details.height)
-        buff.Icon:SetHeight(19 * details.height)
-        buff.Icon:SetTexCoord(0.05, 0.95, 0.05 + texBase, 0.95 - texBase)
+        auraFrame:SetHeight(20 * details.height)
+        auraFrame.Icon:SetHeight(19 * details.height)
+        auraFrame.Icon:SetTexCoord(0.05, 0.95, 0.05 + texBase, 0.95 - texBase)
 
         if aura.durationSecret then
-          buff.Cooldown:SetCooldownFromDurationObject(aura.durationSecret)
+          auraFrame.Cooldown:SetCooldownFromDurationObject(aura.durationSecret)
         else
-          CooldownFrame_Set(buff.Cooldown, aura.expirationTime - aura.duration, aura.duration, aura.duration > 0, true);
+          CooldownFrame_Set(auraFrame.Cooldown, aura.expirationTime - aura.duration, aura.duration, aura.duration > 0, true);
         end
 
-        buff:Show();
+        auraFrame:Show();
 
-        buff:SetPoint(anchor, currentX, currentY)
+        auraFrame:SetPoint(anchor, currentX, currentY)
         currentX = currentX + xOffset
       end
     end

@@ -322,9 +322,9 @@ function addonTable.Display.AurasManagerMixin:FullRefresh()
     end
   end
 
-  self.OnDebuffsUpdate(self.debuffs)
-  self.OnCrowdControlUpdate(self.crowdControl)
-  self.OnBuffsUpdate(self.buffs)
+  self.OnDebuffsUpdate(self.debuffs, self.debuffFilter)
+  self.OnCrowdControlUpdate(self.crowdControl, self.crowdControlFilter)
+  self.OnBuffsUpdate(self.buffs, self.buffFilter)
 end
 
 function addonTable.Display.AurasManagerMixin:OnEvent(_, _, refreshData)
@@ -439,14 +439,14 @@ function addonTable.Display.AurasManagerMixin:OnEvent(_, _, refreshData)
 
   if changes.debuffs then
     table.sort(self.debuffs, self.debuffSortFunc)
-    self.OnDebuffsUpdate(self.debuffs)
+    self.OnDebuffsUpdate(self.debuffs, self.debuffFilter)
   end
   if changes.crowdControl then
     table.sort(self.crowdControl, self.crowdControlSortFunc)
-    self.OnCrowdControlUpdate(self.crowdControl)
+    self.OnCrowdControlUpdate(self.crowdControl, self.crowdControlFilter)
   end
   if changes.buffs then
-    table.sort(self.buffs, self.buffSortFunc)
+    table.sort(self.buffs, self.buffSortFunc, self.buffFilter)
     self.OnBuffsUpdate(self.buffs)
   end
 end
