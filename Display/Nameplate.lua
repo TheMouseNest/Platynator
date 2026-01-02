@@ -244,8 +244,9 @@ end
 
 function addonTable.Display.NameplateMixin:SetUnit(unit)
   self.SoftTargetIcon:Hide()
-  self.interactUnit = nil
   self:SetAlpha(0)
+
+  self.interactUnit = unit
   if unit and (not UnitNameplateShowsWidgetsOnly or not UnitNameplateShowsWidgetsOnly(unit)) and not UnitIsGameObject(unit) then
     self.unit = unit
     self:Show()
@@ -308,8 +309,6 @@ function addonTable.Display.NameplateMixin:SetUnit(unit)
 
     addonTable.CallbackRegistry:UnregisterCallback("TextOverrideUpdated", self)
   end
-
-  self.interactUnit = unit
 
   self:UpdateVisual()
 end

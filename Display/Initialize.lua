@@ -153,7 +153,7 @@ function addonTable.Display.ManagerMixin:OnLoad()
           hooksecurefunc(nameplate.UnitFrame.AurasFrame, "RefreshAuras", function(af, data)
             if not af:IsForbidden() then
               local display = self.nameplateDisplays[af:GetParent().unit]
-              if display then
+              if display and display.unit then
                 display.AurasManager:OnEvent("", "", data)
               end
             end
