@@ -454,6 +454,38 @@ addonTable.CustomiseDialog.ColorsConfig = {
       },
     },
   },
+  ["interrupt"] = {
+    label = addonTable.Locales.INTERRUPT_READY,
+    default = {
+      kind = "interrupt",
+      colors = {
+        ready = GetColor("00FF00"),
+        notReady = GetColor("FF0000"),
+      },
+    },
+    entries = {
+      {
+        label = addonTable.Locales.READY,
+        kind = "colorPicker",
+        setter = function(details, value)
+          details.colors.ready = value
+        end,
+        getter = function(details)
+          return details.colors.ready
+        end,
+      },
+      {
+        label = addonTable.Locales.NOT_READY,
+        kind = "colorPicker",
+        setter = function(details, value)
+          details.colors.notReady = value
+        end,
+        getter = function(details)
+          return details.colors.notReady
+        end,
+      },
+    },
+  },
 }
 
 addonTable.CustomiseDialog.ColorsConfigOrder = {
@@ -461,6 +493,7 @@ addonTable.CustomiseDialog.ColorsConfigOrder = {
   "target",
   "focus",
   "threat",
+  "interrupt",
   "eliteType",
   "quest",
   "guild",
