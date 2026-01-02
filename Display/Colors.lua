@@ -88,7 +88,7 @@ local kindToEvent = {
   focus = {"PLAYER_FOCUS_CHANGED"},
   threat = {"UNIT_THREAT_LIST_UPDATE"},
   quest = {"QUEST_LOG_UPDATE"},
-  interrupt = {
+  interruptReady = {
     "UNIT_SPELLCAST_START",
     "UNIT_SPELLCAST_STOP",
     "UNIT_SPELLCAST_DELAYED",
@@ -98,7 +98,24 @@ local kindToEvent = {
     "UNIT_SPELLCAST_CHANNEL_START",
     "UNIT_SPELLCAST_CHANNEL_STOP",
     "SPELL_UPDATE_COOLDOWN",
-  }
+  },
+  cast = {
+    "UNIT_SPELLCAST_START",
+    "UNIT_SPELLCAST_STOP",
+    "UNIT_SPELLCAST_DELAYED",
+    "UNIT_SPELLCAST_CHANNEL_START",
+    "UNIT_SPELLCAST_CHANNEL_STOP",
+    "UNIT_SPELLCAST_CHANNEL_UPDATE",
+    "UNIT_SPELLCAST_INTERRUPTIBLE",
+    "UNIT_SPELLCAST_NOT_INTERRUPTIBLE",
+  },
+  importantCast = {
+    "UNIT_SPELLCAST_START",
+    "UNIT_SPELLCAST_STOP",
+    "UNIT_SPELLCAST_DELAYED",
+    "UNIT_SPELLCAST_CHANNEL_START",
+    "UNIT_SPELLCAST_CHANNEL_STOP",
+  },
 }
 
 function addonTable.Display.UnregisterForColorEvents(frame)
@@ -125,18 +142,22 @@ function addonTable.Display.RegisterForColorEvents(frame, settings)
 end
 
 function addonTable.Display.GetColor(settings, unit)
+  local colorQueue = {}
   for _, s in ipairs(settings) do
     if s.kind == "tapped" then
       if IsTapped(unit) then
-        return s.colors.tapped
+        table.insert(colorQueue, {color = s.colors.tapped})
+        break
       end
     elseif s.kind == "target" then
       if UnitIsUnit("target", unit) then
-        return s.colors.target
+        table.insert(colorQueue, {color = s.colors.target})
+        break
       end
     elseif s.kind == "focus" then
       if UnitIsUnit("focus", unit) then
-        return s.colors.focus
+        table.insert(colorQueue, {s.colors.focus})
+        break
       end
     elseif s.kind == "threat" then
       local threat = UnitThreatSituation("player", unit)
@@ -144,13 +165,17 @@ function addonTable.Display.GetColor(settings, unit)
       if (inRelevantInstance or not s.instancesOnly) and (threat or (hostile and not s.combatOnly) or (inRelevantInstance and UnitAffectingCombat(unit))) then
         local role = GetPlayerRole()
         if (role == roleType.Tank and (threat == 0 or threat == nil) and not DoesOtherTankHaveAggro(unit)) or (role ~= roleType.Tank and threat == 3) then
-          return s.colors.warning
+          table.insert(colorQueue, {color = s.colors.warning})
+          break
         elseif threat == 1 or threat == 2 then
-          return s.colors.transition
+          table.insert(colorQueue, {color = s.colors.transition})
+          break
         elseif s.useSafeColor and ((role == roleType.Tank and threat == 3) or (role ~= roleType.Tank and (threat == 0 or threat == nil))) then
-          return s.colors.safe
+          table.insert(colorQueue, {color = s.colors.safe})
+          break
         elseif role == roleType.Tank and (threat == 0 or threat == nil) and DoesOtherTankHaveAggro(unit) then
-          return s.colors.offtank
+          table.insert(colorQueue, {color = s.colors.offtank})
+          break
         end
       end
     elseif s.kind == "eliteType" then
@@ -160,29 +185,36 @@ function addonTable.Display.GetColor(settings, unit)
           local level = UnitEffectiveLevel(unit)
           local playerLevel = PLATYNATOR_LAST_INSTANCE.level
           if level >= playerLevel + 2 then
-            return s.colors.boss
+            table.insert(colorQueue, {color = s.colors.boss})
+            break
           elseif level == playerLevel + 1 then
-            return s.colors.miniboss
+            table.insert(colorQueue, {color = s.colors.miniboss})
+            break
           elseif level == playerLevel then
             local class = UnitClassBase(unit)
             if class == "PALADIN" then
-              return s.colors.caster
+              table.insert(colorQueue, {color = s.colors.caster})
             else
-              return s.colors.melee
+              table.insert(colorQueue, {color = s.colors.melee})
             end
+            break
           end
         elseif classification == "normal" or classification == "trivial" then
-          return s.colors.trivial
+          table.insert(colorQueue, {color = s.colors.trivial})
+          break
         end
       end
     elseif s.kind == "quest" then
       if C_QuestLog.UnitIsRelatedToActiveQuest and C_QuestLog.UnitIsRelatedToActiveQuest(unit) then
         if IsNeutral(unit) then
-          return s.colors.neutral
+          table.insert(colorQueue, {color = s.colors.neutral})
+          break
         elseif UnitIsFriend("player", unit) then
-          return s.colors.friendly
+          table.insert(colorQueue, {color = s.colors.friendly})
+          break
         else
-          return s.colors.hostile
+          table.insert(colorQueue, {color = s.colors.hostile})
+          break
         end
       end
     elseif s.kind == "guild" then
@@ -190,26 +222,30 @@ function addonTable.Display.GetColor(settings, unit)
         local playerGuild, _, _, playerRealm = GetGuildInfo("player")
         local unitGuild, _, _, unitRealm = GetGuildInfo(unit)
         if playerGuild ~= nil and playerGuild == unitGuild and playerRealm == unitRealm then
-          return s.colors.guild
+          table.insert(colorQueue, {color = s.colors.guild})
+          break
         end
       end
     elseif s.kind == "classColors" then
       if UnitIsPlayer(unit) then
-        return RAID_CLASS_COLORS[UnitClassBase(unit)]
+        table.insert(colorQueue, {color = SS_COLORS[UnitClassBase(unit)]})
+        break
       end
     elseif s.kind == "reaction" then
       if IsNeutral(unit) then
-        return s.colors.neutral
+        table.insert(colorQueue, {color = s.colors.neutral})
       elseif IsUnfriendly(unit) then
-        return s.colors.unfriendly
+        table.insert(colorQueue, {color = s.colors.unfriendly})
       elseif UnitIsFriend("player", unit) then
-        return s.colors.friendly
+        table.insert(colorQueue, {color = s.colors.friendly})
       else
-        return s.colors.hostile
+        table.insert(colorQueue, {color = s.colors.hostile})
       end
+      break
     elseif s.kind == "difficulty" then
-      return s.colors[addonTable.Display.Utilities.GetUnitDifficulty(unit)]
-    elseif s.kind == "interrupt" then
+      table.insert(colorQueue, {color = s.colors[addonTable.Display.Utilities.GetUnitDifficulty(unit)]})
+      break
+    elseif s.kind == "interruptReady" then
       local spellID = GetInterruptSpell()
       if spellID then
         local _, _, _, _, _, _, _, notInterruptible, _ = UnitCastingInfo(unit)
@@ -220,29 +256,92 @@ function addonTable.Display.GetColor(settings, unit)
           if C_Spell.GetSpellCooldownDuration and C_CurveUtil.EvaluateColorFromBoolean then
             local duration = C_Spell.GetSpellCooldownDuration(spellID)
             local c1 = C_CurveUtil.EvaluateColorFromBoolean(duration:IsZero(), ConvertColor(s.colors.ready), ConvertColor(s.colors.notReady))
-            if notInterruptible ~= nil then
-              return C_CurveUtil.EvaluateColorFromBoolean(notInterruptible, transparency, c1)
-            end
+            table.insert(colorQueue, {state = notInterruptible, invert = true, color = c1})
           elseif C_Spell.GetSpellCooldownDuration then
             local duration = C_Spell.GetSpellCooldownDuration(spellID)
             local c1 = WorkaroundBooleanEvaluator(duration:IsZero(), ConvertColor(s.colors.ready), ConvertColor(s.colors.notReady))
-            return WorkaroundBooleanEvaluator(notInterruptible, transparency, c1)
+            table.insert(colorQueue, {state = notInterruptible, invert = true, color = c1})
           else
             local cooldownInfo = C_Spell.GetSpellCooldown(spellID)
             if notInterruptible == false then
               if cooldownInfo.startTime ~= 0 then
-                return s.colors.notReady
+                table.insert(colorQueue, {color = s.colors.notReady})
               else
-                return s.colors.ready
+                table.insert(colorQueue, {color = s.colors.ready})
               end
-            else
-              return transparency
+              break
             end
           end
         end
       end
+    elseif s.kind == "importantCast" then
+      local _, _, _, _, _, _, _, _, spellID = UnitCastingInfo(unit)
+      local isChannel = false
+      if spellID == nil then
+        _, _, _, _, _, _, _, spellID = UnitChannelInfo(unit)
+        isChannel = true
+      end
+      if spellID ~= nil then
+        local state = C_Spell.IsSpellImportant(spellID)
+        if isChannel then
+          table.insert(colorQueue, {state = state, color = ConvertColor(s.colors.channel)})
+        else
+          table.insert(colorQueue, {state = state, color = ConvertColor(s.colors.cast)})
+        end
+      end
+    elseif s.kind == "cast" then
+      local _, _, _, _, _, _, _, notInterruptible, _ = UnitCastingInfo(unit)
+      local isChannel = false
+      if notInterruptible == nil then
+        _, _, _, _, _, _, notInterruptible, _ = UnitChannelInfo(unit)
+        isChannel = true
+      end
+      if notInterruptible ~= nil then
+        local c1 = ConvertColor(s.colors.uninterruptable)
+        local c2 = isChannel and ConvertColor(s.colors.channel) or ConvertColor(s.colors.cast)
+        table.insert(colorQueue, {state = notInterruptible, color = c1})
+        table.insert(colorQueue, {color = c2})
+      else
+        table.insert(colorQueue, {color = ConvertColor(s.colors.interrupted)})
+      end
+      break
     elseif s.kind == "fixed" then
-      return s.colors.fixed
+      table.insert(colorQueue, {color = ConvertColor(s.colors.fixed)})
+      break
     end
   end
+
+  if #colorQueue == 0 then
+    return nil
+  end
+
+  local color = transparency
+  for index = #colorQueue, 1, -1 do
+    local details = colorQueue[index]
+    if details.state == nil then
+      color = details.color
+    elseif details.invert then
+      if C_CurveUtil then
+        if C_CurveUtil.EvaluateColorFromBoolean then
+          color = C_CurveUtil.EvaluateColorFromBoolean(details.state, ConvertColor(color), ConvertColor(details.color))
+        else
+          color = WorkaroundBooleanEvaluator(details.state, ConvertColor(color), ConvertColor(details.color))
+        end
+      else
+        color = details.state and color or details.color
+      end
+    else
+      if C_CurveUtil then
+        if C_CurveUtil.EvaluateColorFromBoolean then
+          color = C_CurveUtil.EvaluateColorFromBoolean(details.state, details.color, color)
+        else
+          color = WorkaroundBooleanEvaluator(details.state, details.color, color)
+        end
+      else
+        color = details.state and details.color or color
+      end
+    end
+  end
+
+  return color
 end

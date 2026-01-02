@@ -746,10 +746,7 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
             end
           end
         else
-          defaultColor = w.details.colors.normalCast
-        end
-        if w.details.kind == "cast" then
-          w:SetCannotInterrupt(false)
+          defaultColor = w.details.autoColors[#w.details.autoColors].colors.cast
         end
         w.statusBar:SetMinMaxValues(0, 100)
         w.statusBar:SetValue(70)
