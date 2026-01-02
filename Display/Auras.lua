@@ -579,4 +579,8 @@ legacy.blacklistedBuffs = {
 
 legacy.whitelistedDebuffs = {
   [257284] = true, -- Hunter's Mark (Retail)
+  [121253] = true, -- Keg Smash (Monk)
+  [123725] = true, -- Breath of Fire (Monk)
+  [325153] = true, -- Exploding Keg (Monk)
+  [445584] = true, -- Marked for Execution (Warrior)
 }
