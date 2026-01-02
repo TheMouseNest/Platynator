@@ -27,6 +27,42 @@ local function GetPlayerRole()
   return roleMap[role]
 end
 
+local interruptMap = {
+  ["DEATHKNIGHT"] = {47528, 47476},
+  ["WARRIOR"] = {6552},
+  ["WARLOCK"] = {19647},
+  ["SHAMAN"] = {57994},
+  ["ROGUE"] = {1766},
+  ["PRIEST"] = {15487},
+  ["PALADIN"] = {96231, 31935},
+  ["MONK"] = {116705},
+  ["MAGE"] = {2139},
+  ["HUNTER"] = {187707, 147362},
+  ["EVOKER"] = {351338},
+  ["DRUID"] = {38675, 106839},
+  ["DEMONHUNTER"] = {183752},
+}
+
+local interruptSpells = interruptMap[UnitClassBase("player")] or {}
+
+local function GetInterruptSpell()
+  for _, s in ipairs(interruptSpells) do
+    if C_SpellBook.IsSpellKnown(s) then
+      return s
+    end
+  end
+end
+
+local ConvertColor = addonTable.Display.Utilities.ConvertColor
+local transparency = CreateColor(0, 0, 0, 0)
+
+local t = UIParent:CreateTexture()
+t:SetTexture("Interface/AddOns/Platynator/Assets/Special/white.png")
+local function WorkaroundBooleanEvaluator(state, color1, color2)
+  t:SetVertexColorFromBoolean(state, color1, color2)
+  return CreateColor(t:GetVertexColor())
+end
+
 local function DoesOtherTankHaveAggro(unit)
   return IsInRaid() and UnitGroupRolesAssigned(unit .. "target") == "TANK"
 end
@@ -47,11 +83,22 @@ instanceTracker:SetScript("OnEvent", function()
 end)
 
 local kindToEvent = {
-  tapped = "UNIT_HEALTH",
-  target = "PLAYER_TARGET_CHANGED",
-  focus = "PLAYER_FOCUS_CHANGED",
-  threat = "UNIT_THREAT_LIST_UPDATE",
-  quest = "QUEST_LOG_UPDATE",
+  tapped = {"UNIT_HEALTH"},
+  target = {"PLAYER_TARGET_CHANGED"},
+  focus = {"PLAYER_FOCUS_CHANGED"},
+  threat = {"UNIT_THREAT_LIST_UPDATE"},
+  quest = {"QUEST_LOG_UPDATE"},
+  interrupt = {
+    "UNIT_SPELLCAST_START",
+    "UNIT_SPELLCAST_STOP",
+    "UNIT_SPELLCAST_DELAYED",
+    "UNIT_SPELLCAST_FAILED",
+    "UNIT_SPELLCAST_INTERRUPTIBLE",
+    "UNIT_SPELLCAST_NOT_INTERRUPTIBLE",
+    "UNIT_SPELLCAST_CHANNEL_START",
+    "UNIT_SPELLCAST_CHANNEL_STOP",
+    "SPELL_UPDATE_COOLDOWN",
+  }
 }
 
 function addonTable.Display.UnregisterForColorEvents(frame)
@@ -61,10 +108,12 @@ end
 function addonTable.Display.RegisterForColorEvents(frame, settings)
   local events = {}
   for _, s in ipairs(settings) do
-    local e = kindToEvent[s.kind]
-    if e then
-      events[e] = true
-      frame:RegisterEvent(e)
+    local es = kindToEvent[s.kind]
+    if es then
+      for _, e in ipairs(es) do
+        events[e] = true
+        frame:RegisterEvent(e)
+      end
     end
   end
 
@@ -160,6 +209,38 @@ function addonTable.Display.GetColor(settings, unit)
       end
     elseif s.kind == "difficulty" then
       return s.colors[addonTable.Display.Utilities.GetUnitDifficulty(unit)]
+    elseif s.kind == "interrupt" then
+      local spellID = GetInterruptSpell()
+      if spellID then
+        local _, _, _, _, _, _, _, notInterruptible, _ = UnitCastingInfo(unit)
+        if notInterruptible == nil then
+          _, _, _, _, _, _, notInterruptible, _ = UnitChannelInfo(unit)
+        end
+        if notInterruptible ~= nil then
+          if C_Spell.GetSpellCooldownDuration and C_CurveUtil.EvaluateColorFromBoolean then
+            local duration = C_Spell.GetSpellCooldownDuration(spellID)
+            local c1 = C_CurveUtil.EvaluateColorFromBoolean(duration:IsZero(), ConvertColor(s.colors.ready), ConvertColor(s.colors.notReady))
+            if notInterruptible ~= nil then
+              return C_CurveUtil.EvaluateColorFromBoolean(notInterruptible, transparency, c1)
+            end
+          elseif C_Spell.GetSpellCooldownDuration then
+            local duration = C_Spell.GetSpellCooldownDuration(spellID)
+            local c1 = WorkaroundBooleanEvaluator(duration:IsZero(), ConvertColor(s.colors.ready), ConvertColor(s.colors.notReady))
+            return WorkaroundBooleanEvaluator(notInterruptible, transparency, c1)
+          else
+            local cooldownInfo = C_Spell.GetSpellCooldown(spellID)
+            if notInterruptible == false then
+              if cooldownInfo.startTime ~= 0 then
+                return s.colors.notReady
+              else
+                return s.colors.ready
+              end
+            else
+              return transparency
+            end
+          end
+        end
+      end
     elseif s.kind == "fixed" then
       return s.colors.fixed
     end
