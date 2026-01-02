@@ -372,13 +372,13 @@ function addonTable.Display.ManagerMixin:UpdateInstanceShowState()
     return
   end
 
-  if state == "name_only" and C_CVar.GetCVarInfo("nameplateShowOnlyNameForFriendlyPlayerUnits") then
-    C_CVar.SetCVar("nameplateShowOnlyNameForFriendlyPlayerUnits", "1")
-  end
-
   if InCombatLockdown() then
     self:RegisterEvent("PLAYER_REGEN_ENABLED")
     return
+  end
+
+  if state == "name_only" and C_CVar.GetCVarInfo("nameplateShowOnlyNameForFriendlyPlayerUnits") then
+    C_CVar.SetCVar("nameplateShowOnlyNameForFriendlyPlayerUnits", "1")
   end
 
   local values = GetCVarsForNameplates()
