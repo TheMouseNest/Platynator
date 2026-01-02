@@ -898,13 +898,6 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
       container:ClearAllPoints()
       addonTable.Display.ApplyAnchor(container, details.anchor)
     end
-
-    if not InCombatLockdown() then
-      for _, w in ipairs(widgets) do
-        w:SetPropagateMouseMotion(true)
-        w:SetPropagateMouseClicks(false)
-      end
-    end
   end
 
   GenerateWidgets()
@@ -1217,26 +1210,9 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
       end
     end
 
-    if not InCombatLockdown() then
-      for _, w in ipairs(widgets) do
-        w:SetPropagateMouseMotion(true)
-        w:SetPropagateMouseClicks(false)
-      end
-    end
     selectionIndexes = {}
     UpdateSelection()
 
-    container:RegisterEvent("PLAYER_REGEN_ENABLED")
-  end)
-  container:SetScript("OnHide", function()
-    container:UnregisterEvent("PLAYER_REGEN_ENABLED")
-  end)
-
-  container:SetScript("OnEvent", function()
-    for _, w in ipairs(widgets) do
-      w:SetPropagateMouseMotion(true)
-      w:SetPropagateMouseClicks(false)
-    end
   end)
 
   return container

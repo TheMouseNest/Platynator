@@ -34,6 +34,8 @@ Core/SlashCmd.lua
 Core/Fonts.lua
 Core/Initialize.lua
 
+Display/Templates.xml
+
 Display/Initialize.lua
 Display/Utilities.lua
 Display/CVars.lua
@@ -65,7 +67,6 @@ Display/RareMarker.lua
 Display/RaidMarker.lua
 Display/PvPMarker.lua
 Display/Widgets.lua
-Display/LegacyBuffTemplate.xml
 
 API/Main.lua
 

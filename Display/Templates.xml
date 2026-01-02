@@ -36,4 +36,7 @@
       </Frame>
     </Frames>
   </Frame>
+
+  <Frame name="PlatynatorPropagateMouseTemplate" virtual="true" hidden="true" propagateMouseInput="Motion">
+  </Frame>
 </Ui>
