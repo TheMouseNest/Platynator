@@ -228,7 +228,7 @@ function addonTable.Display.GetColor(settings, unit)
       end
     elseif s.kind == "classColors" then
       if UnitIsPlayer(unit) then
-        table.insert(colorQueue, {color = SS_COLORS[UnitClassBase(unit)]})
+        table.insert(colorQueue, {color = RAID_CLASS_COLORS[UnitClassBase(unit)]})
         break
       end
     elseif s.kind == "reaction" then
@@ -275,18 +275,20 @@ function addonTable.Display.GetColor(settings, unit)
         end
       end
     elseif s.kind == "importantCast" then
-      local _, _, _, _, _, _, _, _, spellID = UnitCastingInfo(unit)
-      local isChannel = false
-      if spellID == nil then
-        _, _, _, _, _, _, _, spellID = UnitChannelInfo(unit)
-        isChannel = true
-      end
-      if spellID ~= nil then
-        local state = C_Spell.IsSpellImportant(spellID)
-        if isChannel then
-          table.insert(colorQueue, {state = state, color = ConvertColor(s.colors.channel)})
-        else
-          table.insert(colorQueue, {state = state, color = ConvertColor(s.colors.cast)})
+      if C_Spell.IsSpellImportant then
+        local _, _, _, _, _, _, _, _, spellID = UnitCastingInfo(unit)
+        local isChannel = false
+        if spellID == nil then
+          _, _, _, _, _, _, _, spellID = UnitChannelInfo(unit)
+          isChannel = true
+        end
+        if spellID ~= nil then
+          local state = C_Spell.IsSpellImportant(spellID)
+          if isChannel then
+            table.insert(colorQueue, {state = state, color = ConvertColor(s.colors.channel)})
+          else
+            table.insert(colorQueue, {state = state, color = ConvertColor(s.colors.cast)})
+          end
         end
       end
     elseif s.kind == "cast" then
