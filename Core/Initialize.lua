@@ -196,22 +196,42 @@ function addonTable.Core.UpgradeDesign(design)
       }
       bar.colors = nil
     end
-    if bar.autoColors then
-      UpdateAutoColors(bar.autoColors)
-    end
     if not bar.background.color then
       bar.background.color = GetColor("FFFFFF")
       bar.background.color.a = bar.background.alpha or 1
       bar.background.alpha = nil
     end
-    if bar.kind == "cast" and bar.colors.normalChannel == nil then
+    if bar.kind == "cast" and bar.colors and bar.colors.normalChannel == nil then
       bar.colors.normalChannel = GetColor("3ec637")
     end
-    if bar.kind == "cast" and bar.colors.normalCast == nil then
+    if bar.kind == "cast" and bar.colors and bar.colors.normalCast == nil then
       bar.colors.importantCast = GetColor("ff1827")
       bar.colors.importantChannel = GetColor("0a43ff")
       bar.colors.normalCast = bar.colors.normal
       bar.colors.normal = nil
+    end
+    if bar.kind == "cast" and not bar.autoColors then
+      local cast = {
+        kind = "cast",
+        colors = {
+          cast = bar.colors.normalCast,
+          channel = bar.colors.normalChannel,
+          uninterruptable = bar.colors.uninterruptable,
+          interrupted = bar.colors.interrupted,
+        },
+      }
+      local important = {
+        kind = "importantCast",
+        colors = {
+          cast = bar.colors.importantCast,
+          channel = bar.colors.importantChannel,
+        },
+      }
+      bar.autoColors = {
+        important,
+        cast,
+      }
+      bar.colors = nil
     end
     if not addonTable.Assets.BarBordersSliced[bar.border.asset] then
       local size = addonTable.Assets.BarBordersLegacy[bar.border.asset].mode
@@ -230,6 +250,9 @@ function addonTable.Core.UpgradeDesign(design)
           anchor = {"RIGHT", 84 * bar.scale, 0}
         })
       end
+    end
+    if bar.autoColors then
+      UpdateAutoColors(bar.autoColors)
     end
   end
 

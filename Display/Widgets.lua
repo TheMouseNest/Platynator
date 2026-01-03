@@ -166,17 +166,8 @@ function addonTable.Display.GetCastBar(frame, parent)
   frame.reverseStatusTexture:SetPoint("LEFT", frame)
   frame.reverseStatusTexture:SetDrawLayer("ARTWORK")
 
-  frame.cannotInterruptStatusTexture = frame.statusBar:CreateTexture()
-  frame.cannotInterruptStatusTexture:SetDrawLayer("ARTWORK")
-  frame.cannotInterruptReverseStatusTexture = frame.statusBar:CreateTexture()
-  frame.cannotInterruptReverseStatusTexture:SetPoint("LEFT", frame)
-  frame.cannotInterruptReverseStatusTexture:SetDrawLayer("ARTWORK")
-
   frame.marker = frame.statusBar:CreateTexture()
   frame.marker:SetSnapToPixelGrid(false)
-
-  frame.cannotInterruptMarker = frame.statusBar:CreateTexture()
-  frame.cannotInterruptMarker:SetSnapToPixelGrid(false)
 
   local borderHolder = CreateFrame("Frame", nil, frame)
   borderHolder:SetFlattensRenderLayers(true)
@@ -192,11 +183,8 @@ function addonTable.Display.GetCastBar(frame, parent)
         frame.statusBar:SetFillStyle("REVERSE")
       end
       frame.marker:SetPoint("CENTER", frame.reverseStatusTexture, "RIGHT")
-      frame.cannotInterruptMarker:SetPoint("CENTER", frame.cannotInterruptReverseStatusTexture, "RIGHT")
       self.statusBar:GetStatusBarTexture():SetColorTexture(1, 1, 1, 0)
-      self.cannotInterruptStatusTexture:Hide()
       self.reverseStatusTexture:Show()
-      self.cannotInterruptReverseStatusTexture:Show()
     else
       if addonTable.Constants.IsMidnight then
         frame.statusBar:SetFillStyle(Enum.StatusBarFillStyle.Standard)
@@ -204,33 +192,8 @@ function addonTable.Display.GetCastBar(frame, parent)
         frame.statusBar:SetFillStyle("STANDARD")
       end
       frame.marker:SetPoint("CENTER", frame.statusBar:GetStatusBarTexture(), "RIGHT")
-      frame.cannotInterruptMarker:SetPoint("CENTER", frame.statusBar:GetStatusBarTexture(), "RIGHT")
       self.statusBar:SetStatusBarTexture(addonTable.Assets.BarBackgrounds[frame.details.foreground.asset].file)
-      self.cannotInterruptStatusTexture:Show()
       self.reverseStatusTexture:Hide()
-      self.cannotInterruptReverseStatusTexture:Hide()
-    end
-  end
-
-  function frame:SetCannotInterrupt(notInterruptible)
-    if self.SetAlphaFromBoolean then
-      self.background:SetAlphaFromBoolean(notInterruptible, 0, 1)
-      self.marker:SetAlphaFromBoolean(notInterruptible, 0, 1)
-      self.statusBar:GetStatusBarTexture():SetAlphaFromBoolean(notInterruptible, 0, 1)
-      self.reverseStatusTexture:SetAlphaFromBoolean(notInterruptible, 0, 1)
-      self.cannotInterruptStatusTexture:SetAlphaFromBoolean(notInterruptible)
-      self.cannotInterruptReverseStatusTexture:SetAlphaFromBoolean(notInterruptible)
-      self.cannotInterruptMarker:SetAlphaFromBoolean(notInterruptible)
-      self.cannotInterruptBackground:SetAlphaFromBoolean(notInterruptible)
-    else
-      self.background:SetAlpha(notInterruptible and 0 or 1)
-      self.statusBar:GetStatusBarTexture():SetAlpha(notInterruptible and 0 or 1)
-      self.marker:SetAlpha(notInterruptible and 0 or 1)
-      self.reverseStatusTexture:SetAlpha(notInterruptible and 0 or 1)
-      self.cannotInterruptStatusTexture:SetAlpha(notInterruptible and 1 or 0)
-      self.cannotInterruptReverseStatusTexture:SetAlpha(notInterruptible and 1 or 0)
-      self.cannotInterruptMarker:SetAlpha(notInterruptible and 1 or 0)
-      self.cannotInterruptBackground:SetAlpha(notInterruptible and 1 or 0)
     end
   end
 
@@ -240,10 +203,6 @@ function addonTable.Display.GetCastBar(frame, parent)
   frame.background = frame:CreateTexture()
   frame.background:SetPoint("CENTER")
   frame.background:SetDrawLayer("BACKGROUND")
-
-  frame.cannotInterruptBackground = frame:CreateTexture()
-  frame.cannotInterruptBackground:SetPoint("CENTER")
-  frame.cannotInterruptBackground:SetDrawLayer("BACKGROUND")
 
   function frame:Init(details)
     InitBar(frame, details)
@@ -259,49 +218,13 @@ function addonTable.Display.GetCastBar(frame, parent)
     frame.reverseStatusTexture:SetPoint("RIGHT", frame.statusBar:GetStatusBarTexture(), "LEFT")
     frame.reverseStatusTexture:SetHorizTile(true)
 
-    frame.cannotInterruptStatusTexture:SetTexture(foregroundDetails.file)
-    frame.cannotInterruptStatusTexture:SetAllPoints(frame.statusBar:GetStatusBarTexture())
-    frame.cannotInterruptStatusTexture:SetHorizTile(true)
-    frame.cannotInterruptStatusTexture:SetVertexColor(details.colors.uninterruptable.r, details.colors.uninterruptable.g, details.colors.uninterruptable.b)
-
-    frame.cannotInterruptReverseStatusTexture:SetTexture(foregroundDetails.file)
-    frame.cannotInterruptReverseStatusTexture:SetPoint("RIGHT", frame.statusBar:GetStatusBarTexture(), "LEFT")
-    frame.cannotInterruptReverseStatusTexture:SetHorizTile(true)
-    frame.cannotInterruptReverseStatusTexture:SetVertexColor(details.colors.uninterruptable.r, details.colors.uninterruptable.g, details.colors.uninterruptable.b)
-
-    if details.marker.asset ~= "none" then
-      frame.cannotInterruptMarker:Show()
-      local markerDetails = addonTable.Assets.BarPositionHighlights[details.marker.asset]
-      frame.cannotInterruptMarker:SetTexture(markerDetails.file)
-      frame.cannotInterruptMarker:SetPoint("CENTER", frame.statusBar:GetStatusBarTexture(), "RIGHT")
-      frame.cannotInterruptMarker:SetVertexColor(details.colors.uninterruptable.r, details.colors.uninterruptable.g, details.colors.uninterruptable.b)
-    else
-      frame.cannotInterruptMarker:Hide()
-    end
-
     local backgroundDetails = addonTable.Assets.BarBackgrounds[details.background.asset]
-    frame.cannotInterruptBackground:SetTexture(backgroundDetails.file)
-    frame.cannotInterruptBackground:SetAllPoints(frame.statusBar)
-    local mod = details.background.color
-    if details.background.applyColor then
-      frame.cannotInterruptBackground:SetVertexColor(mod.r * details.colors.uninterruptable.r, mod.g * details.colors.uninterruptable.g, mod.b * details.colors.uninterruptable.b, mod.a)
-    else
-      frame.cannotInterruptBackground:SetVertexColor(mod.r, mod.g, mod.b, mod.a)
-    end
 
     frame.reverseStatusTexture:RemoveMaskTexture(frame.mask)
-    frame.cannotInterruptStatusTexture:RemoveMaskTexture(frame.mask)
-    frame.cannotInterruptReverseStatusTexture:RemoveMaskTexture(frame.mask)
-    frame.cannotInterruptMarker:RemoveMaskTexture(frame.mask)
-    frame.cannotInterruptBackground:RemoveMaskTexture(frame.mask)
 
     local maskInfo = addonTable.Assets.BarMasks[details.border.asset]
     if maskInfo then
       frame.reverseStatusTexture:AddMaskTexture(frame.mask)
-      frame.cannotInterruptStatusTexture:AddMaskTexture(frame.mask)
-      frame.cannotInterruptReverseStatusTexture:AddMaskTexture(frame.mask)
-      frame.cannotInterruptMarker:AddMaskTexture(frame.mask)
-      frame.cannotInterruptBackground:AddMaskTexture(frame.mask)
     end
 
     frame.details = details
@@ -328,12 +251,6 @@ function addonTable.Display.GetCastBar(frame, parent)
     SizeBar(frame, details)
     local borderDetails = addonTable.Assets.BarBordersSliced[details.border.asset]
     frame.reverseStatusTexture:SetHeight(frame.rawHeight * borderDetails.lowerScale)
-    frame.cannotInterruptReverseStatusTexture:SetHeight(frame.rawHeight * borderDetails.lowerScale)
-
-    if details.marker.asset ~= "none" then
-      local markerDetails = addonTable.Assets.BarPositionHighlights[details.marker.asset]
-      PixelUtil.SetSize(frame.cannotInterruptMarker, markerDetails.width * details.scale, frame.rawHeight * borderDetails.lowerScale)
-    end
   end
 
   return frame

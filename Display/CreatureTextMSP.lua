@@ -76,11 +76,12 @@ function addonTable.Display.CreatureTextMSPMixin:UnregisterCallback()
   end
 end
 
-function addonTable.Display.CreatureTextMSPMixin:SetColor(c)
-  if not c then
-    c = self.details.color
+function addonTable.Display.CreatureTextMSPMixin:SetColor(r, g, b)
+  if not r then
+    local c =  self.details.color
+    r, g, b = c.r, c.g, c.b
   end
-  self.text:SetTextColor(c.r, c.g, c.b)
+  self.text:SetTextColor(r, g, b)
 end
 
 function addonTable.Display.CreatureTextMSPMixin:StripInternal()

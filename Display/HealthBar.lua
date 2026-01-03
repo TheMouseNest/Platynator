@@ -3,6 +3,22 @@ local addonTable = select(2, ...)
 
 addonTable.Display.HealthBarMixin = {}
 
+local ConvertColor = addonTable.Display.Utilities.ConvertColor
+
+function addonTable.Display.HealthBarMixin:PostInit()
+  if self.details.background.applyColor then -- Apply tint to colours
+    local mod = self.details.background.color
+    if mod.r ~= 1 or mod.g ~= 1 or mod.b ~= 1 then
+      self.modColors = CopyTable(self.details.autoColors)
+      for _, s in ipairs(self.modColors) do
+        for l, c in pairs(s.colors) do
+          s.colors[l] = {r = mod.r * c.r, g = mod.g * c.g, b = mod.b * c.b, a = mod.a}
+        end
+      end
+    end
+  end
+end
+
 function addonTable.Display.HealthBarMixin:SetUnit(unit)
   self.unit = unit
   if self.unit then
@@ -17,22 +33,29 @@ function addonTable.Display.HealthBarMixin:SetUnit(unit)
     self:SetColor(addonTable.Display.GetColor(self.details.autoColors, self.unit))
     addonTable.Display.RegisterForColorEvents(self, self.details.autoColors)
   else
-    self:Strip()
+    self:UnregisterAllEvents()
+    addonTable.Display.UnregisterForColorEvents(self)
   end
 end
 
 function addonTable.Display.HealthBarMixin:Strip()
   self:UnregisterAllEvents()
   addonTable.Display.UnregisterForColorEvents(self)
+  self.modColors = nil
 end
 
-function addonTable.Display.HealthBarMixin:SetColor(c)
-  self.statusBar:GetStatusBarTexture():SetVertexColor(c.r, c.g, c.b)
+function addonTable.Display.HealthBarMixin:SetColor(...)
+  self.statusBar:GetStatusBarTexture():SetVertexColor(...)
   if self.details.background.applyColor then
     local mod = self.details.background.color
-    self.background:SetVertexColor(mod.r * c.r, mod.r * c.g, mod.r * c.b, mod.a)
+    if self.modColors then
+      self.background:SetVertexColor(addonTable.Display.GetColor(self.modColors, self.unit))
+    else
+      local r, g, b = ...
+      self.background:SetVertexColor(r, g, b, mod.a)
+    end
   end
-  self.marker:SetVertexColor(c.r, c.g, c.b)
+  self.marker:SetVertexColor(...)
 end
 
 function addonTable.Display.HealthBarMixin:UpdateHealth()

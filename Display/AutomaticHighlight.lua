@@ -19,10 +19,10 @@ function addonTable.Display.AutomaticHighlightMixin:Strip()
   addonTable.Display.UnregisterForColorEvents(self)
 end
 
-function addonTable.Display.AutomaticHighlightMixin:SetColor(c)
-  self:SetShown(c ~= nil)
-  if c then
-    self.highlight:SetVertexColor(c.r, c.g, c.b, c.a)
+function addonTable.Display.AutomaticHighlightMixin:SetColor(...)
+  self:SetShown(... ~= nil)
+  if ... then
+    self.highlight:SetVertexColor(...)
   end
 end
 

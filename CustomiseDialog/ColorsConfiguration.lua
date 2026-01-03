@@ -454,6 +454,125 @@ addonTable.CustomiseDialog.ColorsConfig = {
       },
     },
   },
+  ["interruptReady"] = {
+    label = addonTable.Locales.INTERRUPT_READY,
+    default = {
+      kind = "interruptReady",
+      colors = {
+        ready = GetColor("00FF00"),
+        notReady = GetColor("FF0000"),
+      },
+    },
+    entries = {
+      {
+        label = addonTable.Locales.READY,
+        kind = "colorPicker",
+        setter = function(details, value)
+          details.colors.ready = value
+        end,
+        getter = function(details)
+          return details.colors.ready
+        end,
+      },
+      {
+        label = addonTable.Locales.NOT_READY,
+        kind = "colorPicker",
+        setter = function(details, value)
+          details.colors.notReady = value
+        end,
+        getter = function(details)
+          return details.colors.notReady
+        end,
+      },
+    },
+  },
+  ["importantCast"] = {
+    label = addonTable.Locales.IMPORTANT_CAST,
+    default = {
+      kind = "importantCast",
+      colors = {
+        cast = GetColor("FF1827"),
+        channel = GetColor("0A43FF"),
+      },
+    },
+    entries = {
+      {
+        label = addonTable.Locales.CAST,
+        kind = "colorPicker",
+        setter = function(details, value)
+          details.colors.cast = value
+        end,
+        getter = function(details)
+          return details.colors.cast
+        end,
+      },
+      {
+        label = addonTable.Locales.CHANNEL,
+        kind = "colorPicker",
+        setter = function(details, value)
+          details.colors.channel = value
+        end,
+        getter = function(details)
+          return details.colors.channel
+        end,
+      },
+    }
+  },
+  ["cast"] = {
+    label = addonTable.Locales.CASTING,
+    default = {
+      kind = "cast",
+      colors = {
+        cast = GetColor("FC8C00"),
+        channel = GetColor("3EC637"),
+        interrupted = GetColor("FC36E0"),
+        uninterruptable = GetColor("83C0C3"),
+      },
+    },
+    entries = {
+      {
+        label = addonTable.Locales.CAST,
+        kind = "colorPicker",
+        setter = function(details, value)
+          details.colors.cast = value
+        end,
+        getter = function(details)
+          return details.colors.cast
+        end,
+      },
+      {
+        label = addonTable.Locales.CHANNEL,
+        kind = "colorPicker",
+        setter = function(details, value)
+          details.colors.channel = value
+        end,
+        getter = function(details)
+          return details.colors.channel
+        end,
+      },
+      {
+        label = addonTable.Locales.INTERRUPTED_CAST,
+        kind = "colorPicker",
+        setter = function(details, value)
+          details.colors.interrupted = value
+        end,
+        getter = function(details)
+          return details.colors.interrupted
+        end,
+      },
+      { kind = "spacer" },
+      {
+        label = addonTable.Locales.UNINTERRUPTABLE,
+        kind = "colorPicker",
+        setter = function(details, value)
+          details.colors.uninterruptable = value
+        end,
+        getter = function(details)
+          return details.colors.uninterruptable
+        end,
+      },
+    }
+  },
 }
 
 addonTable.CustomiseDialog.ColorsConfigOrder = {
@@ -467,4 +586,7 @@ addonTable.CustomiseDialog.ColorsConfigOrder = {
   "classColors",
   "difficulty",
   "reaction",
+  "interruptReady",
+  "importantCast",
+  "cast",
 }
