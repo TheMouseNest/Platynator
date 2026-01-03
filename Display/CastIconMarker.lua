@@ -50,7 +50,21 @@ function addonTable.Display.CastIconMarkerMixin:Strip()
 end
 
 function addonTable.Display.CastIconMarkerMixin:OnEvent(eventName, ...)
-  self:ApplyCasting()
+  if eventName == "UNIT_SPELLCAST_INTERRUPTED" then
+    self.interrupted = true
+    self:Show()
+    if self.background then
+      self.background:Show()
+    end
+    self.timer = C_Timer.NewTimer(0.8, function()
+      if self.interrupted then
+        self.interrupted = nil
+        self:Hide()
+      end
+    end)
+  else
+    self:ApplyCasting()
+  end
 end
 
 function addonTable.Display.CastIconMarkerMixin:ApplyCasting()
@@ -65,7 +79,7 @@ function addonTable.Display.CastIconMarkerMixin:ApplyCasting()
     if self.background then
       self.background:Show()
     end
-  else
+  elseif not self.interrupted then
     self.marker:Hide()
     if self.background then
       self.background:Hide()
