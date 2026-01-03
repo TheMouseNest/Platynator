@@ -126,6 +126,7 @@ local function GetAutomaticColors(rootParent, lockedElements)
             table.insert(container.details, 1, addonTable.CustomiseDialog.AddAlphaToColors(CopyTable(details.default)))
           end
           Announce()
+          UpdateSelected(details.default.kind)
         end)
       end
     end
