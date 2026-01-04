@@ -137,7 +137,15 @@ addonTable.Assets.BarMasks = {
 addonTable.Assets.Highlights = {
   ["bold"] = {file = "Interface/AddOns/Platynator/Assets/%s/BarBorders/bold-square.png", width = 20, height = 20, has4k = true, masked = true, tag = "bold", margin = 0.45, extra = 0, minSize = 50, modifier = 0.35, DPIScale = 1/2, mode = renderMode.Sliced},
   ["slight"] = {file = "Interface/AddOns/Platynator/Assets/%s/BarBorders/slight-square.png", width = 20, height = 20, has4k = true, masked = true, tag = "slight", margin = 0.3, extra = 0, minSize = 50, modifier = 0.35, DPIScale = 1/2, mode = renderMode.Sliced},
+  ["thin"] = {file = "Interface/AddOns/Platynator/Assets/%s/BarBorders/thin-square.png", width = 20, height = 20, has4k = true, masked = true, tag = "thin", margin = 0.2, extra = 0, minSize = 50, modifier = 0.35, DPIScale = 1/2, mode = renderMode.Sliced},
+  ["1px"] = {file = "Interface/AddOns/Platynator/Assets/%s/BarBorders/1px-square.png", width = 20, height = 20, has4k = true, masked = true, tag = "1px", margin = 0.3, extra = 0, minSize = 50, modifier = 0.35, DPIScale = 1/2, mode = renderMode.Sliced},
+
   ["soft"] = {file = "Interface/AddOns/Platynator/Assets/%s/BarBorders/soft-square.png", width = 66, height = 66, has4k = true, masked = true, tag = "soft", margin = 0.33, extra = 9, minSize = 50, modifier = 0.25, DPIScale = 4/6, mode = renderMode.Sliced},
+
+  ["blizzard-health"] = {file = "Interface/AddOns/Platynator/Assets/%s/BarBorders/blizzard-health-square.png", width = 48, height = 48, has4k = true, masked = true, tag = "blizzard-health", margin = 0.4, extra = 0, minSize = 100, modifier = 0.3, DPIScale = 1/2, mode = renderMode.Sliced},
+  ["blizzard-classic"] = {file = "Interface/AddOns/Platynator/Assets/%s/BarBorders/blizzard-classic-square.png", width = 48, height = 48, has4k = true, masked = true, tag = "blizzard-classic", margin = 0.4, extra = 0, minSize = 100, modifier = 0.3, DPIScale = 1/2, mode = renderMode.Sliced},
+  ["blizzard-cast-bar"] = {file = "Interface/AddOns/Platynator/Assets/%s/BarBorders/blizzard-cast-bar-square.png", width = 48, height = 48, has4k = true, masked = true, tag = "blizzard-cast-bar", margin = 0.35, extra = 0, minSize = 50, modifier = 0.35, DPIScale = 1/2, mode = renderMode.Sliced},
+
   ["blizzard-bold-health"] = {file = "Interface/AddOns/Platynator/Assets/%s/Highlights/blizzard-health-bold-square.png", width = 48, height = 48, has4k = true, masked = true, tag = "blizzard-bold-health", margin = 0.4, extra = 0, minSize = 100, modifier = 0.3, DPIScale = 1/2, mode = renderMode.Sliced},
 
   ["soft-glow"] = {file = "Interface/AddOns/Platynator/Assets/%s/Highlights/soft-glow-square.png", width = 59, height = 59, has4k = true, masked = true, tag = "soft", margin = 0.4, extra = 11, padding = 0, minSize = 50, modifier = 0.3, DPIScale = 1/2, mode = renderMode.Sliced},
