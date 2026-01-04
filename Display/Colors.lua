@@ -165,7 +165,7 @@ function addonTable.Display.GetColor(settings, unit)
       end
     elseif s.kind == "focus" then
       if UnitIsUnit("focus", unit) then
-        table.insert(colorQueue, {s.colors.focus})
+        table.insert(colorQueue, {color = s.colors.focus})
         break
       end
     elseif s.kind == "threat" then
