@@ -7,7 +7,8 @@ function addonTable.Display.CreatureTextMixin:SetUnit(unit)
   self.unit = unit
   if self.unit then
     self:RegisterUnitEvent("UNIT_NAME_UPDATE", self.unit)
-    self.text:SetText(UnitName(self.unit))
+    self.defaultText = UnitName(self.unit)
+    self.text:SetText(self.defaultText)
 
     self:SetColor(addonTable.Display.GetColor(self.details.autoColors, self.unit))
     addonTable.Display.RegisterForColorEvents(self, self.details.autoColors)
@@ -19,6 +20,7 @@ function addonTable.Display.CreatureTextMixin:SetUnit(unit)
   else
     addonTable.Display.UnregisterForColorEvents(self)
     self:UnregisterAllEvents()
+    self.defaultText = nil
   end
 end
 
@@ -27,6 +29,7 @@ function addonTable.Display.CreatureTextMixin:Strip()
   self.text:SetTextColor(c.r, c.g, c.b)
   self.ApplyTarget = nil
   self.ApplyTextOverride = nil
+  self.defaultText = nil
 
   addonTable.Display.UnregisterForColorEvents(self)
   self:UnregisterAllEvents()
@@ -46,7 +49,8 @@ function addonTable.Display.CreatureTextMixin:OnEvent(eventName, ...)
       self:SetShown(UnitShouldDisplayName(self.unit))
     end
   elseif eventName == "UNIT_NAME_UPDATE" then
-    self.text:SetText(UnitName(self.unit))
+    self.defaultText = UnitName(self.unit)
+    self.text:SetText(self.defaultText)
   end
 
   self:ColorEventHandler(eventName)
@@ -60,7 +64,5 @@ end
 
 function addonTable.Display.CreatureTextMixin:ApplyTextOverride()
   local override = addonTable.API.TextOverrides.name[self.unit]
-  if override then
-    self.text:SetText(override)
-  end
+  self.text:SetText(override or self.defaultText)
 end

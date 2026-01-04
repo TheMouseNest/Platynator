@@ -23,12 +23,11 @@ addonTable.Display.GuildTextMixin = {}
 function addonTable.Display.GuildTextMixin:SetUnit(unit)
   self.unit = unit
   if self.unit then
-    local set = false
+    self.defaultText = ""
     if UnitIsPlayer(self.unit) then
       local guild = GetGuildInfo(self.unit)
       if guild then
-        set = true
-        self.text:SetText(guild)
+        self.defaultText = guild
       end
     elseif not UnitIsBattlePetCompanion(self.unit) and not IsInInstance() then
       local text
@@ -47,13 +46,10 @@ function addonTable.Display.GuildTextMixin:SetUnit(unit)
         end
       end
       if text and not text:match(invalidPattern1) and not text:match(invalidPattern2) then
-        self.text:SetText(text)
-        set = true
+        self.defaultText = text
       end
     end
-    if not set then
-      self.text:SetText("")
-    end
+    self.text:SetText(self.defaultText)
     if self.details.showWhenWowDoes then
       self:SetShown(UnitShouldDisplayName(self.unit))
       self:RegisterUnitEvent("UNIT_HEALTH", self.unit)
