@@ -22,9 +22,9 @@ function addonTable.Display.LevelTextMixin:Strip()
   addonTable.Display.UnregisterForColorEvents(self)
 end
 
-function addonTable.Display.LevelTextMixin:SetColor(c)
-  if c then
-    self.text:SetTextColor(c.r, c.g, c.b)
+function addonTable.Display.LevelTextMixin:SetColor(r, g, b)
+  if r then
+    self.text:SetTextColor(r, g, b)
   else
     self.text:SetTextColor(self.details.color.r, self.details.color.g, self.details.color.b)
   end
