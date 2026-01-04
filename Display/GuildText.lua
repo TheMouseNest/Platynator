@@ -79,7 +79,5 @@ end
 
 function addonTable.Display.GuildTextMixin:ApplyTextOverride()
   local override = addonTable.API.TextOverrides.guild[self.unit]
-  if override then
-    self.text:SetText(override)
-  end
+  self.text:SetText(override or self.defaultText)
 end
