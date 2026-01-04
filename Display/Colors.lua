@@ -83,6 +83,7 @@ instanceTracker:SetScript("OnEvent", function()
 end)
 
 local kindToEvent = {
+  reaction = {"UNIT_FACTION"},
   tapped = {"UNIT_HEALTH"},
   target = {"PLAYER_TARGET_CHANGED"},
   focus = {"PLAYER_FOCUS_CHANGED"},
@@ -245,7 +246,7 @@ function addonTable.Display.GetColor(settings, unit)
         table.insert(colorQueue, {color = s.colors.neutral})
       elseif IsUnfriendly(unit) then
         table.insert(colorQueue, {color = s.colors.unfriendly})
-      elseif UnitIsFriend("player", unit) then
+      elseif UnitIsFriend("player", unit) and not UnitCanAttack("player", unit) then
         table.insert(colorQueue, {color = s.colors.friendly})
       else
         table.insert(colorQueue, {color = s.colors.hostile})
