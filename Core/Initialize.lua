@@ -135,6 +135,8 @@ function addonTable.Core.UpgradeDesign(design)
         ac.colors.neutral = ac.colors.quest
         ac.colors.friendly = ac.colors.quest
         ac.colors.quest = nil
+      elseif ac.kind == "classColors" and ac.colors == nil then
+        ac.colors = {}
       end
     end
   end
