@@ -55,6 +55,7 @@ function addonTable.Display.GuildTextMixin:SetUnit(unit)
       self:RegisterUnitEvent("UNIT_HEALTH", self.unit)
     end
   else
+    self.defaultText = nil
     self:UnregisterAllEvents()
   end
 end
@@ -62,6 +63,8 @@ end
 function addonTable.Display.GuildTextMixin:Strip()
   self.ApplyTarget = nil
   self.ApplyTextOverride = nil
+
+  self.defaultText = nil
 end
 
 function addonTable.Display.GuildTextMixin:OnEvent()
