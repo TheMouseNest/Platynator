@@ -319,14 +319,18 @@ function addonTable.Display.GetColor(settings, unit)
         castInfo = {UnitCastingInfo(unit)}
         channelInfo = {UnitChannelInfo(unit)}
       end
+      local text = castInfo[1]
       local notInterruptible = castInfo[8]
-      if notInterruptible == nil then
+      local isChannel = false
+      if text == nil then
+        text = channelInfo[1]
         notInterruptible = channelInfo[7]
+        isChannel = true
       end
-      if notInterruptible ~= nil then
+      if text ~= nil then -- We use text instead of notInterruptible, for classic era support
         local c1 = s.colors.uninterruptable
         local c2 = isChannel and s.colors.channel or s.colors.cast
-        table.insert(colorQueue, {state = notInterruptible, color = c1})
+        table.insert(colorQueue, {state = notInterruptible or false, color = c1})
         table.insert(colorQueue, {color = c2})
       else
         table.insert(colorQueue, {color = s.colors.interrupted})
