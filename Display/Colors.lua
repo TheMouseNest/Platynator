@@ -131,7 +131,11 @@ function addonTable.Display.RegisterForColorEvents(frame, settings)
     if es then
       for _, e in ipairs(es) do
         events[e] = true
-        frame:RegisterEvent(e)
+        if e:match("^UNIT") then
+          frame:RegisterUnitEvent(e, frame.unit)
+        else
+          frame:RegisterEvent(e)
+        end
       end
     end
   end
