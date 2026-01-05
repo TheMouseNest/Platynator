@@ -547,6 +547,16 @@ addonTable.CustomiseDialog.WidgetsConfig = {
               return details.color
             end,
           },
+          {
+            label = addonTable.Locales.FLIP,
+            kind = "checkbox",
+            setter = function(details, value)
+              details.flip = { horizontal = value }
+            end,
+            getter = function(details)
+              return details.flip and details.flip.horizontal
+            end,
+          },
         },
       },
     },

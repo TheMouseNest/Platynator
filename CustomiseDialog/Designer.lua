@@ -822,6 +822,11 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
         end
         if w.details.kind == "castIcon" and w.details.square then
           w.background:Show()
+          local flip = w.details.flip or {}
+          addonTable.Display.UpdateTextureFlip(w.marker, flip.horizontal, 0.1, 0.9, 0.1, 0.9)
+        else
+          local flip = w.details.flip or {}
+          addonTable.Display.UpdateTextureFlip(w.marker, flip.horizontal)
         end
       elseif w.kind == "highlights" then
         w:Show(true)

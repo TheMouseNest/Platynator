@@ -28,6 +28,10 @@ function addonTable.Display.EliteMarkerMixin:SetUnit(unit)
     else
       self.marker:Hide()
     end
+    
+    local flip = self.details.flip or {}
+    addonTable.Display.UpdateTextureFlip(self.marker, flip.horizontal, flip.vertical)
+
   else
     self:Strip()
   end
