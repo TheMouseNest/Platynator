@@ -1,12 +1,13 @@
 ---@class addonTablePlatynator
 local addonTable = select(2, ...)
 
-addonTable.Display.PvPMarkerMixin = {}
+addonTable.Display.PvPMarkerMixin = CreateFromMixins(addonTable.Display.CombatVisibilityMixin)
 
 function addonTable.Display.PvPMarkerMixin:SetUnit(unit)
   self.unit = unit
   if self.unit and addonTable.Constants.IsRetail then
     self:RegisterUnitEvent("UNIT_CLASSIFICATION_CHANGED", self.unit)
+    self:RegisterCombatEvents()
 
     self.showClassification = C_PvP.IsPVPMap()
 
@@ -53,6 +54,9 @@ function addonTable.Display.PvPMarkerMixin:Update()
   if atlas then
     self.marker:Show()
     self.marker:SetAtlas(atlas)
+    if self:ShouldHideForCombat() then
+      self.marker:Hide()
+    end
   else
     self.marker:Hide()
   end

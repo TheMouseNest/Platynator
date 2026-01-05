@@ -66,3 +66,20 @@ function addonTable.Display.Utilities.IsInRelevantInstance()
   local _, instanceType = GetInstanceInfo()
   return instanceType == "raid" or instanceType == "party" or instanceType == "arenas"
 end
+
+addonTable.Display.CombatVisibilityMixin = {}
+
+function addonTable.Display.CombatVisibilityMixin:RegisterCombatEvents()
+  if self.details.combatState and self.details.combatState ~= "Never" then
+    self:RegisterEvent("PLAYER_REGEN_DISABLED")
+    self:RegisterEvent("PLAYER_REGEN_ENABLED")
+  end
+end
+
+function addonTable.Display.CombatVisibilityMixin:ShouldHideForCombat()
+  local inCombat = UnitAffectingCombat("player")
+  if self.details.combatState == "Always" and inCombat then
+    return true
+  end
+  return false
+end

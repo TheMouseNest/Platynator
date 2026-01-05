@@ -547,7 +547,32 @@ addonTable.CustomiseDialog.WidgetsConfig = {
               return details.color
             end,
           },
+          {
+            label = addonTable.Locales.HIDE_IN_COMBAT,
+            kind = "dropdown",
+            getInitData = function()
+              return {
+                addonTable.Locales.ALWAYS,
+                addonTable.Locales.NEVER,
+              }, {
+                "Always",
+                "Never",
+              }
+            end,
+            setter = function(details, value)
+              details.combatState = value
+            end,
+            getter = function(details)
+              return details.combatState or "Never"
+            end
+          },
         },
+      },
+    },
+    ["elite"] = {
+      {
+        label = addonTable.Locales.GENERAL,
+        entries = {},
       },
     },
     ["castIcon"] = {

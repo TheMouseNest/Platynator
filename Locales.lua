@@ -229,6 +229,10 @@ L["IMPORTANT_CAST"] = "Important Cast"
 L["INTERRUPTED_CAST"] = "Interrupted cast"
 L["UNINTERRUPTABLE"] = "Uninterruptable"
 
+L["HIDE_IN_COMBAT"] = "Hide in combat"
+L["ALWAYS"] = "Always"
+L["NEVER"] = "Never"
+
 L["WHAT_TO_EXPORT"] = "What to export?"
 L["STYLE"] = "Style"
 L["PROFILE"] = "Profile"
