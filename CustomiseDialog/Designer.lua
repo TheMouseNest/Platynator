@@ -667,9 +667,9 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
   end)
 
   local auraContainers = {
-    buffs = CreateFrame("Frame", nil, preview),
-    debuffs = CreateFrame("Frame", nil, preview),
-    crowdControl = CreateFrame("Frame", nil, preview),
+    buffs = CreateFrame("Frame", nil, preview, "PlatynatorPropagateMouseTemplate"),
+    debuffs = CreateFrame("Frame", nil, preview, "PlatynatorPropagateMouseTemplate"),
+    crowdControl = CreateFrame("Frame", nil, preview, "PlatynatorPropagateMouseTemplate"),
   }
   do
     local textures = {
