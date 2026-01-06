@@ -6,20 +6,16 @@ local function GetLabelsValues(allAssets, filter, showHeight)
 
   local allKeys = GetKeysArray(allAssets)
   table.sort(allKeys, function(a, b)
-    local aType, aMain = a:match("(.+)%/(.+)")
-    local bType, bMain = b:match("(.+)%/(.+)")
-    local aMode, bMode = allAssets[a].mode, allAssets[b].mode
-    if not aMode and bMode then
-      return true
-    elseif not bMode and aMode then
-      return false
-    elseif not bMode and not aMode then
-      return a < b
-    elseif bMain == aMain then
-      return aMode > bMode
-    else
-      return aMain < bMain
+    local aGroup, bGroup = allAssets[a].group, allAssets[b].group
+    local aOrder, bOrder = allAssets[a].order, allAssets[b].order
+    if aOrder then
+      if aGroup == bGroup then
+        return aOrder < bOrder
+      else
+        return aGroup < bGroup
+      end
     end
+    return a < b
   end)
 
   for _, key in ipairs(allKeys) do
@@ -31,7 +27,7 @@ local function GetLabelsValues(allAssets, filter, showHeight)
         height = 180/width * height
         width = 180
       end
-      local text = "|T".. (details.preview or details.file) .. ":" .. height .. ":" .. width .. "|t"
+      local text = "|T".. (details.preview or details.file) .. ":" .. (height - 1) .. ":" .. (width - 1) .. "|t"
       if details.isTransparent then
         text = addonTable.Locales.NONE
       end
