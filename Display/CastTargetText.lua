@@ -45,9 +45,9 @@ function addonTable.Display.CastTargetTextMixin:UpdateTarget()
 end
 
 function addonTable.Display.CastTargetTextMixin:UpdateText()
-  if type(self.target) ~= "nil" then
+  if self.target ~= nil then
     self.text:SetText(self.target)
-    if type(self.targetClass) ~= "nil" and self.details.applyClassColors then
+    if self.targetClass ~= nil and self.details.applyClassColors then
       if C_ClassColor then
         self.text:SetTextColor(C_ClassColor.GetClassColor(self.targetClass):GetRGB())
       else

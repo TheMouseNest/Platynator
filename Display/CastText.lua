@@ -36,9 +36,13 @@ function addonTable.Display.CastTextMixin:OnEvent(eventName, ...)
     self.interrupted = true
     self:Show()
     self.text:SetText(addonTable.Locales.INTERRUPTED)
+    if self.timer then
+      self.timer:Cancel()
+    end
     self.timer = C_Timer.NewTimer(0.8, function()
       if self.interrupted then
         self.interrupted = nil
+        self.timer = nil
         self:Hide()
       end
     end)

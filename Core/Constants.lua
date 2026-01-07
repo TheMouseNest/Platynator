@@ -26,6 +26,8 @@ addonTable.Constants.Events = {
   "SkinLoaded",
 
   "TextOverrideUpdated",
+
+  "LegacyInterrupter"
 }
 
 addonTable.Constants.RefreshReason = {

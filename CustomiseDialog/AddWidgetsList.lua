@@ -374,6 +374,20 @@ addonTable.CustomiseDialog.DesignWidgets = {
     },
   },
   {
+    name = addonTable.Locales.CAST_INTERRUPTER,
+    kind = "texts",
+    default = {
+      kind = "castInterrupter",
+      scale = 1,
+      layer = 2,
+      anchor = {"TOPLEFT", -140, 50},
+      color = GetColor("FFFFFF"),
+      applyClassColors = true,
+      align = "CENTER",
+      shorten = "NONE",
+    },
+  },
+  {
     name = addonTable.Locales.ICONS,
     special = "header",
   },

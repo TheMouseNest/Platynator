@@ -776,7 +776,7 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
           else
             display = addonTable.Locales.NO_VALUE_UPPER
           end
-        elseif w.details.kind == "creatureName" or w.details.kind == "target" or w.details.kind == "castTarget" then
+        elseif w.details.kind == "creatureName" or w.details.kind == "target" or w.details.kind == "castTarget" or w.details.kind == "castInterrupter" then
           display = "Cheesanator" .. (w.details.kind ~= "creatureName" and "2?" or "")
           if w.details.applyClassColors then
             local c = RAID_CLASS_COLORS["MAGE"]

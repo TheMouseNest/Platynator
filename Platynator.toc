@@ -52,6 +52,7 @@ Display/HealthText.lua
 Display/CastText.lua
 Display/CastTimeText.lua
 Display/CastTargetText.lua
+Display/CastInterrupterText.lua
 Display/LevelText.lua
 Display/UnitTargetText.lua
 Display/AutomaticHighlight.lua
