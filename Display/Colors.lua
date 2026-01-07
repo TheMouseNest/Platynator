@@ -102,6 +102,18 @@ local kindToEvent = {
     "ACTIONBAR_UPDATE_COOLDOWN",
     "SPELL_UPDATE_USABLE",
   },
+  uninterruptableCast = {
+    "UNIT_SPELLCAST_START",
+    "UNIT_SPELLCAST_STOP",
+    "UNIT_SPELLCAST_DELAYED",
+    "UNIT_SPELLCAST_FAILED",
+    "UNIT_SPELLCAST_INTERRUPTED",
+    "UNIT_SPELLCAST_CHANNEL_START",
+    "UNIT_SPELLCAST_CHANNEL_STOP",
+    "UNIT_SPELLCAST_CHANNEL_UPDATE",
+    "UNIT_SPELLCAST_INTERRUPTIBLE",
+    "UNIT_SPELLCAST_NOT_INTERRUPTIBLE",
+  },
   cast = {
     "UNIT_SPELLCAST_START",
     "UNIT_SPELLCAST_STOP",
@@ -278,25 +290,32 @@ function addonTable.Display.GetColor(settings, unit)
         if notInterruptible ~= nil then
           if C_Spell.GetSpellCooldownDuration and C_CurveUtil.EvaluateColorFromBoolean then
             local duration = C_Spell.GetSpellCooldownDuration(spellID)
-            local c1, c2 = s.colors.ready, s.colors.notReady
-            local r, g, b, a = SplitEvaluate(duration:IsZero(), c1.r, c1.b, c1.g, c1.a, c2.r, c2.g, c2.b, c2.a)
-            table.insert(colorQueue, {state = notInterruptible, invert = true, color = {r = r, g = g, b = b, a = a}})
+            table.insert(colorQueue, {state = {{value = duration:IsZero()}, {value = notInterruptible, invert = true}}, color = s.colors.ready})
           elseif C_Spell.GetSpellCooldownDuration then
             local duration = C_Spell.GetSpellCooldownDuration(spellID)
-            local r, g, b, a = WorkaroundBooleanEvaluator(duration:IsZero(), s.colors.ready, s.colors.notReady)
-            table.insert(colorQueue, {state = notInterruptible, invert = true, color = {r = r, g = g, b = b, a = a}})
+            table.insert(colorQueue, {state = {{value = duration:IsZero()}, {value = notInterruptible, invert = true}}, color = s.colors.ready})
           else
             local cooldownInfo = C_Spell.GetSpellCooldown(spellID)
             if notInterruptible == false then
-              if cooldownInfo.startTime ~= 0 then
-                table.insert(colorQueue, {color = s.colors.notReady})
-              else
+              if cooldownInfo.startTime == 0 then
                 table.insert(colorQueue, {color = s.colors.ready})
+                break
               end
-              break
             end
           end
         end
+      end
+    elseif s.kind == "uninterruptableCast" then
+      if not castInfo then
+        castInfo = {UnitCastingInfo(unit)}
+        channelInfo = {UnitChannelInfo(unit)}
+      end
+      local uninterruptable = castInfo[8]
+      if uninterruptable == nil then
+        uninterruptable = channelInfo[7]
+      end
+      if uninterruptable ~= nil then
+        table.insert(colorQueue, {state = {{value = uninterruptable}}, color = s.colors.uninterruptable})
       end
     elseif s.kind == "importantCast" then
       if C_Spell.IsSpellImportant then
@@ -313,9 +332,9 @@ function addonTable.Display.GetColor(settings, unit)
         if spellID ~= nil then
           local state = C_Spell.IsSpellImportant(spellID)
           if isChannel then
-            table.insert(colorQueue, {state = state, color = s.colors.channel})
+            table.insert(colorQueue, {state = {{value = state}}, color = s.colors.channel})
           else
-            table.insert(colorQueue, {state = state, color = s.colors.cast})
+            table.insert(colorQueue, {state = {{value = state}}, color = s.colors.cast})
           end
         end
       end
@@ -325,20 +344,13 @@ function addonTable.Display.GetColor(settings, unit)
         channelInfo = {UnitChannelInfo(unit)}
       end
       local text = castInfo[1]
-      local notInterruptible = castInfo[8]
       local isChannel = false
       if text == nil then
         text = channelInfo[1]
-        notInterruptible = channelInfo[7]
         isChannel = true
       end
-      if text ~= nil then -- We use text instead of notInterruptible, for classic era support
-        local c1 = s.colors.uninterruptable
-        local c2 = isChannel and s.colors.channel or s.colors.cast
-        if notInterruptible ~= nil then
-          table.insert(colorQueue, {state = notInterruptible, color = c1})
-        end
-        table.insert(colorQueue, {color = c2})
+      if text ~= nil then
+        table.insert(colorQueue, {color = isChannel and s.colors.channel or s.colors.cast})
       else
         table.insert(colorQueue, {color = s.colors.interrupted})
       end
@@ -360,10 +372,16 @@ function addonTable.Display.GetColor(settings, unit)
       local c = details.color
       if details.state == nil then
         r, g, b, a = c.r, c.g, c.b, c.a or 1
-      elseif details.invert then
-        r, g, b, a = SplitEvaluate(details.state, r, g, b, a, c.r, c.g, c.b, c.a)
       else
-        r, g, b, a = SplitEvaluate(details.state, c.r, c.g, c.b, c.a, r, g, b, a)
+        local r0, g0, b0, a0 = c.r, c.g, c.b, c.a
+        for _, s in ipairs(details.state) do
+          if s.invert then
+            r0, g0, b0, a0 = SplitEvaluate(s.value, r, g, b, a, r0, g0, b0, a0)
+          else
+            r0, g0, b0, a0 = SplitEvaluate(s.value, r0, g0, b0, a0, r, g, b, a)
+          end
+        end
+        r, g, b, a = r0, g0, b0, a0
       end
     end
     return r, g, b, a
@@ -374,10 +392,16 @@ function addonTable.Display.GetColor(settings, unit)
       local c = details.color
       if details.state == nil then
         r, g, b, a = c.r, c.g, c.b, c.a or 1
-      elseif details.invert then
-        r, g, b, a = WorkaroundBooleanEvaluator(details.state, CreateColor(r, g, b, a), ConvertColor(details.color))
       else
-        r, g, b, a = WorkaroundBooleanEvaluator(details.state, ConvertColor(details.color), CreateColor(r, g, b, a))
+        local r0, g0, b0, a0 = c.r, c.g, c.b, c.a
+        for _, s in ipairs(details.state) do
+          if s.invert then
+            r0, g0, b0, a0 = WorkaroundBooleanEvaluator(s.value, CreateColor(r, g, b, a), CreateColor(r0, g0, b0, a0))
+          else
+            r0, g0, b0, a0 = WorkaroundBooleanEvaluator(s.value, CreateColor(r0, g0, b0, a0), CreateColor(r, g, b, a))
+          end
+        end
+        r, g, b, a = r0, g0, b0, a0
       end
     end
     return r, g, b, a
@@ -387,10 +411,16 @@ function addonTable.Display.GetColor(settings, unit)
       local details = colorQueue[index]
       if details.state == nil then
         color = details.color
-      elseif details.invert then
-        color = details.state and color or details.color
       else
-        color = details.state and details.color or color
+        local color0 = details.color
+        for _, s in ipairs(details.state) do
+          if s.invert then
+            color0 = s.value and color or color0
+          else
+            color0 = s.value and color0 or color
+          end
+        end
+        color = color0
       end
     end
 

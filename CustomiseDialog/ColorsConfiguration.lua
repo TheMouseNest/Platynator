@@ -460,7 +460,6 @@ addonTable.CustomiseDialog.ColorsConfig = {
       kind = "interruptReady",
       colors = {
         ready = GetColor("00FF00"),
-        notReady = GetColor("FF0000"),
       },
     },
     entries = {
@@ -472,16 +471,6 @@ addonTable.CustomiseDialog.ColorsConfig = {
         end,
         getter = function(details)
           return details.colors.ready
-        end,
-      },
-      {
-        label = addonTable.Locales.NOT_READY,
-        kind = "colorPicker",
-        setter = function(details, value)
-          details.colors.notReady = value
-        end,
-        getter = function(details)
-          return details.colors.notReady
         end,
       },
     },
@@ -526,7 +515,6 @@ addonTable.CustomiseDialog.ColorsConfig = {
         cast = GetColor("FC8C00"),
         channel = GetColor("3EC637"),
         interrupted = GetColor("FC36E0"),
-        uninterruptable = GetColor("83C0C3"),
       },
     },
     entries = {
@@ -560,7 +548,17 @@ addonTable.CustomiseDialog.ColorsConfig = {
           return details.colors.interrupted
         end,
       },
-      { kind = "spacer" },
+    }
+  },
+  ["uninterruptableCast"] = {
+    label = addonTable.Locales.UNINTERRUPTABLE_CAST,
+    default = {
+      kind = "uninterruptableCast",
+      colors = {
+        uninterruptable = GetColor("83C0C3"),
+      },
+    },
+    entries = {
       {
         label = addonTable.Locales.UNINTERRUPTABLE,
         kind = "colorPicker",
@@ -588,5 +586,6 @@ addonTable.CustomiseDialog.ColorsConfigOrder = {
   "reaction",
   "interruptReady",
   "importantCast",
+  "uninterruptableCast",
   "cast",
 }

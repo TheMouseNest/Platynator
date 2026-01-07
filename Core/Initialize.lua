@@ -125,7 +125,9 @@ function addonTable.Core.UpgradeDesign(design)
   end
 
   local function UpdateAutoColors(autoColors)
-    for _, ac in ipairs(autoColors) do
+    local index = 1
+    while index <= #autoColors do
+      local ac = autoColors[index]
       if ac.kind == "eliteType" and ac.colors.trivial == nil then
         ac.colors.trivial = GetColor("b28e55")
       elseif ac.kind == "threat" and ac.useSafeColor == nil then
@@ -137,7 +139,17 @@ function addonTable.Core.UpgradeDesign(design)
         ac.colors.quest = nil
       elseif ac.kind == "classColors" and ac.colors == nil then
         ac.colors = {}
+      elseif ac.kind == "cast" and ac.colors.uninterruptable then
+        local new = CopyTable(addonTable.CustomiseDialog.ColorsConfig["uninterruptableCast"].default)
+        new.colors.uninterruptable = ac.colors.uninterruptable
+        table.insert(autoColors, index, new)
+        ac.colors.uninterruptable = nil
+        index = index - 1
+      elseif ac.kind == "interruptReady" and ac.notReady then
+        ac.notReady = nil
       end
+
+      index = index + 1
     end
   end
 
