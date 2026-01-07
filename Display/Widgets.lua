@@ -50,8 +50,8 @@ local function InitBar(frame, details)
   frame.marker:RemoveMaskTexture(frame.mask)
 
   local maskDetails = addonTable.Assets.BarMasks[details.border.asset]
+  frame.mask:SetBlockingLoadsRequested(true)
   if maskDetails then
-    frame.mask:SetBlockingLoadsRequested(true)
     frame.mask:SetTexture(maskDetails.file, "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
     frame.mask:SetTextureSliceMargins(maskDetails.width * maskDetails.margin, maskDetails.height * maskDetails.margin, maskDetails.width * maskDetails.margin, maskDetails.height * maskDetails.margin)
   else
