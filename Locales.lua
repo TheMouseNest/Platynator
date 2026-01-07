@@ -166,7 +166,6 @@ L["NAME_ONLY"] = "Name Only"
 L["CUSTOM"] = "Custom"
 L["SAVE_AS"] = "Save as"
 
-L["FRIENDLY"] = "Friendly"
 L["ENEMY"] = "Enemy"
 L["SIMPLIFIED"] = "Simplified"
 L["DEFAULT_BRACKETS"] = "(Default)"
