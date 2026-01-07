@@ -166,9 +166,9 @@ L["NAME_ONLY"] = "Name Only"
 L["CUSTOM"] = "Custom"
 L["SAVE_AS"] = "Save as"
 
-L["FRIENDLY_STYLE"] = "Friendly Style"
-L["ENEMY_STYLE"] = "Enemy Style"
-L["SIMPLIFIED_STYLE"] = "Simplified Style"
+L["FRIENDLY"] = "Friendly"
+L["ENEMY"] = "Enemy"
+L["SIMPLIFIED"] = "Simplified"
 L["DEFAULT_BRACKETS"] = "(Default)"
 
 L["ADD_WIDGET"] = "Add Widget"

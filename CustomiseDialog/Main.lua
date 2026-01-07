@@ -471,7 +471,7 @@ local function SetupStyleSelect(parent)
 
   local allFrames = {}
 
-  local friendlyStyleDropdown = addonTable.CustomiseDialog.Components.GetBasicDropdown(container, addonTable.Locales.FRIENDLY_STYLE, function(value)
+  local friendlyStyleDropdown = addonTable.CustomiseDialog.Components.GetBasicDropdown(container, addonTable.Locales.FRIENDLY, function(value)
     return addonTable.Config.Get(addonTable.Config.Options.DESIGNS_ASSIGNED)["friend"] == value
   end, function(value)
     addonTable.Config.Get(addonTable.Config.Options.DESIGNS_ASSIGNED)["friend"] = value
@@ -480,7 +480,7 @@ local function SetupStyleSelect(parent)
   friendlyStyleDropdown:SetPoint("TOP")
   table.insert(allFrames, friendlyStyleDropdown)
 
-  local enemyStyleDropdown = addonTable.CustomiseDialog.Components.GetBasicDropdown(container, addonTable.Locales.ENEMY_STYLE, function(value)
+  local enemyStyleDropdown = addonTable.CustomiseDialog.Components.GetBasicDropdown(container, addonTable.Locales.ENEMY, function(value)
     return addonTable.Config.Get(addonTable.Config.Options.DESIGNS_ASSIGNED)["enemy"] == value
   end, function(value)
     addonTable.Config.Get(addonTable.Config.Options.DESIGNS_ASSIGNED)["enemy"] = value
@@ -491,7 +491,7 @@ local function SetupStyleSelect(parent)
 
   local simplifiedStyleDropdown
   if C_NamePlateManager and C_NamePlateManager.SetNamePlateSimplified then
-    simplifiedStyleDropdown = addonTable.CustomiseDialog.Components.GetBasicDropdown(container, addonTable.Locales.SIMPLIFIED_STYLE, function(value)
+    simplifiedStyleDropdown = addonTable.CustomiseDialog.Components.GetBasicDropdown(container, addonTable.Locales.SIMPLIFIED, function(value)
       return addonTable.Config.Get(addonTable.Config.Options.DESIGNS_ASSIGNED)["enemySimplified"] == value
     end, function(value)
       addonTable.Config.Get(addonTable.Config.Options.DESIGNS_ASSIGNED)["enemySimplified"] = value
