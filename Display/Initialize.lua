@@ -331,7 +331,7 @@ end
 
 function addonTable.Display.ManagerMixin:UpdateShowState()
   if InCombatLockdown() then
-    self:RegisterCallback("PLAYER_REGEN_ENABLED")
+    self:RegisterEvent("PLAYER_REGEN_ENABLED")
     return
   end
 
