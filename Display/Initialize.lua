@@ -578,7 +578,11 @@ function addonTable.Display.ManagerMixin:UpdateNamePlateSize()
     if IsInInstance() then
       local _, instanceType = GetInstanceInfo()
       if instanceType == "raid" or instanceType == "party" or instanceType == "arenas" then
-        C_NamePlate.SetNamePlateFriendlySize(width, height)
+        if addonTable.Constants.IsClassic then
+          C_NamePlate.SetNamePlateFriendlySize(128, 16)
+        else
+          C_NamePlate.SetNamePlateFriendlySize(width, height)
+        end
       end
     end
   elseif C_NamePlate.SetNamePlateSize then -- Midnight setting the click region
