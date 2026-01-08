@@ -594,6 +594,10 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
   titleText:SetPoint("RIGHT", -40, 0)
   titleText:SetShadowOffset(1, -1)
 
+  local suggestionToClick = container:CreateFontString(nil, nil, "GameFontHighlightLarge")
+  suggestionToClick:SetText(addonTable.Locales.CLICK_ON_A_WIDGET)
+  suggestionToClick:SetPoint("TOP", previewInset, "BOTTOM", 0, -15)
+
   local function OffsetWidgets(x, y)
     local offsets = {}
     for _, index in ipairs(selectionIndexes) do
@@ -1155,8 +1159,10 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
       end
       selectorPool:ReleaseAll()
       titleText:SetText("")
+      suggestionToClick:Show()
       return
     end
+    suggestionToClick:Hide()
     deleteButton:Enable()
 
     if #selectionIndexes > 1 then

@@ -172,6 +172,7 @@ L["DEFAULT_BRACKETS"] = "(Default)"
 
 L["ADD_WIDGET"] = "Add Widget"
 L["DELETE_WIDGET"] = "Delete Widget"
+L["CLICK_ON_A_WIDGET"] = "Click on a widget for settings"
 L["BARS"] = "Bars"
 L["HEALTH"] = "Health"
 L["CAST"] = "Cast"
