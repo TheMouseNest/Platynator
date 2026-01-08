@@ -456,6 +456,24 @@ addonTable.CustomiseDialog.WidgetsConfig = {
         }
       }
     },
+    ["castInterrupter"] = {
+      {
+        label = addonTable.Locales.COLORS,
+        entries = {
+          {
+            label = addonTable.Locales.CLASS_COLORED,
+            kind = "checkbox",
+            setter = function(details, value)
+              details.applyClassColors = value
+            end,
+            getter = function(details)
+              return details.applyClassColors
+            end,
+            hide = addonTable.Constants.IsMidnight,t
+          },
+        }
+      }
+    },
     ["level"] = {
       {
         label = addonTable.Locales.COLORS,
