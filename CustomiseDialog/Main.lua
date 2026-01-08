@@ -659,6 +659,9 @@ function addonTable.CustomiseDialog.GetStyleDropdown(parent)
             if assigned["enemy"] == entry.value then
               assigned["enemy"] = addonTable.Constants.CustomName
             end
+            if assigned["enemySimplified"] == entry.value then
+              assigned["enemySimplified"] = "_hare_simplified"
+            end
             if addonTable.Config.Get(addonTable.Config.Options.STYLE) == entry.value then
               addonTable.Config.Set(addonTable.Config.Options.STYLE, addonTable.Constants.CustomName) 
             end

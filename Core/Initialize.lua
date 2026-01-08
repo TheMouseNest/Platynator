@@ -381,18 +381,18 @@ function addonTable.Core.MigrateSettings()
     addonTable.Config.Set(addonTable.Config.Options.STYLE, mapping["friend"])
   end
 
+  for _, design in pairs(addonTable.Config.Get(addonTable.Config.Options.DESIGNS)) do
+    addonTable.Core.UpgradeDesign(design)
+  end
+
   local mapping = addonTable.Config.Get(addonTable.Config.Options.DESIGNS_ASSIGNED)
-  if mapping["enemySimplified"] == nil then
+  if mapping["enemySimplified"] == nil or addonTable.Core.GetDesignByName(mapping["enemySimplified"]) == nil then
     mapping["enemySimplified"] = "_hare_simplified"
   end
 
   local simplified = addonTable.Config.Get(addonTable.Config.Options.SIMPLIFIED_NAMEPLATES)
   if simplified["instancesNormal"] == nil then
     simplified["instancesNormal"] = true
-  end
-
-  for _, design in pairs(addonTable.Config.Get(addonTable.Config.Options.DESIGNS)) do
-    addonTable.Core.UpgradeDesign(design)
   end
 end
 
