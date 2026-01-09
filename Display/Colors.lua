@@ -258,7 +258,7 @@ function addonTable.Display.GetColor(settings, unit)
         end
       end
     elseif s.kind == "classColors" then
-      if UnitIsPlayer(unit) or UnitTreatAsPlayerForDisplay(unit) then
+      if UnitIsPlayer(unit) or UnitTreatAsPlayerForDisplay and UnitTreatAsPlayerForDisplay(unit) then
         local _, class = UnitClass(unit)
         table.insert(colorQueue, {color = RAID_CLASS_COLORS[class]})
         break
