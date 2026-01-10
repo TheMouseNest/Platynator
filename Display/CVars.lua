@@ -19,6 +19,7 @@ local cvars = {
   ["nameplatePlayerLargerScale"] = "1",
   ["nameplateTargetBehindMaxDistance"] = "30",
   ["nameplateTargetRadialPosition"] = "1",
+  ["clampTargetNameplateToScreen"] = "1",
 }
 
 if addonTable.Constants.IsMidnight then
