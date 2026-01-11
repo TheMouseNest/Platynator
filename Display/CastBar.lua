@@ -75,15 +75,11 @@ function addonTable.Display.CastBarMixin:OnEvent(eventName, ...)
         self:Hide()
       end
     end)
-  elseif eventName == "UNIT_SPELLCAST_NOT_INTERRUPTIBLE" or eventName == "UNIT_SPELLCAST_INTERRUPTIBLE" then
-    local name, text, texture, startTime, endTime, _, _, notInterruptible, _ = UnitCastingInfo(self.unit)
-    local isChanneled = false
-
-    if type(name) == "nil" then
-      name, text, texture, startTime, endTime, _, notInterruptible, _ = UnitChannelInfo(self.unit)
-      isChanneled = true
+  elseif eventName == "UNIT_SPELLCAST_DELAYED" or eventName == "UNIT_SPELLCAST_CHANNEL_UPDATE" then
+    if self:IsShown() then
+      self:ApplyCasting()
     end
-  else
+  elseif eventName:match("^UNIT_SPELL") then
     self:ApplyCasting()
   end
 
