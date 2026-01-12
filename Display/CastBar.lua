@@ -39,8 +39,8 @@ function addonTable.Display.CastBarMixin:SetUnit(unit)
 
     self:ApplyCasting()
 
-    self:SetColor(addonTable.Display.GetColor(self.details.autoColors, self.unit))
     addonTable.Display.RegisterForColorEvents(self, self.details.autoColors)
+    self:SetColor(addonTable.Display.GetColor(self.details.autoColors, self.colorState, self.unit))
   else
     self:StripInternal()
   end

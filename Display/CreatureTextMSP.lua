@@ -31,8 +31,8 @@ function addonTable.Display.CreatureTextMSPMixin:SetUnit(unit)
     self:RegisterUnitEvent("UNIT_HEALTH", self.unit)
     self:UpdateName()
 
-    self:SetColor(addonTable.Display.GetColor(self.details.autoColors, self.unit))
     addonTable.Display.RegisterForColorEvents(self, self.details.autoColors)
+    self:SetColor(addonTable.Display.GetColor(self.details.autoColors, self.colorState, self.unit))
 
     if self.details.showWhenWowDoes then
       self:SetShown(UnitShouldDisplayName(self.unit))

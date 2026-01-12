@@ -9,8 +9,8 @@ function addonTable.Display.LevelTextMixin:SetUnit(unit)
     self:RegisterUnitEvent("UNIT_LEVEL", self.unit)
     self:UpdateLevel()
 
-    self:SetColor(addonTable.Display.GetColor(self.details.autoColors, self.unit))
     addonTable.Display.RegisterForColorEvents(self, self.details.autoColors)
+    self:SetColor(addonTable.Display.GetColor(self.details.autoColors, self.colorState, self.unit))
   else
     self:Strip()
   end

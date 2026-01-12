@@ -82,6 +82,48 @@ instanceTracker:SetScript("OnEvent", function()
   end
 end)
 
+local stateToEvent = {
+  cast = {
+    "UNIT_SPELLCAST_START",
+    "UNIT_SPELLCAST_STOP",
+    "UNIT_SPELLCAST_FAILED",
+    "UNIT_SPELLCAST_INTERRUPTED",
+    "UNIT_SPELLCAST_INTERRUPTIBLE",
+    "UNIT_SPELLCAST_NOT_INTERRUPTIBLE",
+    "UNIT_SPELLCAST_CHANNEL_START",
+    "UNIT_SPELLCAST_CHANNEL_STOP",
+  },
+  quest = {
+    "QUEST_LOG_UPDATE",
+  },
+  threat = {
+    "UNIT_THREAT_LIST_UPDATE",
+  }
+}
+
+local stateToCalculator = {
+  cast = function(state, unit)
+    state.castInfo = {UnitCastingInfo(unit)}
+    state.channelInfo = {UnitChannelInfo(unit)}
+  end,
+  quest = function(state, unit)
+    state.quest = C_QuestLog.UnitIsRelatedToActiveQuest and C_QuestLog.UnitIsRelatedToActiveQuest(unit)
+  end,
+  threat = function(state, unit)
+    state.threat = UnitThreatSituation("player", unit)
+    state.hostile = UnitCanAttack("player", unit) and UnitIsEnemy(unit, "player")
+  end
+}
+
+local eventToState = {}
+local eventToCalulator = {}
+for key, events in pairs(stateToEvent) do
+  for _, e in ipairs(events) do
+    eventToState[e] = key
+    eventToCalulator[e] = stateToCalculator[key]
+  end
+end
+
 local kindToEvent = {
   reaction = {"UNIT_FACTION"},
   tapped = {"UNIT_HEALTH"},
@@ -133,15 +175,22 @@ local kindToEvent = {
 
 function addonTable.Display.UnregisterForColorEvents(frame)
   frame.ColorEventHandler = nil
+  frame.colorState = nil
 end
 
 function addonTable.Display.RegisterForColorEvents(frame, settings)
   local events = {}
+  frame.colorState = {}
   for _, s in ipairs(settings) do
     local es = kindToEvent[s.kind]
     if es then
       for _, e in ipairs(es) do
         events[e] = true
+        local stateKind = eventToState[e]
+        local state = frame.colorState[stateKind]
+        if stateKind and not state then
+          stateToCalculator[stateKind](frame.colorState, frame.unit)
+        end
         if e:match("^UNIT") then
           frame:RegisterUnitEvent(e, frame.unit)
         else
@@ -153,7 +202,11 @@ function addonTable.Display.RegisterForColorEvents(frame, settings)
 
   function frame:ColorEventHandler(eventName)
     if events[eventName] then
-      self:SetColor(addonTable.Display.GetColor(settings, self.unit))
+      local calculator = eventToCalulator[eventName]
+      if calculator then
+        calculator(frame.colorState, self.unit)
+      end
+      self:SetColor(addonTable.Display.GetColor(settings, frame.colorState, self.unit))
     end
   end
 end
@@ -165,9 +218,8 @@ local function SplitEvaluate(state, r1, g1, b1, a1, r2, g2, b2, a2)
     C_CurveUtil.EvaluateColorValueFromBoolean(state, a1 or 1, a2 or 1)
 end
 
-function addonTable.Display.GetColor(settings, unit)
+function addonTable.Display.GetColor(settings, state, unit)
   local colorQueue = {}
-  local castInfo, channelInfo
   for _, s in ipairs(settings) do
     if s.kind == "tapped" then
       if IsTapped(unit) then
@@ -185,8 +237,8 @@ function addonTable.Display.GetColor(settings, unit)
         break
       end
     elseif s.kind == "threat" then
-      local threat = UnitThreatSituation("player", unit)
-      local hostile = UnitCanAttack("player", unit) and UnitIsEnemy(unit, "player")
+      local threat = state.threat
+      local hostile = state.hostile
       if (inRelevantInstance or not s.instancesOnly) and (threat or (hostile and not s.combatOnly) or (inRelevantInstance and UnitAffectingCombat(unit))) then
         local role = GetPlayerRole()
         if (role == roleType.Tank and (threat == 0 or threat == nil) and not DoesOtherTankHaveAggro(unit)) or (role ~= roleType.Tank and threat == 3) then
@@ -230,7 +282,7 @@ function addonTable.Display.GetColor(settings, unit)
         end
       end
     elseif s.kind == "quest" then
-      if C_QuestLog.UnitIsRelatedToActiveQuest and C_QuestLog.UnitIsRelatedToActiveQuest(unit) then
+      if state.quest then
         if IsNeutral(unit) then
           table.insert(colorQueue, {color = s.colors.neutral})
           break
@@ -272,17 +324,15 @@ function addonTable.Display.GetColor(settings, unit)
       table.insert(colorQueue, {color = s.colors[addonTable.Display.Utilities.GetUnitDifficulty(unit)]})
       break
     elseif s.kind == "interruptReady" then
-      local spellID = GetInterruptSpell()
-      if spellID then
-        if not castInfo then
-          castInfo = {UnitCastingInfo(unit)}
-          channelInfo = {UnitChannelInfo(unit)}
-        end
-        local notInterruptible = castInfo[8]
-        if notInterruptible == nil then
-          notInterruptible = channelInfo[7]
-        end
-        if notInterruptible ~= nil then
+      local castInfo = state.castInfo
+      local channelInfo = state.channelInfo
+      local notInterruptible = castInfo[8]
+      if notInterruptible == nil then
+        notInterruptible = channelInfo[7]
+      end
+      if notInterruptible ~= nil then
+        local spellID = GetInterruptSpell()
+        if spellID then
           if C_Spell.GetSpellCooldownDuration and C_CurveUtil.EvaluateColorFromBoolean then
             local duration = C_Spell.GetSpellCooldownDuration(spellID)
             table.insert(colorQueue, {state = {{value = duration:IsZero()}, {value = notInterruptible, invert = true}}, color = s.colors.ready})
@@ -301,10 +351,8 @@ function addonTable.Display.GetColor(settings, unit)
         end
       end
     elseif s.kind == "uninterruptableCast" then
-      if not castInfo then
-        castInfo = {UnitCastingInfo(unit)}
-        channelInfo = {UnitChannelInfo(unit)}
-      end
+      local castInfo = state.castInfo
+      local channelInfo = state.channelInfo
       local uninterruptable = castInfo[8]
       if uninterruptable == nil then
         uninterruptable = channelInfo[7]
@@ -314,10 +362,8 @@ function addonTable.Display.GetColor(settings, unit)
       end
     elseif s.kind == "importantCast" then
       if C_Spell.IsSpellImportant then
-        if not castInfo then
-          castInfo = {UnitCastingInfo(unit)}
-          channelInfo = {UnitChannelInfo(unit)}
-        end
+        local castInfo = state.castInfo
+        local channelInfo = state.channelInfo
         local spellID = castInfo[9]
         local isChannel = false
         if spellID == nil then
@@ -334,10 +380,8 @@ function addonTable.Display.GetColor(settings, unit)
         end
       end
     elseif s.kind == "cast" then
-      if not castInfo then
-        castInfo = {UnitCastingInfo(unit)}
-        channelInfo = {UnitChannelInfo(unit)}
-      end
+      local castInfo = state.castInfo
+      local channelInfo = state.channelInfo
       local text = castInfo[1]
       local isChannel = false
       if text == nil then

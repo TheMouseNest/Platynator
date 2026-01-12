@@ -30,8 +30,8 @@ function addonTable.Display.HealthBarMixin:SetUnit(unit)
     self.statusBarAbsorb:SetValue(UnitGetTotalAbsorbs(self.unit))
     self:UpdateHealth()
 
-    self:SetColor(addonTable.Display.GetColor(self.details.autoColors, self.unit))
     addonTable.Display.RegisterForColorEvents(self, self.details.autoColors)
+    self:SetColor(addonTable.Display.GetColor(self.details.autoColors, self.colorState, self.unit))
   else
     self:UnregisterAllEvents()
     addonTable.Display.UnregisterForColorEvents(self)
