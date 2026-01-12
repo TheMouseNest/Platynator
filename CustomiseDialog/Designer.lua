@@ -8,6 +8,12 @@ local function Announce()
   addonTable.CallbackRegistry:TriggerEvent("RefreshStateChange", {[addonTable.Constants.RefreshReason.Design] = true})
 end
 
+local pixelStep = 0.5
+
+local function RoundPixel(pixel)
+  return Round(pixel / pixelStep) * pixelStep
+end
+
 local function GetAutomaticColors(rootParent, lockedElements)
   local selectedValue = ""
   local UpdateSelected
@@ -447,14 +453,14 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
     elseif x == 0 and y == 0 then
       w.details.anchor = {point}
     else
-      w.details.anchor = {point, Round(x), Round(y)}
+      w.details.anchor = {point, RoundPixel(x), RoundPixel(y)}
     end
 
     if x ~= 0 then
-      snapX = Round(x) - x
+      snapX = RoundPixel(x) - x
     end
     if y ~= 0 then
-      snapY = Round(y) - y
+      snapY = RoundPixel(y) - y
     end
 
     -- snapX, snapY used to offset other widgets to keep them all consistent to each other
@@ -468,7 +474,7 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
     local snapped = true
     local iteration = 0
     -- Shift items around until we reach a happy medium where everything is approximately in the same
-    -- relative place to the other items as it was before moving, complext because of allowing widgets to snap to center points
+    -- relative place to the other items as it was before moving, complex because of allowing widgets to snap to center points
     while snapped and
       -- Capped iterations to a reasonably high number that it isn't expected to reach (unless dozens of items are selected)
       iteration < 200
@@ -482,7 +488,7 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
         local w = widgets[index]
         snapX, snapY, xLock, yLock = UpdateWidgetPoints(w, snappingAmount, offsets[indexIndex].x, offsets[indexIndex].y)
         local o = offsets[indexIndex]
-        if math.abs(snapX) >= 0.5 and not o.xLock or math.abs(snapY) >= 0.5 and not o.yLock then
+        if math.abs(snapX) >= pixelStep/2 and not o.xLock or math.abs(snapY) >= pixelStep/2 and not o.yLock then
           -- See UpdateWidgetPoints for usage of xLock/yLock
           o.xLock = o.xLock or xLock
           o.yLock = o.yLock or yLock
@@ -603,13 +609,16 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
     for _, index in ipairs(selectionIndexes) do
       table.insert(offsets, {x = x, y = y, xLock = x == 0, yLock = y == 0})
     end
-    AlignForRelativePoints(offsets, 0.6)
+    AlignForRelativePoints(offsets, 0.4)
     Announce()
   end
 
   keyboardTrap:SetScript("OnKeyDown", function(_, key)
     keyboardTrap:SetPropagateKeyboardInput(false)
-    local amount = 1
+    local amount = pixelStep
+    if IsShiftKeyDown() then
+      amount = amount * 4
+    end
     if key == "LEFT" then
       OffsetWidgets(-amount, 0)
     elseif key == "RIGHT" then
