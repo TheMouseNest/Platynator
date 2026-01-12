@@ -1,7 +1,7 @@
 ---@class addonTablePlatynator
 local addonTable = select(2, ...)
 
-addonTable.Display.CannotInterruptMarkerMixin = {}
+addonTable.Display.CannotInterruptMarkerMixin = CreateFromMixins(addonTable.Display.CombatVisibilityMixin)
 
 function addonTable.Display.CannotInterruptMarkerMixin:SetUnit(unit)
   self.unit = unit
@@ -17,6 +17,7 @@ function addonTable.Display.CannotInterruptMarkerMixin:SetUnit(unit)
     self:RegisterUnitEvent("UNIT_SPELLCAST_INTERRUPTED", self.unit)
     self:RegisterUnitEvent("UNIT_SPELLCAST_FAILED", self.unit)
 
+    self:RegisterCombatEvents()
 
     self:ApplyCasting()
   else
@@ -46,6 +47,9 @@ function addonTable.Display.CannotInterruptMarkerMixin:ApplyCasting()
       self.marker:SetAlphaFromBoolean(notInterruptible)
     else
       self.marker:SetShown(notInterruptible)
+    end
+    if self:ShouldHideForCombat() then
+      self.marker:Hide()
     end
   else
     self.marker:Hide()

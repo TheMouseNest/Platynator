@@ -5,7 +5,7 @@ local borderPool = CreateTexturePool(UIParent, "BACKGROUND", 0, nil, function(_,
   tex:SetColorTexture(0, 0, 0)
 end)
 
-addonTable.Display.CastIconMarkerMixin = {}
+addonTable.Display.CastIconMarkerMixin = CreateFromMixins(addonTable.Display.CombatVisibilityMixin)
 
 function addonTable.Display.CastIconMarkerMixin:PostInit()
   if self.details.square then
@@ -33,6 +33,8 @@ function addonTable.Display.CastIconMarkerMixin:SetUnit(unit)
     self:RegisterUnitEvent("UNIT_SPELLCAST_INTERRUPTED", self.unit)
     self:RegisterUnitEvent("UNIT_SPELLCAST_FAILED", self.unit)
 
+    self:RegisterCombatEvents()
+
     self:ApplyCasting()
   else
     self:UnregisterAllEvents()
@@ -56,6 +58,12 @@ function addonTable.Display.CastIconMarkerMixin:OnEvent(eventName, ...)
     if self.background then
       self.background:Show()
     end
+    if self:ShouldHideForCombat() then
+      self.marker:Hide()
+      if self.background then
+        self.background:Hide()
+      end
+    end
     self.timer = C_Timer.NewTimer(0.8, function()
       if self.interrupted then
         self.interrupted = nil
@@ -65,6 +73,8 @@ function addonTable.Display.CastIconMarkerMixin:OnEvent(eventName, ...)
         end
       end
     end)
+  elseif eventName == "PLAYER_REGEN_ENABLED" or eventName == "PLAYER_REGEN_DISABLED" then
+    self:ApplyCasting()
   else
     self:ApplyCasting()
   end
@@ -81,6 +91,12 @@ function addonTable.Display.CastIconMarkerMixin:ApplyCasting()
     self.marker:Show()
     if self.background then
       self.background:Show()
+    end
+    if self:ShouldHideForCombat() then
+      self.marker:Hide()
+      if self.background then
+        self.background:Hide()
+      end
     end
   elseif not self.interrupted then
     self.marker:Hide()

@@ -232,6 +232,10 @@ L["UNINTERRUPTABLE"] = "Uninterruptable"
 L["SOFT_TARGET"] = "Soft Target"
 L["SOFT_TARGET_SENTENCE_CASE"] = "Soft target"
 
+L["HIDE_IN_COMBAT"] = "Hide in combat"
+L["ALWAYS"] = "Always"
+L["NEVER"] = "Never"
+
 L["WHAT_TO_EXPORT"] = "What to export?"
 L["STYLE"] = "Style"
 L["PROFILE"] = "Profile"
