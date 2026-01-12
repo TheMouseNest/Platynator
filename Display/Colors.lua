@@ -128,11 +128,7 @@ local kindToEvent = {
   reaction = {"UNIT_FACTION"},
   tapped = {"UNIT_HEALTH"},
   target = {"PLAYER_TARGET_CHANGED"},
-  softTarget = {
-    "PLAYER_TARGET_CHANGED",
-    "PLAYER_SOFT_ENEMY_CHANGED",
-    "PLAYER_SOFT_FRIEND_CHANGED",
-  },
+  softTarget = {"PLAYER_TARGET_CHANGED"},
   focus = {"PLAYER_FOCUS_CHANGED"},
   threat = {"UNIT_THREAT_LIST_UPDATE"},
   quest = {"QUEST_LOG_UPDATE"},
