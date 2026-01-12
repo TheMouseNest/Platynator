@@ -819,6 +819,9 @@ function addonTable.CustomiseDialog.Toggle()
   containers[1].button:Click()
 
   frame:SetScript("OnShow", function()
+    local tabsWidth = frame.Tabs[#frame.Tabs]:GetRight() - frame.Tabs[1]:GetLeft()
+    frame:SetWidth(math.max(frame:GetWidth(), tabsWidth + 20))
+
     local shownContainer = FindValueInTableIf(containers, function(c) return c:IsShown() end)
     if shownContainer then
       PanelTemplates_SetTab(frame, tIndexOf(containers, shownContainer))
