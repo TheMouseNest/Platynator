@@ -49,7 +49,7 @@ function addonTable.Display.HealthBarMixin:SetColor(...)
   if self.details.background.applyColor then
     local mod = self.details.background.color
     if self.modColors then
-      self.background:SetVertexColor(addonTable.Display.GetColor(self.modColors, self.unit))
+      self.background:SetVertexColor(addonTable.Display.GetColor(self.modColors, self.colorState, self.unit))
     else
       local r, g, b = ...
       self.background:SetVertexColor(r, g, b, mod.a)
