@@ -378,11 +378,11 @@ function addonTable.Display.GetColor(settings, state, unit)
           isChannel = true
         end
         if spellID ~= nil then
-          local state = C_Spell.IsSpellImportant(spellID)
+          local isImportant = C_Spell.IsSpellImportant(spellID)
           if isChannel then
-            table.insert(colorQueue, {state = {{value = state}}, color = s.colors.channel})
+            table.insert(colorQueue, {state = {{value = isImportant}}, color = s.colors.channel})
           else
-            table.insert(colorQueue, {state = {{value = state}}, color = s.colors.cast})
+            table.insert(colorQueue, {state = {{value = isImportant}}, color = s.colors.cast})
           end
         end
       end
