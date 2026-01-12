@@ -103,6 +103,7 @@ local stateToEvent = {
 
 local stateToCalculator = {
   cast = function(state, unit)
+    state.cast = true
     state.castInfo = {UnitCastingInfo(unit)}
     state.channelInfo = {UnitChannelInfo(unit)}
   end,
@@ -189,7 +190,7 @@ function addonTable.Display.RegisterForColorEvents(frame, settings)
         events[e] = true
         local stateKind = eventToState[e]
         local state = frame.colorState[stateKind]
-        if stateKind and not state then
+        if stateKind and state == nil then
           stateToCalculator[stateKind](frame.colorState, frame.unit)
         end
         if e:match("^UNIT") then
