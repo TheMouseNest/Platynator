@@ -759,7 +759,7 @@ function addonTable.CustomiseDialog.Toggle()
   table.insert(UISpecialFrames, frame:GetName())
   frame:SetSize(600, 830)
   frame:SetPoint("CENTER")
-  frame:Raise()
+  frame:Hide()
 
   frame.CloseButton:SetScript("OnClick", function()
     frame:Hide()
@@ -827,6 +827,8 @@ function addonTable.CustomiseDialog.Toggle()
       PanelTemplates_SetTab(frame, tIndexOf(containers, shownContainer))
     end
   end)
+
+  frame:Show()
 
   --addonTable.Skins.AddFrame("ButtonFrame", frame, {"customise"})
 end
