@@ -333,6 +333,8 @@ function addonTable.Display.GetHighlight(frame, parent)
 
     if details.kind == "target" then
       Mixin(frame, addonTable.Display.TargetHighlightMixin)
+    elseif details.kind == "softTarget" then
+      Mixin(frame, addonTable.Display.SoftTargetHighlightMixin)
     elseif details.kind == "focus" then
       Mixin(frame, addonTable.Display.FocusHighlightMixin)
     elseif details.kind == "mouseover" then

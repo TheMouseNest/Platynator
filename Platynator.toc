@@ -57,6 +57,7 @@ Display/LevelText.lua
 Display/UnitTargetText.lua
 Display/AutomaticHighlight.lua
 Display/TargetHighlight.lua
+Display/SoftTargetHighlight.lua
 Display/FocusHighlight.lua
 Display/MouseoverHighlight.lua
 Display/FixedHighlight.lua

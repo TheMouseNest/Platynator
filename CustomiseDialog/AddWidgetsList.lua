@@ -129,6 +129,20 @@ addonTable.CustomiseDialog.DesignWidgets = {
     },
   },
   {
+    name = addonTable.Locales.SOFT_TARGET,
+    kind = "highlights",
+    default = {
+      anchor = {"TOPLEFT", -140, 50},
+      kind = "softTarget",
+      asset = "glow",
+      width = 1,
+      height = 1,
+      color = GetColor("FFFFFF", 1),
+      scale = 1,
+      layer = 0,
+    },
+  },
+  {
     name = addonTable.Locales.FOCUSED,
     kind = "highlights",
     default = {

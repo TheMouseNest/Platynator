@@ -57,6 +57,27 @@ addonTable.CustomiseDialog.ColorsConfig = {
       },
     },
   },
+  ["softTarget"] = {
+    label = addonTable.Locales.SOFT_TARGET,
+    default = {
+      kind = "softTarget",
+      colors = {
+        softTarget = GetColor("34edd1"),
+      },
+    },
+    entries = {
+      {
+        label = addonTable.Locales.SOFT_TARGET_SENTENCE_CASE,
+        kind = "colorPicker",
+        setter = function(details, value)
+          details.colors.softTarget = value
+        end,
+        getter = function(details)
+          return details.colors.softTarget
+        end,
+      },
+    },
+  },
   ["focus"] = {
     label = addonTable.Locales.FOCUS,
     default = {
@@ -576,6 +597,7 @@ addonTable.CustomiseDialog.ColorsConfig = {
 addonTable.CustomiseDialog.ColorsConfigOrder = {
   "tapped",
   "target",
+  "softTarget",
   "focus",
   "threat",
   "eliteType",

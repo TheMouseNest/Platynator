@@ -14,7 +14,7 @@ local function RoundPixel(pixel)
   return Round(pixel / pixelStep) * pixelStep
 end
 
-local function GetAutomaticColors(rootParent, lockedElements)
+local function GetAutomaticColors(rootParent, lockedElements, addAlpha)
   local selectedValue = ""
   local UpdateSelected
 
@@ -126,10 +126,10 @@ local function GetAutomaticColors(rootParent, lockedElements)
       if not seen[kind] then
         local details = addonTable.CustomiseDialog.ColorsConfig[kind]
         rootDescription:CreateButton(details.label, function()
-          if container.details.addAlpha then
-            table.insert(container.details, 1, CopyTable(details.default))
-          else
+          if addAlpha then
             table.insert(container.details, 1, addonTable.CustomiseDialog.AddAlphaToColors(CopyTable(details.default)))
+          else
+            table.insert(container.details, 1, CopyTable(details.default))
           end
           Announce()
           UpdateSelected(details.default.kind)
@@ -995,7 +995,7 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
         elseif e.kind == "colorPicker" then
           frame = addonTable.CustomiseDialog.Components.GetColorPicker(parent, e.label, 28, Setter)
         elseif e.kind == "autoColors" then
-          frame = GetAutomaticColors(parent, e.lockedElements)
+          frame = GetAutomaticColors(parent, e.lockedElements, e.addAlpha)
         end
 
         if frame then
