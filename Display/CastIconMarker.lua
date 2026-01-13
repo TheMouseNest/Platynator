@@ -35,7 +35,15 @@ function addonTable.Display.CastIconMarkerMixin:SetUnit(unit)
 
     self:ApplyCasting()
   else
-    self:UnregisterAllEvents()
+    self:StripInternal()
+  end
+end
+
+function addonTable.Display.CastIconMarkerMixin:StripInternal()
+  self:UnregisterAllEvents()
+  if self.timer then
+    self.timer:Cancel()
+    self.timer = nil
   end
 end
 
