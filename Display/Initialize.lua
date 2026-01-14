@@ -352,8 +352,11 @@ function addonTable.Display.ManagerMixin:UpdateShowState()
 
     self.oldShowState = CopyTable(currentShow)
   end
-  if state == "name_only" and C_CVar.GetCVarInfo("nameplateShowOnlyNameForFriendlyPlayerUnits") then
-    C_CVar.SetCVar("nameplateShowOnlyNameForFriendlyPlayerUnits", "1")
+  if C_CVar.GetCVarInfo("nameplateShowOnlyNameForFriendlyPlayerUnits") then
+    C_CVar.SetCVar("nameplateShowOnlyNameForFriendlyPlayerUnits", "0")
+  end
+  if C_CVar.GetCVarInfo("nameplateUseClassColorForFriendlyPlayerUnitNames") then
+    C_CVar.SetCVar("nameplateUseClassColorForFriendlyPlayerUnitNames", "0")
   end
 
   for key, state in pairs(currentShow) do
@@ -380,12 +383,14 @@ function addonTable.Display.ManagerMixin:UpdateInstanceShowState()
   if state == "name_only" and C_CVar.GetCVarInfo("nameplateShowOnlyNameForFriendlyPlayerUnits") then
     C_CVar.SetCVar("nameplateShowOnlyNameForFriendlyPlayerUnits", "1")
   end
+  if state == "name_only" and C_CVar.GetCVarInfo("nameplateUseClassColorForFriendlyPlayerUnitNames") then
+    C_CVar.SetCVar("nameplateUseClassColorForFriendlyPlayerUnitNames", "1")
+  end
 
   local values = GetCVarsForNameplates()
   local currentShow = addonTable.Config.Get(addonTable.Config.Options.SHOW_NAMEPLATES)
 
-  local _, instanceType = GetInstanceInfo()
-  if instanceType == "raid" or instanceType == "party" or instanceType == "arenas" then
+  if addonTable.Display.Utilities.IsInRelevantInstance() then
     if not self.hiddenFriendly then
       if currentShow.player and state ~= "name_only" then
         C_CVar.SetCVar(values.player, "0")
