@@ -507,6 +507,35 @@ addonTable.CustomiseDialog.WidgetsConfig = {
         }
       },
     },
+    ["questTracker"] = {
+      {
+        label = addonTable.Locales.GENERAL,
+        entries = {
+          {
+            label = addonTable.Locales.QUEST_TRACKER_FIRST_ONLY,
+            kind = "checkbox",
+            tooltip = addonTable.Locales.QUEST_TRACKER_FIRST_ONLY_INFO,
+            setter = function(details, value)
+              details.firstOnly = value
+            end,
+            getter = function(details)
+              return details.firstOnly ~= false
+            end,
+          },
+          {
+            label = addonTable.Locales.QUEST_TRACKER_PARTY_SUPPORT,
+            kind = "checkbox",
+            tooltip = addonTable.Locales.QUEST_TRACKER_PARTY_SUPPORT_INFO,
+            setter = function(details, value)
+              details.partySupport = value
+            end,
+            getter = function(details)
+              return details.partySupport == true
+            end,
+          },
+        }
+      },
+    },
   },
   ["markers"] = {
     ["*"] = {

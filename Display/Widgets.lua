@@ -498,6 +498,8 @@ function addonTable.Display.GetText(frame, parent)
       Mixin(frame, addonTable.Display.CastInterrupterTextMixin)
     elseif details.kind == "castTimeLeft" then
       Mixin(frame, addonTable.Display.CastTimeLeftTextMixin)
+    elseif details.kind == "questTracker" then
+      Mixin(frame, addonTable.Display.QuestTrackerTextMixin)
     else
       assert(false)
     end

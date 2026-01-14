@@ -179,7 +179,7 @@ local function GetAutomaticColors(rootParent, lockedElements, addAlpha)
       end
 
       if e.kind == "checkbox" then
-        frame = addonTable.CustomiseDialog.Components.GetCheckbox(parent, e.label, -30, Setter)
+        frame = addonTable.CustomiseDialog.Components.GetCheckbox(parent, e.label, -30, Setter, e.tooltip)
       elseif e.kind == "colorPicker" then
         frame = addonTable.CustomiseDialog.Components.GetColorPicker(parent, e.label, -30, Setter)
       end
@@ -819,6 +819,8 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
           display = addonTable.Locales.ARCANE_FLURRY
         elseif w.details.kind == "level" then
           display = "60"
+        elseif w.details.kind == "questTracker" then
+          display = "0/7 Dragons killed"
         end
         if display then
           w.text:SetText(display)
@@ -991,7 +993,7 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
             return value == e.getter(parent.details)
           end, Setter)
         elseif e.kind == "checkbox" then
-          frame = addonTable.CustomiseDialog.Components.GetCheckbox(parent, e.label, 28, Setter)
+          frame = addonTable.CustomiseDialog.Components.GetCheckbox(parent, e.label, 28, Setter, e.tooltip)
         elseif e.kind == "colorPicker" then
           frame = addonTable.CustomiseDialog.Components.GetColorPicker(parent, e.label, 28, Setter)
         elseif e.kind == "autoColors" then

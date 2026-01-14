@@ -3,7 +3,7 @@ local addonTable = select(2, ...)
 
 addonTable.CustomiseDialog.Components = {}
 
-function addonTable.CustomiseDialog.Components.GetCheckbox(parent, label, spacing, callback)
+function addonTable.CustomiseDialog.Components.GetCheckbox(parent, label, spacing, callback, tooltipText)
   spacing = spacing or 0
   local holder = CreateFrame("Frame", nil, parent)
   holder:SetHeight(40)
@@ -39,6 +39,23 @@ function addonTable.CustomiseDialog.Components.GetCheckbox(parent, label, spacin
   checkBox:SetScript("OnClick", function()
     callback(checkBox:GetChecked())
   end)
+
+  if tooltipText then
+    local function ShowTooltip()
+      GameTooltip:SetOwner(checkBox, "ANCHOR_RIGHT")
+      GameTooltip_SetTitle(GameTooltip, tooltipText)
+      GameTooltip:Show()
+    end
+    local function HideTooltip()
+      if GameTooltip:GetOwner() == checkBox then
+        GameTooltip:Hide()
+      end
+    end
+    holder:HookScript("OnEnter", ShowTooltip)
+    holder:HookScript("OnLeave", HideTooltip)
+    checkBox:HookScript("OnEnter", ShowTooltip)
+    checkBox:HookScript("OnLeave", HideTooltip)
+  end
 
   return holder
 end

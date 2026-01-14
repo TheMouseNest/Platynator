@@ -274,6 +274,9 @@ function addonTable.Core.UpgradeDesign(design)
     if text.kind == "layer" then
       text.kind = "level"
     end
+    if text.kind == "questTracker" then
+      text.kind = "questTracker"
+    end
     if text.kind == "target" and text.applyClassColors == nil then
       text.applyClassColors = false
     end
