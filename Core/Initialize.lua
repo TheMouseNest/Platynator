@@ -52,6 +52,12 @@ function addonTable.Core.UpgradeDesign(design)
     if marker.layer == nil then
       marker.layer = 3
     end
+    if marker.kind == "castIcon" and marker.square == nil then
+      marker.square = false
+    end
+    if marker.kind == "elite" and marker.openWorldOnly == nil then
+      marker.openWorldOnly = false
+    end
   end
   if not design.auras then
     design.auras = {

@@ -604,7 +604,24 @@ addonTable.CustomiseDialog.WidgetsConfig = {
               details.square = value
             end,
             getter = function(details)
-              return details.square == true
+              return details.square
+            end,
+          }
+        }
+      },
+    },
+    ["elite"] = {
+      {
+        label = addonTable.Locales.GENERAL,
+        entries = {
+          {
+            label = addonTable.Locales.SHOW_ONLY_IN_OPEN_WORLD,
+            kind = "checkbox",
+            setter = function(details, value)
+              details.openWorldOnly = value
+            end,
+            getter = function(details)
+              return details.openWorldOnly
             end,
           }
         }
