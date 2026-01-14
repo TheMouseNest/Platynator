@@ -56,4 +56,7 @@ function addonTable.Display.PvPMarkerMixin:Update()
   else
     self.marker:Hide()
   end
+  
+  local flip = self.details.flip or {}
+  addonTable.Display.UpdateTextureFlip(self.marker, flip.horizontal)
 end

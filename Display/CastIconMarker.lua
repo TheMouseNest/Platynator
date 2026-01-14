@@ -88,4 +88,11 @@ function addonTable.Display.CastIconMarkerMixin:ApplyCasting()
       self.background:Hide()
     end
   end
+  
+  local flip = self.details.flip or {}
+  if self.details.square then
+    addonTable.Display.UpdateTextureFlip(self.marker, flip.horizontal, 0.1, 0.9, 0.1, 0.9)
+  else
+    addonTable.Display.UpdateTextureFlip(self.marker, flip.horizontal)
+  end
 end
