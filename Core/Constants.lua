@@ -17,7 +17,8 @@ addonTable.Constants = {
 
   CustomName = "_custom",
 
-  DefaultFont = "Roboto Condensed Bold"
+  DefaultFont = "Roboto Condensed Bold",
+  FontFamilies = {"roman", "korean", "simplifiedchinese", "traditionalchinese", "russian"},
 }
 addonTable.Constants.Events = {
   "SettingChanged",

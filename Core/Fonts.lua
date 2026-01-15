@@ -32,7 +32,7 @@ function addonTable.Core.GetFontByID(id)
   return fonts[key] or fonts[addonTable.Constants.DefaultFont:lower() .. outline .. shadow]
 end
 
-local alphabet = {"roman", "korean", "simplifiedchinese", "traditionalchinese", "russian"}
+local alphabet = addonTable.Constants.FontFamilies
 
 local locale = GetLocale()
 local overrideAlphabet = "roman"
