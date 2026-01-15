@@ -45,6 +45,7 @@ function addonTable.Display.CastIconMarkerMixin:StripInternal()
     self.timer:Cancel()
     self.timer = nil
   end
+  self.interrupted = nil
 end
 
 function addonTable.Display.CastIconMarkerMixin:Strip()
