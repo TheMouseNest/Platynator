@@ -611,6 +611,9 @@ function addonTable.Display.ManagerMixin:UpdateNamePlateSize()
 end
 
 function addonTable.Display.ManagerMixin:InitializeFriendlyFont()
+  if not SystemFont_NamePlate_Outlined then
+    return
+  end
   if not PlatynatorOriginalSystemFont then
     local f = CreateFont("PlatynatorOriginalSystemFont")
     f:CopyFontObject(SystemFont_NamePlate_Outlined)
@@ -637,7 +640,7 @@ function addonTable.Display.ManagerMixin:UpdateFriendlyFont()
   if self.friendlyFontSize and addonTable.Config.Get(addonTable.Config.Options.SHOW_FRIENDLY_IN_INSTANCES) == "name_only" then
     SystemFont_NamePlate_Outlined:CopyFontObject(_G[addonTable.CurrentFont])
     SystemFont_NamePlate_Outlined:SetFontHeight(self.friendlyFontSize)
-  else
+  elseif SystemFont_NamePlate_Outlined then
     SystemFont_NamePlate_Outlined:CopyFontObject(PlatynatorOriginalSystemFont)
   end
 end
