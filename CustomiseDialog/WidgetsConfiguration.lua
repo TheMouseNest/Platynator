@@ -736,7 +736,7 @@ addonTable.CustomiseDialog.WidgetsConfig = {
             getter = function(details)
               return details.filters.important
             end,
-            hide = not addonTable.Constants.IsMidnight,
+            hide = addonTable.Constants.IsClassic,
           },
           {
             label = addonTable.Locales.FROM_YOU,
