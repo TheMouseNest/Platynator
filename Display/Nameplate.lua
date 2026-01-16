@@ -4,7 +4,6 @@ local addonTable = select(2, ...)
 addonTable.Display.NameplateMixin = {}
 function addonTable.Display.NameplateMixin:OnLoad()
   self:SetFlattensRenderLayers(true)
-  self:SetIgnoreParentScale(true)
   self:SetCollapsesLayout(true)
 
   self.widgets = {}
@@ -244,7 +243,6 @@ end
 
 function addonTable.Display.NameplateMixin:SetUnit(unit)
   self.SoftTargetIcon:Hide()
-  self:SetAlpha(0)
 
   self.interactUnit = unit
   if unit and (not UnitNameplateShowsWidgetsOnly or not UnitNameplateShowsWidgetsOnly(unit)) and not UnitIsGameObject(unit) then
@@ -357,8 +355,12 @@ end
 
 function addonTable.Display.NameplateMixin:UpdateVisual()
   if not self.unit then
-    self.overrideAlpha = 1
-    self:SetScale(self.scale * addonTable.Config.Get(addonTable.Config.Options.GLOBAL_SCALE) * UIParent:GetEffectiveScale())
+    if not addonTable.Constants.ParentedToNameplates then
+      self.overrideAlpha = 1
+    else
+      self:SetAlpha(1)
+    end
+    self:SetScale(self.scale * addonTable.Config.Get(addonTable.Config.Options.GLOBAL_SCALE))
     return
   end
 
@@ -366,15 +368,22 @@ function addonTable.Display.NameplateMixin:UpdateVisual()
   local alpha = 1
   local isTarget = UnitIsUnit("target", self.unit)
   if isTarget then
-    scale = scale * addonTable.Config.Get(addonTable.Config.Options.TARGET_SCALE)
+    if not addonTable.Constants.ParentedToNameplates then
+      scale = scale * addonTable.Config.Get(addonTable.Config.Options.TARGET_SCALE)
+    end
+    -- Nothing to do if its parented to the nameplate, as that will handle scaling for us
   elseif self.casting then
     scale = scale * addonTable.Config.Get(addonTable.Config.Options.CAST_SCALE)
     alpha = alpha * addonTable.Config.Get(addonTable.Config.Options.CAST_ALPHA)
   else
     alpha = alpha * addonTable.Config.Get(addonTable.Config.Options.NOT_TARGET_ALPHA)
   end
-  self:SetScale(self.scale * scale * addonTable.Config.Get(addonTable.Config.Options.GLOBAL_SCALE) * UIParent:GetEffectiveScale())
-  self.overrideAlpha = alpha
+  self:SetScale(self.scale * scale * addonTable.Config.Get(addonTable.Config.Options.GLOBAL_SCALE))
+  if not addonTable.Constants.ParentedToNameplates then
+    self.overrideAlpha = alpha
+  else
+    self:SetAlpha(alpha)
+  end
 end
 
 function addonTable.Display.NameplateMixin:UpdateSoftInteract()

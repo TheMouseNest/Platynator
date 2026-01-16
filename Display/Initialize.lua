@@ -84,16 +84,18 @@ function addonTable.Display.ManagerMixin:OnLoad()
   self.ModifiedUFs = {}
   self.HookedUFs = {}
   self.unitToNameplate = {}
-  self.AlphaImporter = CreateFrame("Frame", nil, self)
-  self.AlphaImporter:SetScript("OnUpdate", function()
-    for unit, nameplate in pairs(self.unitToNameplate) do
-      local display = self.nameplateDisplays[unit]
-      display:SetAlpha(nameplate:GetAlpha() * display.overrideAlpha)
-      if display:GetFrameLevel() ~= nameplate:GetFrameLevel() then
-        display:SetFrameLevel(nameplate:GetFrameLevel())
+  if not addonTable.Constants.ParentedToNameplates then
+    self.AlphaImporter = CreateFrame("Frame", nil, self)
+    self.AlphaImporter:SetScript("OnUpdate", function()
+      for unit, nameplate in pairs(self.unitToNameplate) do
+        local display = self.nameplateDisplays[unit]
+        display:SetAlpha(nameplate:GetAlpha() * display.overrideAlpha)
+        if display:GetFrameLevel() ~= nameplate:GetFrameLevel() then
+          display:SetFrameLevel(nameplate:GetFrameLevel())
+        end
       end
-    end
-  end)
+    end)
+  end
   -- Apply Platynator settings to aura layout
   local function RelayoutAuras(list, filter)
     if list:IsForbidden() then
@@ -204,7 +206,7 @@ function addonTable.Display.ManagerMixin:OnLoad()
   end)
 
   addonTable.CallbackRegistry:RegisterCallback("RefreshStateChange", function(_, state)
-    if state[addonTable.Constants.RefreshReason.Design] or state[addonTable.Constants.RefreshReason.SimplifiedScale] then
+    if state[addonTable.Constants.RefreshReason.Design] then
       self:SetScript("OnUpdate", function()
         local design = addonTable.Core.GetDesign("enemy")
         addonTable.CurrentFont = addonTable.Core.GetFontByDesign(design)
@@ -225,9 +227,9 @@ function addonTable.Display.ManagerMixin:OnLoad()
           end
           local UF = self.ModifiedUFs[unit]
           if UF and UF.HitTestFrame then
-            self:UpdateStackingRegion(nameplate, unit)
+            self:UpdateStackingRegion(unit)
           end
-          display:InitializeWidgets(addonTable.Core.GetDesign(display.kind), addonTable.Core.GetDesignScale(display.kind))
+          display:InitializeWidgets(addonTable.Core.GetDesign(display.kind), addonTable.Constants.ParentedToNameplates and 1 or addonTable.Core.GetDesignScale(display.kind))
           self:ListenToBuffs(display, unit)
           display:SetUnit(unit)
         end
@@ -235,27 +237,32 @@ function addonTable.Display.ManagerMixin:OnLoad()
           self.lastInteract:UpdateSoftInteract()
         end
         self:UpdateNamePlateSize()
-        self:UpdateSimplifiedScale()
         self:UpdateStacking()
+        self:UpdateTargetScale()
+        self:UpdateFriendlyFont()
       end)
     end
+    if state[addonTable.Constants.RefreshReason.SimplifiedScale] then
+      self:UpdateSimplifiedScale()
+    end
     if state[addonTable.Constants.RefreshReason.Scale] or state[addonTable.Constants.RefreshReason.TargetBehaviour] then
-      for unit, display in pairs(self.nameplateDisplays) do
-        display:InitializeWidgets(addonTable.Core.GetDesign(display.kind), display.scale)
-        display:SetUnit(unit)
-        if display.stackRegion then
-          self:UpdateStackingRegion(nil, unit)
+      self:SetScript("OnUpdate", function()
+        for unit, display in pairs(self.nameplateDisplays) do
+          display:UpdateVisual()
+          if display.stackRegion then
+            self:UpdateStackingRegion(unit)
+          end
         end
-      end
-      self:UpdateNamePlateSize()
-      self:UpdateTargetScale()
-      self:UpdateFriendlyFont()
+        self:UpdateNamePlateSize()
+        self:UpdateTargetScale()
+        self:UpdateFriendlyFont()
+      end)
     end
     if state[addonTable.Constants.RefreshReason.StackingBehaviour] then
       self:UpdateStacking()
       for unit, display in pairs(self.nameplateDisplays) do
         if display.stackRegion then
-          self:UpdateStackingRegion(nil, unit)
+          self:UpdateStackingRegion(unit)
         end
       end
     end
@@ -278,7 +285,7 @@ function addonTable.Display.ManagerMixin:OnLoad()
     if settingName == addonTable.Config.Options.CLICK_REGION_SCALE_X or settingName == addonTable.Config.Options.CLICK_REGION_SCALE_Y then
       for unit, UF in pairs(self.ModifiedUFs) do
         if UF.HitTestFrame then
-          self:UpdateStackingRegion(nameplate, unit)
+          self:UpdateStackingRegion(unit)
         end
       end
       self:UpdateNamePlateSize()
@@ -466,12 +473,12 @@ function addonTable.Display.ManagerMixin:ListenToBuffs(display, unit)
   end
 end
 
-function addonTable.Display.ManagerMixin:UpdateStackingRegion(nameplate, unit)
-  nameplate = nameplate or C_NamePlate.GetNamePlateForUnit(unit, issecure())
+function addonTable.Display.ManagerMixin:UpdateStackingRegion(unit)
   local stackRegion = self.nameplateDisplays[unit].stackRegion
-  local newWidth = addonTable.StackRect.width * addonTable.Config.Get(addonTable.Config.Options.STACK_REGION_SCALE_X) * addonTable.Config.Get(addonTable.Config.Options.GLOBAL_SCALE)
-  local newHeight = addonTable.StackRect.height * addonTable.Config.Get(addonTable.Config.Options.STACK_REGION_SCALE_Y) * addonTable.Config.Get(addonTable.Config.Options.GLOBAL_SCALE)
-  stackRegion:SetPoint("BOTTOMLEFT", nameplate, "CENTER", addonTable.StackRect.left - (newWidth - addonTable.StackRect.width)/2, addonTable.StackRect.bottom - (newHeight - addonTable.StackRect.height)/2)
+  local globalScale = addonTable.Config.Get(addonTable.Config.Options.GLOBAL_SCALE)
+  local newWidth = addonTable.StackRect.width * addonTable.Config.Get(addonTable.Config.Options.STACK_REGION_SCALE_X) * globalScale
+  local newHeight = addonTable.StackRect.height * addonTable.Config.Get(addonTable.Config.Options.STACK_REGION_SCALE_Y) * globalScale
+  stackRegion:SetPoint("BOTTOMLEFT", stackRegion:GetParent(), "CENTER", addonTable.StackRect.left - (newWidth - addonTable.StackRect.width)/2, addonTable.StackRect.bottom - (newHeight - addonTable.StackRect.height)/2)
   stackRegion:SetSize(newWidth, newHeight)
 end
 
@@ -503,7 +510,18 @@ function addonTable.Display.ManagerMixin:Install(unit, nameplate)
     self.nameplateDisplays[unit] = newDisplay
     self.unitToNameplate[unit] = nameplate
     local UF = self.ModifiedUFs[unit]
-    if UF and UF.HitTestFrame then
+    if nameplate.SetStackingBoundsFrame then
+      newDisplay:SetParent(nameplate)
+      if not newDisplay.stackRegion then
+        newDisplay.stackRegion = CreateFrame("Frame", nil, newDisplay)
+        local tex = newDisplay.stackRegion:CreateTexture()
+        tex:SetColorTexture(1, 0, 0, 0)
+        tex:SetAllPoints(newDisplay.stackRegion)
+      end
+      newDisplay.stackRegion:SetParent(nameplate)
+      nameplate:SetStackingBoundsFrame(newDisplay.stackRegion)
+      self:UpdateStackingRegion(unit)
+    elseif UF and UF.HitTestFrame then
       if not newDisplay.stackRegion then
         newDisplay.stackRegion = nameplate:CreateTexture()
         newDisplay.stackRegion:SetIgnoreParentScale(true)
@@ -511,12 +529,14 @@ function addonTable.Display.ManagerMixin:Install(unit, nameplate)
       end
       newDisplay.stackRegion:SetIgnoreParentScale(true)
       newDisplay.stackRegion:SetParent(nameplate)
-      self:UpdateStackingRegion(nameplate, unit)
+      self:UpdateStackingRegion(unit)
+    else
+      newDisplay:SetParent(nameplate)
     end
 
     newDisplay:Install(nameplate)
     if newDisplay.styleIndex ~= self.styleIndex then
-      newDisplay:InitializeWidgets(addonTable.Core.GetDesign(newDisplay.kind), addonTable.Core.GetDesignScale(newDisplay.kind))
+      newDisplay:InitializeWidgets(addonTable.Core.GetDesign(newDisplay.kind), addonTable.Constants.ParentedToNameplates and 1 or addonTable.Core.GetDesignScale(newDisplay.kind))
       newDisplay.styleIndex = self.styleIndex
     end
     self:ListenToBuffs(newDisplay, unit)
@@ -714,11 +734,18 @@ function addonTable.Display.ManagerMixin:OnEvent(eventName, ...)
     self:UpdateTargetScale()
     self:UpdateSimplifiedScale()
   elseif eventName == "UI_SCALE_CHANGED" then
-    for unit, display in pairs(self.nameplateDisplays) do
-      display:InitializeWidgets(addonTable.Core.GetDesign(display.kind), display.scale)
-      display:SetUnit(unit)
-      if display.stackRegion then
-        self:UpdateStackingRegion(nil, unit)
+    if not addonTable.Constants.ParentedToNameplates then
+      for unit, display in pairs(self.nameplateDisplays) do
+        display:UpdateVisual()
+        if display.stackRegion then
+          self:UpdateStackingRegion(unit)
+        end
+      end
+    else
+      for unit, display in pairs(self.nameplateDisplays) do
+        if display.stackRegion then
+          self:UpdateStackingRegion(unit)
+        end
       end
     end
     self:UpdateNamePlateSize()
