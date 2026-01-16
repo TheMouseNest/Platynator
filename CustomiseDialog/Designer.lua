@@ -998,6 +998,8 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
           frame = addonTable.CustomiseDialog.Components.GetColorPicker(parent, e.label, 28, Setter)
         elseif e.kind == "autoColors" then
           frame = GetAutomaticColors(parent, e.lockedElements, e.addAlpha)
+        elseif e.kind == "note" then
+          frame = addonTable.CustomiseDialog.Components.GetNote(parent, e.label)
         end
 
         if frame then

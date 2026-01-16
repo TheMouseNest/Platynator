@@ -60,6 +60,12 @@ end
 
 local minSize = 1
 local maxSize = 7
+local tocVersion
+if type(GetBuildInfo) == "function" then
+  local rawTocVersion = select(4, GetBuildInfo())
+  tocVersion = tonumber(rawTocVersion)
+end
+local isClassicTbc = not tocVersion or tocVersion < 30000
 
 addonTable.CustomiseDialog.WidgetsConfig = {
   ["bars"] = {
@@ -469,7 +475,7 @@ addonTable.CustomiseDialog.WidgetsConfig = {
             getter = function(details)
               return details.applyClassColors
             end,
-            hide = addonTable.Constants.IsMidnight,t
+            hide = addonTable.Constants.IsMidnight,
           },
         }
       }
@@ -512,9 +518,15 @@ addonTable.CustomiseDialog.WidgetsConfig = {
         label = addonTable.Locales.GENERAL,
         entries = {
           {
+            label = addonTable.Locales.QUEST_TRACKER_TOOLTIP_NOTE,
+            kind = "note",
+            setter = function() end,
+            getter = function() return nil end,
+            hide = not isClassicTbc,
+          },
+          {
             label = addonTable.Locales.QUEST_TRACKER_FIRST_ONLY,
             kind = "checkbox",
-            tooltip = addonTable.Locales.QUEST_TRACKER_FIRST_ONLY_INFO,
             setter = function(details, value)
               details.firstOnly = value
             end,
@@ -525,7 +537,6 @@ addonTable.CustomiseDialog.WidgetsConfig = {
           {
             label = addonTable.Locales.QUEST_TRACKER_PARTY_SUPPORT,
             kind = "checkbox",
-            tooltip = addonTable.Locales.QUEST_TRACKER_PARTY_SUPPORT_INFO,
             setter = function(details, value)
               details.partySupport = value
             end,

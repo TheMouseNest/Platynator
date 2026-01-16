@@ -62,6 +62,12 @@ local function IsQuestProgressText(text)
   if unitLevelPattern and text:match(unitLevelPattern) then
     return false
   end
+  if text:match("%d+%%%s*[Tt]hreat") then
+    return false
+  end
+  if text:match("^[Tt]hreat%s*%d+%%") then
+    return false
+  end
   if text:match("%d+/%d+") then
     return true
   end
@@ -69,6 +75,150 @@ local function IsQuestProgressText(text)
     return true
   end
   return false
+end
+
+local questieTooltips
+
+-- Questie only hooks the default GameTooltip, so use its API when available.
+local function GetQuestieTooltips()
+  if questieTooltips then
+    return questieTooltips
+  end
+  if QuestieLoader and QuestieLoader.ImportModule then
+    local ok, tooltips = pcall(QuestieLoader.ImportModule, QuestieLoader, "QuestieTooltips")
+    if ok and tooltips and tooltips.GetTooltip then
+      questieTooltips = tooltips
+      return questieTooltips
+    end
+  end
+  return nil
+end
+
+local function GetQuestieNpcId(unit)
+  if not UnitGUID then
+    return nil
+  end
+  local guid = UnitGUID(unit)
+  if not guid or guid == "" then
+    return nil
+  end
+  local unitType, _, _, _, _, npcId = strsplit("-", guid)
+  if unitType ~= "Creature" and unitType ~= "Vehicle" then
+    return nil
+  end
+  if not npcId or npcId == "" then
+    return nil
+  end
+  return npcId
+end
+
+local GetNameMap
+
+local function NormalizeName(text)
+  text = NormalizeText(text)
+  if not text then
+    return nil
+  end
+  return text:lower()
+end
+
+local function BuildNameMapLower(includeGroup)
+  local names = GetNameMap(includeGroup)
+  local lowered = {}
+  for name in pairs(names) do
+    if type(name) == "string" then
+      lowered[name:lower()] = true
+    end
+  end
+  return lowered
+end
+
+local function GetQuestieLineName(text, nameMap)
+  if not text or not nameMap then
+    return nil
+  end
+  for chunk in text:gmatch("%b()") do
+    local plain = NormalizeName(chunk:sub(2, -2))
+    if plain and nameMap[plain] then
+      return plain
+    end
+  end
+  return nil
+end
+
+local function StripQuestieNames(text, nameMap)
+  if not text or not nameMap then
+    return text
+  end
+  local stripped = text:gsub("%b()", function(chunk)
+    local plain = NormalizeName(chunk:sub(2, -2))
+    if plain and nameMap[plain] then
+      return ""
+    end
+    return chunk
+  end)
+  stripped = stripped:gsub("%s%s+", " "):gsub("%s+$", "")
+  return stripped
+end
+
+local function GetQuestTextFromQuestie(unit, firstOnly, partySupport)
+  local tooltips = GetQuestieTooltips()
+  if not tooltips then
+    return nil
+  end
+
+  local npcId = GetQuestieNpcId(unit)
+  if not npcId then
+    return nil
+  end
+
+  local tooltipLines = tooltips.GetTooltip("m_" .. npcId)
+  if type(tooltipLines) ~= "table" then
+    return nil
+  end
+
+  local playerNames
+  local groupNames
+  if not partySupport then
+    playerNames = BuildNameMapLower(false)
+    groupNames = BuildNameMapLower(true)
+  end
+
+  local results = {}
+  local currentQuestIndex = 0
+  for _, line in ipairs(tooltipLines) do
+    local normalized = NormalizeText(line)
+    if normalized and normalized ~= "" and not IsQuestProgressText(line) then
+      if firstOnly and currentQuestIndex >= 1 and #results > 0 then
+        break
+      end
+      currentQuestIndex = currentQuestIndex + 1
+    elseif IsQuestProgressText(line) then
+      if currentQuestIndex == 0 then
+        currentQuestIndex = 1
+      end
+      if not firstOnly or currentQuestIndex == 1 then
+        local output = line
+        if not partySupport then
+          local lineName = GetQuestieLineName(line, groupNames)
+          if lineName and not playerNames[lineName] then
+            output = nil
+          else
+            output = StripQuestieNames(line, playerNames)
+          end
+        end
+        if output and output ~= "" then
+          table.insert(results, output)
+        end
+      end
+    end
+  end
+
+  if #results > 0 then
+    return table.concat(results, "\n")
+  end
+
+  return nil
 end
 
 local questLineType = Enum and Enum.TooltipDataLineType and Enum.TooltipDataLineType.QuestObjective
@@ -88,7 +238,7 @@ local function GetLineText(line)
 end
 
 -- Build name lookup for player (and optionally party/raid) headers.
-local function GetNameMap(includeGroup)
+GetNameMap = function(includeGroup)
   local names = {}
 
   local function AddName(name, realm)
@@ -347,9 +497,19 @@ end
 -- Dispatch between C_TooltipInfo and GameTooltip paths.
 local function GetQuestText(unit, firstOnly, partySupport)
   if C_TooltipInfo then
-    return GetQuestTextFromTooltipData(C_TooltipInfo.GetUnit(unit), firstOnly, partySupport)
+    local text = GetQuestTextFromTooltipData(C_TooltipInfo.GetUnit(unit), firstOnly, partySupport)
+    if text and text ~= "" then
+      return text
+    end
   end
-  return GetQuestTextFromTooltip(unit, firstOnly, partySupport)
+  local questieText = GetQuestTextFromQuestie(unit, firstOnly, partySupport)
+  if questieText and questieText ~= "" then
+    return questieText
+  end
+  if not C_TooltipInfo then
+    return GetQuestTextFromTooltip(unit, firstOnly, partySupport)
+  end
+  return nil
 end
 
 addonTable.Display.QuestTrackerTextMixin = {}
