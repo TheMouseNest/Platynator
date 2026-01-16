@@ -49,6 +49,7 @@ function addonTable.Display.CastIconMarkerMixin:StripInternal()
 end
 
 function addonTable.Display.CastIconMarkerMixin:Strip()
+  self:StripInternal()
   self.marker:SetTexCoord(0, 1, 0, 1)
   if self.background then
     self.background:Hide()
