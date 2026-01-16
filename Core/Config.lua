@@ -3,7 +3,7 @@ local addonTable = select(2, ...)
 addonTable.Config = {}
 
 local settings = {
-  STYLE = {key = "style", default = "_hare"},
+  STYLE = {key = "style", default = "_deer"},
   CURRENT_SKIN = {key = "current_skin", default = "blizzard", refresh = {addonTable.Constants.RefreshReason.Skin}},
 
   GLOBAL_SCALE = {key = "global_scale", default = 1, refresh = {addonTable.Constants.RefreshReason.Scale}},
@@ -11,7 +11,7 @@ local settings = {
   LEGACY_DESIGN = {key = "design_all", default = {}},
 
   DESIGNS = {key = "designs", default = {}, refresh = {addonTable.Constants.RefreshReason.Design}},
-  DESIGNS_ASSIGNED = {key = "designs_assigned", default = {["friend"] = "_name-only", ["enemy"] = "_hare", ["enemySimplified"] = "_hare_simplified"}},
+  DESIGNS_ASSIGNED = {key = "designs_assigned", default = {["friend"] = "_name-only", ["enemy"] = "_deer", ["enemySimplified"] = "_hare_simplified"}},
 
   TARGET_SCALE = {key = "target_scale", default = 1.2, refresh = {addonTable.Constants.RefreshReason.TargetBehaviour}},
   CAST_SCALE = {key = "cast_scale", default = 1.1, refresh = {addonTable.Constants.RefreshReason.TargetBehaviour}},
