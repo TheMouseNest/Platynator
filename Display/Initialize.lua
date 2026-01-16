@@ -248,6 +248,7 @@ function addonTable.Display.ManagerMixin:OnLoad()
       end
       self:UpdateNamePlateSize()
       self:UpdateTargetScale()
+      self:UpdateFriendlyFont()
     end
     if state[addonTable.Constants.RefreshReason.StackingBehaviour] then
       self:UpdateStacking()
