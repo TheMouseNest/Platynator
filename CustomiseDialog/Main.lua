@@ -321,11 +321,13 @@ local function SetupBehaviour(parent)
     end
     table.insert(allFrames, simplifiedPlatesDropdown)
 
-    simplifiedScaleSlider = addonTable.CustomiseDialog.Components.GetSlider(container, addonTable.Locales.SIMPLIFIED_SCALE, 1, 100, function(value) return ("%d%%"):format(value) end, function(value)
-      addonTable.Config.Set(addonTable.Config.Options.SIMPLIFIED_SCALE, value / 100)
-    end)
-    simplifiedScaleSlider:SetPoint("TOP", allFrames[#allFrames], "BOTTOM", 0, 0)
-    table.insert(allFrames, simplifiedScaleSlider)
+    if C_CVar.GetCVarInfo("nameplateSimplifiedScale") then
+      simplifiedScaleSlider = addonTable.CustomiseDialog.Components.GetSlider(container, addonTable.Locales.SIMPLIFIED_SCALE, 1, 100, function(value) return ("%d%%"):format(value) end, function(value)
+        addonTable.Config.Set(addonTable.Config.Options.SIMPLIFIED_SCALE, value / 100)
+      end)
+      simplifiedScaleSlider:SetPoint("TOP", allFrames[#allFrames], "BOTTOM", 0, 0)
+      table.insert(allFrames, simplifiedScaleSlider)
+    end
   end
 
   local friendlyInInstancesDropdown = addonTable.CustomiseDialog.Components.GetBasicDropdown(container, addonTable.Locales.SHOW_FRIENDLY_IN_INSTANCES, function(value)
