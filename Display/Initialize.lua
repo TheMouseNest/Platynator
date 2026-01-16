@@ -204,7 +204,7 @@ function addonTable.Display.ManagerMixin:OnLoad()
   end)
 
   addonTable.CallbackRegistry:RegisterCallback("RefreshStateChange", function(_, state)
-    if state[addonTable.Constants.RefreshReason.Design] then
+    if state[addonTable.Constants.RefreshReason.Design] or state[addonTable.Constants.RefreshReason.SimplifiedScale] then
       self:SetScript("OnUpdate", function()
         local design = addonTable.Core.GetDesign("enemy")
         addonTable.CurrentFont = addonTable.Core.GetFontByDesign(design)
@@ -235,6 +235,7 @@ function addonTable.Display.ManagerMixin:OnLoad()
           self.lastInteract:UpdateSoftInteract()
         end
         self:UpdateNamePlateSize()
+        self:UpdateSimplifiedScale()
         self:UpdateStacking()
       end)
     end
@@ -611,6 +612,19 @@ function addonTable.Display.ManagerMixin:UpdateNamePlateSize()
   end
 end
 
+function addonTable.Display.ManagerMixin:UpdateSimplifiedScale()
+  if InCombatLockdown() then
+    self:RegisterEvent("PLAYER_REGEN_ENABLED")
+    return
+  end
+
+  if not C_CVar.GetCVarInfo("nameplateSimplifiedScale") then
+    return
+  end
+
+  C_CVar.SetCVar("nameplateSimplifiedScale", addonTable.Config.Get(addonTable.Config.Options.SIMPLIFIED_SCALE))
+end
+
 function addonTable.Display.ManagerMixin:InitializeFriendlyFont()
   if not SystemFont_NamePlate_Outlined then
     return
@@ -698,6 +712,7 @@ function addonTable.Display.ManagerMixin:OnEvent(eventName, ...)
     self:UpdateShowState()
     self:UpdateNamePlateSize()
     self:UpdateTargetScale()
+    self:UpdateSimplifiedScale()
   elseif eventName == "UI_SCALE_CHANGED" then
     for unit, display in pairs(self.nameplateDisplays) do
       display:InitializeWidgets(addonTable.Core.GetDesign(display.kind), display.scale)
@@ -741,5 +756,6 @@ function addonTable.Display.ManagerMixin:OnEvent(eventName, ...)
     self:UpdateTargetScale()
     self:UpdateInstanceShowState()
     self:UpdateNamePlateSize()
+    self:UpdateSimplifiedScale()
   end
 end

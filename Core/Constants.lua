@@ -38,6 +38,7 @@ addonTable.Constants.RefreshReason = {
   StackingBehaviour = 4,
   ShowBehaviour = 5,
   Simplified = 6,
+  SimplifiedScale = 7,
 }
 
 addonTable.Constants.OldFontMapping = {

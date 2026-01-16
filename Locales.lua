@@ -113,6 +113,7 @@ L["ON_TARGET_SCALE"] = "On target scale"
 L["ON_CAST_SCALE"] = "On cast scale"
 L["ON_CAST_TRANSPARENCY"] = "On cast transparency"
 L["ON_NOT_TARGET_TRANSPARENCY"] = "On not target transparency"
+L["SIMPLIFIED_SCALE"] = "Simplified scale"
 
 L["FOREGROUND"] = "Foreground"
 L["VISUAL"] = "Visual"
