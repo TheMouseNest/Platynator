@@ -534,7 +534,12 @@ addonTable.CustomiseDialog.WidgetsConfig = {
               return details.firstOnly ~= false
             end,
           },
-          {
+        }
+      },
+      {
+        label = addonTable.Locales.QUEST_TRACKER_PARTY_SUPPORT_TAB,
+        entries = {
+                    {
             label = addonTable.Locales.QUEST_TRACKER_PARTY_SUPPORT,
             kind = "checkbox",
             setter = function(details, value)
@@ -544,8 +549,18 @@ addonTable.CustomiseDialog.WidgetsConfig = {
               return details.partySupport == true
             end,
           },
-        }
-      },
+          {
+            label = addonTable.Locales.QUEST_TRACKER_PARTY_SUPPORT_COLLAPSE,
+            kind = "checkbox",
+            setter = function(details, value)
+              details.partySupportCollapse = value
+            end,
+            getter = function(details)
+              return details.partySupportCollapse == true
+            end,
+          },
+        },
+      }
     },
   },
   ["markers"] = {
