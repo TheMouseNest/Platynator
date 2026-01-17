@@ -272,7 +272,7 @@ function addonTable.Core.UpgradeDesign(design)
       end
     end
     if bar.kind == "cast" and bar.interruptMarker == nil then
-      bar.interruptMarker = {asset = "wide/glow"}
+      bar.interruptMarker = {asset = "none"}
     end
     if bar.autoColors then
       UpdateAutoColors(bar.autoColors)
