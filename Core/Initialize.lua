@@ -323,6 +323,9 @@ function addonTable.Core.UpgradeDesign(design)
       text.applyDifficultyColors = nil
       text.colors = nil
     end
+    if text.kind == "health" and text.percentageDecimals == nil then
+      text.percentageDecimals = 0
+    end
     if text.autoColors then
       UpdateAutoColors(text.autoColors)
     end

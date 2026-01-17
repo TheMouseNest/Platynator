@@ -3,18 +3,26 @@ local addonTable = select(2, ...)
 
 addonTable.Display.HealthTextMixin = {}
 
+function addonTable.Display.HealthTextMixin:PostInit()
+  self.percentageFormat = "%d%%"
+  if self.details.percentageDecimals > 0 then
+    self.percentageFormat = "%." .. self.details.percentageDecimals .. "f%%"
+  end
+end
+
 function addonTable.Display.HealthTextMixin:SetUnit(unit)
   self.unit = unit
   if self.unit then
     self:RegisterUnitEvent("UNIT_HEALTH", self.unit)
     self:UpdateText()
   else
-    self:Strip()
+    self:UnregisterAllEvents()
   end
 end
 
 function addonTable.Display.HealthTextMixin:Strip()
   self:UnregisterAllEvents()
+  self.percentageFormat = nil
 end
 
 function addonTable.Display.HealthTextMixin:OnEvent()
@@ -51,9 +59,9 @@ function addonTable.Display.HealthTextMixin:UpdateText()
     }
     local types = self.details.displayTypes 
     if UnitHealthPercent then -- Midnight APIs
-      values.percentage = string.format("%d%%", UnitHealthPercent(self.unit, true, CurveConstants.ScaleTo100))
+      values.percentage = string.format(self.percentageFormat, UnitHealthPercent(self.unit, true, CurveConstants.ScaleTo100))
     else
-      values.percentage = math.ceil(UnitHealth(self.unit, true)/UnitHealthMax(self.unit)*100) .. "%"
+      values.percentage = string.format(self.percentageFormat, UnitHealth(self.unit, true)/UnitHealthMax(self.unit)*100)
     end
     if #types == 2 then
       self.text:SetFormattedText("%s (%s)", values[types[1]], values[types[2]])
