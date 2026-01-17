@@ -399,6 +399,23 @@ addonTable.CustomiseDialog.DesignWidgets = {
     },
   },
   {
+    name = addonTable.Locales.QUEST_TRACKER,
+    kind = "texts",
+    default = {
+      kind = "questTracker",
+      firstOnly = true,
+      partySupport = false,
+      scale = 1,
+      layer = 2,
+      anchor = {"TOPLEFT", -140, 50},
+      widthLimit = 0,
+      color = GetColor("FFFFFF"),
+      align = "CENTER",
+      shorten = "NONE",
+      truncate = false,
+    },
+  },
+  {
     name = addonTable.Locales.ICONS,
     special = "header",
   },
