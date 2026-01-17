@@ -157,40 +157,51 @@ function addonTable.Display.NameplateMixin:OnLoad()
   self.casting = false
 
   self.sizeChangeCount = -1
+end
 
-  self:SetScript("OnSizeChanged", function()
-    if not self.widgets or not self:IsVisible() then
-      return
+function addonTable.Display.NameplateMixin:OnSizeChanged()
+  -- Optimisation to avoid recalculating anchors/sizes while nameplate scales up/down
+  self.sizeChangeCount = 0
+  self:SetScript("OnUpdate", function()
+    self.sizeChangeCount = self.sizeChangeCount + 1
+    if self.sizeChangeCount >= 2 then
+      self:ApplyPixelPerfectSizing()
+      self:SetScript("OnUpdate", nil)
     end
-    if self.sizeChangeCount == -1 then
-      self.sizeChangeCount = 0
-      return
-    end
-    -- Optimisation to avoid recalculating anchors/sizes while nameplate scales up/down
-    self.sizeChangeCount = 0
-    self:SetScript("OnUpdate", function()
-      self.sizeChangeCount = self.sizeChangeCount + 1
-      if self.sizeChangeCount >= 2 then
-        self:ApplyPixelPerfectSizing()
-        self.sizeChangeCount = -1
-        self:SetScript("OnUpdate", nil)
-      end
-    end)
   end)
 end
 
+-- Avoid pixel-perfecting the alignment if the scale hasn't changed, or its
+-- shrinking cause the nameplate is disappearing
+function addonTable.Display.NameplateMixin:ShouldNotSize()
+  -- Detect sizing down, which we should ignore
+  if not self.unit or not self:IsVisible() then
+    return true
+  end
+  local scale = self:GetEffectiveScale()
+  return scale == self.lastScale or scale < self.offsetScale
+end
+
 function addonTable.Display.NameplateMixin:ApplyPixelPerfectSizing()
-  if not self.widgets or not self:IsVisible() then
+  if self:ShouldNotSize() then
     return
   end
   for _, w in ipairs(self.widgets) do
     w:ApplyAnchor()
     w:ApplySize()
   end
+  self.lastScale = self:GetEffectiveScale()
 end
 
 function addonTable.Display.NameplateMixin:InitializeWidgets(design, scale)
-  self.scale = scale or 1
+  self.offsetScale = (scale or 1) * UIParent:GetEffectiveScale() * addonTable.Config.Get(addonTable.Config.Options.GLOBAL_SCALE)
+  if addonTable.Constants.ParentedToNameplates then
+    self.scale = 1
+  else
+    self.scale = scale or 1
+  end
+
+  self.lastScale = self:GetEffectiveScale()
 
   self.unit = nil
   self:UpdateVisual()
@@ -254,6 +265,11 @@ function addonTable.Display.NameplateMixin:InitializeWidgets(design, scale)
   end
 
   self.AurasManager:PostInit(designInfo.buffs, designInfo.debuffs, designInfo.crowdControl)
+
+  if self:GetScript("OnSizeChanged") == nil then
+    self:SetScript("OnSizeChanged", self.OnSizeChanged)
+  end
+  self:SetScript("OnUpdate", nil)
 end
 
 function addonTable.Display.NameplateMixin:Install(nameplate)
@@ -264,7 +280,7 @@ function addonTable.Display.NameplateMixin:Install(nameplate)
 
   -- We force a sizing immediately to avoid 0 size widgets breaking the textures from the Blizz animations
   self:ApplyPixelPerfectSizing()
-  self.sizeChangeCount = -1
+  self:SetScript("OnUpdate", nil)
 end
 
 function addonTable.Display.NameplateMixin:SetUnit(unit)
