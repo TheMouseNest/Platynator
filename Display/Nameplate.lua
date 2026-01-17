@@ -156,8 +156,14 @@ function addonTable.Display.NameplateMixin:OnLoad()
 
   self.casting = false
 
+  self.sizeChangeCount = -1
+
   self:SetScript("OnSizeChanged", function()
-    if not self.widgets or #self.widgets == 0 or not self:IsVisible() then
+    if not self.widgets or not self:IsVisible() then
+      return
+    end
+    if self.sizeChangeCount == -1 then
+      self.sizeChangeCount = 0
       return
     end
     -- Optimisation to avoid recalculating anchors/sizes while nameplate scales up/down
@@ -165,17 +171,22 @@ function addonTable.Display.NameplateMixin:OnLoad()
     self:SetScript("OnUpdate", function()
       self.sizeChangeCount = self.sizeChangeCount + 1
       if self.sizeChangeCount >= 2 then
-        if not self.widgets or not self:IsVisible() then
-          return
-        end
-        for _, w in ipairs(self.widgets) do
-          w:ApplyAnchor()
-          w:ApplySize()
-        end
+        self:ApplyPixelPerfectSizing()
+        self.sizeChangeCount = -1
         self:SetScript("OnUpdate", nil)
       end
     end)
   end)
+end
+
+function addonTable.Display.NameplateMixin:ApplyPixelPerfectSizing()
+  if not self.widgets or not self:IsVisible() then
+    return
+  end
+  for _, w in ipairs(self.widgets) do
+    w:ApplyAnchor()
+    w:ApplySize()
+  end
 end
 
 function addonTable.Display.NameplateMixin:InitializeWidgets(design, scale)
@@ -250,6 +261,10 @@ function addonTable.Display.NameplateMixin:Install(nameplate)
   self:SetFrameStrata("BACKGROUND")
   self:SetPoint("CENTER", nameplate)
   self:SetSize(10, 10)
+
+  -- We force a sizing immediately to avoid 0 size widgets breaking the textures from the Blizz animations
+  self:ApplyPixelPerfectSizing()
+  self.sizeChangeCount = -1
 end
 
 function addonTable.Display.NameplateMixin:SetUnit(unit)
