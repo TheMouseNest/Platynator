@@ -234,6 +234,7 @@ L["UNINTERRUPTABLE"] = "Uninterruptable"
 L["SOFT_TARGET"] = "Soft Target"
 L["SOFT_TARGET_SENTENCE_CASE"] = "Soft target"
 L["SHOW_ONLY_IN_OPEN_WORLD"] = "Show only in open world"
+L["MARK_INTERRUPT_READY_POINT"] = "Mark interrupt ready point"
 
 L["WHAT_TO_EXPORT"] = "What to export?"
 L["STYLE"] = "Style"

@@ -27,31 +27,7 @@ local function GetPlayerRole()
   return roleMap[role]
 end
 
-local interruptMap = {
-  ["DEATHKNIGHT"] = {47528, 47476},
-  ["WARRIOR"] = {6552},
-  ["WARLOCK"] = {19647},
-  ["SHAMAN"] = {57994},
-  ["ROGUE"] = {1766},
-  ["PRIEST"] = {15487},
-  ["PALADIN"] = {96231, 31935},
-  ["MONK"] = {116705},
-  ["MAGE"] = {2139},
-  ["HUNTER"] = {187707, 147362},
-  ["EVOKER"] = {351338},
-  ["DRUID"] = {38675, 78675, 106839},
-  ["DEMONHUNTER"] = {183752},
-}
-
-local interruptSpells = interruptMap[UnitClassBase("player")] or {}
-
-local function GetInterruptSpell()
-  for _, s in ipairs(interruptSpells) do
-    if C_SpellBook.IsSpellKnown(s) then
-      return s
-    end
-  end
-end
+local GetInterruptSpell = addonTable.Display.Utilities.GetInterruptSpell
 
 local t = UIParent:CreateTexture()
 t:SetTexture("Interface/AddOns/Platynator/Assets/Special/white.png")

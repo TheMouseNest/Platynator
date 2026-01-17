@@ -204,13 +204,22 @@ function addonTable.Display.GetCastBar(frame, parent)
   frame.background:SetPoint("CENTER")
   frame.background:SetDrawLayer("BACKGROUND")
 
+  frame.interruptMarker = CreateFrame("StatusBar", nil, frame)
+  frame.interruptMarker:SetStatusBarTexture("Interface/AddOns/Platynator/Special/transparent.png")
+  frame.interruptMarkerPoint = frame.interruptMarker:CreateTexture()
+  frame.interruptMarkerPoint:SetColorTexture(1, 1, 1)
+  frame.interruptMarkerPoint:SetWidth(5)
+  frame.interruptMarkerPoint:SetPoint("CENTER", frame.interruptMarker:GetStatusBarTexture(), "RIGHT")
+  frame.interruptMarker:SetClipsChildren(true)
+
   function frame:Init(details)
     InitBar(frame, details)
 
     local borderDetails = addonTable.Assets.BarBordersSliced[details.border.asset]
 
     frame.statusBar:SetFrameLevel(frame:GetFrameLevel() + 2)
-    borderHolder:SetFrameLevel(frame:GetFrameLevel() + 4)
+    frame.interruptMarker:SetFrameLevel(frame:GetFrameLevel() + 4)
+    borderHolder:SetFrameLevel(frame:GetFrameLevel() + 5)
 
     local foregroundDetails = addonTable.Assets.BarBackgrounds[details.foreground.asset]
     frame.reverseStatusTexture:Hide()
@@ -218,14 +227,19 @@ function addonTable.Display.GetCastBar(frame, parent)
     frame.reverseStatusTexture:SetPoint("RIGHT", frame.statusBar:GetStatusBarTexture(), "LEFT")
     frame.reverseStatusTexture:SetHorizTile(true)
 
+    frame.interruptMarker:SetScale(1/borderDetails.lowerScale)
+    frame.interruptMarker:ClearAllPoints()
+    frame.interruptMarker:SetPoint("LEFT", frame.statusBar:GetStatusBarTexture(), "RIGHT")
+    if details.interruptMarker.asset ~= "none" then
+      local markerDetails = addonTable.Assets.BarPositionHighlights[details.interruptMarker.asset]
+      frame.interruptMarkerPoint:SetTexture(markerDetails.file)
+    end
+
     local backgroundDetails = addonTable.Assets.BarBackgrounds[details.background.asset]
 
     frame.reverseStatusTexture:RemoveMaskTexture(frame.mask)
-
-    local maskInfo = addonTable.Assets.BarMasks[details.border.asset]
-    if maskInfo then
-      frame.reverseStatusTexture:AddMaskTexture(frame.mask)
-    end
+    frame.reverseStatusTexture:AddMaskTexture(frame.mask)
+    frame.interruptMarkerPoint:AddMaskTexture(frame.mask)
 
     frame.details = details
 
@@ -251,6 +265,12 @@ function addonTable.Display.GetCastBar(frame, parent)
     SizeBar(frame, details)
     local borderDetails = addonTable.Assets.BarBordersSliced[details.border.asset]
     frame.reverseStatusTexture:SetHeight(frame.rawHeight * borderDetails.lowerScale)
+    frame.interruptMarkerPoint:SetHeight(frame.rawHeight * borderDetails.lowerScale)
+    frame.interruptMarker:SetSize(frame.rawWidth * borderDetails.lowerScale, frame.rawHeight * borderDetails.lowerScale)
+    if details.interruptMarker.asset ~= "none" then
+      local markerDetails = addonTable.Assets.BarPositionHighlights[details.interruptMarker.asset]
+      PixelUtil.SetSize(frame.interruptMarkerPoint, markerDetails.width * details.scale * borderDetails.lowerScale, frame.rawHeight * borderDetails.lowerScale)
+    end
   end
 
   return frame
