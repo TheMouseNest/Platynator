@@ -367,6 +367,7 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
     end
     if #foci > 1 then
       MenuUtil.CreateContextMenu(foci[1], function(_, rootDescription)
+        rootDescription:SetMinimumWidth(1)
         for _, w in ipairs(foci) do
           local button = rootDescription:CreateButton(titleMap[w.kind][w.details.kind], function()
             local index = tIndexOf(widgets, w)
