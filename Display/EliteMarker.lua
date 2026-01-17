@@ -33,10 +33,10 @@ function addonTable.Display.EliteMarkerMixin:SetUnit(unit)
     else
       self.marker:Hide()
     end
-  else
-    self:Strip()
   end
 end
 
 function addonTable.Display.EliteMarkerMixin:Strip()
+  self.eliteTexture = nil
+  self.rareEliteTexture = nil
 end

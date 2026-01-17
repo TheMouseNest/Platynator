@@ -290,9 +290,10 @@ local function SetupBehaviour(parent)
   end
   table.insert(allFrames, applyNameplatesDropdown)
 
+  local simplifiedScaleSlider
   if addonTable.Constants.IsMidnight then
     local simplifiedPlatesDropdown = addonTable.CustomiseDialog.Components.GetBasicDropdown(container, addonTable.Locales.SIMPLIFIED_NAMEPLATES)
-    simplifiedPlatesDropdown:SetPoint("TOP", allFrames[#allFrames], "BOTTOM", 0, 0)
+    simplifiedPlatesDropdown:SetPoint("TOP", allFrames[#allFrames], "BOTTOM", 0, -30)
     do
       local values = {
         "instancesNormal",
@@ -319,6 +320,14 @@ local function SetupBehaviour(parent)
       end)
     end
     table.insert(allFrames, simplifiedPlatesDropdown)
+
+    if C_CVar.GetCVarInfo("nameplateSimplifiedScale") then
+      simplifiedScaleSlider = addonTable.CustomiseDialog.Components.GetSlider(container, addonTable.Locales.SIMPLIFIED_SCALE, 1, 100, function(value) return ("%d%%"):format(value) end, function(value)
+        addonTable.Config.Set(addonTable.Config.Options.SIMPLIFIED_SCALE, value / 100)
+      end)
+      simplifiedScaleSlider:SetPoint("TOP", allFrames[#allFrames], "BOTTOM", 0, 0)
+      table.insert(allFrames, simplifiedScaleSlider)
+    end
   end
 
   local friendlyInInstancesDropdown = addonTable.CustomiseDialog.Components.GetBasicDropdown(container, addonTable.Locales.SHOW_FRIENDLY_IN_INSTANCES, function(value)
@@ -384,6 +393,10 @@ local function SetupBehaviour(parent)
     castScaleSlider:SetValue(addonTable.Config.Get(addonTable.Config.Options.CAST_SCALE) * 100)
     castTransparencySlider:SetValue(100 - addonTable.Config.Get(addonTable.Config.Options.CAST_ALPHA) * 100)
     notTargetTransparencySlider:SetValue(100 - addonTable.Config.Get(addonTable.Config.Options.NOT_TARGET_ALPHA) * 100)
+
+    if simplifiedScaleSlider then
+      simplifiedScaleSlider:SetValue(addonTable.Config.Get(addonTable.Config.Options.SIMPLIFIED_SCALE) * 100)
+    end
 
     for _, f in ipairs(allFrames) do
       if f.SetValue then

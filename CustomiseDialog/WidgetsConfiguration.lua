@@ -255,6 +255,21 @@ addonTable.CustomiseDialog.WidgetsConfig = {
     },
     ["cast"] = {
       {
+        label = addonTable.Locales.TEXTURES,
+        entries = {
+          {
+            label = addonTable.Locales.MARK_INTERRUPT_READY_POINT,
+            kind = "checkbox",
+            setter = function(details, value)
+              details.interruptMarker.asset = value and "wide/glow" or "none"
+            end,
+            getter = function(details)
+              return details.interruptMarker.asset ~= "none"
+            end,
+          },
+        },
+      },
+      {
         label = addonTable.Locales.COLORS,
         entries = {
           {
@@ -791,7 +806,7 @@ addonTable.CustomiseDialog.WidgetsConfig = {
             getter = function(details)
               return details.filters.important
             end,
-            hide = not addonTable.Constants.IsMidnight,
+            hide = addonTable.Constants.IsClassic,
           },
           {
             label = addonTable.Locales.FROM_YOU,

@@ -4,7 +4,6 @@ local addonTable = select(2, ...)
 addonTable.Display.NameplateMixin = {}
 function addonTable.Display.NameplateMixin:OnLoad()
   self:SetFlattensRenderLayers(true)
-  self:SetIgnoreParentScale(true)
   self:SetCollapsesLayout(true)
 
   self.widgets = {}
@@ -157,15 +156,37 @@ function addonTable.Display.NameplateMixin:OnLoad()
 
   self.casting = false
 
+  self.sizeChangeCount = -1
+
   self:SetScript("OnSizeChanged", function()
     if not self.widgets or not self:IsVisible() then
       return
     end
-    for _, w in ipairs(self.widgets) do
-      w:ApplyAnchor()
-      w:ApplySize()
+    if self.sizeChangeCount == -1 then
+      self.sizeChangeCount = 0
+      return
     end
+    -- Optimisation to avoid recalculating anchors/sizes while nameplate scales up/down
+    self.sizeChangeCount = 0
+    self:SetScript("OnUpdate", function()
+      self.sizeChangeCount = self.sizeChangeCount + 1
+      if self.sizeChangeCount >= 2 then
+        self:ApplyPixelPerfectSizing()
+        self.sizeChangeCount = -1
+        self:SetScript("OnUpdate", nil)
+      end
+    end)
   end)
+end
+
+function addonTable.Display.NameplateMixin:ApplyPixelPerfectSizing()
+  if not self.widgets or not self:IsVisible() then
+    return
+  end
+  for _, w in ipairs(self.widgets) do
+    w:ApplyAnchor()
+    w:ApplySize()
+  end
 end
 
 function addonTable.Display.NameplateMixin:InitializeWidgets(design, scale)
@@ -240,11 +261,14 @@ function addonTable.Display.NameplateMixin:Install(nameplate)
   self:SetFrameStrata("BACKGROUND")
   self:SetPoint("CENTER", nameplate)
   self:SetSize(10, 10)
+
+  -- We force a sizing immediately to avoid 0 size widgets breaking the textures from the Blizz animations
+  self:ApplyPixelPerfectSizing()
+  self.sizeChangeCount = -1
 end
 
 function addonTable.Display.NameplateMixin:SetUnit(unit)
   self.SoftTargetIcon:Hide()
-  self:SetAlpha(0)
 
   self.interactUnit = unit
   if unit and (not UnitNameplateShowsWidgetsOnly or not UnitNameplateShowsWidgetsOnly(unit)) and not UnitIsGameObject(unit) then
@@ -356,9 +380,14 @@ function addonTable.Display.NameplateMixin:UpdateForFocus()
 end
 
 function addonTable.Display.NameplateMixin:UpdateVisual()
+  local scaleMod = addonTable.Constants.IsMidnight and 1 or UIParent:GetEffectiveScale()
   if not self.unit then
-    self.overrideAlpha = 1
-    self:SetScale(self.scale * addonTable.Config.Get(addonTable.Config.Options.GLOBAL_SCALE) * UIParent:GetEffectiveScale())
+    if not addonTable.Constants.ParentedToNameplates then
+      self.overrideAlpha = 1
+    else
+      self:SetAlpha(1)
+    end
+    self:SetScale(self.scale * addonTable.Config.Get(addonTable.Config.Options.GLOBAL_SCALE) * scaleMod)
     return
   end
 
@@ -366,15 +395,22 @@ function addonTable.Display.NameplateMixin:UpdateVisual()
   local alpha = 1
   local isTarget = UnitIsUnit("target", self.unit)
   if isTarget then
-    scale = scale * addonTable.Config.Get(addonTable.Config.Options.TARGET_SCALE)
+    if not addonTable.Constants.ParentedToNameplates then
+      scale = scale * addonTable.Config.Get(addonTable.Config.Options.TARGET_SCALE)
+    end
+    -- Nothing to do if its parented to the nameplate, as that will handle scaling for us
   elseif self.casting then
     scale = scale * addonTable.Config.Get(addonTable.Config.Options.CAST_SCALE)
     alpha = alpha * addonTable.Config.Get(addonTable.Config.Options.CAST_ALPHA)
   else
     alpha = alpha * addonTable.Config.Get(addonTable.Config.Options.NOT_TARGET_ALPHA)
   end
-  self:SetScale(self.scale * scale * addonTable.Config.Get(addonTable.Config.Options.GLOBAL_SCALE) * UIParent:GetEffectiveScale())
-  self.overrideAlpha = alpha
+  self:SetScale(self.scale * scale * addonTable.Config.Get(addonTable.Config.Options.GLOBAL_SCALE) * scaleMod)
+  if not addonTable.Constants.ParentedToNameplates then
+    self.overrideAlpha = alpha
+  else
+    self:SetAlpha(alpha)
+  end
 end
 
 function addonTable.Display.NameplateMixin:UpdateSoftInteract()

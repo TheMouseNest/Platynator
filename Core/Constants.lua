@@ -17,7 +17,10 @@ addonTable.Constants = {
 
   CustomName = "_custom",
 
-  DefaultFont = "Roboto Condensed Bold"
+  ParentedToNameplates = (select(4, GetBuildInfo())) ~= 120000,
+
+  DefaultFont = "Roboto Condensed Bold",
+  FontFamilies = {"roman", "korean", "simplifiedchinese", "traditionalchinese", "russian"},
 }
 addonTable.Constants.Events = {
   "SettingChanged",
@@ -37,6 +40,7 @@ addonTable.Constants.RefreshReason = {
   StackingBehaviour = 4,
   ShowBehaviour = 5,
   Simplified = 6,
+  SimplifiedScale = 7,
 }
 
 addonTable.Constants.OldFontMapping = {

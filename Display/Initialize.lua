@@ -53,6 +53,16 @@ function addonTable.Display.ManagerMixin:OnLoad()
   self:RegisterEvent("RUNE_POWER_UPDATE")
   self:RegisterEvent("UNIT_FACTION")
 
+  if C_CVar.GetCVarInfo("nameplateShowOnlyNameForFriendlyPlayerUnits") then -- Midnight name-only nameplates
+    self:RegisterEvent("FORBIDDEN_NAME_PLATE_UNIT_ADDED")
+
+    EventRegistry:RegisterCallback("TextSizeManager.OnTextScaleUpdated", function()
+      if addonTable.CurrentFont then
+        self:UpdateFriendlyFont()
+      end
+    end)
+  end
+
   C_Timer.NewTicker(0.1, function() -- Used for transitioning mobs to attackable
     for unit, display in pairs(self.nameplateDisplays) do
       local display = self.nameplateDisplays[unit]
@@ -74,16 +84,18 @@ function addonTable.Display.ManagerMixin:OnLoad()
   self.ModifiedUFs = {}
   self.HookedUFs = {}
   self.unitToNameplate = {}
-  self.AlphaImporter = CreateFrame("Frame", nil, self)
-  self.AlphaImporter:SetScript("OnUpdate", function()
-    for unit, nameplate in pairs(self.unitToNameplate) do
-      local display = self.nameplateDisplays[unit]
-      display:SetAlpha(nameplate:GetAlpha() * display.overrideAlpha)
-      if display:GetFrameLevel() ~= nameplate:GetFrameLevel() then
-        display:SetFrameLevel(nameplate:GetFrameLevel())
+  if not addonTable.Constants.ParentedToNameplates then
+    self.AlphaImporter = CreateFrame("Frame", nil, self)
+    self.AlphaImporter:SetScript("OnUpdate", function()
+      for unit, nameplate in pairs(self.unitToNameplate) do
+        local display = self.nameplateDisplays[unit]
+        display:SetAlpha(nameplate:GetAlpha() * display.overrideAlpha)
+        if display:GetFrameLevel() ~= nameplate:GetFrameLevel() then
+          display:SetFrameLevel(nameplate:GetFrameLevel())
+        end
       end
-    end
-  end)
+    end)
+  end
   -- Apply Platynator settings to aura layout
   local function RelayoutAuras(list, filter)
     if list:IsForbidden() then
@@ -198,6 +210,7 @@ function addonTable.Display.ManagerMixin:OnLoad()
       self:SetScript("OnUpdate", function()
         local design = addonTable.Core.GetDesign("enemy")
         addonTable.CurrentFont = addonTable.Core.GetFontByDesign(design)
+        self:InitializeFriendlyFont()
         PlatynatorNameplateCooldownFont:SetFont(design.font.asset, 13, design.font.outline and "OUTLINE" or "")
         if design.font.shadow then
           PlatynatorNameplateCooldownFont:SetShadowOffset(1, -1)
@@ -214,9 +227,9 @@ function addonTable.Display.ManagerMixin:OnLoad()
           end
           local UF = self.ModifiedUFs[unit]
           if UF and UF.HitTestFrame then
-            self:UpdateStackingRegion(nameplate, unit)
+            self:UpdateStackingRegion(unit)
           end
-          display:InitializeWidgets(addonTable.Core.GetDesign(display.kind), addonTable.Core.GetDesignScale(display.kind))
+          display:InitializeWidgets(addonTable.Core.GetDesign(display.kind), addonTable.Constants.ParentedToNameplates and 1 or addonTable.Core.GetDesignScale(display.kind))
           self:ListenToBuffs(display, unit)
           display:SetUnit(unit)
         end
@@ -225,24 +238,29 @@ function addonTable.Display.ManagerMixin:OnLoad()
         end
         self:UpdateNamePlateSize()
         self:UpdateStacking()
+        self:UpdateTargetScale()
+        self:UpdateFriendlyFont()
       end)
+    end
+    if state[addonTable.Constants.RefreshReason.SimplifiedScale] then
+      self:UpdateSimplifiedScale()
     end
     if state[addonTable.Constants.RefreshReason.Scale] or state[addonTable.Constants.RefreshReason.TargetBehaviour] then
       for unit, display in pairs(self.nameplateDisplays) do
-        display:InitializeWidgets(addonTable.Core.GetDesign(display.kind), display.scale)
-        display:SetUnit(unit)
+        display:UpdateVisual()
         if display.stackRegion then
-          self:UpdateStackingRegion(nil, unit)
+          self:UpdateStackingRegion(unit)
         end
       end
       self:UpdateNamePlateSize()
       self:UpdateTargetScale()
+      self:UpdateFriendlyFont()
     end
     if state[addonTable.Constants.RefreshReason.StackingBehaviour] then
       self:UpdateStacking()
       for unit, display in pairs(self.nameplateDisplays) do
         if display.stackRegion then
-          self:UpdateStackingRegion(nil, unit)
+          self:UpdateStackingRegion(unit)
         end
       end
     end
@@ -265,7 +283,7 @@ function addonTable.Display.ManagerMixin:OnLoad()
     if settingName == addonTable.Config.Options.CLICK_REGION_SCALE_X or settingName == addonTable.Config.Options.CLICK_REGION_SCALE_Y then
       for unit, UF in pairs(self.ModifiedUFs) do
         if UF.HitTestFrame then
-          self:UpdateStackingRegion(nameplate, unit)
+          self:UpdateStackingRegion(unit)
         end
       end
       self:UpdateNamePlateSize()
@@ -352,8 +370,11 @@ function addonTable.Display.ManagerMixin:UpdateShowState()
 
     self.oldShowState = CopyTable(currentShow)
   end
-  if state == "name_only" and C_CVar.GetCVarInfo("nameplateShowOnlyNameForFriendlyPlayerUnits") then
-    C_CVar.SetCVar("nameplateShowOnlyNameForFriendlyPlayerUnits", "1")
+  if C_CVar.GetCVarInfo("nameplateShowOnlyNameForFriendlyPlayerUnits") then
+    C_CVar.SetCVar("nameplateShowOnlyNameForFriendlyPlayerUnits", "0")
+  end
+  if C_CVar.GetCVarInfo("nameplateUseClassColorForFriendlyPlayerUnitNames") then
+    C_CVar.SetCVar("nameplateUseClassColorForFriendlyPlayerUnitNames", "0")
   end
 
   for key, state in pairs(currentShow) do
@@ -380,17 +401,19 @@ function addonTable.Display.ManagerMixin:UpdateInstanceShowState()
   if state == "name_only" and C_CVar.GetCVarInfo("nameplateShowOnlyNameForFriendlyPlayerUnits") then
     C_CVar.SetCVar("nameplateShowOnlyNameForFriendlyPlayerUnits", "1")
   end
+  if state == "name_only" and C_CVar.GetCVarInfo("nameplateUseClassColorForFriendlyPlayerUnitNames") then
+    C_CVar.SetCVar("nameplateUseClassColorForFriendlyPlayerUnitNames", "1")
+  end
 
   local values = GetCVarsForNameplates()
   local currentShow = addonTable.Config.Get(addonTable.Config.Options.SHOW_NAMEPLATES)
 
-  local _, instanceType = GetInstanceInfo()
-  if instanceType == "raid" or instanceType == "party" or instanceType == "arenas" then
+  if addonTable.Display.Utilities.IsInRelevantInstance() then
     if not self.hiddenFriendly then
       if currentShow.player and state ~= "name_only" then
         C_CVar.SetCVar(values.player, "0")
       end
-      if currentShow.npc then
+      if currentShow.npc or state == "name_only" then
         C_CVar.SetCVar(values.npc, "0")
       end
       self.hiddenFriendly = true
@@ -448,12 +471,12 @@ function addonTable.Display.ManagerMixin:ListenToBuffs(display, unit)
   end
 end
 
-function addonTable.Display.ManagerMixin:UpdateStackingRegion(nameplate, unit)
-  nameplate = nameplate or C_NamePlate.GetNamePlateForUnit(unit, issecure())
+function addonTable.Display.ManagerMixin:UpdateStackingRegion(unit)
   local stackRegion = self.nameplateDisplays[unit].stackRegion
-  local newWidth = addonTable.StackRect.width * addonTable.Config.Get(addonTable.Config.Options.STACK_REGION_SCALE_X) * addonTable.Config.Get(addonTable.Config.Options.GLOBAL_SCALE)
-  local newHeight = addonTable.StackRect.height * addonTable.Config.Get(addonTable.Config.Options.STACK_REGION_SCALE_Y) * addonTable.Config.Get(addonTable.Config.Options.GLOBAL_SCALE)
-  stackRegion:SetPoint("BOTTOMLEFT", nameplate, "CENTER", addonTable.StackRect.left - (newWidth - addonTable.StackRect.width)/2, addonTable.StackRect.bottom - (newHeight - addonTable.StackRect.height)/2)
+  local globalScale = addonTable.Config.Get(addonTable.Config.Options.GLOBAL_SCALE)
+  local newWidth = addonTable.StackRect.width * addonTable.Config.Get(addonTable.Config.Options.STACK_REGION_SCALE_X) * globalScale
+  local newHeight = addonTable.StackRect.height * addonTable.Config.Get(addonTable.Config.Options.STACK_REGION_SCALE_Y) * globalScale
+  stackRegion:SetPoint("BOTTOMLEFT", stackRegion:GetParent(), "CENTER", addonTable.StackRect.left - (newWidth - addonTable.StackRect.width)/2, addonTable.StackRect.bottom - (newHeight - addonTable.StackRect.height)/2)
   stackRegion:SetSize(newWidth, newHeight)
 end
 
@@ -485,7 +508,18 @@ function addonTable.Display.ManagerMixin:Install(unit, nameplate)
     self.nameplateDisplays[unit] = newDisplay
     self.unitToNameplate[unit] = nameplate
     local UF = self.ModifiedUFs[unit]
-    if UF and UF.HitTestFrame then
+    if nameplate.SetStackingBoundsFrame then
+      newDisplay:SetParent(nameplate)
+      if not newDisplay.stackRegion then
+        newDisplay.stackRegion = CreateFrame("Frame", nil, newDisplay)
+        local tex = newDisplay.stackRegion:CreateTexture()
+        tex:SetColorTexture(1, 0, 0, 0)
+        tex:SetAllPoints(newDisplay.stackRegion)
+      end
+      newDisplay.stackRegion:SetParent(nameplate)
+      nameplate:SetStackingBoundsFrame(newDisplay.stackRegion)
+      self:UpdateStackingRegion(unit)
+    elseif UF and UF.HitTestFrame then
       if not newDisplay.stackRegion then
         newDisplay.stackRegion = nameplate:CreateTexture()
         newDisplay.stackRegion:SetIgnoreParentScale(true)
@@ -493,12 +527,14 @@ function addonTable.Display.ManagerMixin:Install(unit, nameplate)
       end
       newDisplay.stackRegion:SetIgnoreParentScale(true)
       newDisplay.stackRegion:SetParent(nameplate)
-      self:UpdateStackingRegion(nameplate, unit)
+      self:UpdateStackingRegion(unit)
+    else
+      newDisplay:SetParent(nameplate)
     end
 
     newDisplay:Install(nameplate)
     if newDisplay.styleIndex ~= self.styleIndex then
-      newDisplay:InitializeWidgets(addonTable.Core.GetDesign(newDisplay.kind), addonTable.Core.GetDesignScale(newDisplay.kind))
+      newDisplay:InitializeWidgets(addonTable.Core.GetDesign(newDisplay.kind), addonTable.Constants.ParentedToNameplates and 1 or addonTable.Core.GetDesignScale(newDisplay.kind))
       newDisplay.styleIndex = self.styleIndex
     end
     self:ListenToBuffs(newDisplay, unit)
@@ -594,6 +630,54 @@ function addonTable.Display.ManagerMixin:UpdateNamePlateSize()
   end
 end
 
+function addonTable.Display.ManagerMixin:UpdateSimplifiedScale()
+  if InCombatLockdown() then
+    self:RegisterEvent("PLAYER_REGEN_ENABLED")
+    return
+  end
+
+  if not C_CVar.GetCVarInfo("nameplateSimplifiedScale") then
+    return
+  end
+
+  C_CVar.SetCVar("nameplateSimplifiedScale", addonTable.Config.Get(addonTable.Config.Options.SIMPLIFIED_SCALE))
+end
+
+function addonTable.Display.ManagerMixin:InitializeFriendlyFont()
+  if not SystemFont_NamePlate_Outlined then
+    return
+  end
+  if not PlatynatorOriginalSystemFont then
+    local f = CreateFont("PlatynatorOriginalSystemFont")
+    f:CopyFontObject(SystemFont_NamePlate_Outlined)
+  end
+  local design = addonTable.Core.GetDesign("friend")
+  local scale
+  for _, t in ipairs(design.texts) do
+    if t.kind == "creatureName" then
+      scale = t.scale
+      break
+    end
+  end
+  if scale then
+    scale = scale * addonTable.Config.Get(addonTable.Config.Options.GLOBAL_SCALE)
+    self.friendlyFontSize = _G[addonTable.CurrentFont]:GetFontHeight() * scale
+  else
+    self.friendlyFontSize = nil
+  end
+
+  self:UpdateFriendlyFont()
+end
+
+function addonTable.Display.ManagerMixin:UpdateFriendlyFont()
+  if self.friendlyFontSize and addonTable.Config.Get(addonTable.Config.Options.SHOW_FRIENDLY_IN_INSTANCES) == "name_only" then
+    SystemFont_NamePlate_Outlined:CopyFontObject(_G[addonTable.CurrentFont])
+    SystemFont_NamePlate_Outlined:SetFontHeight(self.friendlyFontSize)
+  elseif SystemFont_NamePlate_Outlined then
+    SystemFont_NamePlate_Outlined:CopyFontObject(PlatynatorOriginalSystemFont)
+  end
+end
+
 function addonTable.Display.ManagerMixin:OnEvent(eventName, ...)
   if eventName == "NAME_PLATE_UNIT_ADDED" then
     local unit = ...
@@ -646,12 +730,20 @@ function addonTable.Display.ManagerMixin:OnEvent(eventName, ...)
     self:UpdateShowState()
     self:UpdateNamePlateSize()
     self:UpdateTargetScale()
+    self:UpdateSimplifiedScale()
   elseif eventName == "UI_SCALE_CHANGED" then
-    for unit, display in pairs(self.nameplateDisplays) do
-      display:InitializeWidgets(addonTable.Core.GetDesign(display.kind), display.scale)
-      display:SetUnit(unit)
-      if display.stackRegion then
-        self:UpdateStackingRegion(nil, unit)
+    if not addonTable.Constants.ParentedToNameplates then
+      for unit, display in pairs(self.nameplateDisplays) do
+        display:UpdateVisual()
+        if display.stackRegion then
+          self:UpdateStackingRegion(unit)
+        end
+      end
+    else
+      for unit, display in pairs(self.nameplateDisplays) do
+        if display.stackRegion then
+          self:UpdateStackingRegion(unit)
+        end
       end
     end
     self:UpdateNamePlateSize()
@@ -664,9 +756,12 @@ function addonTable.Display.ManagerMixin:OnEvent(eventName, ...)
     local design = addonTable.Core.GetDesign("enemy")
 
     addonTable.CurrentFont = addonTable.Core.GetFontByDesign(design)
+    self:InitializeFriendlyFont()
     CreateFont("PlatynatorNameplateCooldownFont")
     local file, size, flags = _G[addonTable.CurrentFont]:GetFont()
     PlatynatorNameplateCooldownFont:SetFont(file, 14, flags)
+  elseif eventName == "FORBIDDEN_NAME_PLATE_UNIT_ADDED" then
+    self:UpdateFriendlyFont()
   elseif eventName == "VARIABLES_LOADED" then
     if addonTable.Constants.IsMidnight then
       C_CVar.SetCVarBitfield(NamePlateConstants.ENEMY_NPC_AURA_DISPLAY_CVAR, Enum.NamePlateEnemyNpcAuraDisplay.Buffs, true)
@@ -686,5 +781,6 @@ function addonTable.Display.ManagerMixin:OnEvent(eventName, ...)
     self:UpdateTargetScale()
     self:UpdateInstanceShowState()
     self:UpdateNamePlateSize()
+    self:UpdateSimplifiedScale()
   end
 end
