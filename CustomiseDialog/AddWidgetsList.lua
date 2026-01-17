@@ -227,7 +227,7 @@ addonTable.CustomiseDialog.DesignWidgets = {
         reversed = false,
       },
       filters = {
-        dispelable = true,
+        dispelable = false,
         important = true,
       },
     },

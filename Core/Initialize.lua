@@ -113,7 +113,7 @@ function addonTable.Core.UpgradeDesign(design)
     end
     if aura.kind == "buffs" and not aura.filters then
       aura.filters = {
-        dispelable = true,
+        dispelable = false,
         important = true,
       }
     end
