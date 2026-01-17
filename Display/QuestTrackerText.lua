@@ -681,6 +681,7 @@ function addonTable.Display.QuestTrackerTextMixin:SetUnit(unit)
   self.unit = unit
   if self.unit then
     self:RegisterEvent("QUEST_LOG_UPDATE")
+    self:RegisterEvent("UNIT_QUEST_LOG_CHANGED")
     self:UpdateText()
   else
     self:Strip()
