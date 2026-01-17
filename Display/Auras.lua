@@ -293,7 +293,7 @@ function addonTable.Display.AurasManagerMixin:FullRefresh()
         if not aura then
           break
         end
-        if aura.isHarmful and (not self.buffsDetails.filters.important or aura.nameplateShowPersonal or legacy.whitelistedDebuffs[aura.spellId] or addonTable.Constants.IsClassic) and not legacy.crowdControlSpells[aura.spellId] then
+        if aura.isHarmful and (not self.debuffsDetails.filters.important or aura.nameplateShowPersonal or legacy.whitelistedDebuffs[aura.spellId] or addonTable.Constants.IsClassic) and not legacy.crowdControlSpells[aura.spellId] then
           table.insert(self.debuffs, aura.auraInstanceID)
           aura.applicationsString = aura.applications > 1 and tostring(aura.applications) or ""
           aura.kind = "debuffs"
