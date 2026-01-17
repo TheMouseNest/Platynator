@@ -157,13 +157,24 @@ function addonTable.Display.NameplateMixin:OnLoad()
   self.casting = false
 
   self:SetScript("OnSizeChanged", function()
-    if not self.widgets or not self:IsVisible() then
+    if not self.widgets or #self.widgets == 0 or not self:IsVisible() then
       return
     end
-    for _, w in ipairs(self.widgets) do
-      w:ApplyAnchor()
-      w:ApplySize()
-    end
+    -- Optimisation to avoid recalculating anchors/sizes while nameplate scales up/down
+    self.sizeChangeCount = 0
+    self:SetScript("OnUpdate", function()
+      self.sizeChangeCount = self.sizeChangeCount + 1
+      if self.sizeChangeCount >= 2 then
+        if not self.widgets or not self:IsVisible() then
+          return
+        end
+        for _, w in ipairs(self.widgets) do
+          w:ApplyAnchor()
+          w:ApplySize()
+        end
+        self:SetScript("OnUpdate", nil)
+      end
+    end)
   end)
 end
 

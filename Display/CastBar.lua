@@ -110,12 +110,12 @@ function addonTable.Display.CastBarMixin:ApplyCasting()
   local name, text, texture, startTime, endTime, _, _, notInterruptible, spellID = UnitCastingInfo(self.unit)
   local isChanneled = false
 
-  if type(name) == "nil" then
+  if name == nil then
     name, text, texture, startTime, endTime, _, notInterruptible, spellID = UnitChannelInfo(self.unit)
     isChanneled = true
   end
 
-  if type(name) ~= "nil" then
+  if name ~= nil then
     self.interrupted = nil
 
     self:SetReverseFill(isChanneled)
@@ -146,7 +146,7 @@ function addonTable.Display.CastBarMixin:ApplyCasting()
       self.statusBar:SetMinMaxValues(0, (endTime - startTime) / 1000)
       self.interruptMarker:SetMinMaxValues(self.statusBar:GetMinMaxValues())
       local spellID
-      if self.showInterruptMarker then
+      if self.showInterruptMarker and not notInterruptible then
         spellID = GetInterruptSpell()
       end
       self.interruptMarker:SetShown(spellID ~= nil)
