@@ -246,17 +246,15 @@ function addonTable.Display.ManagerMixin:OnLoad()
       self:UpdateSimplifiedScale()
     end
     if state[addonTable.Constants.RefreshReason.Scale] or state[addonTable.Constants.RefreshReason.TargetBehaviour] then
-      self:SetScript("OnUpdate", function()
-        for unit, display in pairs(self.nameplateDisplays) do
-          display:UpdateVisual()
-          if display.stackRegion then
-            self:UpdateStackingRegion(unit)
-          end
+      for unit, display in pairs(self.nameplateDisplays) do
+        display:UpdateVisual()
+        if display.stackRegion then
+          self:UpdateStackingRegion(unit)
         end
-        self:UpdateNamePlateSize()
-        self:UpdateTargetScale()
-        self:UpdateFriendlyFont()
-      end)
+      end
+      self:UpdateNamePlateSize()
+      self:UpdateTargetScale()
+      self:UpdateFriendlyFont()
     end
     if state[addonTable.Constants.RefreshReason.StackingBehaviour] then
       self:UpdateStacking()
