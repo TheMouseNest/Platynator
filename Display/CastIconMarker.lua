@@ -35,11 +35,21 @@ function addonTable.Display.CastIconMarkerMixin:SetUnit(unit)
 
     self:ApplyCasting()
   else
-    self:UnregisterAllEvents()
+    self:StripInternal()
   end
 end
 
+function addonTable.Display.CastIconMarkerMixin:StripInternal()
+  self:UnregisterAllEvents()
+  if self.timer then
+    self.timer:Cancel()
+    self.timer = nil
+  end
+  self.interrupted = nil
+end
+
 function addonTable.Display.CastIconMarkerMixin:Strip()
+  self:StripInternal()
   self.marker:SetTexCoord(0, 1, 0, 1)
   if self.background then
     self.background:Hide()

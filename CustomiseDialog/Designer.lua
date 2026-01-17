@@ -764,6 +764,15 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
         end
         w.statusBar:SetMinMaxValues(0, 100)
         w.statusBar:SetValue(70)
+        if w.details.kind == "cast" then
+          if w.details.interruptMarker.asset ~= "none" then
+            w.interruptMarker:Show()
+            w.interruptMarker:SetMinMaxValues(0, 100)
+            w.interruptMarker:SetValue(10)
+          else
+            w.interruptMarker:Hide()
+          end
+        end
         w.statusBar:GetStatusBarTexture():SetVertexColor(defaultColor.r, defaultColor.g, defaultColor.b)
         if w.details.background.applyColor then
           local mod = w.details.background.color

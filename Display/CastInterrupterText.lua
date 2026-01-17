@@ -55,11 +55,10 @@ function addonTable.Display.CastInterrupterTextMixin:Strip()
 end
 
 function addonTable.Display.CastInterrupterTextMixin:UpdateFromGUID(guid)
-  local name, class
+  local name, class, _
   if UnitNameFromGUID then
     name = UnitNameFromGUID(guid)
-    --local _, class = UnitClassFromGUID(guid)
-
+    _, class = GetPlayerInfoByGUID(guid)
   else
     local unit = UnitTokenFromGUID(guid)
     if not unit then
