@@ -95,11 +95,7 @@ local function SetupGeneral(parent)
         local button = rootDescription:CreateRadio(name ~= "DEFAULT" and name or LIGHTBLUE_FONT_COLOR:WrapTextInColorCode(DEFAULT), function()
           return PLATYNATOR_CURRENT_PROFILE == name
         end, function()
-          local oldSkin = addonTable.Config.Get(addonTable.Config.Options.CURRENT_SKIN)
           addonTable.Config.ChangeProfile(name)
-          if addonTable.Config.Get(addonTable.Config.Options.CURRENT_SKIN) ~= oldSkin then
-            addonTable.Dialogs.ShowConfirm(addonTable.Locales.RELOAD_REQUIRED, YES, NO, function() ReloadUI() end)
-          end
         end)
         if name ~= "DEFAULT" and name ~= PLATYNATOR_CURRENT_PROFILE then
           button:AddInitializer(function(button, description, menu)
@@ -178,6 +174,7 @@ local function SetupGeneral(parent)
             else
               addonTable.Config.Get(addonTable.Config.Options.DESIGNS)[value] = import
               addonTable.Config.Set(addonTable.Config.Options.STYLE, value)
+              styleDropdown.DropDown:GenerateMenu()
             end
           end)
         elseif import.kind == "profile" then
@@ -197,6 +194,7 @@ local function SetupGeneral(parent)
                 import.style = import.designs_assigned["enemy"]
               end
               addonTable.Config.ChangeProfile(PLATYNATOR_CURRENT_PROFILE, old)
+              profileDropdown.DropDown:GenerateMenu()
             end,
             function()
               addonTable.Dialogs.ShowEditBox(addonTable.Locales.ENTER_THE_NEW_PROFILE_NAME, OKAY, CANCEL, function(value)
@@ -208,6 +206,7 @@ local function SetupGeneral(parent)
                     import.style = import.designs_assigned["enemy"]
                   end
                   addonTable.Config.ChangeProfile(PLATYNATOR_CURRENT_PROFILE, old)
+                  profileDropdown.DropDown:GenerateMenu()
                 else
                   addonTable.Dialogs.ShowAcknowledge(addonTable.Locales.THAT_PROFILE_NAME_ALREADY_EXISTS)
                 end
