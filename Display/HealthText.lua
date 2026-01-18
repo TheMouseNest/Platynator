@@ -32,8 +32,6 @@ function addonTable.Display.HealthTextMixin:PostInit()
         end
       end
     end
-  else
-    self.abbreviateCallback = function(number) return number end
   end
 end
 
@@ -95,7 +93,12 @@ function addonTable.Display.HealthTextMixin:UpdateText()
         values.percentage = string.format("%d%%", value)
       end
     else
-      values.percentage = self.abbreviateCallback(UnitHealth(self.unit, true)/UnitHealthMax(self.unit)*100) .. "%"
+      local value = UnitHealth(self.unit, true)/UnitHealthMax(self.unit)*100
+      if self.abbreviateCallback then
+        values.percentage = self.abbreviateCallback(value) .. "%"
+      else
+        values.percentage = string.format("%d%%", value)
+      end
     end
     if #types == 2 then
       self.text:SetFormattedText("%s (%s)", values[types[1]], values[types[2]])
