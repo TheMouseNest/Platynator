@@ -367,10 +367,10 @@ addonTable.CustomiseDialog.WidgetsConfig = {
     },
     ["health"] = {
       {
-        label = addonTable.Locales.GENERAL,
+        label = addonTable.Locales.VALUES,
         entries = {
           {
-            label = addonTable.Locales.ABSOLUTE_VALUE,
+            label = addonTable.Locales.ABSOLUTE,
             kind = "checkbox",
             setter = function(details, value)
               if value and tIndexOf(details.displayTypes, "absolute") == nil then
@@ -386,8 +386,9 @@ addonTable.CustomiseDialog.WidgetsConfig = {
               return tIndexOf(details.displayTypes, "absolute") ~= nil
             end,
           },
+          { kind = "spacer" },
           {
-            label = addonTable.Locales.PERCENTAGE_VALUE,
+            label = addonTable.Locales.PERCENTAGE,
             kind = "checkbox",
             setter = function(details, value)
               if value and tIndexOf(details.displayTypes, "percentage") == nil then
@@ -401,6 +402,32 @@ addonTable.CustomiseDialog.WidgetsConfig = {
             end,
             getter = function(details)
               return tIndexOf(details.displayTypes, "percentage") ~= nil
+            end,
+          },
+          {
+            label = addonTable.Locales.SIGNIFICANT_FIGURES,
+            kind = "slider",
+            min = 0, max = 4,
+            formatter = function(value)
+              if value == 0 then
+                return addonTable.Locales.ROUNDED
+              else
+                return tostring(value + 1)
+              end
+            end,
+            setter = function(details, value)
+              if value == 0 then
+                details.significantFigures = value
+              else
+                details.significantFigures = value + 1
+              end
+            end,
+            getter = function(details)
+              if value == 0 then
+                return details.significantFigures
+              else
+                return details.significantFigures - 1
+              end
             end,
           },
         }

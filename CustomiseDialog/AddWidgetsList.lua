@@ -301,6 +301,7 @@ addonTable.CustomiseDialog.DesignWidgets = {
       align = "CENTER",
       shorten = "NONE",
       truncate = false,
+      significantFigures = 0,
     },
   },
   {
