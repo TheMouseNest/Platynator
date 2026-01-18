@@ -321,7 +321,7 @@ function addonTable.Display.GetColor(settings, state, unit)
             table.insert(colorQueue, {state = {{value = duration:IsZero()}, {value = notInterruptible, invert = true}}, color = s.colors.ready})
           else
             local cooldownInfo = C_Spell.GetSpellCooldown(spellID)
-            if notInterruptible == false and cooldownInfo.startTime == 0 or cooldownInfo.startTime + cooldownInfo.duration <= GetTime() then
+            if notInterruptible == false and cooldownInfo.startTime == 0 then
               table.insert(colorQueue, {color = s.colors.ready})
               break
             end
