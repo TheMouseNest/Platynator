@@ -57,6 +57,7 @@ function addonTable.Display.CastIconMarkerMixin:Strip()
     self.background = nil
   end
   self.PostApplyAnchor = nil
+  self.PostInit = nil
 end
 
 function addonTable.Display.CastIconMarkerMixin:OnEvent(eventName, ...)
