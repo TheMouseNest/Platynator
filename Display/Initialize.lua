@@ -280,6 +280,7 @@ function addonTable.Display.ManagerMixin:OnLoad()
     end
     if state[addonTable.Constants.RefreshReason.Clickable] then
       self:UpdateClickable()
+      self:UpdateNamePlateSize()
     end
   end)
 
