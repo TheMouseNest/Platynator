@@ -24,6 +24,8 @@ local function InitBar(frame, details)
   local borderDetails = addonTable.Assets.BarBordersSliced[details.border.asset]
   local foregroundDetails = addonTable.Assets.BarBackgrounds[details.foreground.asset]
   frame.statusBar:SetScale(1/borderDetails.lowerScale * details.scale)
+  frame.statusBar:SetMinMaxValues(0, 1)
+  frame.statusBar:SetValue(1)
   frame.statusBar:SetStatusBarTexture(foregroundDetails.file)
   frame.statusBar:GetStatusBarTexture():SetDrawLayer("ARTWORK")
 

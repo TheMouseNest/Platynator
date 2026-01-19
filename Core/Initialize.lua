@@ -128,6 +128,9 @@ function addonTable.Core.UpgradeDesign(design)
         reversed = false,
       }
     end
+    if aura.kind == "debuffs" and aura.showPandemic == nil then
+      aura.showPandemic = true
+    end
   end
 
   local function UpdateAutoColors(autoColors)

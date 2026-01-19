@@ -70,6 +70,7 @@ function addonTable.Display.ManagerMixin:OnLoad()
         self:Uninstall(unit)
         self:Install(unit, nameplate)
       end
+      display:UpdateAurasForPandemic()
     end
   end)
 

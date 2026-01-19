@@ -756,7 +756,6 @@ addonTable.CustomiseDialog.WidgetsConfig = {
           {
             label = addonTable.Locales.SHOW_PANDEMIC,
             kind = "checkbox",
-            hide = true,
             setter = function(details, value)
               details.showPandemic = value
             end,
