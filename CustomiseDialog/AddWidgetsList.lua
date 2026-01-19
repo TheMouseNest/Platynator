@@ -305,6 +305,20 @@ addonTable.CustomiseDialog.DesignWidgets = {
     },
   },
   {
+    name = addonTable.Locales.DAMAGE_ABSORB_VALUE,
+    kind = "texts",
+    default = {
+      kind = "damageAbsorb",
+      scale = 0.98,
+      layer = 2,
+      anchor = {"TOPLEFT", -140, 50},
+      color = GetColor("FFFFFF"),
+      align = "CENTER",
+      shorten = "NONE",
+      truncate = false,
+    },
+  },
+  {
     name = addonTable.Locales.CAST_NAME,
     kind = "texts",
     default = {

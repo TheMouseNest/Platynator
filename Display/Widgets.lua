@@ -513,6 +513,8 @@ function addonTable.Display.GetText(frame, parent)
 
     if details.kind == "health" then
       Mixin(frame, addonTable.Display.HealthTextMixin)
+    elseif details.kind == "damageAbsorb" then
+      Mixin(frame, addonTable.Display.AbsorbTextMixin)
     elseif details.kind == "creatureName" then
       Mixin(frame, addonTable.Display.CreatureTextMSPMixin or addonTable.Display.CreatureTextMixin)
     elseif details.kind == "guild" then
