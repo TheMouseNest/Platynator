@@ -118,7 +118,7 @@ local kindToEvent = {
     "UNIT_SPELLCAST_NOT_INTERRUPTIBLE",
     "UNIT_SPELLCAST_CHANNEL_START",
     "UNIT_SPELLCAST_CHANNEL_STOP",
-    "ACTIONBAR_UPDATE_COOLDOWN",
+    "ACTIONBAR_UPDATE_USABLE",
     "SPELL_UPDATE_USABLE",
   },
   uninterruptableCast = {
@@ -316,19 +316,14 @@ function addonTable.Display.GetColor(settings, state, unit)
       if notInterruptible ~= nil then
         local spellID = GetInterruptSpell()
         if spellID then
-          if C_Spell.GetSpellCooldownDuration and C_CurveUtil.EvaluateColorFromBoolean then
-            local duration = C_Spell.GetSpellCooldownDuration(spellID)
-            table.insert(colorQueue, {state = {{value = duration:IsZero()}, {value = notInterruptible, invert = true}}, color = s.colors.ready})
-          elseif C_Spell.GetSpellCooldownDuration then
+          if C_Spell.GetSpellCooldownDuration then
             local duration = C_Spell.GetSpellCooldownDuration(spellID)
             table.insert(colorQueue, {state = {{value = duration:IsZero()}, {value = notInterruptible, invert = true}}, color = s.colors.ready})
           else
             local cooldownInfo = C_Spell.GetSpellCooldown(spellID)
-            if notInterruptible == false then
-              if cooldownInfo.startTime == 0 then
-                table.insert(colorQueue, {color = s.colors.ready})
-                break
-              end
+            if notInterruptible == false and cooldownInfo.startTime == 0 then
+              table.insert(colorQueue, {color = s.colors.ready})
+              break
             end
           end
         end

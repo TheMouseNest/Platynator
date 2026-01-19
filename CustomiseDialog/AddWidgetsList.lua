@@ -227,7 +227,7 @@ addonTable.CustomiseDialog.DesignWidgets = {
         reversed = false,
       },
       filters = {
-        dispelable = true,
+        dispelable = false,
         important = true,
       },
     },
@@ -301,6 +301,7 @@ addonTable.CustomiseDialog.DesignWidgets = {
       align = "CENTER",
       shorten = "NONE",
       truncate = false,
+      significantFigures = 0,
     },
   },
   {

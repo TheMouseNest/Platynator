@@ -39,4 +39,5 @@ end
 function addonTable.Display.EliteMarkerMixin:Strip()
   self.eliteTexture = nil
   self.rareEliteTexture = nil
+  self.PostInit = nil
 end

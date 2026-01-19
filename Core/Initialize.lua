@@ -113,7 +113,7 @@ function addonTable.Core.UpgradeDesign(design)
     end
     if aura.kind == "buffs" and not aura.filters then
       aura.filters = {
-        dispelable = true,
+        dispelable = false,
         important = true,
       }
     end
@@ -326,6 +326,9 @@ function addonTable.Core.UpgradeDesign(design)
       text.applyDifficultyColors = nil
       text.colors = nil
     end
+    if text.kind == "health" and text.significantFigures == nil then
+      text.significantFigures = 0
+    end
     if text.autoColors then
       UpdateAutoColors(text.autoColors)
     end
@@ -405,6 +408,14 @@ function addonTable.Core.MigrateSettings()
   local simplified = addonTable.Config.Get(addonTable.Config.Options.SIMPLIFIED_NAMEPLATES)
   if simplified["instancesNormal"] == nil then
     simplified["instancesNormal"] = true
+  end
+
+  if type(addonTable.Config.Get(addonTable.Config.Options.STACKING_NAMEPLATES)) == "boolean" then
+    local state = addonTable.Config.Get(addonTable.Config.Options.STACKING_NAMEPLATES)
+    addonTable.Config.Set(addonTable.Config.Options.STACKING_NAMEPLATES, {
+      friend = false,
+      enemy = state,
+    })
   end
 end
 

@@ -179,21 +179,32 @@ function addonTable.Display.GetCastBar(frame, parent)
     if value then
       if addonTable.Constants.IsMidnight then
         frame.statusBar:SetFillStyle(Enum.StatusBarFillStyle.Reverse)
+        frame.interruptMarker:SetFillStyle(Enum.StatusBarFillStyle.Reverse)
       else
         frame.statusBar:SetFillStyle("REVERSE")
+        frame.interruptMarker:SetFillStyle("REVERSE")
       end
-      frame.marker:SetPoint("CENTER", frame.reverseStatusTexture, "RIGHT")
+
       self.statusBar:GetStatusBarTexture():SetColorTexture(1, 1, 1, 0)
       self.reverseStatusTexture:Show()
+
+      frame.marker:SetPoint("CENTER", frame.reverseStatusTexture, "RIGHT")
+      frame.interruptMarker:ClearAllPoints()
+      frame.interruptMarker:SetPoint("RIGHT", frame.statusBar:GetStatusBarTexture(), "LEFT")
+      frame.interruptMarkerPoint:SetPoint("CENTER", frame.interruptMarker:GetStatusBarTexture(), "LEFT")
     else
       if addonTable.Constants.IsMidnight then
         frame.statusBar:SetFillStyle(Enum.StatusBarFillStyle.Standard)
       else
         frame.statusBar:SetFillStyle("STANDARD")
       end
-      frame.marker:SetPoint("CENTER", frame.statusBar:GetStatusBarTexture(), "RIGHT")
       self.statusBar:SetStatusBarTexture(addonTable.Assets.BarBackgrounds[frame.details.foreground.asset].file)
       self.reverseStatusTexture:Hide()
+
+      frame.marker:SetPoint("CENTER", frame.statusBar:GetStatusBarTexture(), "RIGHT")
+      frame.interruptMarker:ClearAllPoints()
+      frame.interruptMarker:SetPoint("LEFT", frame.statusBar:GetStatusBarTexture(), "RIGHT")
+      frame.interruptMarkerPoint:SetPoint("CENTER", frame.interruptMarker:GetStatusBarTexture(), "RIGHT")
     end
   end
 
@@ -218,8 +229,8 @@ function addonTable.Display.GetCastBar(frame, parent)
     local borderDetails = addonTable.Assets.BarBordersSliced[details.border.asset]
 
     frame.statusBar:SetFrameLevel(frame:GetFrameLevel() + 2)
-    frame.interruptMarker:SetFrameLevel(frame:GetFrameLevel() + 4)
-    borderHolder:SetFrameLevel(frame:GetFrameLevel() + 5)
+    frame.interruptMarker:SetFrameLevel(frame:GetFrameLevel() + 5)
+    borderHolder:SetFrameLevel(frame:GetFrameLevel() + 6)
 
     local foregroundDetails = addonTable.Assets.BarBackgrounds[details.foreground.asset]
     frame.reverseStatusTexture:Hide()

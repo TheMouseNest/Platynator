@@ -17,6 +17,13 @@ function addonTable.Display.HealthBarMixin:PostInit()
       end
     end
   end
+  if addonTable.Constants.IsMidnight then
+    self.calculator = CreateUnitHealPredictionCalculator()
+    if self.calculator.SetMaximumHealthMode then
+      self.calculator:SetMaximumHealthMode(Enum.UnitMaximumHealthMode.WithAbsorbs)
+      self.calculator:SetDamageAbsorbClampMode(Enum.UnitDamageAbsorbClampMode.MaximumHealth)
+    end
+  end
 end
 
 function addonTable.Display.HealthBarMixin:SetUnit(unit)
@@ -25,10 +32,7 @@ function addonTable.Display.HealthBarMixin:SetUnit(unit)
     self:RegisterUnitEvent("UNIT_HEALTH", self.unit)
     self:RegisterUnitEvent("UNIT_MAXHEALTH", self.unit)
     self:RegisterUnitEvent("UNIT_ABSORB_AMOUNT_CHANGED", self.unit)
-    self.statusBar:SetMinMaxValues(0, UnitHealthMax(self.unit))
-    self.statusBarAbsorb:SetMinMaxValues(self.statusBar:GetMinMaxValues())
     self:UpdateHealth()
-    self:UpdateAbsorb()
 
     addonTable.Display.RegisterForColorEvents(self, self.details.autoColors)
     self:SetColor(addonTable.Display.GetColor(self.details.autoColors, self.colorState, self.unit))
@@ -59,23 +63,35 @@ function addonTable.Display.HealthBarMixin:SetColor(...)
 end
 
 function addonTable.Display.HealthBarMixin:UpdateHealth()
-  self.statusBar:SetValue(UnitHealth(self.unit, true))
-end
-
-function addonTable.Display.HealthBarMixin:UpdateAbsorb()
-  self.statusBarAbsorb:SetValue(UnitGetTotalAbsorbs(self.unit))
+  if self.calculator then
+    if self.calculator.GetMaximumHealth then
+      UnitGetDetailedHealPrediction(self.unit, nil, self.calculator)
+      self.statusBar:SetMinMaxValues(0, self.calculator:GetMaximumHealth())
+      self.statusBarAbsorb:SetMinMaxValues(self.statusBar:GetMinMaxValues())
+      local absorbs = self.calculator:GetDamageAbsorbs()
+      self.statusBarAbsorb:SetValue(absorbs)
+    else
+      self.statusBar:SetMinMaxValues(0, UnitHealthMax(self.unit))
+      self.statusBarAbsorb:SetMinMaxValues(self.statusBar:GetMinMaxValues())
+      self.statusBarAbsorb:SetValue(UnitGetTotalAbsorbs(self.unit))
+    end
+    self.statusBar:SetValue(UnitHealth(self.unit))
+  else
+    local absorbs = UnitGetTotalAbsorbs(self.unit)
+    self.statusBar:SetMinMaxValues(0, UnitHealthMax(self.unit) + absorbs)
+    self.statusBarAbsorb:SetMinMaxValues(self.statusBar:GetMinMaxValues())
+    self.statusBar:SetValue(UnitHealth(self.unit, true))
+    self.statusBarAbsorb:SetValue(absorbs)
+  end
 end
 
 function addonTable.Display.HealthBarMixin:OnEvent(eventName)
   if eventName == "UNIT_HEALTH" then
     self:UpdateHealth()
   elseif eventName == "UNIT_MAXHEALTH" then
-    self.statusBar:SetMinMaxValues(0, UnitHealthMax(self.unit))
-    self.statusBarAbsorb:SetMinMaxValues(self.statusBar:GetMinMaxValues())
     self:UpdateHealth()
-    self:UpdateAbsorb()
   elseif eventName == "UNIT_ABSORB_AMOUNT_CHANGED" then
-    self:UpdateAbsorb()
+    self:UpdateHealth()
   end
 
   self:ColorEventHandler(eventName)

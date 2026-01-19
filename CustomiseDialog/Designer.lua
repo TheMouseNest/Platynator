@@ -367,6 +367,7 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
     end
     if #foci > 1 then
       MenuUtil.CreateContextMenu(foci[1], function(_, rootDescription)
+        rootDescription:SetMinimumWidth(1)
         for _, w in ipairs(foci) do
           local button = rootDescription:CreateButton(titleMap[w.kind][w.details.kind], function()
             local index = tIndexOf(widgets, w)
@@ -788,9 +789,12 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
         if w.details.kind == "health" then
           local types = w.details.displayTypes
           local values = {
-            absolute = AbbreviateNumbers(70000),
-            percentage = "70%",
+            absolute = AbbreviateNumbers(71255),
+            percentage = "71%"
           }
+          if w.details.significantFigures > 0 then
+            values.percentage = (w.abbreviateCallback and w.abbreviateCallback(71.255) or w.abbreviateData and AbbreviateNumbers(71.255, w.abbreviateData)) .. "%"
+          end
           if #types == 2 then
             display = string.format("%s (%s)", values[types[1]], values[types[2]])
           elseif #types == 1 then

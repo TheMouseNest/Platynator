@@ -95,11 +95,7 @@ local function SetupGeneral(parent)
         local button = rootDescription:CreateRadio(name ~= "DEFAULT" and name or LIGHTBLUE_FONT_COLOR:WrapTextInColorCode(DEFAULT), function()
           return PLATYNATOR_CURRENT_PROFILE == name
         end, function()
-          local oldSkin = addonTable.Config.Get(addonTable.Config.Options.CURRENT_SKIN)
           addonTable.Config.ChangeProfile(name)
-          if addonTable.Config.Get(addonTable.Config.Options.CURRENT_SKIN) ~= oldSkin then
-            addonTable.Dialogs.ShowConfirm(addonTable.Locales.RELOAD_REQUIRED, YES, NO, function() ReloadUI() end)
-          end
         end)
         if name ~= "DEFAULT" and name ~= PLATYNATOR_CURRENT_PROFILE then
           button:AddInitializer(function(button, description, menu)
@@ -178,6 +174,7 @@ local function SetupGeneral(parent)
             else
               addonTable.Config.Get(addonTable.Config.Options.DESIGNS)[value] = import
               addonTable.Config.Set(addonTable.Config.Options.STYLE, value)
+              styleDropdown.DropDown:GenerateMenu()
             end
           end)
         elseif import.kind == "profile" then
@@ -197,6 +194,7 @@ local function SetupGeneral(parent)
                 import.style = import.designs_assigned["enemy"]
               end
               addonTable.Config.ChangeProfile(PLATYNATOR_CURRENT_PROFILE, old)
+              profileDropdown.DropDown:GenerateMenu()
             end,
             function()
               addonTable.Dialogs.ShowEditBox(addonTable.Locales.ENTER_THE_NEW_PROFILE_NAME, OKAY, CANCEL, function(value)
@@ -208,6 +206,7 @@ local function SetupGeneral(parent)
                     import.style = import.designs_assigned["enemy"]
                   end
                   addonTable.Config.ChangeProfile(PLATYNATOR_CURRENT_PROFILE, old)
+                  profileDropdown.DropDown:GenerateMenu()
                 else
                   addonTable.Dialogs.ShowAcknowledge(addonTable.Locales.THAT_PROFILE_NAME_ALREADY_EXISTS)
                 end
@@ -330,6 +329,30 @@ local function SetupBehaviour(parent)
     end
   end
 
+  local clickableNameplatesDropdown = addonTable.CustomiseDialog.Components.GetBasicDropdown(container, addonTable.Locales.CLICKABLE_NAMEPLATES)
+  clickableNameplatesDropdown:SetPoint("TOP", allFrames[#allFrames], "BOTTOM", 0, -30)
+  local values = {
+    "friend",
+    "enemy",
+  }
+  local labels = {
+    addonTable.Locales.FRIENDLY,
+    addonTable.Locales.ENEMY,
+  }
+  clickableNameplatesDropdown.DropDown:SetDefaultText(NONE)
+  clickableNameplatesDropdown.DropDown:SetupMenu(function(_, rootDescription)
+    for index, l in ipairs(labels) do
+      rootDescription:CreateCheckbox(l, function()
+        return addonTable.Config.Get(addonTable.Config.Options.CLICKABLE_NAMEPLATES)[values[index]]
+      end, function()
+        local current = addonTable.Config.Get(addonTable.Config.Options.CLICKABLE_NAMEPLATES)[values[index]]
+        addonTable.Config.Get(addonTable.Config.Options.CLICKABLE_NAMEPLATES)[values[index]] = not current
+        addonTable.CallbackRegistry:TriggerEvent("RefreshStateChange", {[addonTable.Constants.RefreshReason.Clickable] = true})
+      end)
+    end
+  end)
+  table.insert(allFrames, clickableNameplatesDropdown)
+
   local friendlyInInstancesDropdown = addonTable.CustomiseDialog.Components.GetBasicDropdown(container, addonTable.Locales.SHOW_FRIENDLY_IN_INSTANCES, function(value)
     return addonTable.Config.Get(addonTable.Config.Options.SHOW_FRIENDLY_IN_INSTANCES) == value
   end, function(value)
@@ -417,15 +440,29 @@ local function SetupPositioning(parent)
 
   local allFrames = {}
 
-  local stackingNameplatesCheckbox = addonTable.CustomiseDialog.Components.GetCheckbox(container, addonTable.Locales.STACKING_NAMEPLATES, 28, function(value)
-    if InCombatLockdown() then
-      return
+  local stackingNameplatesDropdown = addonTable.CustomiseDialog.Components.GetBasicDropdown(container, addonTable.Locales.STACKING_NAMEPLATES)
+  stackingNameplatesDropdown:SetPoint("TOP")
+  local values = {
+    "friend",
+    "enemy",
+  }
+  local labels = {
+    addonTable.Locales.FRIENDLY,
+    addonTable.Locales.ENEMY,
+  }
+  stackingNameplatesDropdown.DropDown:SetDefaultText(NONE)
+  stackingNameplatesDropdown.DropDown:SetupMenu(function(_, rootDescription)
+    for index, l in ipairs(labels) do
+      rootDescription:CreateCheckbox(l, function()
+        return addonTable.Config.Get(addonTable.Config.Options.STACKING_NAMEPLATES)[values[index]]
+      end, function()
+        local current = addonTable.Config.Get(addonTable.Config.Options.STACKING_NAMEPLATES)[values[index]]
+        addonTable.Config.Get(addonTable.Config.Options.STACKING_NAMEPLATES)[values[index]] = not current
+        addonTable.CallbackRegistry:TriggerEvent("RefreshStateChange", {[addonTable.Constants.RefreshReason.StackingBehaviour] = true})
+      end)
     end
-    addonTable.Config.Set(addonTable.Config.Options.STACKING_NAMEPLATES, value)
   end)
-  stackingNameplatesCheckbox.option = addonTable.Config.Options.STACKING_NAMEPLATES
-  stackingNameplatesCheckbox:SetPoint("TOP")
-  table.insert(allFrames, stackingNameplatesCheckbox)
+  table.insert(allFrames, stackingNameplatesDropdown)
 
   if C_CVar.GetCVarInfo("nameplateOtherTopInset") then
     local closerToScreenEdgesCheckbox = addonTable.CustomiseDialog.Components.GetCheckbox(container, addonTable.Locales.CLOSER_TO_SCREEN_EDGES, 28, function(value)
