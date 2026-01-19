@@ -808,7 +808,7 @@ addonTable.CustomiseDialog.WidgetsConfig = {
             end,
           },
           {
-            label = addonTable.Locales.DISPELABLE,
+            label = addonTable.Locales.DISPELLABLE,
             kind = "checkbox",
             setter = function(details, value)
               details.filters.dispelable = value
