@@ -406,6 +406,14 @@ function addonTable.Core.MigrateSettings()
   if simplified["instancesNormal"] == nil then
     simplified["instancesNormal"] = true
   end
+
+  if type(addonTable.Config.Get(addonTable.Config.Options.STACKING_NAMEPLATES)) == "boolean" then
+    local state = addonTable.Config.Get(addonTable.Config.Options.STACKING_NAMEPLATES)
+    addonTable.Config.Set(addonTable.Config.Options.STACKING_NAMEPLATES, {
+      friend = false,
+      enemy = state,
+    })
+  end
 end
 
 local function SetStyle()

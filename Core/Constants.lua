@@ -41,6 +41,7 @@ addonTable.Constants.RefreshReason = {
   ShowBehaviour = 5,
   Simplified = 6,
   SimplifiedScale = 7,
+  Clickable = 8,
 }
 
 addonTable.Constants.OldFontMapping = {
