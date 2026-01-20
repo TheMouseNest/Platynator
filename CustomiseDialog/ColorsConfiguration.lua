@@ -496,6 +496,27 @@ addonTable.CustomiseDialog.ColorsConfig = {
       },
     },
   },
+  ["castTargetsYou"] = {
+    label = addonTable.Locales.CAST_TARGETS_YOU,
+    default = {
+      kind = "castTargetsYou",
+      colors = {
+        targeted = GetColor("FF0000"),
+      },
+    },
+    entries = {
+      {
+        label = addonTable.Locales.TARGETED,
+        kind = "colorPicker",
+        setter = function(details, value)
+          details.colors.targeted = value
+        end,
+        getter = function(details)
+          return details.colors.targeted
+        end,
+      },
+    },
+  },
   ["importantCast"] = {
     label = addonTable.Locales.IMPORTANT_CAST,
     default = {
@@ -607,6 +628,7 @@ addonTable.CustomiseDialog.ColorsConfigOrder = {
   "difficulty",
   "reaction",
   "interruptReady",
+  "castTargetsYou",
   "importantCast",
   "uninterruptableCast",
   "cast",

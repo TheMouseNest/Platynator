@@ -131,6 +131,14 @@ local kindToEvent = {
     "UNIT_SPELLCAST_INTERRUPTIBLE",
     "UNIT_SPELLCAST_NOT_INTERRUPTIBLE",
   },
+  castTargetsYou = {
+    "UNIT_SPELLCAST_START",
+    "UNIT_SPELLCAST_STOP",
+    "UNIT_SPELLCAST_FAILED",
+    "UNIT_SPELLCAST_INTERRUPTED",
+    "UNIT_SPELLCAST_CHANNEL_START",
+    "UNIT_SPELLCAST_CHANNEL_STOP",
+  },
   cast = {
     "UNIT_SPELLCAST_START",
     "UNIT_SPELLCAST_STOP",
@@ -326,6 +334,21 @@ function addonTable.Display.GetColor(settings, state, unit)
               break
             end
           end
+        end
+      end
+    elseif s.kind == "castTargetsYou" then
+      local castInfo = state.castInfo
+      local channelInfo = state.channelInfo
+      local name = castInfo[1]
+      if name == nil then
+        name = channelInfo[1]
+      end
+      if name ~= nil then
+        if UnitIsSpellTarget then
+          table.insert(colorQueue, {state = {{value = UnitIsSpellTarget(unit, "player")}}, color = s.colors.targeted})
+        elseif UnitIsUnit(unit .. "target", "player") then
+          table.insert(colorQueue, {color = s.colors.targeted})
+          break
         end
       end
     elseif s.kind == "uninterruptableCast" then
