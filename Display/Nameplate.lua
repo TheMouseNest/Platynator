@@ -524,7 +524,7 @@ end
 
 function addonTable.Display.NameplateMixin:UpdateAurasForPandemic()
   local time = GetTime()
-  if self.DebuffDisplay.details.showPandemic and self.DebuffDisplay.Wrapped.items then
+  if self.DebuffDisplay.details and self.DebuffDisplay.details.showPandemic and self.DebuffDisplay.Wrapped.items then
     for _, item in ipairs(self.DebuffDisplay.Wrapped.items) do
       if item.durationSecret then
         item.Pandemic:SetAlpha(item.durationSecret:EvaluateRemainingPercent(pandemicCurve))
