@@ -17,6 +17,7 @@ end
 
 function addonTable.Display.AbsorbTextMixin:Strip()
   self:UnregisterAllEvents()
+  self.text:SetAlpha(1)
 end
 
 function addonTable.Display.AbsorbTextMixin:OnEvent()
@@ -51,7 +52,7 @@ end
 
 function addonTable.Display.AbsorbTextMixin:UpdateText()
   if UnitIsDeadOrGhost(self.unit) then
-    self.text:SetText("0")
+    self.text:SetText("+0")
     self.text:SetAlpha(0)
   else
     local raw = UnitGetTotalAbsorbs(self.unit)
