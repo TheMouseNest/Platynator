@@ -7,7 +7,7 @@ function addonTable.Display.RareMarkerMixin:SetUnit(unit)
   self.unit = unit
   if self.unit then
     local classification = UnitClassification(self.unit)
-    if classification == "rare" then
+    if classification == "rare" or (self.details.includeElites and classification == "rareelite") then
       self.marker:Show()
     else
       self.marker:Hide()

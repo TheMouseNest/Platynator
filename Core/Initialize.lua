@@ -58,6 +58,9 @@ function addonTable.Core.UpgradeDesign(design)
     if marker.kind == "elite" and marker.openWorldOnly == nil then
       marker.openWorldOnly = false
     end
+    if marker.kind == "rare" and marker.includeElites == nil then
+      marker.includeElites = false
+    end
   end
   if not design.auras then
     design.auras = {

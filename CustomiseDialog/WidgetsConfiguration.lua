@@ -639,6 +639,23 @@ addonTable.CustomiseDialog.WidgetsConfig = {
           }
         }
       },
+    },
+    ["rare"] = {
+      {
+        label = addonTable.Locales.GENERAL,
+        entries = {
+          {
+            label = addonTable.Locales.INCLUDE_ELITE_RARES,
+            kind = "checkbox",
+            setter = function(details, value)
+              details.includeElites = value
+            end,
+            getter = function(details)
+              return details.includeElites
+            end,
+          }
+        }
+      },
     }
   },
   ["auras"] = {

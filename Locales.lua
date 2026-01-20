@@ -241,6 +241,7 @@ L["MARK_INTERRUPT_READY_POINT"] = "Mark interrupt ready point"
 L["VALUES"] = "Values"
 L["SIGNIFICANT_FIGURES"] = "Significant figures"
 L["ROUNDED"] = "Rounded"
+L["INCLUDE_ELITE_RARES"] = "Include elite rares"
 
 L["WHAT_TO_EXPORT"] = "What to export?"
 L["STYLE"] = "Style"
