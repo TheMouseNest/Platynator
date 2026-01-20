@@ -87,7 +87,7 @@ local interruptSpells = interruptMap[UnitClassBase("player")] or {}
 
 function addonTable.Display.Utilities.GetInterruptSpell()
   for _, s in ipairs(interruptSpells) do
-    if C_SpellBook.IsSpellKnown(s) then
+    if C_SpellBook.IsSpellKnown(s) or C_SpellBook.IsSpellKnown(s, Enum.SpellBookSpellBank.Pet) then
       return s
     end
   end
