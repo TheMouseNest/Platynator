@@ -63,6 +63,10 @@ addonTable.CustomiseDialog.DesignWidgets = {
       marker = {
         asset = "none",
       },
+      interruptMarker = {
+        asset = "none",
+        color = GetColor("FFFFFF"),
+      },
       background = {
         asset = "wide/fade-bottom",
         color = GetColor("FFFFFF", 1),

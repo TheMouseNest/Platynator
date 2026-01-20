@@ -246,6 +246,8 @@ function addonTable.Display.GetCastBar(frame, parent)
     if details.interruptMarker.asset ~= "none" then
       local markerDetails = addonTable.Assets.BarPositionHighlights[details.interruptMarker.asset]
       frame.interruptMarkerPoint:SetTexture(markerDetails.file)
+      local color = details.interruptMarker.color
+      frame.interruptMarkerPoint:SetVertexColor(color.r, color.g, color.b)
     end
 
     local backgroundDetails = addonTable.Assets.BarBackgrounds[details.background.asset]

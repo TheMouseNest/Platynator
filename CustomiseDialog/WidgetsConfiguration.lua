@@ -261,6 +261,16 @@ addonTable.CustomiseDialog.WidgetsConfig = {
               return details.interruptMarker.asset ~= "none"
             end,
           },
+          {
+            label = addonTable.Locales.INTERRUPT_POINT_COLOR,
+            kind = "colorPicker",
+            setter = function(details, value)
+              details.interruptMarker.color = value
+            end,
+            getter = function(details)
+              return details.interruptMarker.color
+            end,
+          },
         },
       },
       {
