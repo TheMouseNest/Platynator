@@ -36,6 +36,7 @@ function addonTable.Display.NameplateMixin:OnLoad()
     frame.Pandemic = CreateFrame("Frame", nil, frame)
     frame.Pandemic:SetAllPoints()
     frame.Pandemic.Animation = frame.Pandemic:CreateAnimationGroup()
+    frame.Pandemic:SetFrameLevel(frame.Cooldown:GetFrameLevel() + 5)
     do
       frame.Pandemic.Top = frame.Pandemic:CreateTexture()
       frame.Pandemic.Top:SetPoint("TOPLEFT")
