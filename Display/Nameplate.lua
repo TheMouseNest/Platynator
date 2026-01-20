@@ -164,8 +164,8 @@ function addonTable.Display.NameplateMixin:OnLoad()
         auraFrame.duration = aura.duration
         auraFrame.expirationTime = aura.expirationTime
 
+        auraFrame.Pandemic:SetShown(details.showPandemic)
         if details.showPandemic then
-          auraFrame.Pandemic:SetShown(details.showPandemic)
           auraFrame.Pandemic.Top:SetHeight(pandemicDim)
           auraFrame.Pandemic.Bottom:SetHeight(pandemicDim)
           auraFrame.Pandemic.Left:SetWidth(pandemicDim)
