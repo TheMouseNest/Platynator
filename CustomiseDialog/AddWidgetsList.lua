@@ -475,6 +475,7 @@ addonTable.CustomiseDialog.DesignWidgets = {
       asset = "normal/blizzard-rare-midnight",
       color = GetColor("ffffff"),
       anchor = {"TOPLEFT", -140, 50},
+      includeElites = true,
     },
   },
   {
