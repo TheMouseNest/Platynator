@@ -357,7 +357,10 @@ local function SetupBehaviour(parent)
     return addonTable.Config.Get(addonTable.Config.Options.SHOW_FRIENDLY_IN_INSTANCES) == value
   end, function(value)
     addonTable.Config.Set(addonTable.Config.Options.SHOW_FRIENDLY_IN_INSTANCES, value)
-    addonTable.CallbackRegistry:TriggerEvent("RefreshStateChange", {[addonTable.Constants.RefreshReason.ShowBehaviour] = true})
+    addonTable.CallbackRegistry:TriggerEvent("RefreshStateChange", {
+      [addonTable.Constants.RefreshReason.ShowBehaviour] = true,
+      --[addonTable.Constants.RefreshReason.Design] = true,
+    })
   end)
   friendlyInInstancesDropdown:SetPoint("TOP", allFrames[#allFrames], "BOTTOM", 0, -30)
   do

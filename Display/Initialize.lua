@@ -55,16 +55,6 @@ function addonTable.Display.ManagerMixin:OnLoad()
   self:RegisterEvent("RUNE_POWER_UPDATE")
   self:RegisterEvent("UNIT_FACTION")
 
-  if C_CVar.GetCVarInfo("nameplateShowOnlyNameForFriendlyPlayerUnits") then -- Midnight name-only nameplates
-    self:RegisterEvent("FORBIDDEN_NAME_PLATE_UNIT_ADDED")
-
-    EventRegistry:RegisterCallback("TextSizeManager.OnTextScaleUpdated", function()
-      if addonTable.CurrentFont then
-        self:UpdateFriendlyFont()
-      end
-    end)
-  end
-
   C_Timer.NewTicker(0.1, function() -- Used for transitioning mobs to attackable
     for unit, display in pairs(self.nameplateDisplays) do
       local display = self.nameplateDisplays[unit]
@@ -212,7 +202,6 @@ function addonTable.Display.ManagerMixin:OnLoad()
       self:SetScript("OnUpdate", function()
         local design = addonTable.Core.GetDesign("enemy")
         addonTable.CurrentFont = addonTable.Core.GetFontByDesign(design)
-        self:InitializeFriendlyFont()
         PlatynatorNameplateCooldownFont:SetFont(design.font.asset, 13, design.font.outline and "OUTLINE" or "")
         if design.font.shadow then
           PlatynatorNameplateCooldownFont:SetShadowOffset(1, -1)
@@ -241,7 +230,6 @@ function addonTable.Display.ManagerMixin:OnLoad()
         self:UpdateNamePlateSize()
         self:UpdateStacking()
         self:UpdateTargetScale()
-        self:UpdateFriendlyFont()
       end)
     end
     if state[addonTable.Constants.RefreshReason.SimplifiedScale] then
@@ -257,7 +245,6 @@ function addonTable.Display.ManagerMixin:OnLoad()
       end
       self:UpdateNamePlateSize()
       self:UpdateTargetScale()
-      self:UpdateFriendlyFont()
     end
     if state[addonTable.Constants.RefreshReason.StackingBehaviour] then
       self:UpdateStacking()
@@ -683,39 +670,11 @@ function addonTable.Display.ManagerMixin:UpdateSimplifiedScale()
   C_CVar.SetCVar("nameplateSimplifiedScale", addonTable.Config.Get(addonTable.Config.Options.SIMPLIFIED_SCALE))
 end
 
-function addonTable.Display.ManagerMixin:InitializeFriendlyFont()
-  if not SystemFont_NamePlate_Outlined then
-    return
-  end
-  if not PlatynatorOriginalSystemFont then
-    local f = CreateFont("PlatynatorOriginalSystemFont")
-    f:CopyFontObject(SystemFont_NamePlate_Outlined)
-  end
-  local design = addonTable.Core.GetDesign("friend")
-  local scale
-  for _, t in ipairs(design.texts) do
-    if t.kind == "creatureName" then
-      scale = t.scale
-      break
-    end
-  end
-  if scale then
-    scale = scale * addonTable.Config.Get(addonTable.Config.Options.GLOBAL_SCALE)
-    self.friendlyFontSize = _G[addonTable.CurrentFont]:GetFontHeight() * scale
-  else
-    self.friendlyFontSize = nil
-  end
-
-  self:UpdateFriendlyFont()
-end
-
-function addonTable.Display.ManagerMixin:UpdateFriendlyFont()
-  if self.friendlyFontSize and addonTable.Config.Get(addonTable.Config.Options.SHOW_FRIENDLY_IN_INSTANCES) == "name_only" then
-    SystemFont_NamePlate_Outlined:CopyFontObject(_G[addonTable.CurrentFont])
-    SystemFont_NamePlate_Outlined:SetFontHeight(self.friendlyFontSize)
-  elseif SystemFont_NamePlate_Outlined then
-    SystemFont_NamePlate_Outlined:CopyFontObject(PlatynatorOriginalSystemFont)
-  end
+local function ChangeFont(base, new, overrideHeight)
+  C_Timer.After(0, function()
+    base:SetFontObject(new)
+    base:SetFontHeight(overrideHeight or 9)
+  end)
 end
 
 function addonTable.Display.ManagerMixin:OnEvent(eventName, ...)
@@ -798,12 +757,9 @@ function addonTable.Display.ManagerMixin:OnEvent(eventName, ...)
     local design = addonTable.Core.GetDesign("enemy")
 
     addonTable.CurrentFont = addonTable.Core.GetFontByDesign(design)
-    self:InitializeFriendlyFont()
     CreateFont("PlatynatorNameplateCooldownFont")
     local file, size, flags = _G[addonTable.CurrentFont]:GetFont()
     PlatynatorNameplateCooldownFont:SetFont(file, 14, flags)
-  elseif eventName == "FORBIDDEN_NAME_PLATE_UNIT_ADDED" then
-    self:UpdateFriendlyFont()
   elseif eventName == "VARIABLES_LOADED" then
     if addonTable.Constants.IsMidnight then
       C_CVar.SetCVarBitfield(NamePlateConstants.ENEMY_NPC_AURA_DISPLAY_CVAR, Enum.NamePlateEnemyNpcAuraDisplay.Buffs, true)
