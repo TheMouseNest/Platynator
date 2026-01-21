@@ -37,6 +37,9 @@ function addonTable.Display.ManagerMixin:OnLoad()
   self:RegisterEvent("NAME_PLATE_UNIT_ADDED")
   self:RegisterEvent("NAME_PLATE_UNIT_REMOVED")
   self:RegisterEvent("PLAYER_TARGET_CHANGED")
+  self:RegisterEvent("PLAYER_TARGET_CHANGED")
+  self:RegisterEvent("PLAYER_SOFT_ENEMY_CHANGED")
+  self:RegisterEvent("PLAYER_SOFT_FRIEND_CHANGED")
   self:RegisterEvent("PLAYER_SOFT_INTERACT_CHANGED")
   self:RegisterEvent("UPDATE_MOUSEOVER_UNIT")
   self:RegisterEvent("PLAYER_FOCUS_CHANGED")
@@ -723,7 +726,7 @@ function addonTable.Display.ManagerMixin:OnEvent(eventName, ...)
   elseif  eventName == "NAME_PLATE_UNIT_REMOVED" then
     local unit = ...
     self:Uninstall(unit)
-  elseif eventName == "PLAYER_TARGET_CHANGED" then
+  elseif eventName == "PLAYER_TARGET_CHANGED" or eventName == "PLAYER_SOFT_ENEMY_CHANGED" or eventName == "PLAYER_SOFT_FRIEND_CHANGED" then
     self:UpdateForTarget()
   elseif eventName == "PLAYER_FOCUS_CHANGED" then
     self:UpdateForFocus()

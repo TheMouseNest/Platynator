@@ -489,7 +489,7 @@ function addonTable.Display.NameplateMixin:UpdateVisual()
 
   local scale = 1
   local alpha = 1
-  local isTarget = UnitIsUnit("target", self.unit)
+  local isTarget = UnitIsUnit("target", self.unit) or UnitIsUnit("softenemy", self.unit) or UnitIsUnit("softfriend", self.unit)
   if isTarget then
     if not addonTable.Constants.ParentedToNameplates then
       scale = scale * addonTable.Config.Get(addonTable.Config.Options.TARGET_SCALE)
@@ -523,6 +523,7 @@ function addonTable.Display.NameplateMixin:UpdateSoftInteract()
   end
   self.SoftTargetIcon:SetShown(hasCursorTexture)
 end
+
 function addonTable.Display.NameplateMixin:OnEvent(eventName)
   self:UpdateCastingState()
   self:UpdateVisual()
