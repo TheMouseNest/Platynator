@@ -29,7 +29,7 @@ function addonTable.Display.GuildTextMixin:SetUnit(unit)
       if guild then
         self.defaultText = guild
       end
-    elseif not UnitIsBattlePetCompanion(self.unit) and not IsInInstance() then
+    elseif not UnitIsBattlePetCompanion(self.unit) and not addonTable.Display.Utilities.IsInRelevantInstance() then
       local text
       if C_TooltipInfo then
         local tooltipData = C_TooltipInfo.GetUnit(self.unit)
