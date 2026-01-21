@@ -50,8 +50,81 @@ local function CleanProgressText(text)
   return text:gsub("^%-+%s*", "")
 end
 
+local questProgressPatterns
+local threatPatterns
+
+local function FormatStringToPattern(formatString)
+  if not formatString or formatString == "" then
+    return nil
+  end
+
+  local pattern = formatString
+  pattern = pattern:gsub("%%(%d+)%$", "%%")
+  pattern = pattern:gsub("%%%%", "\0PERCENT\0")
+  pattern = pattern:gsub("%%%-?%d*%.?%d*[d]", "\0DIGIT\0")
+  pattern = pattern:gsub("%%%-?%d*%.?%d*[s]", "\0STRING\0")
+  pattern = pattern:gsub("([%(%)%.%+%-%*%?%[%]%^%$%%])", "%%%1")
+  pattern = pattern:gsub("\0DIGIT\0", "%d+")
+  pattern = pattern:gsub("\0STRING\0", ".+")
+  pattern = pattern:gsub("\0PERCENT\0", "%%")
+  return "^" .. pattern .. "$"
+end
+
+local function BuildQuestProgressPatterns()
+
+  if questProgressPatterns then
+    return questProgressPatterns
+  end
+  questProgressPatterns = {}
+  if type(_G) ~= "table" then
+    return questProgressPatterns
+  end
+  for key, value in pairs(_G) do
+    if type(key) == "string" and key:match("^QUEST_") and type(value) == "string" then
+      if (value:find("/", 1, true) or value:find("%%", 1, true))
+        and (value:find("%d", 1, true) or value:find("%s", 1, true)) then
+        local pattern = FormatStringToPattern(value)
+        if pattern then
+          table.insert(questProgressPatterns, pattern)
+        end
+      end
+    end
+  end
+  return questProgressPatterns
+end
+
+local function BuildThreatPatterns()
+  if threatPatterns then
+    return threatPatterns
+  end
+  threatPatterns = {}
+  if type(_G) ~= "table" then
+    return threatPatterns
+  end
+  for key, value in pairs(_G) do
+    if type(key) == "string" and key:match("^THREAT") and type(value) == "string" then
+      if value:find("%d", 1, true) or value:find("%s", 1, true) then
+        local pattern = FormatStringToPattern(value)
+        if pattern then
+          table.insert(threatPatterns, pattern)
+        end
+      end
+    end
+  end
+  return threatPatterns
+end
+
+local function MatchesAnyPattern(text, patterns)
+  for _, pattern in ipairs(patterns) do
+    if text:match(pattern) then
+      return true
+    end
+  end
+  return false
+end
+
 -- Detect quest progress lines like "3/7" or "70%".
-local function IsQuestProgressText(text)
+local function IsQuestProgressText(text, allowFallback)
   text = NormalizeText(text)
   if not text or text == "" then
     return false
@@ -62,16 +135,24 @@ local function IsQuestProgressText(text)
   if unitLevelPattern and text:match(unitLevelPattern) then
     return false
   end
-  if text:match("%d+%%%s*[Tt]hreat") then
+  local threatList = BuildThreatPatterns()
+  if #threatList > 0 and MatchesAnyPattern(text, threatList) then
     return false
   end
-  if text:match("^[Tt]hreat%s*%d+%%") then
+  local questList = BuildQuestProgressPatterns()
+  if #questList > 0 then
+    if MatchesAnyPattern(text, questList) then
+      return true
+    end
+    if allowFallback then
+      -- Questie may format objective text as "1/7 Objective" without Blizzard's format string.
+      if text:match("^%d+/%d+") or text:match("^%d+%%") then
+        return true
+      end
+    end
     return false
   end
-  if text:match("%d+/%d+") then
-    return true
-  end
-  if text:match("%d+%%") then
+  if allowFallback and (text:match("^%d+/%d+") or text:match("^%d+%%")) then
     return true
   end
   return false
@@ -203,12 +284,12 @@ local function GetQuestTextFromQuestie(unit, firstOnly, partySupport, partySuppo
   local currentQuestIndex = 0
   for _, line in ipairs(tooltipLines) do
     local normalized = NormalizeText(line)
-    if normalized and normalized ~= "" and not IsQuestProgressText(line) then
+    if normalized and normalized ~= "" and not IsQuestProgressText(line, true) then
       if firstOnly and currentQuestIndex >= 1 and #results > 0 then
         break
       end
       currentQuestIndex = currentQuestIndex + 1
-    elseif IsQuestProgressText(line) then
+    elseif IsQuestProgressText(line, true) then
       if currentQuestIndex == 0 then
         currentQuestIndex = 1
       end
