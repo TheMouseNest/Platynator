@@ -70,7 +70,7 @@ end
 local interruptMap = {
   ["DEATHKNIGHT"] = {47528, 47476},
   ["WARRIOR"] = {6552},
-  ["WARLOCK"] = {19647},
+  ["WARLOCK"] = {19647, 1276467},
   ["SHAMAN"] = {57994},
   ["ROGUE"] = {1766},
   ["PRIEST"] = {15487},
