@@ -247,7 +247,7 @@ function addonTable.Display.GetColor(settings, state, unit)
         end
       end
     elseif s.kind == "eliteType" then
-      if inRelevantInstance or not s.instancesOnly then
+      if (inRelevantInstance or not s.instancesOnly) and not addonTable.Display.Utilities.IsNeutralUnit(unit) then
         local classification = UnitClassification(unit)
         if classification == "elite" then
           local level = UnitEffectiveLevel(unit)
