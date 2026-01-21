@@ -763,8 +763,18 @@ function addonTable.CustomiseDialog.GetStyleDropdown(parent)
       local button = rootDescription:CreateRadio(entry.label, function()
         return entry.value == currentStyle
       end, function()
-        addonTable.Dialogs.ShowConfirm(addonTable.Locales.THIS_WILL_OVERWRITE_STYLE_CUSTOM, OKAY, CANCEL, function()
+        addonTable.Dialogs.ShowDualChoice(addonTable.Locales.THIS_WILL_OVERWRITE_STYLE_CUSTOM, addonTable.Locales.OVERWRITE, addonTable.Locales.SAVE_CUSTOM_AS, function()
           addonTable.Config.Set(addonTable.Config.Options.STYLE, entry.value)
+        end, function()
+          addonTable.Dialogs.ShowEditBox(addonTable.Locales.ENTER_THE_CUSTOM_STYLE_NAME, OKAY, CANCEL, function(value)
+            local allDesigns = addonTable.Config.Get(addonTable.Config.Options.DESIGNS)
+            if allDesigns[value] or value:match("^_") then
+              addonTable.Dialogs.ShowAcknowledge(addonTable.Locales.THAT_STYLE_NAME_ALREADY_EXISTS)
+            else
+              allDesigns[value] = CopyTable(addonTable.Core.GetDesignByName(addonTable.Constants.CustomName))
+              addonTable.Config.Set(addonTable.Config.Options.STYLE, entry.value)
+            end
+          end)
         end)
       end)
     end
