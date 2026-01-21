@@ -58,6 +58,9 @@ function addonTable.Core.UpgradeDesign(design)
     if marker.kind == "elite" and marker.openWorldOnly == nil then
       marker.openWorldOnly = false
     end
+    if marker.kind == "rare" and marker.includeElites == nil then
+      marker.includeElites = false
+    end
   end
   if not design.auras then
     design.auras = {
@@ -127,6 +130,9 @@ function addonTable.Core.UpgradeDesign(design)
         kind = "duration",
         reversed = false,
       }
+    end
+    if aura.kind == "debuffs" and aura.showPandemic == nil then
+      aura.showPandemic = true
     end
   end
 
@@ -273,6 +279,9 @@ function addonTable.Core.UpgradeDesign(design)
     end
     if bar.kind == "cast" and bar.interruptMarker == nil then
       bar.interruptMarker = {asset = "none"}
+    end
+    if bar.kind == "cast" and bar.interruptMarker.color == nil then
+      bar.interruptMarker.color = GetColor("FFFFFF")
     end
     if bar.autoColors then
       UpdateAutoColors(bar.autoColors)

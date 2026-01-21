@@ -87,8 +87,27 @@ local interruptSpells = interruptMap[UnitClassBase("player")] or {}
 
 function addonTable.Display.Utilities.GetInterruptSpell()
   for _, s in ipairs(interruptSpells) do
-    if C_SpellBook.IsSpellKnown(s) then
+    if C_SpellBook.IsSpellKnown(s) or C_SpellBook.IsSpellKnown(s, Enum.SpellBookSpellBank.Pet) then
       return s
     end
+  end
+end
+
+if addonTable.Constants.IsClassic then
+  local NUMBER_ABBREVIATION_DATA_ALT = {
+    { breakpoint = 10000000,	abbreviation = SECOND_NUMBER_CAP_NO_SPACE,	significandDivisor = 1000000,	fractionDivisor = 1 },
+    { breakpoint = 1000000,		abbreviation = SECOND_NUMBER_CAP_NO_SPACE,	significandDivisor = 100000,		fractionDivisor = 10 },
+    { breakpoint = 10000,		abbreviation = FIRST_NUMBER_CAP_NO_SPACE,	significandDivisor = 1000,		fractionDivisor = 1 },
+    { breakpoint = 1000,		abbreviation = FIRST_NUMBER_CAP_NO_SPACE,	significandDivisor = 100,		fractionDivisor = 10 },
+  }
+
+  addonTable.Display.Utilities.AbbreviateNumbersAlt = function(value)
+    for i, data in ipairs(NUMBER_ABBREVIATION_DATA_ALT) do
+      if value >= data.breakpoint then
+        local finalValue = math.floor(value / data.significandDivisor) / data.fractionDivisor;
+        return finalValue .. data.abbreviation;
+      end
+    end
+    return tostring(value);
   end
 end

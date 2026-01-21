@@ -267,6 +267,16 @@ addonTable.CustomiseDialog.WidgetsConfig = {
               return details.interruptMarker.asset ~= "none"
             end,
           },
+          {
+            label = addonTable.Locales.INTERRUPT_POINT_COLOR,
+            kind = "colorPicker",
+            setter = function(details, value)
+              details.interruptMarker.color = value
+            end,
+            getter = function(details)
+              return details.interruptMarker.color
+            end,
+          },
         },
       },
       {
@@ -694,6 +704,23 @@ addonTable.CustomiseDialog.WidgetsConfig = {
           }
         }
       },
+    },
+    ["rare"] = {
+      {
+        label = addonTable.Locales.GENERAL,
+        entries = {
+          {
+            label = addonTable.Locales.INCLUDE_ELITE_RARES,
+            kind = "checkbox",
+            setter = function(details, value)
+              details.includeElites = value
+            end,
+            getter = function(details)
+              return details.includeElites
+            end,
+          }
+        }
+      },
     }
   },
   ["auras"] = {
@@ -811,7 +838,6 @@ addonTable.CustomiseDialog.WidgetsConfig = {
           {
             label = addonTable.Locales.SHOW_PANDEMIC,
             kind = "checkbox",
-            hide = true,
             setter = function(details, value)
               details.showPandemic = value
             end,
@@ -863,7 +889,7 @@ addonTable.CustomiseDialog.WidgetsConfig = {
             end,
           },
           {
-            label = addonTable.Locales.DISPELABLE,
+            label = addonTable.Locales.DISPELLABLE,
             kind = "checkbox",
             setter = function(details, value)
               details.filters.dispelable = value

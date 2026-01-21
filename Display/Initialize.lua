@@ -37,6 +37,9 @@ function addonTable.Display.ManagerMixin:OnLoad()
   self:RegisterEvent("NAME_PLATE_UNIT_ADDED")
   self:RegisterEvent("NAME_PLATE_UNIT_REMOVED")
   self:RegisterEvent("PLAYER_TARGET_CHANGED")
+  self:RegisterEvent("PLAYER_TARGET_CHANGED")
+  self:RegisterEvent("PLAYER_SOFT_ENEMY_CHANGED")
+  self:RegisterEvent("PLAYER_SOFT_FRIEND_CHANGED")
   self:RegisterEvent("PLAYER_SOFT_INTERACT_CHANGED")
   self:RegisterEvent("UPDATE_MOUSEOVER_UNIT")
   self:RegisterEvent("PLAYER_FOCUS_CHANGED")
@@ -70,6 +73,7 @@ function addonTable.Display.ManagerMixin:OnLoad()
         self:Uninstall(unit)
         self:Install(unit, nameplate)
       end
+      display:UpdateAurasForPandemic()
     end
   end)
 
@@ -383,17 +387,13 @@ function addonTable.Display.ManagerMixin:UpdateShowState()
     local newValue = state and "1" or "0"
     C_CVar.SetCVar(values[key], newValue)
   end
-  self.hiddenFriendly = false
+  self.toggledFriendly = false
 
   self:UpdateInstanceShowState()
 end
 
 function addonTable.Display.ManagerMixin:UpdateInstanceShowState()
   local state = addonTable.Config.Get(addonTable.Config.Options.SHOW_FRIENDLY_IN_INSTANCES)
-  -- Avoid changing nameplate visibility if we don't need to (so the Blizz hotkeys persist)
-  if state == "always" then
-    return
-  end
 
   if InCombatLockdown() then
     self:RegisterEvent("PLAYER_REGEN_ENABLED")
@@ -411,23 +411,29 @@ function addonTable.Display.ManagerMixin:UpdateInstanceShowState()
   local currentShow = addonTable.Config.Get(addonTable.Config.Options.SHOW_NAMEPLATES)
 
   if addonTable.Display.Utilities.IsInRelevantInstance() then
-    if not self.hiddenFriendly then
-      if currentShow.player and state ~= "name_only" then
-        C_CVar.SetCVar(values.player, "0")
+    if not self.toggledFriendly and
+      (state == "name_only" and not currentShow.player
+      or state == "never" and (currentShow.player or currentShow.npc)
+      or state == "name_only" and currentShow.npc)
+      or state == "always" and (not currentShow.player or not currentShow.npc) then
+      C_CVar.SetCVar(values.player, state == "never" and "0" or "1")
+      if currentShow.npc then
+        C_CVar.SetCVar(values.npc, state ~= "always" and "0" or "1")
       end
-      if currentShow.npc or state == "name_only" then
-        C_CVar.SetCVar(values.npc, "0")
-      end
-      self.hiddenFriendly = true
+      self.toggledFriendly = true
     end
-  elseif self.hiddenFriendly then
+  elseif self.toggledFriendly then
     if currentShow.player then
       C_CVar.SetCVar(values.player, "1")
+    elseif state ~= "never" then
+      C_CVar.SetCVar(values.player, "0")
     end
     if currentShow.npc then
       C_CVar.SetCVar(values.npc, "1")
+    elseif state == "always" then
+      C_CVar.SetCVar(values.npc, "0")
     end
-    self.hiddenFriendly = false
+    self.toggledFriendly = false
   end
 end
 
@@ -720,7 +726,7 @@ function addonTable.Display.ManagerMixin:OnEvent(eventName, ...)
   elseif  eventName == "NAME_PLATE_UNIT_REMOVED" then
     local unit = ...
     self:Uninstall(unit)
-  elseif eventName == "PLAYER_TARGET_CHANGED" then
+  elseif eventName == "PLAYER_TARGET_CHANGED" or eventName == "PLAYER_SOFT_ENEMY_CHANGED" or eventName == "PLAYER_SOFT_FRIEND_CHANGED" then
     self:UpdateForTarget()
   elseif eventName == "PLAYER_FOCUS_CHANGED" then
     self:UpdateForFocus()
@@ -807,8 +813,12 @@ function addonTable.Display.ManagerMixin:OnEvent(eventName, ...)
 
       C_CVar.SetCVarBitfield(NamePlateConstants.ENEMY_PLAYER_AURA_DISPLAY_CVAR, Enum.NamePlateEnemyPlayerAuraDisplay.Buffs, true)
       C_CVar.SetCVarBitfield(NamePlateConstants.ENEMY_PLAYER_AURA_DISPLAY_CVAR, Enum.NamePlateEnemyPlayerAuraDisplay.Debuffs, true)
+      C_CVar.SetCVarBitfield(NamePlateConstants.ENEMY_PLAYER_AURA_DISPLAY_CVAR, Enum.NamePlateEnemyPlayerAuraDisplay.LossOfControl, true)
 
-      --SetCVarBitfield(NamePlateConstants.ENEMY_PLAYER_AURA_DISPLAY_CVAR, Enum.NamePlateEnemyPlayerAuraDisplay.LossOfControl, true);
+      C_CVar.SetCVarBitfield(NamePlateConstants.FRIENDLY_PLAYER_AURA_DISPLAY_CVAR, Enum.NamePlateFriendlyPlayerAuraDisplay.Buffs, true)
+      C_CVar.SetCVarBitfield(NamePlateConstants.FRIENDLY_PLAYER_AURA_DISPLAY_CVAR, Enum.NamePlateFriendlyPlayerAuraDisplay.Debuffs, true)
+      C_CVar.SetCVarBitfield(NamePlateConstants.FRIENDLY_PLAYER_AURA_DISPLAY_CVAR, Enum.NamePlateFriendlyPlayerAuraDisplay.LossOfControl, true)
+
       C_CVar.SetCVar("nameplateMinScale", 1)
     end
     addonTable.Display.SetCVars()

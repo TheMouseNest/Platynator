@@ -24,6 +24,8 @@ local function InitBar(frame, details)
   local borderDetails = addonTable.Assets.BarBordersSliced[details.border.asset]
   local foregroundDetails = addonTable.Assets.BarBackgrounds[details.foreground.asset]
   frame.statusBar:SetScale(1/borderDetails.lowerScale * details.scale)
+  frame.statusBar:SetMinMaxValues(0, 1)
+  frame.statusBar:SetValue(1)
   frame.statusBar:SetStatusBarTexture(foregroundDetails.file)
   frame.statusBar:GetStatusBarTexture():SetDrawLayer("ARTWORK")
 
@@ -244,6 +246,8 @@ function addonTable.Display.GetCastBar(frame, parent)
     if details.interruptMarker.asset ~= "none" then
       local markerDetails = addonTable.Assets.BarPositionHighlights[details.interruptMarker.asset]
       frame.interruptMarkerPoint:SetTexture(markerDetails.file)
+      local color = details.interruptMarker.color
+      frame.interruptMarkerPoint:SetVertexColor(color.r, color.g, color.b)
     end
 
     local backgroundDetails = addonTable.Assets.BarBackgrounds[details.background.asset]
@@ -513,6 +517,8 @@ function addonTable.Display.GetText(frame, parent)
 
     if details.kind == "health" then
       Mixin(frame, addonTable.Display.HealthTextMixin)
+    elseif details.kind == "damageAbsorb" then
+      Mixin(frame, addonTable.Display.AbsorbTextMixin)
     elseif details.kind == "creatureName" then
       Mixin(frame, addonTable.Display.CreatureTextMSPMixin or addonTable.Display.CreatureTextMixin)
     elseif details.kind == "guild" then
