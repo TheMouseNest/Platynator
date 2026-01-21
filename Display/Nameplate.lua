@@ -162,8 +162,10 @@ function addonTable.Display.NameplateMixin:OnLoad()
         auraFrame.auraIndex = nil
         auraFrame.auraFilter = auraFilter
         auraFrame.durationSecret = aura.durationSecret
-        auraFrame.duration = aura.duration
-        auraFrame.expirationTime = aura.expirationTime
+        if not C_Secrets then
+          auraFrame.duration = aura.duration
+          auraFrame.expirationTime = aura.expirationTime
+        end
 
         auraFrame.Pandemic:SetShown(details.showPandemic)
         if details.showPandemic then
@@ -195,11 +197,14 @@ function addonTable.Display.NameplateMixin:OnLoad()
           if details.showPandemic then
             auraFrame.Pandemic:SetAlpha(aura.durationSecret:EvaluateRemainingPercent(pandemicCurve))
           end
-        else
+        elseif auraFrame.expirationTime then
           CooldownFrame_Set(auraFrame.Cooldown, aura.expirationTime - aura.duration, aura.duration, aura.duration > 0, true);
           if details.showPandemic then
             auraFrame.Pandemic:SetAlpha(aura.expirationTime - GetTime() <= aura.duration * pandemicPercentage and 1 or 0)
           end
+        else
+          auraFrame.Cooldown:Clear()
+          auraFrame.Pandemic:SetAlpha(0)
         end
 
         auraFrame:Show();
@@ -529,7 +534,7 @@ function addonTable.Display.NameplateMixin:UpdateAurasForPandemic()
     for _, item in ipairs(self.DebuffDisplay.Wrapped.items) do
       if item.durationSecret then
         item.Pandemic:SetAlpha(item.durationSecret:EvaluateRemainingPercent(pandemicCurve))
-      else
+      elseif item.expirationTime then
         item.Pandemic:SetAlpha(item.expirationTime - time <= item.duration * pandemicPercentage and 1 or 0)
       end
     end
