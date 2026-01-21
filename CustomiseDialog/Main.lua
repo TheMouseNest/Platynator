@@ -256,15 +256,15 @@ local function SetupBehaviour(parent)
     }
     if C_CVar.GetCVarInfo("nameplateShowFriendlyPlayers") ~= nil then
       labels = {
-        addonTable.Locales.PLAYERS,
+        addonTable.Locales.FRIENDLY_PLAYERS,
         addonTable.Locales.FRIENDLY_NPCS,
-        addonTable.Locales.ENEMY_NPCS,
+        addonTable.Locales.ENEMIES,
       }
     else
       labels = {
         addonTable.Locales.PLAYERS_AND_FRIENDS,
         addonTable.Locales.FRIENDLY_NPCS,
-        addonTable.Locales.ENEMY_NPCS,
+        addonTable.Locales.ENEMIES,
       }
     end
 
@@ -281,7 +281,7 @@ local function SetupBehaviour(parent)
           addonTable.Config.Get(addonTable.Config.Options.SHOW_NAMEPLATES)[values[index]] = not current
           addonTable.CallbackRegistry:TriggerEvent("RefreshStateChange", {[addonTable.Constants.RefreshReason.ShowBehaviour] = true})
         end)
-        if index == 1 then
+        if index == 2 then
           rootDescription:CreateDivider()
         end
       end
