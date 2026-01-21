@@ -384,17 +384,13 @@ function addonTable.Display.ManagerMixin:UpdateShowState()
     local newValue = state and "1" or "0"
     C_CVar.SetCVar(values[key], newValue)
   end
-  self.hiddenFriendly = false
+  self.toggledFriendly = false
 
   self:UpdateInstanceShowState()
 end
 
 function addonTable.Display.ManagerMixin:UpdateInstanceShowState()
   local state = addonTable.Config.Get(addonTable.Config.Options.SHOW_FRIENDLY_IN_INSTANCES)
-  -- Avoid changing nameplate visibility if we don't need to (so the Blizz hotkeys persist)
-  if state == "always" then
-    return
-  end
 
   if InCombatLockdown() then
     self:RegisterEvent("PLAYER_REGEN_ENABLED")
@@ -412,23 +408,29 @@ function addonTable.Display.ManagerMixin:UpdateInstanceShowState()
   local currentShow = addonTable.Config.Get(addonTable.Config.Options.SHOW_NAMEPLATES)
 
   if addonTable.Display.Utilities.IsInRelevantInstance() then
-    if not self.hiddenFriendly then
-      if currentShow.player and state ~= "name_only" then
-        C_CVar.SetCVar(values.player, "0")
+    if not self.toggledFriendly and
+      (state == "name_only" and not currentShow.player
+      or state == "never" and (currentShow.player or currentShow.npc)
+      or state == "name_only" and currentShow.npc)
+      or state == "always" and (not currentShow.player or not currentShow.npc) then
+      C_CVar.SetCVar(values.player, state == "never" and "0" or "1")
+      if currentShow.npc then
+        C_CVar.SetCVar(values.npc, state ~= "always" and "0" or "1")
       end
-      if currentShow.npc or state == "name_only" then
-        C_CVar.SetCVar(values.npc, "0")
-      end
-      self.hiddenFriendly = true
+      self.toggledFriendly = true
     end
-  elseif self.hiddenFriendly then
+  elseif self.toggledFriendly then
     if currentShow.player then
       C_CVar.SetCVar(values.player, "1")
+    elseif state ~= "never" then
+      C_CVar.SetCVar(values.player, "0")
     end
     if currentShow.npc then
       C_CVar.SetCVar(values.npc, "1")
+    elseif state == "always" then
+      C_CVar.SetCVar(values.npc, "0")
     end
-    self.hiddenFriendly = false
+    self.toggledFriendly = false
   end
 end
 
