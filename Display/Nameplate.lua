@@ -195,12 +195,12 @@ function addonTable.Display.NameplateMixin:OnLoad()
         if aura.durationSecret then
           auraFrame.Cooldown:SetCooldownFromDurationObject(aura.durationSecret)
           if details.showPandemic then
-            auraFrame.Pandemic:SetAlpha(aura.durationSecret:EvaluateRemainingPercent(pandemicCurve))
+            auraFrame.Pandemic:SetAlpha(C_CurveUtil.EvaluateColorValueFromBoolean(auraFrame.durationSecret:IsZero(), 0, auraFrame.durationSecret:EvaluateRemainingPercent(pandemicCurve)))
           end
         elseif auraFrame.expirationTime then
           CooldownFrame_Set(auraFrame.Cooldown, aura.expirationTime - aura.duration, aura.duration, aura.duration > 0, true);
           if details.showPandemic then
-            auraFrame.Pandemic:SetAlpha(aura.expirationTime - GetTime() <= aura.duration * pandemicPercentage and 1 or 0)
+            auraFrame.Pandemic:SetAlpha(aura.duration > 0 and aura.expirationTime - GetTime() <= aura.duration * pandemicPercentage and 1 or 0)
           end
         else
           auraFrame.Cooldown:Clear()
@@ -534,9 +534,9 @@ function addonTable.Display.NameplateMixin:UpdateAurasForPandemic()
   if self.DebuffDisplay.details and self.DebuffDisplay.details.showPandemic and self.DebuffDisplay.Wrapped.items then
     for _, item in ipairs(self.DebuffDisplay.Wrapped.items) do
       if item.durationSecret then
-        item.Pandemic:SetAlpha(item.durationSecret:EvaluateRemainingPercent(pandemicCurve))
+        item.Pandemic:SetAlpha(C_CurveUtil.EvaluateColorValueFromBoolean(item.durationSecret:IsZero(), 0, item.durationSecret:EvaluateRemainingPercent(pandemicCurve)))
       elseif item.expirationTime then
-        item.Pandemic:SetAlpha(item.expirationTime - time <= item.duration * pandemicPercentage and 1 or 0)
+        item.Pandemic:SetAlpha(item.duration > 0 and item.expirationTime - time <= item.duration * pandemicPercentage and 1 or 0)
       end
     end
   end
