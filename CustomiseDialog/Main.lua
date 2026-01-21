@@ -123,6 +123,7 @@ local function SetupGeneral(parent)
         clone = false
         addonTable.Dialogs.ShowEditBox(addonTable.Locales.ENTER_PROFILE_NAME, ACCEPT, CANCEL, ValidateAndCreate)
       end)
+      rootDescription:SetScrollMode(30 * 20)
     end)
   end
   table.insert(allFrames, profileDropdown)
@@ -778,6 +779,8 @@ function addonTable.CustomiseDialog.GetStyleDropdown(parent)
         end)
       end)
     end
+
+    rootDescription:SetScrollMode(30 * 20)
   end)
 
   styleDropdown:SetPoint("TOP")
