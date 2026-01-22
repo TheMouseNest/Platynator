@@ -395,26 +395,26 @@ function addonTable.Display.ManagerMixin:UpdateInstanceShowState()
 
   if addonTable.Display.Utilities.IsInRelevantInstance() then
     if not self.toggledFriendly and
-      (state == "name_only" and not currentShow.player
-      or state == "never" and (currentShow.player or currentShow.npc)
-      or state == "name_only" and currentShow.npc)
-      or state == "always" and (not currentShow.player or not currentShow.npc) then
-      C_CVar.SetCVar(values.player, state == "never" and "0" or "1")
-      if currentShow.npc then
-        C_CVar.SetCVar(values.npc, state ~= "always" and "0" or "1")
+      (state == "name_only" and not currentShow.friendlyPlayer
+      or state == "never" and (currentShow.friendlyPlayer or currentShow.friendlyNPC)
+      or state == "name_only" and currentShow.friendlyNPC)
+      or state == "always" and (not currentShow.friendlyPlayer or not currentShow.friendlyNPC) then
+      C_CVar.SetCVar(values.friendlyPlayer, state == "never" and "0" or "1")
+      if currentShow.friendlyNPC then
+        C_CVar.SetCVar(values.friendlyNPC, state ~= "always" and "0" or "1")
       end
       self.toggledFriendly = true
     end
   elseif self.toggledFriendly then
-    if currentShow.player then
-      C_CVar.SetCVar(values.player, "1")
+    if currentShow.friendlyPlayer then
+      C_CVar.SetCVar(values.friendlyPlayer, "1")
     elseif state ~= "never" then
-      C_CVar.SetCVar(values.player, "0")
+      C_CVar.SetCVar(values.friendlyPlayer, "0")
     end
-    if currentShow.npc then
-      C_CVar.SetCVar(values.npc, "1")
+    if currentShow.friendlyNPC then
+      C_CVar.SetCVar(values.friendlyNPC, "1")
     elseif state == "always" then
-      C_CVar.SetCVar(values.npc, "0")
+      C_CVar.SetCVar(values.friendlyNPC, "0")
     end
     self.toggledFriendly = false
   end
