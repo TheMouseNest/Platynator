@@ -284,45 +284,50 @@ local function GetQuestTextFromQuestie(unit, firstOnly, partySupport, partySuppo
   local currentQuestIndex = 0
   for _, line in ipairs(tooltipLines) do
     local normalized = NormalizeText(line)
-    if normalized and normalized ~= "" and not IsQuestProgressText(line, true) then
-      if firstOnly and currentQuestIndex >= 1 and #results > 0 then
-        break
-      end
-      currentQuestIndex = currentQuestIndex + 1
-    elseif IsQuestProgressText(line, true) then
-      if currentQuestIndex == 0 then
-        currentQuestIndex = 1
-      end
-      if not firstOnly or currentQuestIndex == 1 then
-        local output = line
-        local cleanText
-        local isPlayerLine
-        if collapseEnabled then
-          local lineName = GetQuestieLineName(line, groupNames)
-          if lineName then
-            isPlayerLine = playerNames[lineName] == true
-          end
-          cleanText = CleanProgressText(StripQuestieNames(line, groupNames))
-          if cleanText == "" then
-            cleanText = nil
-          end
+    if normalized and normalized ~= "" then
+      local isHeader = normalized:match("^%[%d+%]") ~= nil
+      local isProgress = IsQuestProgressText(line, true)
+      local isIndented = line:match("^%s+") ~= nil
+      if isHeader or (not isProgress and not isIndented and currentQuestIndex == 0) then
+        if firstOnly and currentQuestIndex >= 1 and #results > 0 then
+          break
         end
-        if not partySupport then
-          local lineName = GetQuestieLineName(line, groupNames)
-          if lineName and not playerNames[lineName] then
-            output = nil
-          else
-            output = StripQuestieNames(line, playerNames)
-          end
+        currentQuestIndex = currentQuestIndex + 1
+      elseif isProgress or isIndented or (currentQuestIndex > 0 and not isHeader) then
+        if currentQuestIndex == 0 then
+          currentQuestIndex = 1
         end
-        if output and output ~= "" then
+        if not firstOnly or currentQuestIndex == 1 then
+          local output = line
+          local cleanText
+          local isPlayerLine
           if collapseEnabled then
-            table.insert(results, {text = output, cleanText = cleanText, isPlayer = isPlayerLine})
-            if isPlayerLine and cleanText then
-              playerProgress[cleanText] = true
+            local lineName = GetQuestieLineName(line, groupNames)
+            if lineName then
+              isPlayerLine = playerNames[lineName] == true
             end
-          else
-            table.insert(results, output)
+            cleanText = CleanProgressText(StripQuestieNames(line, groupNames))
+            if cleanText == "" then
+              cleanText = nil
+            end
+          end
+          if not partySupport then
+            local lineName = GetQuestieLineName(line, groupNames)
+            if lineName and not playerNames[lineName] then
+              output = nil
+            else
+              output = StripQuestieNames(line, playerNames)
+            end
+          end
+          if output and output ~= "" then
+            if collapseEnabled then
+              table.insert(results, {text = output, cleanText = cleanText, isPlayer = isPlayerLine})
+              if isPlayerLine and cleanText then
+                playerProgress[cleanText] = true
+              end
+            else
+              table.insert(results, output)
+            end
           end
         end
       end
