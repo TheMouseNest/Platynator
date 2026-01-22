@@ -269,22 +269,35 @@ local function SetupBehaviour(parent)
       }
     end
 
+    local function GetCheckbox(rootDescription, label, value)
+      return rootDescription:CreateCheckbox(label, function()
+        return addonTable.Config.Get(addonTable.Config.Options.SHOW_NAMEPLATES)[value]
+      end, function()
+        if InCombatLockdown() then
+          return
+        end
+        local current = addonTable.Config.Get(addonTable.Config.Options.SHOW_NAMEPLATES)[value]
+        addonTable.Config.Get(addonTable.Config.Options.SHOW_NAMEPLATES)[value] = not current
+        addonTable.CallbackRegistry:TriggerEvent("RefreshStateChange", {[addonTable.Constants.RefreshReason.ShowBehaviour] = true})
+      end)
+    end
+
     applyNameplatesDropdown.DropDown:SetDefaultText(NONE)
     applyNameplatesDropdown.DropDown:SetupMenu(function(_, rootDescription)
-      for index, l in ipairs(labels) do
-        rootDescription:CreateCheckbox(l, function()
-          return addonTable.Config.Get(addonTable.Config.Options.SHOW_NAMEPLATES)[values[index]]
-        end, function()
-          if InCombatLockdown() then
-            return
-          end
-          local current = addonTable.Config.Get(addonTable.Config.Options.SHOW_NAMEPLATES)[values[index]]
-          addonTable.Config.Get(addonTable.Config.Options.SHOW_NAMEPLATES)[values[index]] = not current
-          addonTable.CallbackRegistry:TriggerEvent("RefreshStateChange", {[addonTable.Constants.RefreshReason.ShowBehaviour] = true})
-        end)
-        if index == 2 then
-          rootDescription:CreateDivider()
-        end
+      if C_CVar.GetCVarInfo("nameplateShowFriendlyPlayers") ~= nil then
+        local friendlyPlayer = GetCheckbox(rootDescription, addonTable.Locales.FRIENDLY_PLAYERS, "friendlyPlayer")
+        GetCheckbox(friendlyPlayer, addonTable.Locales.MINIONS, "friendlyMinion")
+        GetCheckbox(rootDescription, addonTable.Locales.FRIENDLY_NPCS, "friendlyNPC")
+        local enemies = GetCheckbox(rootDescription, addonTable.Locales.ENEMIES, "enemy")
+        GetCheckbox(enemies, addonTable.Locales.MINIONS, "enemyMinion")
+        GetCheckbox(enemies, addonTable.Locales.MINORS, "enemyMinor")
+      else
+        local friendlyPlayer = GetCheckbox(rootDescription, addonTable.Locales.PLAYERS_AND_FRIENDS, "friendlyPlayer")
+        GetCheckbox(friendlyPlayer, addonTable.Locales.FRIENDLY_NPCS, "friendlyNPC")
+        GetCheckbox(friendlyPlayer, addonTable.Locales.MINIONS, "friendlyMinion")
+        local enemies = GetCheckbox(rootDescription, addonTable.Locales.ENEMIES, "enemy")
+        GetCheckbox(enemies, addonTable.Locales.MINIONS, "enemyMinion")
+        GetCheckbox(enemies, addonTable.Locales.MINORS, "enemyMinor")
       end
     end)
   end

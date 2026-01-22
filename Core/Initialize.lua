@@ -423,6 +423,17 @@ function addonTable.Core.MigrateSettings()
       enemy = state,
     })
   end
+
+  if addonTable.Config.Get(addonTable.Config.Options.SHOW_NAMEPLATES).enemyMinion == nil then
+    local state = addonTable.Config.Get(addonTable.Config.Options.SHOW_NAMEPLATES)
+    state.enemyMinion = true
+    state.enemyMinor = true
+    state.friendlyMinion = false
+    state.friendlyPlayer = state.player
+    state.friendlyNPC = state.npc
+    state.player = nil
+    state.npc = nil
+  end
 end
 
 local function SetStyle()

@@ -329,15 +329,21 @@ end
 local function GetCVarsForNameplates()
   if C_CVar.GetCVarInfo("nameplateShowFriendlyPlayers") ~= nil then
     return {
-      player = "nameplateShowFriendlyPlayers",
-      npc = "nameplateShowFriendlyNpcs",
+      friendlyPlayer = "nameplateShowFriendlyPlayers",
+      friendlyNPC = "nameplateShowFriendlyNpcs",
+      friendlyMinion = "nameplateShowFriendlyPlayerMinions",
       enemy = "nameplateShowEnemies",
+      enemyMinion = "nameplateShowEnemyMinions",
+      enemyMinor = "nameplateShowEnemyMinus",
     }
   else
     return {
-      player = "nameplateShowFriends",
-      npc = "nameplateShowFriendlyNPCs",
+      friendlyPlayer = "nameplateShowFriends",
+      friendlyNPC = "nameplateShowFriendlyNPCs",
+      friendlyMinion = "nameplateShowFriendlyMinions",
       enemy = "nameplateShowEnemies",
+      enemyMinion = "nameplateShowEnemyMinions",
+      enemyMinor = "nameplateShowEnemyMinus",
     }
   end
 end
@@ -353,18 +359,6 @@ function addonTable.Display.ManagerMixin:UpdateShowState()
   local currentShow = addonTable.Config.Get(addonTable.Config.Options.SHOW_NAMEPLATES)
 
   local values = GetCVarsForNameplates()
-  if C_CVar.GetCVarInfo("nameplateShowFriends") ~= nil then -- Check for the entangled cvars for friendly npcs
-    if self.oldShowState then
-      if currentShow.npc and not currentShow.player and not self.oldShowState.player then
-        currentShow.player = true
-      end
-      if not currentShow.player and self.oldShowState.player then
-        currentShow.npc = false
-      end
-    end
-
-    self.oldShowState = CopyTable(currentShow)
-  end
   if C_CVar.GetCVarInfo("nameplateShowOnlyNameForFriendlyPlayerUnits") then
     C_CVar.SetCVar("nameplateShowOnlyNameForFriendlyPlayerUnits", "0")
   end
