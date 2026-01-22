@@ -140,8 +140,11 @@ function addonTable.Display.ManagerMixin:OnLoad()
     return not C_UnitAuras.IsAuraFilteredOutByInstanceID(unitToken, auraInstanceID, "HARMFUL|PLAYER")
   end
   hooksecurefunc(NamePlateDriverFrame, "OnNamePlateAdded", function(_, unit)
+    if unit == "preview" then
+      return
+    end
     local nameplate = C_NamePlate.GetNamePlateForUnit(unit, issecure())
-    if nameplate and unit and unit ~= "preview" and (addonTable.Constants.IsMidnight or not UnitIsUnit("player", unit)) then
+    if nameplate and unit and (addonTable.Constants.IsMidnight or not UnitIsUnit("player", unit)) then
       if addonTable.Constants.IsMidnight then
         nameplate.UnitFrame:SetAlpha(0)
         if not self.HookedUFs[nameplate.UnitFrame] then
@@ -475,9 +478,12 @@ function addonTable.Display.ManagerMixin:UpdateStackingRegion(unit)
 end
 
 function addonTable.Display.ManagerMixin:Install(unit, nameplate)
+  if unit == "preview" then
+    return
+  end
   local nameplate = C_NamePlate.GetNamePlateForUnit(unit, issecure())
   -- NOTE: the nameplate _name_ does not correspond to the unit
-  if nameplate and unit and unit ~= "preview" and (addonTable.Constants.IsMidnight or not UnitIsUnit("player", unit)) then
+  if nameplate and unit and (addonTable.Constants.IsMidnight or not UnitIsUnit("player", unit)) then
     local shouldSimplify = false
     local newDisplay
     if not UnitCanAttack("player", unit) then
