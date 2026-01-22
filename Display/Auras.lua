@@ -450,15 +450,27 @@ function addonTable.Display.AurasManagerMixin:OnEvent(_, _, refreshData)
   end
 
   if changes.debuffs then
-    table.sort(self.debuffs, self.debuffSortFunc)
+    if self.debuffSortFunc then
+      table.sort(self.debuffs, self.debuffSortFunc)
+    else
+      self.debuffs = C_UnitAuras.GetUnitAuraInstanceIDs(self.unit, self.debuffFilter, nil, self.debuffSort, self.debuffOrder)
+    end
     self.OnDebuffsUpdate(self.debuffs, self.debuffFilter)
   end
   if changes.crowdControl then
-    table.sort(self.crowdControl, self.crowdControlSortFunc)
+    if self.crowdControlSortFunc then
+      table.sort(self.crowdControl, self.crowdControlSortFunc)
+    else
+      self.crowdControl = C_UnitAuras.GetUnitAuraInstanceIDs(self.unit, self.crowdControlFilter, nil, self.crowdControlSort, self.crowdControlOrder)
+    end
     self.OnCrowdControlUpdate(self.crowdControl, self.crowdControlFilter)
   end
   if changes.buffs then
-    table.sort(self.buffs, self.buffSortFunc)
+    if self.buffSortFunc then
+      table.sort(self.buffs, self.buffSortFunc)
+    else
+      self.buffs = C_UnitAuras.GetUnitAuraInstanceIDs(self.unit, self.buffFilter, nil, self.buffSort, self.buffOrder)
+    end
     self.OnBuffsUpdate(self.buffs, self.buffFilter)
   end
 end
