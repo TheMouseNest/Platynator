@@ -32,7 +32,7 @@ function addonTable.Display.AurasManagerMixin:PostInit(buffs, debuffs, crowdCont
       if buffs.sorting.kind == "blizzard" then
         self.buffSort = Enum.UnitAuraSortRule.Default
       else
-        self.buffSort = Enum.UnitAuraSortRule.Expiration
+        self.buffSort = Enum.UnitAuraSortRule.ExpirationOnly
       end
       self.buffOrder = buffs.sorting.reversed and Enum.UnitAuraSortDirection.Reverse or Enum.UnitAuraSortDirection.Normal
       self.buffUseImportant = buffs.filters.important
@@ -77,7 +77,7 @@ function addonTable.Display.AurasManagerMixin:PostInit(buffs, debuffs, crowdCont
       if debuffs.sorting.kind == "blizzard" then
         self.debuffSort = Enum.UnitAuraSortRule.Default
       else
-        self.debuffSort = Enum.UnitAuraSortRule.Expiration
+        self.debuffSort = Enum.UnitAuraSortRule.ExpirationOnly
       end
       self.debuffOrder = debuffs.sorting.reversed and Enum.UnitAuraSortDirection.Reverse or Enum.UnitAuraSortDirection.Normal
       self.debuffUseImportant = debuffs.filters.important
@@ -170,7 +170,7 @@ function addonTable.Display.AurasManagerMixin:PostInit(buffs, debuffs, crowdCont
       if crowdControl.sorting.kind == "blizzard" then
         self.crowdControlSort = Enum.UnitAuraSortRule.Default
       else
-        self.crowdControlSort = Enum.UnitAuraSortRule.Expiration
+        self.crowdControlSort = Enum.UnitAuraSortRule.ExpirationOnly
       end
       self.crowdControlOrder = crowdControl.sorting.reversed and Enum.UnitAuraSortDirection.Reverse or Enum.UnitAuraSortDirection.Normal
     else
@@ -235,6 +235,21 @@ end
 
 function addonTable.Display.AurasManagerMixin:GetByInstanceID(auraInstanceID)
   return self.auraData[auraInstanceID]
+end
+
+local function FilterCommon(a1, a2)
+  local include = {}
+  for _, id in ipairs(a1) do
+    include[id] = true
+  end
+  local res = {}
+  for _, id in ipairs(a2) do
+    if include[id] then
+      table.insert(res, id)
+    end
+  end
+
+  return res
 end
 
 function addonTable.Display.AurasManagerMixin:FullRefresh()
@@ -453,7 +468,7 @@ function addonTable.Display.AurasManagerMixin:OnEvent(_, _, refreshData)
     if self.debuffSortFunc then
       table.sort(self.debuffs, self.debuffSortFunc)
     else
-      self.debuffs = C_UnitAuras.GetUnitAuraInstanceIDs(self.unit, self.debuffFilter, nil, self.debuffSort, self.debuffOrder)
+      self.debuffs = FilterCommon(self.debuffs, C_UnitAuras.GetUnitAuraInstanceIDs(self.unit, self.debuffFilter, nil, self.debuffSort, self.debuffOrder))
     end
     self.OnDebuffsUpdate(self.debuffs, self.debuffFilter)
   end
@@ -461,7 +476,7 @@ function addonTable.Display.AurasManagerMixin:OnEvent(_, _, refreshData)
     if self.crowdControlSortFunc then
       table.sort(self.crowdControl, self.crowdControlSortFunc)
     else
-      self.crowdControl = C_UnitAuras.GetUnitAuraInstanceIDs(self.unit, self.crowdControlFilter, nil, self.crowdControlSort, self.crowdControlOrder)
+      self.crowdControl = FilterCommon(self.crowdControl, C_UnitAuras.GetUnitAuraInstanceIDs(self.unit, self.crowdControlFilter, nil, self.crowdControlSort, self.crowdControlOrder))
     end
     self.OnCrowdControlUpdate(self.crowdControl, self.crowdControlFilter)
   end
@@ -469,7 +484,7 @@ function addonTable.Display.AurasManagerMixin:OnEvent(_, _, refreshData)
     if self.buffSortFunc then
       table.sort(self.buffs, self.buffSortFunc)
     else
-      self.buffs = C_UnitAuras.GetUnitAuraInstanceIDs(self.unit, self.buffFilter, nil, self.buffSort, self.buffOrder)
+      self.buffs = FilterCommon(self.buffs, C_UnitAuras.GetUnitAuraInstanceIDs(self.unit, self.buffFilter, nil, self.buffSort, self.buffOrder))
     end
     self.OnBuffsUpdate(self.buffs, self.buffFilter)
   end
