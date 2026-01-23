@@ -26,6 +26,8 @@ local truncateMap = {
 
 function addonTable.Core.UpgradeDesign(design)
   design.appliesToAll = nil
+  design.addon = nil
+  design.kind = nil
 
   if design.scale == nil then
     design.scale = 1
