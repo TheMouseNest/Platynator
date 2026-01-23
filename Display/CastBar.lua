@@ -121,7 +121,7 @@ function addonTable.Display.CastBarMixin:ApplyCasting()
     self:SetReverseFill(isChanneled)
     self:Show()
 
-    if issecretvalue and issecretvalue(startTime) then
+    if C_Secrets then
       local duration
       if isChanneled then
         duration = UnitChannelDuration(self.unit)
