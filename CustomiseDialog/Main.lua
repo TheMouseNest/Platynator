@@ -163,50 +163,26 @@ local function SetupGeneral(parent)
           addonTable.Dialogs.ShowAcknowledge(addonTable.Locales.INVALID_IMPORT)
           return
         end
-        import.version = nil
-        import.addon = nil
         if import.kind == nil or import.kind == "style" then
-          import.kind = nil
-          addonTable.Core.UpgradeDesign(import)
           addonTable.Dialogs.ShowEditBox(addonTable.Locales.ENTER_THE_NEW_STYLE_NAME, OKAY, CANCEL, function(value)
             local designs = addonTable.Config.Get(addonTable.Config.Options.DESIGNS)
             if designs[value] or value:match("^_") then
               addonTable.Dialogs.ShowAcknowledge(addonTable.Locales.THAT_STYLE_NAME_ALREADY_EXISTS)
             else
-              addonTable.Config.Get(addonTable.Config.Options.DESIGNS)[value] = import
-              addonTable.Config.Set(addonTable.Config.Options.STYLE, value)
+              addonTable.CustomiseDialog.ImportData(import, value, false)
               styleDropdown.DropDown:GenerateMenu()
             end
           end)
         elseif import.kind == "profile" then
-          import.kind = nil
           addonTable.Dialogs.ShowDualChoice(addonTable.Locales.OVERWRITE_CURRENT_PROFILE, addonTable.Locales.OVERWRITE, addonTable.Locales.MAKE_NEW,
             function()
-              local oldDesigns = PLATYNATOR_CONFIG.Profiles[PLATYNATOR_CURRENT_PROFILE].designs
-              local old = addonTable.Config.CurrentProfile
-              PLATYNATOR_CONFIG.Profiles[PLATYNATOR_CURRENT_PROFILE] = import
-              local designs = PLATYNATOR_CONFIG.Profiles[PLATYNATOR_CURRENT_PROFILE].designs
-              for key, design in pairs(oldDesigns) do
-                if designs[key] == nil then
-                  designs[key] = design
-                end
-              end
-              if import.style and not import.designs[import.style] then
-                import.style = import.designs_assigned["enemy"]
-              end
-              addonTable.Config.ChangeProfile(PLATYNATOR_CURRENT_PROFILE, old)
+              addonTable.CustomiseDialog.ImportData(import, PLATYNATOR_CURRENT_PROFILE, true)
               profileDropdown.DropDown:GenerateMenu()
             end,
             function()
               addonTable.Dialogs.ShowEditBox(addonTable.Locales.ENTER_THE_NEW_PROFILE_NAME, OKAY, CANCEL, function(value)
                 if PLATYNATOR_CONFIG.Profiles[value] == nil then
-                  addonTable.Config.MakeProfile(value, false)
-                  local old = addonTable.Config.CurrentProfile
-                  PLATYNATOR_CONFIG.Profiles[PLATYNATOR_CURRENT_PROFILE] = import
-                  if import.style and not import.designs[import.style] then
-                    import.style = import.designs_assigned["enemy"]
-                  end
-                  addonTable.Config.ChangeProfile(PLATYNATOR_CURRENT_PROFILE, old)
+                  addonTable.CustomiseDialog.ImportData(import, value, false)
                   profileDropdown.DropDown:GenerateMenu()
                 else
                   addonTable.Dialogs.ShowAcknowledge(addonTable.Locales.THAT_PROFILE_NAME_ALREADY_EXISTS)

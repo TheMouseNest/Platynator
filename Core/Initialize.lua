@@ -522,6 +522,8 @@ function addonTable.Core.GetDesignByName(name)
   if addonTable.Design.Defaults[name] then
     if not addonTable.Design.ParsedDefaults[name] then
       local design = C_EncodingUtil.DeserializeJSON(addonTable.Design.Defaults[name])
+      design.kind = nil
+      design.addon = nil
       addonTable.Core.UpgradeDesign(design)
       addonTable.Design.ParsedDefaults[name] = design
     end
