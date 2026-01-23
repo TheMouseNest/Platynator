@@ -27,6 +27,10 @@ local truncateMap = {
 function addonTable.Core.UpgradeDesign(design)
   design.appliesToAll = nil
 
+  if design.scale == nil then
+    design.scale = 1
+  end
+
   for _, text in ipairs(design.texts) do
     if not text.color then
       text.color = {r = 1, g = 1, b = 1}
@@ -515,7 +519,7 @@ local function UpdateRect(design)
     end
   end
 
-  addonTable.StackRect = {left = left, bottom = bottom, width = right ~= left and right - left or 125, height = top ~= bottom and top - bottom or 10}
+  addonTable.StackRect = {left = left * design.scale, bottom = bottom * design.scale, width = (right ~= left and right - left or 125) * design.scale, height = (top ~= bottom and top - bottom or 10) * design.scale}
 end
 
 function addonTable.Core.GetDesignByName(name)

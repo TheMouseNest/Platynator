@@ -68,6 +68,14 @@ local function SetupGeneral(parent)
     table.insert(allFrames, donateFrame)
   end
 
+  local globalScale = addonTable.CustomiseDialog.Components.GetSlider(container, addonTable.Locales.GLOBAL_SCALE, 1, 300, function(val) return ("%d%%"):format(val) end, function(value)
+    addonTable.Config.Set(addonTable.Config.Options.GLOBAL_SCALE, value/100)
+  end)
+  globalScale:SetValue(addonTable.Config.Get(addonTable.Config.Options.GLOBAL_SCALE) * 100)
+
+  globalScale:SetPoint("TOP", allFrames[#allFrames], "BOTTOM", 0, -30)
+  table.insert(allFrames, globalScale)
+
   local styleDropdown = addonTable.CustomiseDialog.GetStyleDropdown(container)
   styleDropdown:SetPoint("TOP", allFrames[#allFrames], "BOTTOM", 0, -30)
   table.insert(allFrames, styleDropdown)
@@ -198,10 +206,11 @@ local function SetupGeneral(parent)
 
   container:SetScript("OnShow", function()
     for _, f in ipairs(allFrames) do
-      if f.SetValue then
+      if f.SetValue and f.option then
         f:SetValue(addonTable.Config.Get(f.option))
       end
     end
+    globalScale:SetValue(addonTable.Config.Get(addonTable.Config.Options.GLOBAL_SCALE) * 100)
   end)
 
   return container

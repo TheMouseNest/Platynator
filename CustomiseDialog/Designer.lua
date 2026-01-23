@@ -286,17 +286,15 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
   styleDropdown:SetPoint("TOP")
   table.insert(allFrames, styleDropdown)
 
-  do
-    local globalScale = addonTable.CustomiseDialog.Components.GetSlider(container, addonTable.Locales.GLOBAL_SCALE, 1, 300, function(val) return ("%d%%"):format(val) end, function(value)
-      addonTable.Config.Set(addonTable.Config.Options.GLOBAL_SCALE, value/100)
-    end)
-    globalScale:SetValue(addonTable.Config.Get(addonTable.Config.Options.GLOBAL_SCALE) * 100)
-    globalScale.option = addonTable.Config.Options.GLOBAL_SCALE
-    globalScale.scale = 100
+  local designScale = addonTable.CustomiseDialog.Components.GetSlider(container, addonTable.Locales.STYLE_SCALE, 1, 300, function(val) return ("%d%%"):format(val) end, function(value)
+    addonTable.CustomiseDialog.GetCurrentDesign().scale = value / 100
+    Announce()
+  end)
+  designScale:SetValue(addonTable.CustomiseDialog.GetCurrentDesign().scale * 100)
+  designScale.noAuto = true
 
-    globalScale:SetPoint("TOP", allFrames[#allFrames], "BOTTOM", 0, 0)
-    table.insert(allFrames, globalScale)
-  end
+  designScale:SetPoint("TOP", allFrames[#allFrames], "BOTTOM", 0, 0)
+  table.insert(allFrames, designScale)
 
   local UpdateSelection
   local UpdateWidgetPoints
@@ -932,6 +930,7 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
     if state[addonTable.Constants.RefreshReason.Design] then
       local design = addonTable.CustomiseDialog.GetCurrentDesign()
       addonTable.CurrentFont = addonTable.Core.GetFontByDesign(design)
+      designScale:SetValue(design.scale * 100)
       GenerateWidgets()
       if autoSelectedDetails then
         for index, w in ipairs(widgets) do
@@ -1233,10 +1232,12 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
         f:SetValue(addonTable.Config.Get(f.option) * f.scale)
       elseif f.SetValue and f.option then
         f:SetValue(addonTable.Config.Get(f.option))
-      elseif f.SetValue then
+      elseif f.SetValue and not f.noAuto then
         f:SetValue()
       end
     end
+
+    designScale:SetValue(addonTable.CustomiseDialog.GetCurrentDesign().scale * 100)
 
     selectionIndexes = {}
     UpdateSelection()
