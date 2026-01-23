@@ -510,7 +510,7 @@ local function UpdateRect(design)
     end
   end
 
-  addonTable.Rect = {left = left, bottom = bottom, width = right ~= left and right - left or 125, height = top ~= bottom and top - bottom or 10}
+  addonTable.Rect = {left = left * design.scale, bottom = bottom * design.scale, width = (right ~= left and right - left or 125) * design.scale, height = (top ~= bottom and top - bottom or 10) * design.scale}
 
   for _, textDetails in ipairs(design.texts) do
     if textDetails.kind == "creatureName" then
