@@ -454,12 +454,13 @@ function addonTable.Display.AurasManagerMixin:OnEvent(_, _, refreshData)
       local stored = self.auraData[auraInstanceID]
       if stored then
         self.auraData[auraInstanceID] = nil
-        changes[stored.kind] = true
 
         local list = self[stored.kind]
         local index = tIndexOf(list, auraInstanceID)
-        assert(index)
-        table.remove(list, index)
+        if index then
+          changes[stored.kind] = true
+          table.remove(list, index)
+        end
       end
     end
   end
