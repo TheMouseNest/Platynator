@@ -147,6 +147,9 @@ function addonTable.Display.ManagerMixin:OnLoad()
     if nameplate and unit and (addonTable.Constants.IsMidnight or not UnitIsUnit("player", unit)) then
       if addonTable.Constants.IsMidnight then
         nameplate.UnitFrame:SetAlpha(0)
+        nameplate.UnitFrame.AurasFrame.DebuffListFrame:SetParent(addonTable.hiddenFrame)
+        nameplate.UnitFrame.AurasFrame.BuffListFrame:SetParent(addonTable.hiddenFrame)
+        nameplate.UnitFrame.AurasFrame.CrowdControlListFrame:SetParent(addonTable.hiddenFrame)
         if not self.HookedUFs[nameplate.UnitFrame] then
           self.HookedUFs[nameplate.UnitFrame] = true
           hooksecurefunc(nameplate.UnitFrame, "SetAlpha", function(UF)
@@ -191,6 +194,10 @@ function addonTable.Display.ManagerMixin:OnLoad()
         UF.AurasFrame.LossOfControlFrame:SetPoint("LEFT", UF.HealthBarsContainer.healthBar, "RIGHT", 5, 0);
         UF.AurasFrame.LossOfControlFrame:SetParent(UF.AurasFrame)
         UF.AurasFrame.LossOfControlFrame:SetScale(1)
+        UF.AurasFrame.DebuffListFrame:SetParent(UF.AurasFrame)
+        UF.AurasFrame.BuffListFrame:SetParent(UF.AurasFrame)
+        UF.AurasFrame.CrowdControlListFrame:SetParent(UF.AurasFrame)
+        UF.AurasFrame.LossOfControlFrame:SetParent(UF.AurasFrame)
         UF:UnregisterEvent("UNIT_AURA")
       end
       if UF.WidgetContainer then
