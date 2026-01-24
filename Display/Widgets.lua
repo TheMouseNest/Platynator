@@ -397,7 +397,7 @@ function addonTable.Display.GetHighlight(frame, parent)
     local details = frame.details
     local highlightDetails = addonTable.Assets.Highlights[details.asset]
     if highlightDetails.mode == addonTable.Assets.RenderMode.Sliced then
-      local width, height = details.width * addonTable.Assets.BarBordersSize.width, details.height * addonTable.Assets.BarBordersSize.height
+      local width, height = details.width * addonTable.Assets.BarBordersSize.width * highlightDetails.shiftModifierH, details.height * addonTable.Assets.BarBordersSize.height * highlightDetails.shiftModifierV
       PixelUtil.SetSize(frame, width * details.scale, height * details.scale)
       PixelUtil.SetSize(frame.highlight, (width + highlightDetails.extra / 2) * highlightDetails.lowerScale, (height + highlightDetails.extra / 2) * highlightDetails.lowerScale)
     elseif highlightDetails.mode == addonTable.Assets.RenderMode.Fixed then

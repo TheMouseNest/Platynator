@@ -7,7 +7,7 @@
    viewBox="0 0 60 7.5"
    version="1.1"
    id="svg1"
-   inkscape:version="1.4.2 (ebf0e940d0, 2025-05-08)"
+   inkscape:version="1.4.3 (0d15f75042, 2025-12-25)"
    sodipodi:docname="more-arrows.svg"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
@@ -91,7 +91,7 @@
     <path
        id="rect1-9"
        style="fill:#ffffff;stroke:#000000;stroke-width:0.417432;stroke-linecap:round;stroke-dasharray:none;stroke-opacity:1"
-       d="m 67.656615,0.19761547 -1.434932,-1.34735137 -4.586515,4.8833394 0.01726,0.016397 -0.01726,0.016397 4.586516,4.8833391 1.434931,-1.3473513 -3.336669,-3.552382 z"
+       d="M 6.2732454,0.19761547 4.838314,-1.1497359 0.25180176,3.7336035 l 0.01726,0.016397 -0.01726,0.016397 L 4.838315,8.6497366 6.2732454,7.3023853 2.9365782,3.7500033 Z"
        inkscape:export-filename="arrow-down-solid.png"
        inkscape:export-xdpi="423.33334"
        inkscape:export-ydpi="423.33334" />

@@ -178,10 +178,10 @@ addonTable.Assets.Highlights = {
   ["arrows-in-close"] = {file = "Interface/AddOns/Platynator/Assets/%s/Highlights/arrows-in-close.png", width = 1000, height = 125, has4k = true, mode = renderMode.Stretch, tag = "arrows-in-close", group = 8, order = 3},
   ["arrows-out-close"] = {file = "Interface/AddOns/Platynator/Assets/%s/Highlights/arrows-out-close.png", width = 1000, height = 125, has4k = true, mode = renderMode.Stretch, tag = "arrows-out-close", group = 8, order = 4},
 
-  ["arrows"] = {file = "Interface/AddOns/Platynator/Assets/%s/Highlights/arrows.png", width = 1230, height = 164, has4k = true, mode = renderMode.Fixed, tag = "arrows", group = 9, order = 1},
-  ["double-arrows"] = {file = "Interface/AddOns/Platynator/Assets/%s/Highlights/double-arrows.png", width = 1351, height = 173, has4k = true, mode = renderMode.Fixed, tag = "arrows", group = 9, order = 2},
+  ["arrows"] = {file = "Interface/AddOns/Platynator/Assets/%s/Highlights/arrows.png", width = 86, height = 66, has4k = true, margin = 0.5, extra = 0, padding = 0, modifier = 0.29, shiftModifierH = 1.23, shiftModifierV = 1.22, DPIScale = 8/10, mode = renderMode.Sliced, tag = "arrows", group = 9, order = 1},
+  ["double-arrows"] = {file = "Interface/AddOns/Platynator/Assets/%s/Highlights/double-arrows.png", width = 149, height = 69, has4k = true, margin = 0.5, extra = 0, padding = 0, modifier = 0.31, shiftModifierH = 1.36, shiftModifierV = 1.36, DPIScale = 8/10, mode = renderMode.Sliced, tag = "arrows", group = 9, order = 2},
   ["double-arrows-down"] = {file = "Interface/AddOns/Platynator/Assets/%s/Highlights/double-arrows-down.png", width = 173, height = 153, has4k = true, mode = renderMode.Fixed, tag = "arrows", group = 9, order = 3},
-  ["solid-arrows"] = {file = "Interface/AddOns/Platynator/Assets/%s/Highlights/arrows-solid.png", width = 1265, height = 173, has4k = true, mode = renderMode.Fixed, tag = "arrows", group = 9, order = 4},
+  ["solid-arrows"] = {file = "Interface/AddOns/Platynator/Assets/%s/Highlights/arrows-solid.png", width = 97, height = 69, has4k = true, margin = 0.5, extra = 0, padding = 0, modifier = 0.30, shiftModifierH = 1.27, shiftModifierV = 1.36, DPIScale = 8/10, mode = renderMode.Sliced, tag = "arrows", group = 9, order = 4},
   ["solid-arrow-down"] = {file = "Interface/AddOns/Platynator/Assets/%s/Highlights/arrow-solid-down.png", width = 207, height = 132, has4k = true, mode = renderMode.Fixed, tag = "arrows", group = 9, order = 5},
 
   ["blizzard-classic-level"] = {file = "Interface/AddOns/Platynator/Assets/%s/Highlights/blizzard-classic-level.png", width = 178, height = 125, has4k = true, mode = renderMode.Fixed, tag = "blizzard-classic-level", group = 10, order = 1},
@@ -414,6 +414,10 @@ function addonTable.Assets.ApplyScale()
     for key, entry in pairs(list) do
       if entry.mode == renderMode.Sliced then
         slices[key] = entry
+        if entry.shiftModifierH == nil then
+          entry.shiftModifierH = 1
+          entry.shiftModifierV = 1
+        end
       else
         normal[key] = entry
       end
