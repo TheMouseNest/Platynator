@@ -139,6 +139,19 @@ function addonTable.Display.ManagerMixin:OnLoad()
   self.DebuffFilter = function(unitToken, auraInstanceID)
     return not C_UnitAuras.IsAuraFilteredOutByInstanceID(unitToken, auraInstanceID, "HARMFUL|PLAYER")
   end
+
+  local reparentedKeys = {
+    "HealthBarsContainer",
+    "castBar",
+    "RaidTargetFrame",
+    "ClassificationFrame",
+    "PlayerLevelDiffFrame",
+    "SoftTargetFrame",
+    "name",
+    "aggroHighlight",
+    "aggroHighlightBase",
+    "aggroHighlightAdditive",
+  }
   hooksecurefunc(NamePlateDriverFrame, "OnNamePlateAdded", function(_, unit)
     if unit == "preview" then
       return
@@ -150,6 +163,9 @@ function addonTable.Display.ManagerMixin:OnLoad()
         nameplate.UnitFrame.AurasFrame.DebuffListFrame:SetParent(addonTable.hiddenFrame)
         nameplate.UnitFrame.AurasFrame.BuffListFrame:SetParent(addonTable.hiddenFrame)
         nameplate.UnitFrame.AurasFrame.CrowdControlListFrame:SetParent(addonTable.hiddenFrame)
+        for _, key in ipairs(reparentedKeys) do
+          nameplate.UnitFrame[key]:SetParent(addonTable.hiddenFrame)
+        end
         if not self.HookedUFs[nameplate.UnitFrame] then
           self.HookedUFs[nameplate.UnitFrame] = true
           hooksecurefunc(nameplate.UnitFrame, "SetAlpha", function(UF)
@@ -189,7 +205,10 @@ function addonTable.Display.ManagerMixin:OnLoad()
     if self.ModifiedUFs[unit] then
       local UF = self.ModifiedUFs[unit]
       -- Restore original anchors and parents to various things we changed
-      if UF.HitTestFrame then
+      if addonTable.Constants.IsMidnight then
+        for _, key in ipairs(reparentedKeys) do
+          UF[key]:SetParent(UF)
+        end
         UF.AurasFrame.LossOfControlFrame:ClearAllPoints()
         UF.AurasFrame.LossOfControlFrame:SetPoint("LEFT", UF.HealthBarsContainer.healthBar, "RIGHT", 5, 0);
         UF.AurasFrame.LossOfControlFrame:SetParent(UF.AurasFrame)
@@ -237,6 +256,7 @@ function addonTable.Display.ManagerMixin:OnLoad()
         if self.lastInteract and self.lastInteract.interactUnit then
           self.lastInteract:UpdateSoftInteract()
         end
+        self:UpdateFriendlyFont()
         self:UpdateNamePlateSize()
         self:UpdateStacking()
         self:UpdateTargetScale()
@@ -253,6 +273,7 @@ function addonTable.Display.ManagerMixin:OnLoad()
           self:UpdateStackingRegion(unit)
         end
       end
+      self:UpdateFriendlyFont()
       self:UpdateNamePlateSize()
       self:UpdateTargetScale()
     end
@@ -266,6 +287,8 @@ function addonTable.Display.ManagerMixin:OnLoad()
       end
     end
     if state[addonTable.Constants.RefreshReason.ShowBehaviour] then
+      self:UpdateFriendlyFont()
+      self:UpdateNamePlateSize()
       self:UpdateShowState()
     end
     if state[addonTable.Constants.RefreshReason.Simplified] then
@@ -688,11 +711,101 @@ function addonTable.Display.ManagerMixin:UpdateObscuredAlpha()
   C_CVar.SetCVar("nameplateOccludedAlphaMult", addonTable.Config.Get(addonTable.Config.Options.OBSCURED_ALPHA))
 end
 
+local systemFontSizes = {}
+if SystemFont_NamePlate_Outlined then
+  local members = {
+    {
+      alphabet = "roman",
+      file ="Fonts/FRIZQT__.TTF",
+      height = 9,
+      flags = "SLUG",
+    },
+    {
+      alphabet = "korean",
+      file ="Fonts/2002.TTF",
+      height = 9,
+      flags = "SLUG",
+    },
+    {
+      alphabet = "simplifiedchinese",
+      file ="Fonts/ARKai_T.ttf",
+      height = 9,
+      flags = "SLUG",
+    },
+    {
+      alphabet = "traditionalchinese",
+      file ="Fonts/blei00d.TTF",
+      height = 9,
+      flags = "SLUG",
+    },
+    {
+      alphabet = "russian",
+      file ="Fonts/FRIZQT___CYR.TTF",
+      height = 9,
+      flags = "SLUG",
+    },
+  }
+  CreateFontFamily("PlatynatorOriginalSystemFont", members)
+  for _, m in ipairs(members) do
+    m.flags = m.flags .. " OUTLINE"
+  end
+  CreateFontFamily("PlatynatorOriginalSystemFontOutlined", members)
+
+  for i = 1, 5 do
+    local details = NamePlateConstants.NAME_PLATE_SCALES[i]
+    local size = details.vertical * NamePlateConstants.HEALTH_BAR_FONT_HEIGHT
+    table.insert(systemFontSizes, size)
+  end
+end
+
 local function ChangeFont(base, new, overrideHeight)
-  C_Timer.After(0, function()
-    base:SetFontObject(new)
-    base:SetFontHeight(overrideHeight or 9)
-  end)
+  for _, a in ipairs(addonTable.Constants.FontFamilies) do
+    local baseObj = base:GetFontObjectForAlphabet(a)
+    local newObj = new:GetFontObjectForAlphabet(a)
+    local font, height, flags = newObj:GetFont()
+    baseObj:SetFont(font, 9, flags)
+  end
+  base:SetShadowColor(new:GetShadowColor())
+  base:SetShadowOffset(new:GetShadowOffset())
+end
+
+function addonTable.Display.ManagerMixin:UpdateFriendlyFont()
+  if not addonTable.CurrentFont or not C_CVar.GetCVarInfo("nameplateShowOnlyNameForFriendlyPlayerUnits") then
+    return
+  end
+
+  if InCombatLockdown() then
+    self:RegisterEvent("PLAYER_REGEN_ENABLED")
+    return
+  end
+
+  local state = addonTable.Config.Get(addonTable.Config.Options.SHOW_FRIENDLY_IN_INSTANCES)
+  if state == "name_only" then
+    local design = addonTable.Core.GetDesign("friend")
+    local scale
+    for _, t in ipairs(design.texts) do
+      if t.kind == "creatureName" then
+        scale = t.scale
+        break
+      end
+    end
+    if scale then
+      ChangeFont(SystemFont_NamePlate_Outlined, _G[addonTable.CurrentFont])
+      ChangeFont(SystemFont_NamePlate, _G[addonTable.CurrentFont])
+
+      scale = scale * addonTable.Config.Get(addonTable.Config.Options.GLOBAL_SCALE) * design.scale
+      local friendlyFontSize = _G[addonTable.CurrentFont]:GetFontHeight() * scale
+      for index, size in ipairs(systemFontSizes) do
+        if size >= friendlyFontSize or index == 5 then
+          C_CVar.SetCVar("nameplateSize", tostring(index))
+          break
+        end
+      end
+    end
+  else
+    ChangeFont(SystemFont_NamePlate_Outlined, PlatynatorOriginalSystemFontOutlined)
+    ChangeFont(SystemFont_NamePlate, PlatynatorOriginalSystemFont)
+  end
 end
 
 function addonTable.Display.ManagerMixin:OnEvent(eventName, ...)
@@ -779,6 +892,7 @@ function addonTable.Display.ManagerMixin:OnEvent(eventName, ...)
     CreateFont("PlatynatorNameplateCooldownFont")
     local file, size, flags = _G[addonTable.CurrentFont]:GetFont()
     PlatynatorNameplateCooldownFont:SetFont(file, 14, flags)
+    self:UpdateFriendlyFont()
   elseif eventName == "VARIABLES_LOADED" then
     if addonTable.Constants.IsMidnight then
       C_CVar.SetCVarBitfield(NamePlateConstants.ENEMY_NPC_AURA_DISPLAY_CVAR, Enum.NamePlateEnemyNpcAuraDisplay.Buffs, true)
@@ -797,10 +911,11 @@ function addonTable.Display.ManagerMixin:OnEvent(eventName, ...)
     end
     addonTable.Display.SetCVars()
 
+    self:UpdateInstanceShowState()
+    self:UpdateFriendlyFont()
     self:UpdateStacking()
     self:UpdateShowState()
     self:UpdateTargetScale()
-    self:UpdateInstanceShowState()
     self:UpdateNamePlateSize()
     self:UpdateSimplifiedScale()
     self:UpdateObscuredAlpha()
