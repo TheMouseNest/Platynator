@@ -26,6 +26,7 @@ function addonTable.Display.CastInterrupterTextMixin:SetUnit(unit)
   if self.unit then
     self:RegisterUnitEvent("UNIT_SPELLCAST_START", self.unit)
     self:RegisterUnitEvent("UNIT_SPELLCAST_CHANNEL_START", self.unit)
+    self:RegisterUnitEvent("UNIT_SPELLCAST_CHANNEL_STOP", self.unit)
     self:RegisterUnitEvent("UNIT_SPELLCAST_INTERRUPTED", self.unit)
     if not C_Secrets then
       EnableInterrupter()
@@ -98,13 +99,8 @@ function addonTable.Display.CastInterrupterTextMixin:UpdateText()
 end
 
 function addonTable.Display.CastInterrupterTextMixin:OnEvent(eventName, ...)
-  if eventName == "UNIT_SPELLCAST_INTERRUPTED" then
-    local _, _, _, guid = ...
-
-    if guid == nil then
-      return
-    end
-
+  local _, _, _, guid = ...
+  if (eventName == "UNIT_SPELLCAST_INTERRUPTED" or eventName == "UNIT_SPELLCAST_CHANNEL_STOP") and guid then
     self:UpdateFromGUID(guid)
   else
     if self.timer then

@@ -61,7 +61,7 @@ function addonTable.Display.CastIconMarkerMixin:Strip()
 end
 
 function addonTable.Display.CastIconMarkerMixin:OnEvent(eventName, ...)
-  if eventName == "UNIT_SPELLCAST_INTERRUPTED" then
+  if eventName == "UNIT_SPELLCAST_INTERRUPTED" or eventName == "UNIT_SPELLCAST_CHANNEL_STOP" and select(4, ...) ~= nil then
     self.interrupted = true
     self.marker:Show()
     if self.background then
