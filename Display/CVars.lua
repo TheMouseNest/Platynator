@@ -15,7 +15,6 @@ local cvars = {
   ["nameplateMaxScale"] = "1",
   ["nameplateMinScale"] = "1",
   ["nameplateMotionSpeed"] = "0.025",
-  ["nameplateOccludedAlphaMult"] = "0.4",
   ["nameplatePlayerLargerScale"] = "1",
   ["nameplateTargetBehindMaxDistance"] = "30",
   ["nameplateTargetRadialPosition"] = "1",

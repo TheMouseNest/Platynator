@@ -18,6 +18,8 @@ local settings = {
   CAST_ALPHA = {key = "cast_alpha", default = 1, refresh = {addonTable.Constants.RefreshReason.TargetBehaviour}},
   NOT_TARGET_ALPHA = {key = "not_target_alpha", default = 1, refresh = {addonTable.Constants.RefreshReason.TargetBehaviour}},
 
+  OBSCURED_ALPHA = {key = "obscured_alpha", default = 0.4},
+
   STACKING_NAMEPLATES = {key = "stacking_nameplates", default = {friend = false, enemy = true}, refresh = {addonTable.Constants.RefreshReason.StackingBehaviour}},
   CLOSER_TO_SCREEN_EDGES = {key = "closer_to_screen_edges", default = true, refresh = {addonTable.Constants.RefreshReason.StackingBehaviour}},
   CLICK_REGION_SCALE_X = {key = "click_region_scale_x", default = 1},

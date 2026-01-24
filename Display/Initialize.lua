@@ -288,6 +288,8 @@ function addonTable.Display.ManagerMixin:OnLoad()
       self:UpdateStacking()
     elseif settingName == addonTable.Config.Options.APPLY_CVARS then
       addonTable.Display.SetCVars()
+    elseif settingName == addonTable.Config.Options.OBSCURED_ALPHA then
+      self:UpdateObscuredAlpha()
     end
   end)
 end
@@ -670,6 +672,15 @@ function addonTable.Display.ManagerMixin:UpdateSimplifiedScale()
   C_CVar.SetCVar("nameplateSimplifiedScale", addonTable.Config.Get(addonTable.Config.Options.SIMPLIFIED_SCALE))
 end
 
+function addonTable.Display.ManagerMixin:UpdateObscuredAlpha()
+  if InCombatLockdown() then
+    self:RegisterEvent("PLAYER_REGEN_ENABLED")
+    return
+  end
+
+  C_CVar.SetCVar("nameplateOccludedAlphaMult", addonTable.Config.Get(addonTable.Config.Options.OBSCURED_ALPHA))
+end
+
 local function ChangeFont(base, new, overrideHeight)
   C_Timer.After(0, function()
     base:SetFontObject(new)
@@ -730,6 +741,7 @@ function addonTable.Display.ManagerMixin:OnEvent(eventName, ...)
     self:UpdateNamePlateSize()
     self:UpdateTargetScale()
     self:UpdateSimplifiedScale()
+    self:UpdateObscuredAlpha()
   elseif eventName == "UI_SCALE_CHANGED" then
     if not addonTable.Constants.ParentedToNameplates then
       for unit, display in pairs(self.nameplateDisplays) do
@@ -784,5 +796,6 @@ function addonTable.Display.ManagerMixin:OnEvent(eventName, ...)
     self:UpdateInstanceShowState()
     self:UpdateNamePlateSize()
     self:UpdateSimplifiedScale()
+    self:UpdateObscuredAlpha()
   end
 end
