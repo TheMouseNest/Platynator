@@ -824,6 +824,21 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
               end
             end
           end
+        elseif w.details.kind == "arenaID" then
+          display = "#"
+          if w.details.useClassColor then
+            local c = RAID_CLASS_COLORS["MAGE"]
+            w.text:SetTextColor(c.r, c.g, c.b)
+          end
+        elseif w.details.kind == "specName" then
+          display = "Spec"
+          if w.details.capitalise then
+            display = string.upper(display)
+          end
+          if w.details.useClassColor then
+            local c = RAID_CLASS_COLORS["MAGE"]
+            w.text:SetTextColor(c.r, c.g, c.b)
+          end
         elseif w.details.kind == "castTimeLeft" then
           w.text:SetText("1.2")
         elseif w.details.kind == "guild" then

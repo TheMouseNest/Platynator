@@ -443,7 +443,7 @@ addonTable.CustomiseDialog.WidgetsConfig = {
         }
       }
     },
-    ["creatureName"] = {
+["creatureName"] = {
       {
         label = addonTable.Locales.GENERAL,
         entries = {
@@ -456,6 +456,33 @@ addonTable.CustomiseDialog.WidgetsConfig = {
             getter = function(details)
               return details.showWhenWowDoes
             end,
+          },
+          {
+            label = addonTable.Locales.IN_ARENA,
+            kind = "dropdown",
+            getInitData = function()
+              return {
+                addonTable.Locales.SHOW_NAME,
+                addonTable.Locales.SHOW_ARENA_ID,
+                addonTable.Locales.SHOW_SPEC_NAME,
+                addonTable.Locales.SHOW_SPEC_NAME_CAPS,
+                addonTable.Locales.SHOW_ARENA_ID_SPEC,
+                addonTable.Locales.SHOW_ARENA_ID_SPEC_CAPS,
+              }, {
+                "name",
+                "arenaID",
+                "specName",
+                "specNameCaps",
+                "arenaIDSpec",
+                "arenaIDSpecCaps",
+              }
+            end,
+            setter = function(details, value)
+              details.arenaDisplayMode = value
+            end,
+            getter = function(details)
+              return details.arenaDisplayMode or "name"
+            end
           },
         }
       },
@@ -521,7 +548,7 @@ addonTable.CustomiseDialog.WidgetsConfig = {
             getter = function(details)
               return details.applyClassColors
             end,
-            hide = addonTable.Constants.IsMidnight,t
+            hide = addonTable.Constants.IsMidnight,
           },
         }
       }
@@ -554,6 +581,60 @@ addonTable.CustomiseDialog.WidgetsConfig = {
             end,
             getter = function(details)
               return details.showWhenWowDoes
+            end,
+          },
+        }
+      },
+    },
+    ["arenaID"] = {
+      {
+        label = addonTable.Locales.GENERAL,
+        entries = {
+          {
+            label = addonTable.Locales.USE_CLASS_COLOR,
+            kind = "checkbox",
+            setter = function(details, value)
+              details.useClassColor = value
+            end,
+            getter = function(details)
+              return details.useClassColor
+            end,
+          },
+        }
+      },
+    },
+    ["specName"] = {
+      {
+        label = addonTable.Locales.GENERAL,
+        entries = {
+          {
+            label = addonTable.Locales.USE_CLASS_COLOR,
+            kind = "checkbox",
+            setter = function(details, value)
+              details.useClassColor = value
+            end,
+            getter = function(details)
+              return details.useClassColor
+            end,
+          },
+          {
+            label = addonTable.Locales.CAPITALIZE,
+            kind = "checkbox",
+            setter = function(details, value)
+              details.capitalise = value
+            end,
+            getter = function(details)
+              return details.capitalise
+            end,
+          },
+          {
+            label = addonTable.Locales.USE_SHORT_NAME,
+            kind = "checkbox",
+            setter = function(details, value)
+              details.useShortName = value
+            end,
+            getter = function(details)
+              return details.useShortName
             end,
           },
         }
@@ -717,9 +798,11 @@ addonTable.CustomiseDialog.WidgetsConfig = {
               return {
                 addonTable.Locales.LEFT,
                 addonTable.Locales.RIGHT,
+                addonTable.Locales.CENTER,
               }, {
                 "LEFT",
                 "RIGHT",
+                "CENTER",
               }
             end,
             setter = function(details, value)

@@ -535,6 +535,10 @@ function addonTable.Display.GetText(frame, parent)
       Mixin(frame, addonTable.Display.CastInterrupterTextMixin)
     elseif details.kind == "castTimeLeft" then
       Mixin(frame, addonTable.Display.CastTimeLeftTextMixin)
+    elseif details.kind == "arenaID" then
+      Mixin(frame, addonTable.Display.ArenaIDTextMixin)
+    elseif details.kind == "specName" then
+      Mixin(frame, addonTable.Display.SpecNameTextMixin)
     else
       assert(false)
     end
