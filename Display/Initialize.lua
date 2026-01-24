@@ -10,6 +10,18 @@ end
 
 addonTable.Display.ManagerMixin = {}
 
+local function IsUnitTargeting(unit, targetUnit)
+  local unitTarget = unit .. "target"
+  if not UnitExists(unitTarget) then
+    return false
+  end
+  local targetGuid = UnitGUID(targetUnit)
+  if not targetGuid then
+    return false
+  end
+  return UnitGUID(unitTarget) == targetGuid
+end
+
 local function IsEnemyInCombatWithGroup(unit)
   if not UnitCanAttack("player", unit) then
     return false
@@ -32,14 +44,14 @@ local function IsEnemyInCombatWithGroup(unit)
         if UnitThreatSituation(member, unit) ~= nil then
           return true
         end
-        if UnitIsUnit(unit .. "target", member) then
+        if IsUnitTargeting(unit, member) then
           return true
         end
       end
     end
   end
 
-  return UnitIsUnit(unit .. "target", "player")
+  return IsUnitTargeting(unit, "player")
 end
 
 function addonTable.Display.ManagerMixin:OnLoad()
