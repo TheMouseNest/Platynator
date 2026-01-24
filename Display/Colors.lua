@@ -29,15 +29,7 @@ end
 
 local GetInterruptSpell = addonTable.Display.Utilities.GetInterruptSpell
 
-local t = UIParent:CreateTexture()
-t:SetTexture("Interface/AddOns/Platynator/Assets/Special/white.png")
-local function WorkaroundBooleanEvaluator(state, color1, color2)
-  t:SetVertexColorFromBoolean(state, color1, color2)
-  return t:GetVertexColor()
-end
-
 local transparency = {r = 1, g = 1, b = 1, a = 0}
-local ConvertColor = addonTable.Display.Utilities.ConvertColor
 
 local function DoesOtherTankHaveAggro(unit)
   return IsInRaid() and UnitGroupRolesAssigned(unit .. "target") == "TANK"
@@ -405,7 +397,7 @@ function addonTable.Display.GetColor(settings, state, unit)
     return nil
   end
 
-  if C_CurveUtil and C_CurveUtil.EvaluateColorFromBoolean then
+  if C_CurveUtil then
     local r, g, b, a = 0, 0, 0, 0
     for index = #colorQueue, 1, -1 do
       local details = colorQueue[index]
@@ -419,26 +411,6 @@ function addonTable.Display.GetColor(settings, state, unit)
             r0, g0, b0, a0 = SplitEvaluate(s.value, r, g, b, a, r0, g0, b0, a0)
           else
             r0, g0, b0, a0 = SplitEvaluate(s.value, r0, g0, b0, a0, r, g, b, a)
-          end
-        end
-        r, g, b, a = r0, g0, b0, a0
-      end
-    end
-    return r, g, b, a
-  elseif C_CurveUtil then
-    local r, g, b, a = 0, 0, 0, 0
-    for index = #colorQueue, 1, -1 do
-      local details = colorQueue[index]
-      local c = details.color
-      if details.state == nil then
-        r, g, b, a = c.r, c.g, c.b, c.a or 1
-      else
-        local r0, g0, b0, a0 = c.r, c.g, c.b, c.a
-        for _, s in ipairs(details.state) do
-          if s.invert then
-            r0, g0, b0, a0 = WorkaroundBooleanEvaluator(s.value, CreateColor(r, g, b, a), CreateColor(r0, g0, b0, a0))
-          else
-            r0, g0, b0, a0 = WorkaroundBooleanEvaluator(s.value, CreateColor(r0, g0, b0, a0), CreateColor(r, g, b, a))
           end
         end
         r, g, b, a = r0, g0, b0, a0
