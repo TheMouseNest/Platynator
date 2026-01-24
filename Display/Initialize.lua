@@ -9,6 +9,39 @@ function addonTable.Display.Initialize()
 end
 
 addonTable.Display.ManagerMixin = {}
+
+local function IsEnemyInCombatWithGroup(unit)
+  if not UnitCanAttack("player", unit) then
+    return false
+  end
+
+  if UnitAffectingCombat(unit) then
+    return true
+  end
+
+  if UnitThreatSituation("player", unit) ~= nil then
+    return true
+  end
+
+  local groupSize = GetNumGroupMembers()
+  if groupSize and groupSize > 0 then
+    local isRaid = IsInRaid()
+    for i = 1, groupSize do
+      local member = isRaid and ("raid" .. i) or ("party" .. i)
+      if UnitExists(member) then
+        if UnitThreatSituation(member, unit) ~= nil then
+          return true
+        end
+        if UnitIsUnit(unit .. "target", member) then
+          return true
+        end
+      end
+    end
+  end
+
+  return UnitIsUnit(unit .. "target", "player")
+end
+
 function addonTable.Display.ManagerMixin:OnLoad()
   self.styleIndex = 0
   self.friendDisplayPool = CreateFramePool("Frame", UIParent, nil, nil, false, function(frame)
@@ -19,6 +52,11 @@ function addonTable.Display.ManagerMixin:OnLoad()
   self.enemyDisplayPool = CreateFramePool("Frame", UIParent, nil, nil, false, function(frame)
     Mixin(frame, addonTable.Display.NameplateMixin)
     frame.kind = "enemy"
+    frame:OnLoad()
+  end)
+  self.enemyNotInCombatDisplayPool = CreateFramePool("Frame", UIParent, nil, nil, false, function(frame)
+    Mixin(frame, addonTable.Display.NameplateMixin)
+    frame.kind = "enemyNotInCombat"
     frame:OnLoad()
   end)
   self.enemySimplifiedDisplayPool = CreateFramePool("Frame", UIParent, nil, nil, false, function(frame)
@@ -44,6 +82,8 @@ function addonTable.Display.ManagerMixin:OnLoad()
   self:RegisterEvent("PLAYER_FOCUS_CHANGED")
   self:RegisterEvent("PLAYER_LOGIN")
   self:RegisterEvent("PLAYER_ENTERING_WORLD")
+  self:RegisterEvent("UNIT_THREAT_LIST_UPDATE")
+  self:RegisterEvent("UNIT_HEALTH")
   if C_EventUtils.IsEventValid("GARRISON_UPDATE") then
     self:RegisterEvent("GARRISON_UPDATE")
   end
@@ -495,7 +535,13 @@ function addonTable.Display.ManagerMixin:Install(unit, nameplate)
       if shouldSimplify then
         newDisplay = self.enemySimplifiedDisplayPool:Acquire()
       else
-        newDisplay = self.enemyDisplayPool:Acquire()
+        -- Check if enemy is NOT in combat with the player or group and enemyNotInCombat style is set
+        local enemyNotInCombatStyle = addonTable.Config.Get(addonTable.Config.Options.DESIGNS_ASSIGNED)["enemyNotInCombat"]
+        if enemyNotInCombatStyle and enemyNotInCombatStyle ~= "none" and not IsEnemyInCombatWithGroup(unit) then
+          newDisplay = self.enemyNotInCombatDisplayPool:Acquire()
+        else
+          newDisplay = self.enemyDisplayPool:Acquire()
+        end
       end
     end
     if C_NamePlateManager and C_NamePlateManager.SetNamePlateSimplified then
@@ -549,6 +595,8 @@ function addonTable.Display.ManagerMixin:Uninstall(unit)
       self.friendDisplayPool:Release(display)
     elseif display.kind == "enemySimplified" then
       self.enemySimplifiedDisplayPool:Release(display)
+    elseif display.kind == "enemyNotInCombat" then
+      self.enemyNotInCombatDisplayPool:Release(display)
     else
       self.enemyDisplayPool:Release(display)
     end
@@ -730,6 +778,20 @@ function addonTable.Display.ManagerMixin:OnEvent(eventName, ...)
     if display and ((display.kind == "friend" and UnitCanAttack("player", unit)) or (display.kind == "enemy" and not UnitCanAttack("player", unit))) then
       self:Uninstall(unit)
       self:Install(unit, nameplate)
+    end
+  elseif eventName == "UNIT_HEALTH" or eventName == "UNIT_THREAT_LIST_UPDATE" then
+    local unit = ...
+    local display = self.nameplateDisplays[unit]
+    -- Check if we need to switch between enemy and enemyNotInCombat based on combat state
+    if display and UnitCanAttack("player", unit) then
+      local enemyNotInCombatStyle = addonTable.Config.Get(addonTable.Config.Options.DESIGNS_ASSIGNED)["enemyNotInCombat"]
+      local isInCombat = IsEnemyInCombatWithGroup(unit)
+      local shouldBeNotInCombat = enemyNotInCombatStyle and enemyNotInCombatStyle ~= "none" and not isInCombat
+      
+      if (display.kind == "enemyNotInCombat" and isInCombat) or (display.kind == "enemy" and shouldBeNotInCombat) then
+        self:Uninstall(unit)
+        self:Install(unit)
+      end
     end
   elseif eventName == "GLOBAL_MOUSE_UP" then
     self:UpdateForMouseover()

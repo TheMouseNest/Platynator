@@ -548,6 +548,15 @@ local function SetupStyleSelect(parent)
   enemyStyleDropdown:SetPoint("TOP", allFrames[#allFrames], "BOTTOM")
   table.insert(allFrames, enemyStyleDropdown)
 
+  local enemyNotInCombatStyleDropdown = addonTable.CustomiseDialog.Components.GetBasicDropdown(container, addonTable.Locales.ENEMY_NOT_IN_COMBAT, function(value)
+    return addonTable.Config.Get(addonTable.Config.Options.DESIGNS_ASSIGNED)["enemyNotInCombat"] == value
+  end, function(value)
+    addonTable.Config.Get(addonTable.Config.Options.DESIGNS_ASSIGNED)["enemyNotInCombat"] = value
+    addonTable.CallbackRegistry:TriggerEvent("RefreshStateChange", {[addonTable.Constants.RefreshReason.Design] = true})
+  end)
+  enemyNotInCombatStyleDropdown:SetPoint("TOP", allFrames[#allFrames], "BOTTOM")
+  table.insert(allFrames, enemyNotInCombatStyleDropdown)
+
   local simplifiedStyleDropdown
   if C_NamePlateManager and C_NamePlateManager.SetNamePlateSimplified then
     simplifiedStyleDropdown = addonTable.CustomiseDialog.Components.GetBasicDropdown(container, addonTable.Locales.SIMPLIFIED, function(value)
@@ -579,9 +588,16 @@ local function SetupStyleSelect(parent)
       table.insert(labels, entry.label)
       table.insert(values, entry.value)
     end
+    
+    -- Add "None" option for enemyNotInCombat dropdown
+    local labelsWithNone = CopyTable(labels)
+    local valuesWithNone = CopyTable(values)
+    table.insert(labelsWithNone, 1, addonTable.Locales.NONE)
+    table.insert(valuesWithNone, 1, "none")
 
     friendlyStyleDropdown:Init(labels, values)
     enemyStyleDropdown:Init(labels, values)
+    enemyNotInCombatStyleDropdown:Init(labelsWithNone, valuesWithNone)
     if simplifiedStyleDropdown then
       simplifiedStyleDropdown:Init(labels, values)
     end
@@ -717,6 +733,9 @@ function addonTable.CustomiseDialog.GetStyleDropdown(parent)
             end
             if assigned["enemy"] == entry.value then
               assigned["enemy"] = addonTable.Constants.CustomName
+            end
+            if assigned["enemyNotInCombat"] == entry.value then
+              assigned["enemyNotInCombat"] = "none"
             end
             if assigned["enemySimplified"] == entry.value then
               assigned["enemySimplified"] = "_hare_simplified"

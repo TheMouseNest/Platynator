@@ -179,6 +179,7 @@ L["SAVE_AS"] = "Save as"
 L["SAVE_CUSTOM_AS"] = "Save Custom as"
 
 L["ENEMY"] = "Enemy"
+L["ENEMY_NOT_IN_COMBAT"] = "Enemy not in combat"
 L["SIMPLIFIED"] = "Simplified"
 L["DEFAULT_BRACKETS"] = "(Default)"
 

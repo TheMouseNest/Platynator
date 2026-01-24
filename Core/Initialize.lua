@@ -417,6 +417,11 @@ function addonTable.Core.MigrateSettings()
     mapping["enemySimplified"] = "_hare_simplified"
   end
 
+  -- Initialize enemyNotInCombat to "none" if not set
+  if mapping["enemyNotInCombat"] == nil then
+    mapping["enemyNotInCombat"] = "none"
+  end
+
   local simplified = addonTable.Config.Get(addonTable.Config.Options.SIMPLIFIED_NAMEPLATES)
   if simplified["instancesNormal"] == nil then
     simplified["instancesNormal"] = true
@@ -541,6 +546,10 @@ end
 
 function addonTable.Core.GetDesign(kind)
   local name = addonTable.Config.Get(addonTable.Config.Options.DESIGNS_ASSIGNED)[kind]
+  -- If enemyNotInCombat is set to "none", fall back to "enemy" design
+  if kind == "enemyNotInCombat" and name == "none" then
+    name = addonTable.Config.Get(addonTable.Config.Options.DESIGNS_ASSIGNED)["enemy"]
+  end
   return addonTable.Core.GetDesignByName(name)
 end
 
