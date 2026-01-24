@@ -22,10 +22,8 @@ local cvars = {
 }
 
 if addonTable.Constants.IsMidnight then
-  cvars["nameplateStyle"] = "0"
   cvars["nameplateOverlapH"] = "1"
   cvars["nameplateOverlapV"] = "1"
-  cvars["nameplateSize"] = "1"
 end
 
 function addonTable.Display.SetCVars()

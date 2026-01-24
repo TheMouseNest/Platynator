@@ -32,7 +32,7 @@ function addonTable.Display.CastTextMixin:Strip()
 end
 
 function addonTable.Display.CastTextMixin:OnEvent(eventName, ...)
-  if eventName == "UNIT_SPELLCAST_INTERRUPTED" then
+  if eventName == "UNIT_SPELLCAST_INTERRUPTED" or eventName == "UNIT_SPELLCAST_CHANNEL_STOP" and select(4, ...) ~= nil then
     self.interrupted = true
     self:Show()
     self.text:SetText(addonTable.Locales.INTERRUPTED)

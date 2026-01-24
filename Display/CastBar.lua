@@ -67,9 +67,10 @@ function addonTable.Display.CastBarMixin:Strip()
 end
 
 function addonTable.Display.CastBarMixin:OnEvent(eventName, ...)
-  if eventName == "UNIT_SPELLCAST_INTERRUPTED" then
+  if eventName == "UNIT_SPELLCAST_INTERRUPTED" or eventName == "UNIT_SPELLCAST_CHANNEL_STOP" and select(4, ...) ~= nil then
     self.interrupted = true
     self:Show()
+    self:SetReverseFill(false)
     self.statusBar:SetMinMaxValues(0, 1)
     self.statusBar:SetValue(1)
     self.timer = C_Timer.NewTimer(0.8, function()
@@ -78,6 +79,8 @@ function addonTable.Display.CastBarMixin:OnEvent(eventName, ...)
         self:Hide()
       end
     end)
+    self:SetScript("OnUpdate", nil)
+    self.interruptMarker:Hide()
   elseif eventName == "UNIT_SPELLCAST_DELAYED" or eventName == "UNIT_SPELLCAST_CHANNEL_UPDATE" then
     if self:IsShown() then
       self:ApplyCasting()
