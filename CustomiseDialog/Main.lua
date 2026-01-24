@@ -107,6 +107,9 @@ local function SetupGeneral(parent)
         end)
         if name ~= "DEFAULT" and name ~= PLATYNATOR_CURRENT_PROFILE then
           button:AddInitializer(function(button, description, menu)
+            if InCombatLockdown() then
+              return
+            end
             local delete = MenuTemplates.AttachAutoHideButton(button, "transmog-icon-remove")
             delete:SetPoint("RIGHT")
             delete:SetSize(18, 18)
@@ -703,6 +706,9 @@ function addonTable.CustomiseDialog.GetStyleDropdown(parent)
       end)
 
       button:AddInitializer(function(button, description, menu)
+        if InCombatLockdown() then
+          return
+        end
         local delete = MenuTemplates.AttachAutoHideButton(button, "transmog-icon-remove")
         delete:SetPoint("RIGHT")
         delete:SetSize(18, 18)
