@@ -177,7 +177,7 @@ function addonTable.Display.ManagerMixin:OnLoad()
             locked = false
           end)
           hooksecurefunc(nameplate.UnitFrame.AurasFrame, "RefreshAuras", function(af, data)
-            if not af:IsForbidden() then
+            if not af:IsForbidden() and data then
               local display = self.nameplateDisplays[af:GetParent().unit]
               if display and display.unit then
                 display.AurasManager:OnEvent("", "", data)
@@ -664,6 +664,11 @@ function addonTable.Display.ManagerMixin:UpdateNamePlateSize()
 end
 
 function addonTable.Display.ManagerMixin:UpdateClickable()
+  if InCombatLockdown() then
+    self:RegisterEvent("PLAYER_REGEN_ENABLED")
+    return
+  end
+
   local state = addonTable.Config.Get(addonTable.Config.Options.CLICKABLE_NAMEPLATES)
   if C_NamePlateManager and C_NamePlateManager.SetNamePlateHitTestInsets then
     local value = 10000
@@ -862,6 +867,7 @@ function addonTable.Display.ManagerMixin:OnEvent(eventName, ...)
     self:UpdateTargetScale()
     self:UpdateSimplifiedScale()
     self:UpdateObscuredAlpha()
+    self:UpdateClickable()
   elseif eventName == "UI_SCALE_CHANGED" then
     if not addonTable.Constants.ParentedToNameplates then
       for unit, display in pairs(self.nameplateDisplays) do
