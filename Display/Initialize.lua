@@ -10,18 +10,6 @@ end
 
 addonTable.Display.ManagerMixin = {}
 
-local function IsUnitTargeting(unit, targetUnit)
-  local unitTarget = unit .. "target"
-  if not UnitExists(unitTarget) then
-    return false
-  end
-  local targetGuid = UnitGUID(targetUnit)
-  if not targetGuid then
-    return false
-  end
-  return UnitGUID(unitTarget) == targetGuid
-end
-
 local function IsEnemyInCombatWithGroup(unit)
   if not UnitCanAttack("player", unit) then
     return false
@@ -40,18 +28,13 @@ local function IsEnemyInCombatWithGroup(unit)
     local isRaid = IsInRaid()
     for i = 1, groupSize do
       local member = isRaid and ("raid" .. i) or ("party" .. i)
-      if UnitExists(member) then
-        if UnitThreatSituation(member, unit) ~= nil then
-          return true
-        end
-        if IsUnitTargeting(unit, member) then
-          return true
-        end
+      if UnitExists(member) and UnitThreatSituation(member, unit) ~= nil then
+        return true
       end
     end
   end
 
-  return IsUnitTargeting(unit, "player")
+  return false
 end
 
 function addonTable.Display.ManagerMixin:OnLoad()
