@@ -223,7 +223,6 @@ function addonTable.Display.AurasManagerMixin:SetUnit(unit)
     end
     self:RegisterUnitEvent("UNIT_AURA", unit)
     if addonTable.Constants.IsMidnight then
-      print("registration")
       self:RegisterUnitEvent("LOSS_OF_CONTROL_UPDATE", unit)
       self:RegisterUnitEvent("LOSS_OF_CONTROL_ADDED", unit)
     end
