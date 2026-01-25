@@ -163,6 +163,7 @@ function addonTable.Display.ManagerMixin:OnLoad()
         nameplate.UnitFrame.AurasFrame.DebuffListFrame:SetParent(addonTable.hiddenFrame)
         nameplate.UnitFrame.AurasFrame.BuffListFrame:SetParent(addonTable.hiddenFrame)
         nameplate.UnitFrame.AurasFrame.CrowdControlListFrame:SetParent(addonTable.hiddenFrame)
+        nameplate.UnitFrame.AurasFrame.LossOfControlFrame:SetParent(addonTable.hiddenFrame)
         for _, key in ipairs(reparentedKeys) do
           nameplate.UnitFrame[key]:SetParent(addonTable.hiddenFrame)
         end
@@ -209,10 +210,6 @@ function addonTable.Display.ManagerMixin:OnLoad()
         for _, key in ipairs(reparentedKeys) do
           UF[key]:SetParent(UF)
         end
-        UF.AurasFrame.LossOfControlFrame:ClearAllPoints()
-        UF.AurasFrame.LossOfControlFrame:SetPoint("LEFT", UF.HealthBarsContainer.healthBar, "RIGHT", 5, 0);
-        UF.AurasFrame.LossOfControlFrame:SetParent(UF.AurasFrame)
-        UF.AurasFrame.LossOfControlFrame:SetScale(1)
         UF.AurasFrame.DebuffListFrame:SetParent(UF.AurasFrame)
         UF.AurasFrame.BuffListFrame:SetParent(UF.AurasFrame)
         UF.AurasFrame.CrowdControlListFrame:SetParent(UF.AurasFrame)
@@ -479,17 +476,6 @@ function addonTable.Display.ManagerMixin:ListenToBuffs(display, unit)
     local designInfo = {}
     for _, a in ipairs(auras) do
       designInfo[a.kind] = a
-    end
-    local LossOfControlFrame = self.ModifiedUFs[unit].AurasFrame.LossOfControlFrame
-    LossOfControlFrame:SetParent(display.CrowdControlDisplay)
-    if designInfo.crowdControl then
-      LossOfControlFrame:ClearAllPoints()
-      if type(designInfo.crowdControl.anchor[1]) == "string" then
-        LossOfControlFrame:SetPoint(designInfo.crowdControl.anchor[1], display.CrowdControlDisplay)
-      else
-        LossOfControlFrame:SetPoint("CENTER")
-      end
-      LossOfControlFrame:SetScale(designInfo.crowdControl.scale)
     end
   end
 end
