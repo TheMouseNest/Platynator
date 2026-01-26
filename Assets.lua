@@ -288,10 +288,10 @@ addonTable.Assets.HighlightsLegacy = {
   ["75/arrows-out-close"] = {width = 1000, height = 94, mode = legacyMode.Percent75, tag = "arrows-out-close"},
   ["50/arrows-out-close"] = {width = 1000, height = 63, mode = legacyMode.Percent50, tag = "arrows-out-close"},
 
-  ["wide/arrows"] = {width = 1230, height = 164, mode = legacyMode.Percent100, tag = "arrows"},
-  ["wide/double-arrows"] = {width = 1351, height = 173, mode = legacyMode.Percent100, tag = "arrows"},
+  ["wide/arrows"] = {width = 1000, height = 125, mode = legacyMode.Percent100, tag = "arrows"},
+  ["wide/double-arrows"] = {width = 1000, height = 125, mode = legacyMode.Percent100, tag = "arrows"},
   ["normal/double-arrows-down"] = {width = 173, height = 153, mode = legacyMode.Percent100, tag = "arrows"},
-  ["normal/solid-arrows"] = {width = 1265, height = 173, mode = legacyMode.Percent100, tag = "arrows"},
+  ["normal/solid-arrows"] = {width = 1000, height = 125, mode = legacyMode.Percent100, tag = "arrows"},
   ["normal/solid-arrow-down"] = {width = 207, height = 132, mode = legacyMode.Percent100, tag = "arrows"},
 
   ["200/feathered"] = {width = 1000, height = 250, mode = legacyMode.Percent200, tag = "feathered"},
