@@ -359,31 +359,31 @@ function addonTable.Display.AurasManagerMixin:UpdateLossOfControl()
     return changes
   end
 
-  changes["crowdControl"] = true
-
   local lossOfControlData = C_LossOfControl.GetActiveLossOfControlDataByUnit(self.unit, LOSS_OF_CONTROL_ACTIVE_INDEX);
   if lossOfControlData and lossOfControlData.auraInstanceID then
     local aura = C_UnitAuras.GetAuraDataByAuraInstanceID(self.unit, lossOfControlData.auraInstanceID)
 
-    aura.applicationsString = C_UnitAuras.GetAuraApplicationDisplayCount(self.unit, aura.auraInstanceID, 2, 1000)
-    aura.durationSecret = C_UnitAuras.GetAuraDuration(self.unit, aura.auraInstanceID)
-    aura.kind = "crowdControl"
-    self.auraData[aura.auraInstanceID] = aura
+    if aura then
+      aura.applicationsString = C_UnitAuras.GetAuraApplicationDisplayCount(self.unit, aura.auraInstanceID, 2, 1000)
+      aura.durationSecret = C_UnitAuras.GetAuraDuration(self.unit, aura.auraInstanceID)
+      aura.kind = "crowdControl"
+      self.auraData[aura.auraInstanceID] = aura
 
-    self.crowdControl = {lossOfControlData.auraInstanceID}
-    local oldIndex = tIndexOf(self.debuffs, lossOfControlData.auraInstanceID)
-    if oldIndex then
-      table.remove(self.debuffs, oldIndex)
-      changes["debuffs"] = true
+      self.crowdControl = {lossOfControlData.auraInstanceID}
+      local oldIndex = tIndexOf(self.debuffs, lossOfControlData.auraInstanceID)
+      if oldIndex then
+        table.remove(self.debuffs, oldIndex)
+        changes["debuffs"] = true
+      end
+
+      self.lossOfControlApplied = lossOfControlData.auraInstanceID
+      changes["crowdControl"] = true
     end
-
-    self.lossOfControlApplied = lossOfControlData.auraInstanceID
   elseif self.lossOfControlApplied then
     self.crowdControl = {}
     self.auraData[self.lossOfControlApplied] = nil
     self.lossOfControlApplied = nil
-  else
-    changes["crowdControl"] = false
+    changes["crowdControl"] = true
   end
 
   return changes
