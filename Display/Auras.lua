@@ -371,7 +371,7 @@ function addonTable.Display.AurasManagerMixin:UpdateLossOfControl()
     self.auraData[aura.auraInstanceID] = aura
 
     self.crowdControl = {lossOfControlData.auraInstanceID}
-    local oldIndex = tIndexof(self.debuffs, lossOfControlData.auraInstanceID)
+    local oldIndex = tIndexOf(self.debuffs, lossOfControlData.auraInstanceID)
     if oldIndex then
       table.remove(self.debuffs, oldIndex)
       changes["debuffs"] = true
