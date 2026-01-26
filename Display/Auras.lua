@@ -408,7 +408,7 @@ function addonTable.Display.AurasManagerMixin:OnEvent(event, _, refreshData)
     return
   end
 
-  if not self.processingAuras then
+  if not self.processingAuras and event ~= "" then
     return
   end
 
