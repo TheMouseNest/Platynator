@@ -17,14 +17,44 @@ local roleMap = {
   ["HEALER"] = roleType.Healer,
 }
 
-local function GetPlayerRole()
-  if not C_SpecializationInfo.GetSpecialization then
-    return roleType.Damage
-  end
-  local specIndex = C_SpecializationInfo.GetSpecialization()
-  local _, _, _, _, role = C_SpecializationInfo.GetSpecializationInfo(specIndex)
+local isTank = false
+local _, playerClass = UnitClass("player")
 
-  return roleMap[role]
+local function GetPlayerRole()
+  if addonTable.Constants.IsEra or addonTable.Constants.IsBC or addonTable.Constants.IsWrath then
+    -- we're in classic
+    local form = GetShapeshiftForm()
+    if (playerClass == "WARRIOR" and form == 2) or (playerClass == "DRUID" and form == 1) then
+      return roleType.Tank
+    elseif playerClass == "PALADIN" and C_UnitAuras.GetUnitAuraBySpellID("player", 25780) ~= nil then
+      return roleType.Tank
+    end
+  else
+    local specIndex = C_SpecializationInfo.GetSpecialization()
+    local _, _, _, _, role = C_SpecializationInfo.GetSpecializationInfo(specIndex)
+
+    return roleMap[role]
+  end
+  return roleType.Damage
+end
+
+do
+  local specializationMonitor = CreateFrame("Frame")
+  specializationMonitor:RegisterEvent("PLAYER_LOGIN")
+
+  if addonTable.Constants.IsEra or addonTable.Constants.IsBC or addonTable.Constants.IsWrath then
+    if playerClass == "WARRIOR" or playerClass == "DRUID" then
+      specializationMonitor:RegisterEvent("UPDATE_SHAPESHIFT_FORM")
+    elseif playerClass == "PALADIN" then
+      specializationMonitor:RegisterUnitEvent("UNIT_AURA", "player")
+    end
+  elseif C_EventUtils.IsEventValid("PLAYER_SPECIALIZATION_CHANGED") then
+    specializationMonitor:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
+  end
+
+  specializationMonitor:SetScript("OnEvent", function()
+    isTank = GetPlayerRole() == roleType.Tank
+  end)
 end
 
 local GetInterruptSpell = addonTable.Display.Utilities.GetInterruptSpell
@@ -223,17 +253,16 @@ function addonTable.Display.GetColor(settings, state, unit)
       local threat = state.threat
       local hostile = state.hostile
       if (inRelevantInstance or not s.instancesOnly) and (threat or (hostile and not s.combatOnly) or (inRelevantInstance and UnitAffectingCombat(unit))) then
-        local role = GetPlayerRole()
-        if (role == roleType.Tank and (threat == 0 or threat == nil) and not DoesOtherTankHaveAggro(unit)) or (role ~= roleType.Tank and threat == 3) then
+        if (isTank and (threat == 0 or threat == nil) and not DoesOtherTankHaveAggro(unit)) or (not isTank and threat == 3) then
           table.insert(colorQueue, {color = s.colors.warning})
           break
         elseif threat == 1 or threat == 2 then
           table.insert(colorQueue, {color = s.colors.transition})
           break
-        elseif s.useSafeColor and ((role == roleType.Tank and threat == 3) or (role ~= roleType.Tank and (threat == 0 or threat == nil))) then
+        elseif s.useSafeColor and ((isTank and threat == 3) or (not isTank and (threat == 0 or threat == nil))) then
           table.insert(colorQueue, {color = s.colors.safe})
           break
-        elseif role == roleType.Tank and (threat == 0 or threat == nil) and DoesOtherTankHaveAggro(unit) then
+        elseif isTank and (threat == 0 or threat == nil) and DoesOtherTankHaveAggro(unit) then
           table.insert(colorQueue, {color = s.colors.offtank})
           break
         end
