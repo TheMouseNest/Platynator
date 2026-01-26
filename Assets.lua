@@ -42,7 +42,8 @@ addonTable.Assets.BarBackgrounds = {
   ["wide/fade-left"] = {file = "Interface/AddOns/Platynator/Assets/%s/BarBackgrounds/fade-left.png", width = 1000, height = 125, has4k = true, group = 3, order = 3},
   ["wide/fade-right"] = {file = "Interface/AddOns/Platynator/Assets/%s/BarBackgrounds/fade-right.png", width = 1000, height = 125, has4k = true, group = 3, order = 4},
 
-  ["special/blizzard-cast-bar"] = {file = "Interface/AddOns/Platynator/Assets/Special/BarBackgrounds/blizzard-cast-bar.png", width = 1000, height = 125, group = 4, order = 1},
+  ["gw2"] = {file = "Interface/AddOns/Platynator/Assets/Special/BarBackgrounds/gw2.png", width = 1000, height = 125, group = 4, order = 1},
+  ["special/blizzard-cast-bar"] = {file = "Interface/AddOns/Platynator/Assets/Special/BarBackgrounds/blizzard-cast-bar.png", width = 1000, height = 125, group = 4, order = 2},
 
   ["wide/blizzard-absorb"] = {file = "Interface/AddOns/Platynator/Assets/%s/BarBackgrounds/blizzard-absorb.png", width = 1000, height = 125, has4k = true, group = 5, order = 1},
   ["narrow/blizzard-absorb"] = {file = "Interface/AddOns/Platynator/Assets/%s/BarBackgrounds/blizzard-absorb-narrow.png", width = 1000, height = 63, has4k = true, group = 5, order = 2},
