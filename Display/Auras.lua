@@ -391,7 +391,7 @@ end
 
 function addonTable.Display.AurasManagerMixin:OnEvent(event, _, refreshData)
   if event == "LOSS_OF_CONTROL_ADDED" or event == "LOSS_OF_CONTROL_UPDATE" then
-    self:UpdateLossOfControl()
+    local changes = self:UpdateLossOfControl()
     self.OnDebuffsUpdate(self.debuffs, self.debuffFilter)
     if changes.debuffs then
       self.OnDebuffsUpdate(self.debuffs, self.debuffFilter)
