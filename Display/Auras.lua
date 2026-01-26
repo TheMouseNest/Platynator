@@ -345,11 +345,13 @@ function addonTable.Display.AurasManagerMixin:FullRefresh()
     end
   end
 
+  if addonTable.Constants.IsMidnight then
+    self:UpdateLossOfControl()
+  end
+
   self.OnDebuffsUpdate(self.debuffs, self.debuffFilter)
   self.OnCrowdControlUpdate(self.crowdControl, self.crowdControlFilter)
   self.OnBuffsUpdate(self.buffs, self.buffFilter)
-
-  self:UpdateLossOfControl()
 end
 
 function addonTable.Display.AurasManagerMixin:UpdateLossOfControl()
