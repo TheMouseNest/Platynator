@@ -56,6 +56,8 @@ Display/CastTargetText.lua
 Display/CastInterrupterText.lua
 Display/LevelText.lua
 Display/UnitTargetText.lua
+Display/ArenaIDText.lua
+Display/SpecNameText.lua
 Display/AutomaticHighlight.lua
 Display/TargetHighlight.lua
 Display/SoftTargetHighlight.lua
