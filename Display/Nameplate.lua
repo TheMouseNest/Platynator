@@ -182,6 +182,8 @@ function addonTable.Display.NameplateMixin:OnLoad()
         auraFrame.CountFrame.Count:Show();
 
         auraFrame.Cooldown:SetHideCountdownNumbers(not details.showCountdown)
+        auraFrame.Cooldown:SetSwipeColor(1,1,1,details.countdownSwipeOpacity)
+        auraFrame.Cooldown:SetDrawEdge(not details.hideCountdownEdge)
 
         if details.showCountdown then
           auraFrame.Cooldown.Text:SetFontObject(addonTable.CurrentFont)

@@ -75,6 +75,8 @@ function addonTable.Core.UpgradeDesign(design)
         anchor = {"BOTTOMLEFT", -63, 25},
         scale = 1,
         showCountdown = true,
+        countdownSwipeOpacity = 1,
+        hideCountdownEdge = false,
         direction = "RIGHT",
       },
       {
@@ -82,6 +84,8 @@ function addonTable.Core.UpgradeDesign(design)
         anchor = {"RIGHT", -68, 0},
         scale = 1,
         showCountdown = true,
+        countdownSwipeOpacity = 1,
+        hideCountdownEdge = false,
         direction = "LEFT",
       },
       {
@@ -89,6 +93,8 @@ function addonTable.Core.UpgradeDesign(design)
         anchor = {"LEFT", 68, 0},
         scale = 1,
         showCountdown = true,
+        countdownSwipeOpacity = 1,
+        hideCountdownEdge = false,
         direction = "RIGHT",
       },
     }
@@ -99,6 +105,12 @@ function addonTable.Core.UpgradeDesign(design)
     end
     if aura.showCountdown == nil then
       aura.showCountdown = true
+    end
+    if aura.countdownSwipeOpacity == nil then
+      aura.countdownSwipeOpacity = 1
+    end
+    if aura.hideCountdownEdge == nil then
+      aura.hideCountdownEdge = false
     end
     if aura.direction == nil then
       if aura.anchor[1] and aura.anchor[1]:match("RIGHT") then
