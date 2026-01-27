@@ -221,10 +221,10 @@ function addonTable.Display.AurasManagerMixin:SetUnit(unit)
       self.OnDebuffsUpdate(self.debuffs, self.debuffFilter)
       self.OnCrowdControlUpdate(self.crowdControl, self.crowdControlFilter)
     end
-    self:RegisterUnitEvent("UNIT_AURA", unit)
-    if addonTable.Constants.IsRetail and UnitIsPlayer(unit) then
-      self:RegisterUnitEvent("LOSS_OF_CONTROL_UPDATE", unit)
-      self:RegisterUnitEvent("LOSS_OF_CONTROL_ADDED", unit)
+    self:RegisterUnitEvent("UNIT_AURA", self.unit)
+    if addonTable.Constants.IsRetail and UnitIsPlayer(self.unit) then
+      self:RegisterUnitEvent("LOSS_OF_CONTROL_UPDATE", self.unit)
+      self:RegisterUnitEvent("LOSS_OF_CONTROL_ADDED", self.unit)
     end
   else
     self:UnregisterAllEvents()
