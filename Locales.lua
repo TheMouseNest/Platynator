@@ -254,6 +254,7 @@ L["ROUNDED"] = "Rounded"
 L["INCLUDE_ELITE_RARES"] = "Include elite rares"
 L["PLAYER_GUILD"] = "Player guild"
 L["NPC_ROLE"] = "NPC role"
+L["INCLUDE_TARGET"] = "Include target"
 
 L["WHAT_TO_EXPORT"] = "What to export?"
 L["STYLE"] = "Style"

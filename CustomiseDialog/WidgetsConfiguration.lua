@@ -982,6 +982,23 @@ addonTable.CustomiseDialog.WidgetsConfig = {
         },
       },
     },
+    ["mouseover"] = {
+      {
+        label = addonTable.Locales.GENERAL,
+        entries = {
+          {
+            label = addonTable.Locales.INCLUDE_TARGET,
+            kind = "checkbox",
+            setter = function(details, value)
+              details.includeTarget = value
+            end,
+            getter = function(details)
+              return details.includeTarget
+            end,
+          },
+        },
+      },
+    },
     ["automatic"] = {
       {
         label = addonTable.Locales.COLORS,

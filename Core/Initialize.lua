@@ -358,6 +358,10 @@ function addonTable.Core.UpgradeDesign(design)
       highlight.color.a = 1
     end
 
+    if highlight.kind == "mouseover" and highlight.includeTarget == nil then
+      highlight.includeTarget = true
+    end
+
     if not addonTable.Assets.Highlights[highlight.asset] then
       local old = addonTable.Assets.HighlightsLegacy[highlight.asset]
       highlight.asset = addonTable.Assets.HighlightsLegacy[highlight.asset].tag

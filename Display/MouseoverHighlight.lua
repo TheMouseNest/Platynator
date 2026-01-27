@@ -11,6 +11,12 @@ function addonTable.Display.MouseoverHighlightMixin:Strip()
   self.ApplyMouseover = nil
 end
 
+function addonTable.Display.MouseoverHighlightMixin:ApplyTarget()
+  if not self.details.includeTarget then
+    self:ApplyMouseover()
+  end
+end
+
 function addonTable.Display.MouseoverHighlightMixin:ApplyMouseover()
-  self:SetShown(UnitIsUnit("mouseover", self.unit))
+  self:SetShown(UnitIsUnit("mouseover", self.unit) and (self.details.includeTarget or not UnitIsUnit("target", self.unit)))
 end
