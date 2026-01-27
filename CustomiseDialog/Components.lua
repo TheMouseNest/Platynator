@@ -3,7 +3,7 @@ local addonTable = select(2, ...)
 
 addonTable.CustomiseDialog.Components = {}
 
-function addonTable.CustomiseDialog.Components.GetCheckbox(parent, label, spacing, callback)
+function addonTable.CustomiseDialog.Components.GetCheckbox(parent, label, spacing, callback, tooltipText)
   spacing = spacing or 0
   local holder = CreateFrame("Frame", nil, parent)
   holder:SetHeight(40)
@@ -40,6 +40,23 @@ function addonTable.CustomiseDialog.Components.GetCheckbox(parent, label, spacin
     callback(checkBox:GetChecked())
   end)
 
+  if tooltipText then
+    local function ShowTooltip()
+      GameTooltip:SetOwner(checkBox, "ANCHOR_RIGHT")
+      GameTooltip_SetTitle(GameTooltip, tooltipText)
+      GameTooltip:Show()
+    end
+    local function HideTooltip()
+      if GameTooltip:GetOwner() == checkBox then
+        GameTooltip:Hide()
+      end
+    end
+    holder:HookScript("OnEnter", ShowTooltip)
+    holder:HookScript("OnLeave", HideTooltip)
+    checkBox:HookScript("OnEnter", ShowTooltip)
+    checkBox:HookScript("OnLeave", HideTooltip)
+  end
+
   return holder
 end
 
@@ -52,6 +69,45 @@ function addonTable.CustomiseDialog.Components.GetHeader(parent, text)
   holder.text:SetPoint("LEFT", 20, -1)
   holder.text:SetPoint("RIGHT", 20, -1)
   holder:SetHeight(40)
+  return holder
+end
+
+function addonTable.CustomiseDialog.Components.GetNote(parent, text)
+  local holder = CreateFrame("Frame", nil, parent)
+  holder:SetPoint("LEFT", parent, "LEFT", 30, 0)
+  holder:SetPoint("RIGHT", parent, "RIGHT", -30, 0)
+  holder:SetHeight(40)
+
+  local note = holder:CreateFontString(nil, "ARTWORK", "GameFontHighlight")
+  note:SetPoint("TOPLEFT", 20, -4)
+  note:SetPoint("TOPRIGHT", -20, -4)
+  note:SetJustifyH("LEFT")
+  note:SetJustifyV("TOP")
+  note:SetWordWrap(true)
+  note:SetTextColor(1, 0.55, 0.1)
+  note:SetText(text)
+
+  local function UpdateHeight()
+    local width = holder:GetWidth()
+    if width and width > 0 then
+      note:SetWidth(width - 40)
+    end
+    local height = note:GetStringHeight()
+    if height and height > 0 then
+      holder:SetHeight(height + 10)
+    end
+  end
+
+  holder:SetScript("OnSizeChanged", UpdateHeight)
+  holder:SetScript("OnShow", UpdateHeight)
+  holder:SetScript("OnUpdate", function(self)
+    UpdateHeight()
+    self:SetScript("OnUpdate", nil)
+  end)
+
+  function holder:SetValue()
+  end
+
   return holder
 end
 
