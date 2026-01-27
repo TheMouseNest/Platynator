@@ -323,12 +323,12 @@ addonTable.CustomiseDialog.WidgetsConfig = {
             label = addonTable.Locales.WIDTH_RESTRICTION,
             kind = "slider",
             min = 0, max = 300,
-            valuePattern = "%dpx",
+            valuePattern = "%d%%",
             setter = function(details, value)
-              details.widthLimit = value
+              details.maxWidth = value / 100
             end,
             getter = function(details)
-              return details.widthLimit or 0
+              return details.maxWidth * 100
             end,
           },
           {

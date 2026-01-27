@@ -502,11 +502,7 @@ function addonTable.Display.GetText(frame, parent)
 
     frame:SetAllPoints(frame.text)
 
-    if details.widthLimit then
-      frame.text:SetWidth(details.widthLimit)
-    else
-      frame.text:SetWidth(0)
-    end
+    frame.text:SetWidth(details.maxWidth * addonTable.Assets.BarBordersSize.width)
 
     frame.text:SetJustifyV("BOTTOM")
     if details.align ~= frame.text:GetJustifyH() then
