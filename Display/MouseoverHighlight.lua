@@ -8,6 +8,7 @@ function addonTable.Display.MouseoverHighlightMixin:SetUnit(unit)
 end
 
 function addonTable.Display.MouseoverHighlightMixin:Strip()
+  self.ApplyTarget = nil
   self.ApplyMouseover = nil
 end
 

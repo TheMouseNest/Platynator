@@ -172,6 +172,7 @@ addonTable.CustomiseDialog.DesignWidgets = {
       color = GetColor("AAAAAA", 1),
       scale = 1,
       layer = 0,
+      includeTarget = true,
     },
   },
   {
