@@ -341,6 +341,10 @@ function addonTable.Core.UpgradeDesign(design)
     if text.kind == "health" and text.significantFigures == nil then
       text.significantFigures = 0
     end
+    if text.kind == "guild" and text.npcRole == nil then
+      text.playerGuild = true
+      text.npcRole = true
+    end
     if text.autoColors then
       UpdateAutoColors(text.autoColors)
     end
