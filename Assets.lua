@@ -62,7 +62,7 @@ addonTable.Assets.BarBordersSliced = {
   ["round-thin"] = {file = "Interface/AddOns/Platynator/Assets/%s/BarBorders/round-thin-square.png", width = 48, height = 48, has4k = true, masked = true, tag = "round-thin", margin = 0.48, extra = 0, minSize = 50, modifier = 0.3, DPIScale = 1/2, group = 2, order = 3},
 
   ["soft"] = {file = "Interface/AddOns/Platynator/Assets/%s/BarBorders/soft-square.png", width = 66, height = 66, has4k = true, masked = true, tag = "soft", margin = 0.33, extra = 9, minSize = 50, modifier = 0.25, DPIScale = 4/6, group = 3, order = 1},
-  ["gw2"] = {file = "Interface/AddOns/Platynator/Assets/Special/BarBorders/gw2.png", width = 33, height = 33, masked = false, tag = "gw2", margin = 0.3, extra = 8, minSize = 50, modifier = 1, group = 3, order = 2},
+  ["gw2"] = {file = "Interface/AddOns/Platynator/Assets/Special/BarBorders/gw2.png", width = 33, height = 33, masked = false, tag = "gw2", margin = 0.3, extra = 12, minSize = 50, modifier = 1, group = 3, order = 2},
 
   ["blizzard-health"] = {file = "Interface/AddOns/Platynator/Assets/%s/BarBorders/blizzard-health-square.png", width = 48, height = 48, has4k = true, masked = true, tag = "blizzard-health", margin = 0.4, extra = 0, minSize = 100, modifier = 0.3, DPIScale = 1/2, group = 4, order = 1},
   ["blizzard-cast-bar"] = {file = "Interface/AddOns/Platynator/Assets/%s/BarBorders/blizzard-cast-bar-square.png", width = 48, height = 48, has4k = true, masked = true, tag = "blizzard-cast-bar", margin = 0.35, extra = 0, minSize = 50, modifier = 0.35, DPIScale = 1/2, group = 4, order = 2},
@@ -308,6 +308,7 @@ addonTable.Assets.HighlightsLegacy = {
 addonTable.Assets.BarPositionHighlights = {
   ["none"] = {file = "", width = 0, height = 0},
   ["wide/glow"] = {file = "Interface/AddOns/Platynator/Assets/%s/BarPosition/highlight.png", width = 54, height = 125, has4k = true, mode = legacyMode.Percent100},
+  ["gw2"] = {file = "Interface/AddOns/Platynator/Assets/Special/BarPosition/gw2.png", width = 137, height = 125, mode = legacyMode.Percent100},
 }
 
 addonTable.Assets.PowerBars = {
@@ -332,6 +333,7 @@ addonTable.Assets.Markers = {
   ["normal/shield-gradient"] = {file = "Interface/AddOns/Platynator/Assets/%s/Markers/shield-gradient.png", width = 150, height = 155, has4k = true, tag = "cannotInterrupt"},
   ["normal/shield-soft"] = {file = "Interface/AddOns/Platynator/Assets/%s/Markers/shield-soft.png", width = 160, height = 165, has4k = true, tag = "cannotInterrupt"},
   ["normal/blizzard-shield"] = {file = "Interface/AddOns/Platynator/Assets/%s/Markers/blizzard-shield.png", width = 136, height = 165, has4k = true, tag = "cannotInterrupt"},
+  ["normal/gw2-shield"] = {file = "Interface/AddOns/Platynator/Assets/Special/Markers/gw2-shield.png", width = 165, height = 165, has4k = true, tag = "cannotInterrupt"},
 
   ["special/blizzard-elite"] = {file = "Interface/AddOns/Platynator/Assets/Special/Markers/eliterarecombo-blizzard.png", width = 150, height = 155, mode = legacyMode.Special, tag = "elite"},
   ["normal/blizzard-elite"] = {file = "Interface/AddOns/Platynator/Assets/Special/Markers/elite-blizzard.png", width = 150, height = 155},

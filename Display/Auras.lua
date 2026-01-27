@@ -213,7 +213,7 @@ function addonTable.Display.AurasManagerMixin:SetUnit(unit)
   self.unit = unit
   if unit then
     self.isPlayer = UnitIsPlayer(self.unit)
-    if UnitCanAttack("player", self.unit) then
+    if UnitCanAttack("player", self.unit) or addonTable.Constants.IsMidnight then
       self:FullRefresh()
     else
       self:Reset()
@@ -412,7 +412,7 @@ function addonTable.Display.AurasManagerMixin:OnEvent(event, _, refreshData)
     return
   end
 
-  if not UnitCanAttack("player", self.unit) then
+  if not UnitCanAttack("player", self.unit) and not addonTable.Constants.IsMidnight then
     if next(self.buffs) or next(self.debuffs) or next(self.crowdControl) then
       self.buffs = {}
       self.debuffs = {}

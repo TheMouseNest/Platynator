@@ -235,7 +235,7 @@ function addonTable.Display.GetColor(settings, state, unit)
         break
       end
     elseif s.kind == "target" then
-      if UnitIsUnit("target", unit) and not IsTargetLoose() then
+      if UnitIsUnit("target", unit) then
         table.insert(colorQueue, {color = s.colors.target})
         break
       end

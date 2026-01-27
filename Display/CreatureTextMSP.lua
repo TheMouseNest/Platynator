@@ -110,6 +110,6 @@ end
 
 function addonTable.Display.CreatureTextMSPMixin:ApplyTarget()
   if self.details.showWhenWowDoes then
-    self:SetShown(UnitShouldDisplayName(self.unit))
+    self:SetShown(UnitIsUnit(self.unit, "target") or UnitShouldDisplayName(self.unit))
   end
 end

@@ -838,6 +838,10 @@ function addonTable.CustomiseDialog.Toggle()
   frame:SetPoint("CENTER")
   frame:Hide()
 
+  if frame:GetHeight() >= UIParent:GetHeight() then
+    frame:SetScale(UIParent:GetHeight() / frame:GetHeight() * 0.99)
+  end
+
   frame.CloseButton:SetScript("OnClick", function()
     frame:Hide()
   end)
