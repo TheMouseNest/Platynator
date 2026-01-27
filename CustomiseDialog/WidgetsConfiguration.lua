@@ -521,7 +521,7 @@ addonTable.CustomiseDialog.WidgetsConfig = {
             getter = function(details)
               return details.applyClassColors
             end,
-            hide = addonTable.Constants.IsMidnight,t
+            hide = addonTable.Constants.IsRetail,
           },
         }
       }

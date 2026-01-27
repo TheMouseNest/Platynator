@@ -480,7 +480,7 @@ function addonTable.Display.NameplateMixin:UpdateForFocus()
 end
 
 function addonTable.Display.NameplateMixin:UpdateVisual()
-  local scaleMod = addonTable.Constants.IsMidnight and 1 or UIParent:GetEffectiveScale()
+  local scaleMod = addonTable.Constants.IsRetail and 1 or UIParent:GetEffectiveScale()
   if not self.unit then
     if not addonTable.Constants.ParentedToNameplates then
       self.overrideAlpha = 1

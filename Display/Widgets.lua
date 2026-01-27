@@ -179,7 +179,7 @@ function addonTable.Display.GetCastBar(frame, parent)
 
   function frame:SetReverseFill(value)
     if value then
-      if addonTable.Constants.IsMidnight then
+      if addonTable.Constants.IsRetail then
         frame.statusBar:SetFillStyle(Enum.StatusBarFillStyle.Reverse)
         frame.interruptMarker:SetFillStyle(Enum.StatusBarFillStyle.Reverse)
       else
@@ -195,7 +195,7 @@ function addonTable.Display.GetCastBar(frame, parent)
       frame.interruptMarker:SetPoint("RIGHT", frame.statusBar:GetStatusBarTexture(), "LEFT")
       frame.interruptMarkerPoint:SetPoint("CENTER", frame.interruptMarker:GetStatusBarTexture(), "LEFT")
     else
-      if addonTable.Constants.IsMidnight then
+      if addonTable.Constants.IsRetail then
         frame.statusBar:SetFillStyle(Enum.StatusBarFillStyle.Standard)
       else
         frame.statusBar:SetFillStyle("STANDARD")
@@ -296,7 +296,7 @@ function addonTable.Display.GetPower(frame, parent)
 
   frame.background = CreateFrame("StatusBar", nil, frame)
   frame.background:SetAllPoints()
-  if addonTable.Constants.IsMidnight then
+  if addonTable.Constants.IsRetail then
     frame.background:SetFillStyle(Enum.StatusBarFillStyle.Center)
   else
     frame.background:SetFillStyle("CENTER")

@@ -88,7 +88,7 @@ function addonTable.Core.CreateFont(assetKey, outline, shadow, useDefault)
     return
   end
 
-  if addonTable.Constants.IsMidnight and (outline ~= "" or shadow == "") then
+  if addonTable.Constants.IsRetail and (outline ~= "" or shadow == "") then
     outline = outline .. " SLUG"
   end
 

@@ -292,7 +292,7 @@ local function SetupBehaviour(parent)
   table.insert(allFrames, applyNameplatesDropdown)
 
   local simplifiedScaleSlider
-  if addonTable.Constants.IsMidnight then
+  if addonTable.Constants.IsRetail then
     local simplifiedPlatesDropdown = addonTable.CustomiseDialog.Components.GetBasicDropdown(container, addonTable.Locales.SIMPLIFIED_NAMEPLATES)
     simplifiedPlatesDropdown:SetPoint("TOP", allFrames[#allFrames], "BOTTOM", 0, -30)
     do

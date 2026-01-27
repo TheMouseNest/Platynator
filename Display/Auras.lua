@@ -12,13 +12,13 @@ function addonTable.Display.AurasManagerMixin:OnLoad()
   self.OnBuffsUpdate = function() end
 
   self:SetScript("OnEvent", self.OnEvent)
-  self.processingAuras = not addonTable.Constants.IsMidnight
+  self.processingAuras = not addonTable.Constants.IsRetail
 
   self:Reset()
 end
 
 function addonTable.Display.AurasManagerMixin:PostInit(buffs, debuffs, crowdControl)
-  self.processingAuras = not addonTable.Constants.IsMidnight
+  self.processingAuras = not addonTable.Constants.IsRetail
 
   self:Reset()
 
@@ -213,7 +213,7 @@ function addonTable.Display.AurasManagerMixin:SetUnit(unit)
   self.unit = unit
   if unit then
     self.isPlayer = UnitIsPlayer(self.unit)
-    if UnitCanAttack("player", self.unit) or addonTable.Constants.IsMidnight then
+    if UnitCanAttack("player", self.unit) or addonTable.Constants.IsRetail then
       self:FullRefresh()
     else
       self:Reset()
@@ -222,7 +222,7 @@ function addonTable.Display.AurasManagerMixin:SetUnit(unit)
       self.OnCrowdControlUpdate(self.crowdControl, self.crowdControlFilter)
     end
     self:RegisterUnitEvent("UNIT_AURA", unit)
-    if addonTable.Constants.IsMidnight and UnitIsPlayer(unit) then
+    if addonTable.Constants.IsRetail and UnitIsPlayer(unit) then
       self:RegisterUnitEvent("LOSS_OF_CONTROL_UPDATE", unit)
       self:RegisterUnitEvent("LOSS_OF_CONTROL_ADDED", unit)
     end
@@ -345,7 +345,7 @@ function addonTable.Display.AurasManagerMixin:FullRefresh()
     end
   end
 
-  if addonTable.Constants.IsMidnight then
+  if addonTable.Constants.IsRetail then
     self:UpdateLossOfControl()
   end
 
@@ -412,7 +412,7 @@ function addonTable.Display.AurasManagerMixin:OnEvent(event, _, refreshData)
     return
   end
 
-  if not UnitCanAttack("player", self.unit) and not addonTable.Constants.IsMidnight then
+  if not UnitCanAttack("player", self.unit) and not addonTable.Constants.IsRetail then
     if next(self.buffs) or next(self.debuffs) or next(self.crowdControl) then
       self.buffs = {}
       self.debuffs = {}

@@ -17,7 +17,7 @@ function addonTable.Display.HealthBarMixin:PostInit()
       end
     end
   end
-  if addonTable.Constants.IsMidnight then
+  if addonTable.Constants.IsRetail then
     self.calculator = CreateUnitHealPredictionCalculator()
     if self.calculator.SetMaximumHealthMode then
       self.calculator:SetMaximumHealthMode(Enum.UnitMaximumHealthMode.WithAbsorbs)
