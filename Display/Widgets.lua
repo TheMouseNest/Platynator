@@ -94,9 +94,20 @@ function addonTable.Display.GetHealthBar(frame, parent)
   frame.statusBarAbsorb = CreateFrame("StatusBar", nil, frame)
   frame.statusBarAbsorb:SetClipsChildren(true)
 
+  frame.statusBarCutaway = CreateFrame("StatusBar", nil, frame)
+  frame.statusBarCutawayAnimation = frame.statusBarCutaway:CreateAnimationGroup()
+  frame.statusBarCutawayAnimation:SetToFinalAlpha(true)
+  local alpha = frame.statusBarCutawayAnimation:CreateAnimation("Alpha")
+  alpha:SetSmoothing("IN_OUT")
+  alpha:SetFromAlpha(1)
+  alpha:SetToAlpha(0)
+  alpha:SetDuration(0.3)
+
   frame.statusBar = CreateFrame("StatusBar", nil, frame)
   frame.statusBar:SetPoint("CENTER")
   frame.statusBar:SetClipsChildren(true)
+
+  frame.statusBarCutaway:SetAllPoints(frame.statusBar)
 
   frame.marker = frame.statusBar:CreateTexture()
   frame.marker:SetSnapToPixelGrid(false)
@@ -129,7 +140,13 @@ function addonTable.Display.GetHealthBar(frame, parent)
     frame.statusBarAbsorb:SetScale(1/borderDetails.lowerScale * details.scale)
     frame.statusBarAbsorb:GetStatusBarTexture():RemoveMaskTexture(frame.mask)
 
+    frame.statusBarCutaway:SetStatusBarTexture(addonTable.Assets.BarBackgrounds[details.foreground.asset].file)
+    frame.statusBarCutaway:SetScale(1/borderDetails.lowerScale * details.scale)
+    frame.statusBarCutaway:GetStatusBarTexture():RemoveMaskTexture(frame.mask)
+    frame.statusBarCutaway:SetAlpha(0)
+
     frame.statusBarAbsorb:GetStatusBarTexture():AddMaskTexture(frame.mask)
+    frame.statusBarCutaway:GetStatusBarTexture():AddMaskTexture(frame.mask)
 
     if details.kind == "health" then
       Mixin(frame, addonTable.Display.HealthBarMixin)

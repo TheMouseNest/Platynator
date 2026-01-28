@@ -184,6 +184,9 @@ function addonTable.Core.UpgradeDesign(design)
     if bar.kind == "health" and not bar.absorb.color then
       bar.absorb.color = GetColor("FFFFFF")
     end
+    if bar.kind == "health" and bar.animate == nil then
+      bar.animate = false
+    end
     if bar.layer == nil then
       bar.layer = 1
     end

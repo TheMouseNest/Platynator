@@ -205,6 +205,21 @@ addonTable.CustomiseDialog.WidgetsConfig = {
     },
     ["health"] = {
       {
+        label = addonTable.Locales.GENERAL,
+        entries = {
+          {
+            label = addonTable.Locales.ANIMATE,
+            kind = "checkbox",
+            setter = function(details, value)
+              details.animate = value
+            end,
+            getter = function(details)
+              return details.animate
+            end,
+          },
+        }
+      },
+      {
         label = addonTable.Locales.TEXTURES,
         entries = {
           {
