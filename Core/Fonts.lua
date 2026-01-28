@@ -20,7 +20,7 @@ function addonTable.Core.GetFontByDesign(design)
       addonTable.Core.CreateFont(addonTable.Constants.DefaultFont, outline, shadow, slug, true)
     end
   end
-  return fonts[key] or fonts[addonTable.Constants.DefaultFont:lower() .. outline .. shadow]
+  return fonts[key] or fonts[addonTable.Constants.DefaultFont:lower() .. outline .. shadow .. slug]
 end
 
 function addonTable.Core.GetFontByID(id)
