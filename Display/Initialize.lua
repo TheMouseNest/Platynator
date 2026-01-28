@@ -169,6 +169,7 @@ function addonTable.Display.ManagerMixin:OnLoad()
         end
         if not self.HookedUFs[nameplate.UnitFrame] then
           self.HookedUFs[nameplate.UnitFrame] = true
+          local locked = false
           hooksecurefunc(nameplate.UnitFrame, "SetAlpha", function(UF)
             if locked or UF:IsForbidden() then
               return
