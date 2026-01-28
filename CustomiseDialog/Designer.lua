@@ -772,9 +772,11 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
         w.statusBar:SetValue(70)
         if w.details.kind == "cast" then
           if w.details.interruptMarker.asset ~= "none" then
+            w.interruptPositioner:SetMinMaxValues(0, 100)
+            w.interruptPositioner:SetValue(0)
             w.interruptMarker:Show()
             w.interruptMarker:SetMinMaxValues(0, 100)
-            w.interruptMarker:SetValue(10)
+            w.interruptMarker:SetValue(80)
           else
             w.interruptMarker:Hide()
           end

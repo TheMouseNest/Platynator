@@ -199,9 +199,11 @@ function addonTable.Display.GetCastBar(frame, parent)
       if addonTable.Constants.IsRetail then
         frame.statusBar:SetFillStyle(Enum.StatusBarFillStyle.Reverse)
         frame.interruptMarker:SetFillStyle(Enum.StatusBarFillStyle.Reverse)
+        frame.interruptPositioner:SetFillStyle(Enum.StatusBarFillStyle.Reverse)
       else
         frame.statusBar:SetFillStyle("REVERSE")
         frame.interruptMarker:SetFillStyle("REVERSE")
+        frame.interruptPositioner:SetFillStyle("REVERSE")
       end
 
       self.statusBar:GetStatusBarTexture():SetColorTexture(1, 1, 1, 0)
@@ -209,21 +211,27 @@ function addonTable.Display.GetCastBar(frame, parent)
 
       frame.marker:SetPoint("CENTER", frame.reverseStatusTexture, "RIGHT")
       frame.interruptMarker:ClearAllPoints()
-      frame.interruptMarker:SetPoint("RIGHT", frame.statusBar:GetStatusBarTexture(), "LEFT")
-      frame.interruptMarkerPoint:SetPoint("CENTER", frame.interruptMarker:GetStatusBarTexture(), "LEFT")
+      frame.interruptMarker:SetPoint("RIGHT", frame.interruptPositioner:GetStatusBarTexture(), "LEFT")
+      frame.interruptMarkerPoint:ClearAllPoints()
+      frame.interruptMarkerPoint:SetPoint("RIGHT", frame.interruptMarker:GetStatusBarTexture(), "LEFT")
     else
       if addonTable.Constants.IsRetail then
         frame.statusBar:SetFillStyle(Enum.StatusBarFillStyle.Standard)
+        frame.interruptMarker:SetFillStyle(Enum.StatusBarFillStyle.Standard)
+        frame.interruptPositioner:SetFillStyle(Enum.StatusBarFillStyle.Standard)
       else
         frame.statusBar:SetFillStyle("STANDARD")
+        frame.interruptMarker:SetFillStyle("STANDARD")
+        frame.interruptPositioner:SetFillStyle("STANDARD")
       end
       self.statusBar:SetStatusBarTexture(addonTable.Assets.BarBackgrounds[frame.details.foreground.asset].file)
       self.reverseStatusTexture:Hide()
 
       frame.marker:SetPoint("CENTER", frame.statusBar:GetStatusBarTexture(), "RIGHT")
       frame.interruptMarker:ClearAllPoints()
-      frame.interruptMarker:SetPoint("LEFT", frame.statusBar:GetStatusBarTexture(), "RIGHT")
-      frame.interruptMarkerPoint:SetPoint("CENTER", frame.interruptMarker:GetStatusBarTexture(), "RIGHT")
+      frame.interruptMarker:SetPoint("LEFT", frame.interruptPositioner:GetStatusBarTexture(), "RIGHT")
+      frame.interruptMarkerPoint:ClearAllPoints()
+      frame.interruptMarkerPoint:SetPoint("LEFT", frame.interruptMarker:GetStatusBarTexture(), "RIGHT")
     end
   end
 
@@ -234,13 +242,18 @@ function addonTable.Display.GetCastBar(frame, parent)
   frame.background:SetPoint("CENTER")
   frame.background:SetDrawLayer("BACKGROUND")
 
+  frame.interruptPositioner = CreateFrame("StatusBar", nil, frame)
+  frame.interruptPositioner:SetStatusBarTexture("Interface/AddOns/Platynator/Special/transparent.png")
+  frame.interruptPositioner:SetPoint("CENTER")
+
   frame.interruptMarker = CreateFrame("StatusBar", nil, frame)
   frame.interruptMarker:SetStatusBarTexture("Interface/AddOns/Platynator/Special/transparent.png")
+  frame.interruptMarker:SetClipsChildren(true)
   frame.interruptMarkerPoint = frame.interruptMarker:CreateTexture()
   frame.interruptMarkerPoint:SetColorTexture(1, 1, 1)
   frame.interruptMarkerPoint:SetWidth(5)
-  frame.interruptMarkerPoint:SetPoint("CENTER", frame.interruptMarker:GetStatusBarTexture(), "RIGHT")
-  frame.interruptMarker:SetClipsChildren(true)
+  frame.interruptMarker:SetPoint("LEFT", frame.interruptPositioner:GetStatusBarTexture(), "RIGHT")
+  frame.interruptMarkerPoint:SetPoint("LEFT", frame.interruptMarker:GetStatusBarTexture(), "RIGHT")
 
   function frame:Init(details)
     InitBar(frame, details)
@@ -258,8 +271,7 @@ function addonTable.Display.GetCastBar(frame, parent)
     frame.reverseStatusTexture:SetHorizTile(true)
 
     frame.interruptMarker:SetScale(1/borderDetails.lowerScale)
-    frame.interruptMarker:ClearAllPoints()
-    frame.interruptMarker:SetPoint("LEFT", frame.statusBar:GetStatusBarTexture(), "RIGHT")
+    frame.interruptPositioner:SetScale(1/borderDetails.lowerScale)
     if details.interruptMarker.asset ~= "none" then
       local markerDetails = addonTable.Assets.BarPositionHighlights[details.interruptMarker.asset]
       frame.interruptMarkerPoint:SetTexture(markerDetails.file)
@@ -270,6 +282,7 @@ function addonTable.Display.GetCastBar(frame, parent)
     local backgroundDetails = addonTable.Assets.BarBackgrounds[details.background.asset]
 
     frame.reverseStatusTexture:RemoveMaskTexture(frame.mask)
+    frame.interruptMarkerPoint:RemoveMaskTexture(frame.mask)
     frame.reverseStatusTexture:AddMaskTexture(frame.mask)
     frame.interruptMarkerPoint:AddMaskTexture(frame.mask)
 
@@ -299,6 +312,7 @@ function addonTable.Display.GetCastBar(frame, parent)
     frame.reverseStatusTexture:SetHeight(frame.rawHeight * borderDetails.lowerScale)
     frame.interruptMarkerPoint:SetHeight(frame.rawHeight * borderDetails.lowerScale)
     frame.interruptMarker:SetSize(frame.rawWidth * borderDetails.lowerScale, frame.rawHeight * borderDetails.lowerScale)
+    frame.interruptPositioner:SetSize(frame.rawWidth * borderDetails.lowerScale, frame.rawHeight * borderDetails.lowerScale)
     if details.interruptMarker.asset ~= "none" then
       local markerDetails = addonTable.Assets.BarPositionHighlights[details.interruptMarker.asset]
       PixelUtil.SetSize(frame.interruptMarkerPoint, markerDetails.width * details.scale * borderDetails.lowerScale, frame.rawHeight * borderDetails.lowerScale)

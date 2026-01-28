@@ -125,42 +125,59 @@ function addonTable.Display.CastBarMixin:ApplyCasting()
     self:Show()
 
     if C_Secrets then
-      local duration
+      local castDuration
       if isChanneled then
-        duration = UnitChannelDuration(self.unit)
+        castDuration = UnitChannelDuration(self.unit)
       else
-        duration = UnitCastingDuration(self.unit)
+        castDuration = UnitCastingDuration(self.unit)
       end
-      self.statusBar:SetTimerDuration(duration)
-      self.interruptMarker:SetMinMaxValues(0, duration:GetTotalDuration())
+      self.statusBar:SetTimerDuration(castDuration)
       local spellID
       if self.showInterruptMarker then
         spellID = GetInterruptSpell()
       end
       self.interruptMarker:SetShown(spellID ~= nil)
+      self.interruptPositioner:SetShown(spellID ~= nil)
       if spellID then
+        local interruptDuration = C_Spell.GetSpellCooldownDuration(spellID)
+        self.interruptPositioner:SetMinMaxValues(0, castDuration:GetTotalDuration())
+        self.interruptPositioner:SetValue(castDuration:GetElapsedDuration())
+        self.interruptMarker:SetMinMaxValues(0, castDuration:GetTotalDuration())
+        self.interruptMarker:SetValue(interruptDuration:GetRemainingDuration())
         self:SetScript("OnUpdate", function()
-          local duration = C_Spell.GetSpellCooldownDuration(spellID)
-          self.interruptMarker:SetValue(duration:GetRemainingDuration())
-          self.interruptMarker:SetAlphaFromBoolean(duration:IsZero(), 0, C_CurveUtil.EvaluateColorValueFromBoolean(notInterruptible, 0, 1))
+          interruptDuration = C_Spell.GetSpellCooldownDuration(spellID)
+          self.interruptMarker:SetAlphaFromBoolean(interruptDuration:IsZero(), 0, C_CurveUtil.EvaluateColorValueFromBoolean(notInterruptible, 0, 1))
         end)
       end
     else
       self.statusBar:SetMinMaxValues(0, (endTime - startTime) / 1000)
-      self.interruptMarker:SetMinMaxValues(self.statusBar:GetMinMaxValues())
+      self.statusBar:SetValue(GetTime() - startTime / 1000)
+
       local spellID
       if self.showInterruptMarker and not notInterruptible then
         spellID = GetInterruptSpell()
       end
       self.interruptMarker:SetShown(spellID ~= nil)
+      self.interruptPositioner:SetShown(spellID ~= nil)
+      local endTime
+      if spellID then
+        self.interruptPositioner:SetMinMaxValues(self.statusBar:GetMinMaxValues())
+        self.interruptPositioner:SetValue(self.statusBar:GetValue())
+        self.interruptMarker:SetMinMaxValues(self.statusBar:GetMinMaxValues())
+        local info = C_Spell.GetSpellCooldown(spellID)
+        endTime = info.duration + info.startTime
+        if endTime > 0 then
+          self.interruptMarker:SetValue(endTime - GetTime())
+        else
+          endTime = nil
+          self.interruptMarker:Hide()
+        end
+      end
+
       self:SetScript("OnUpdate", function()
         self.statusBar:SetValue(GetTime() - startTime / 1000)
-        if spellID then
-          local info = C_Spell.GetSpellCooldown(spellID)
-          self.interruptMarker:SetValue(info.duration - (GetTime() - info.startTime))
-          if info.startTime == 0 then
-            self.interruptMarker:Hide()
-          end
+        if endTime and endTime <= GetTime() then
+          self.interruptMarker:Hide()
         end
       end)
       self.statusBar:SetValue(GetTime() - startTime / 1000)
