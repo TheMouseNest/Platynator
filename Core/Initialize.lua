@@ -400,6 +400,11 @@ function addonTable.Core.UpgradeDesign(design)
     design.font.flags = nil
   end
 
+  if design.font.slug == nil then
+    design.font.slug = true
+  end
+  design.slug = nil
+
   if design.font.asset == "ArialShort" then
     design.font.asset = "ArialNarrow"
   end

@@ -632,10 +632,24 @@ local function SetupFont(parent)
   shadowCheckbox:SetPoint("TOP", allFrames[#allFrames], "BOTTOM")
   table.insert(allFrames, shadowCheckbox)
 
+  local fontFixCheckbox = addonTable.CustomiseDialog.Components.GetCheckbox(container, addonTable.Locales.ENABLE_IF_LINES_FALLING_OFF_FONT, 28, function(value)
+    local design = addonTable.CustomiseDialog.GetCurrentDesign()
+    if value ~= not design.font.slug then
+      design.font.slug = not value
+      if addonTable.Config.Get(addonTable.Config.Options.STYLE):match("^_") then
+        addonTable.Config.Set(addonTable.Config.Options.STYLE, addonTable.Constants.CustomName)
+      end
+      addonTable.CallbackRegistry:TriggerEvent("RefreshStateChange", {[addonTable.Constants.RefreshReason.Design] = true})
+    end
+  end)
+  fontFixCheckbox:SetPoint("TOP", allFrames[#allFrames], "BOTTOM", 0, -30)
+  table.insert(allFrames, fontFixCheckbox)
+
   local function Update()
     local design = addonTable.CustomiseDialog.GetCurrentDesign()
     outlineCheckbox:SetValue(design.font.outline)
     shadowCheckbox:SetValue(design.font.shadow)
+    fontFixCheckbox:SetValue(not design.font.slug)
 
     for _, f in ipairs(allFrames) do
       if f.DropDown then
