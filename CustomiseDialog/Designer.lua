@@ -689,6 +689,7 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
       debuffs = {135959},
       crowdControl = {135860},
     }
+    local asset = addonTable.Assets.BarBordersSliced["1px"]
     for kind, w in pairs(auraContainers) do
       w:SetSize(10, 10)
       w.Wrapper = CreateFrame("Frame", nil, w)
@@ -698,6 +699,12 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
       w.auras = {}
       for index, tex in ipairs(textures[kind]) do
         local buff = CreateFrame("Frame", nil, w.Wrapper, "PlatynatorNameplateBuffButtonTemplate")
+        buff.Border = buff:CreateTexture(nil, "OVERLAY")
+        buff.Border:SetAllPoints(true)
+        buff.Border:SetScale(1/asset.lowerScale)
+        buff.Border:SetTexture(asset.file)
+        buff.Border:SetTextureSliceMargins(asset.width * asset.margin, asset.width * asset.margin, asset.height * asset.margin, asset.height * asset.margin)
+        buff.Border:SetVertexColor(0, 0, 0)
         buff:Show()
         buff.Icon:SetTexture(tex)
         buff:SetPoint("LEFT", (index - 1) * 22, 0)
@@ -915,7 +922,8 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
       local texBase = 0.95 * (1 - details.height) / 2
       for _, aura in ipairs(container.auras) do
         aura:SetHeight(20 * details.height)
-        aura.Icon:SetHeight(19 * details.height)
+        aura.Icon:SetHeight(20 * details.height)
+        aura.Border:SetHeight(20 * details.height)
         aura.Icon:SetTexCoord(0.05, 0.95, 0.05 + texBase, 0.95 - texBase)
       end
       table.insert(widgets, container)

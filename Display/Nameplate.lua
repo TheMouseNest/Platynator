@@ -30,7 +30,14 @@ function addonTable.Display.NameplateMixin:OnLoad()
   self.CrowdControlDisplay:SetSize(10, 10)
 
   self.AurasManager = addonTable.Utilities.InitFrameWithMixin(self, addonTable.Display.AurasManagerMixin)
+  local borderAsset = addonTable.Assets.BarBordersSliced["1px"]
   self.AurasPool = CreateFramePool("Frame", self, "PlatynatorNameplateBuffButtonTemplate", nil, false, function(frame)
+    frame.Border = frame:CreateTexture(nil, "OVERLAY")
+    frame.Border:SetAllPoints(true)
+    frame.Border:SetScale(1/borderAsset.lowerScale)
+    frame.Border:SetTexture(borderAsset.file)
+    frame.Border:SetTextureSliceMargins(borderAsset.width * borderAsset.margin, borderAsset.width * borderAsset.margin, borderAsset.height * borderAsset.margin, borderAsset.height * borderAsset.margin)
+    frame.Border:SetVertexColor(0, 0, 0)
     frame.Cooldown:SetCountdownAbbrevThreshold(20)
     frame.Cooldown.Text = frame.Cooldown:GetRegions()
     frame.Pandemic = CreateFrame("Frame", nil, frame)
@@ -189,7 +196,8 @@ function addonTable.Display.NameplateMixin:OnLoad()
         end
 
         PixelUtil.SetSize(auraFrame, 20, 20 * details.height)
-        PixelUtil.SetSize(auraFrame.Icon, 19, 19 * details.height)
+        PixelUtil.SetSize(auraFrame.Border, 20, 20 * details.height)
+        PixelUtil.SetSize(auraFrame.Icon, 20, 20 * details.height)
         auraFrame.Icon:SetTexCoord(0.05, 0.95, 0.05 + texBase, 0.95 - texBase)
 
         if aura.durationSecret then
