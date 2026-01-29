@@ -68,7 +68,6 @@ function addonTable.Display.CastTimeLeftTextMixin:ApplyCasting()
       end)
     end
   else
-    self:SetScript("OnUpdate", nil)
     self:Hide()
   end
 end

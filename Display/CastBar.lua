@@ -73,6 +73,10 @@ function addonTable.Display.CastBarMixin:OnEvent(eventName, ...)
     self:SetReverseFill(false)
     self.statusBar:SetMinMaxValues(0, 1)
     self.statusBar:SetValue(1)
+    if self.timer then
+      self.timer:Cancel()
+      self.timer = nil
+    end
     self.timer = C_Timer.NewTimer(0.8, function()
       if self.interrupted then
         self.interrupted = nil
@@ -124,6 +128,11 @@ function addonTable.Display.CastBarMixin:ApplyCasting()
     self:SetReverseFill(isChanneled)
     self:Show()
 
+    if self.timer then
+      self.timer:Cancel()
+      self.timer = nil
+    end
+
     if C_Secrets then
       local castDuration
       if isChanneled then
@@ -144,9 +153,10 @@ function addonTable.Display.CastBarMixin:ApplyCasting()
         self.interruptPositioner:SetValue(castDuration:GetElapsedDuration())
         self.interruptMarker:SetMinMaxValues(0, castDuration:GetTotalDuration())
         self.interruptMarker:SetValue(interruptDuration:GetRemainingDuration())
-        self:SetScript("OnUpdate", function()
+        local uninterruptibleCheck = C_CurveUtil.EvaluateColorValueFromBoolean(notInterruptible, 0, 1)
+        self.timer = C_Timer.NewTicker(0.005, function()
           interruptDuration = C_Spell.GetSpellCooldownDuration(spellID)
-          self.interruptMarker:SetAlphaFromBoolean(interruptDuration:IsZero(), 0, C_CurveUtil.EvaluateColorValueFromBoolean(notInterruptible, 0, 1))
+          self.interruptMarker:SetAlphaFromBoolean(interruptDuration:IsZero(), 0, uninterruptibleCheck)
         end)
       end
     else
@@ -174,7 +184,7 @@ function addonTable.Display.CastBarMixin:ApplyCasting()
         end
       end
 
-      self:SetScript("OnUpdate", function()
+      self.timer = C_Timer.NewTicker(0.005, function()
         self.statusBar:SetValue(GetTime() - startTime / 1000)
         if endTime and endTime <= GetTime() then
           self.interruptMarker:Hide()
@@ -183,8 +193,11 @@ function addonTable.Display.CastBarMixin:ApplyCasting()
       self.statusBar:SetValue(GetTime() - startTime / 1000)
     end
   else
-    self:SetScript("OnUpdate", nil)
     if not self.interrupted then
+      if self.timer then
+        self.timer:Cancel()
+        self.timer = nil
+      end
       self:Hide()
     end
   end
