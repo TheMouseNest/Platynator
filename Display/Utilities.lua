@@ -101,8 +101,9 @@ local executeMap = {
   -- Rogue
   [328085] = 0.35,
   -- Warlock
-  [198590] = 0.2, -- Drain soul
+  [388667] = 0.2, -- Drain soul
   [17877] = 0.2, -- Shadowburn
+  [234876] = 0.35, -- Death's Embrace
 
   --Warrior (Classic ranks)
   [20658] = 0.2,
