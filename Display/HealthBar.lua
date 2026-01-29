@@ -75,6 +75,7 @@ function addonTable.Display.HealthBarMixin:UpdateHealth()
     if self.calculator.GetMaximumHealth then
       UnitGetDetailedHealPrediction(self.unit, nil, self.calculator)
       self.statusBar:SetMinMaxValues(0, self.calculator:GetMaximumHealth())
+      self.statusBarCutaway:SetMinMaxValues(self.statusBar:GetMinMaxValues())
       self.statusBarAbsorb:SetMinMaxValues(self.statusBar:GetMinMaxValues())
       local absorbs = self.calculator:GetDamageAbsorbs()
       self.statusBarAbsorb:SetValue(absorbs)
@@ -101,7 +102,7 @@ function addonTable.Display.HealthBarMixin:OnEvent(eventName)
     if self.details.animate then
       self.statusBarCutaway:SetValue(self.oldHealth)
       self.statusBarCutawayAnimation:Play()
-      self.oldHealth = UnitHealth(self.unit)
+      self.oldHealth = self.statusBar:GetValue()
     end
   elseif eventName == "UNIT_MAXHEALTH" then
     self:UpdateHealth()
