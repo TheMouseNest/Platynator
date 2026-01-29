@@ -89,7 +89,7 @@ function addonTable.Display.HealthBarMixin:UpdateHealth()
       local absorbs = self.calculator:GetDamageAbsorbs()
       self.statusBarAbsorb:SetValue(absorbs)
       self.calculator:SetMaximumHealthMode(Enum.UnitMaximumHealthMode.Default)
-      self.statusBar:SetValue(self.calculator:GetMaximumHealth(), self.animate)
+      self.statusBar:SetValue(self.calculator:GetCurrentHealth(), self.animate)
     else
       local maxHealth = UnitHealthMax(self.unit)
       self.statusBar:SetMinMaxValues(0, maxHealth)
