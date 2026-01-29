@@ -613,6 +613,27 @@ addonTable.CustomiseDialog.ColorsConfig = {
       },
     }
   },
+  ["execute"] = {
+    label = addonTable.Locales.EXECUTE,
+    default = {
+      kind = "execute",
+      colors = {
+        execute = GetColor("D1D1D1"),
+      },
+    },
+    entries = {
+      {
+        label = addonTable.Locales.EXECUTE,
+        kind = "colorPicker",
+        setter = function(details, value)
+          details.colors.execute = value
+        end,
+        getter = function(details)
+          return details.colors.execute
+        end,
+      },
+    }
+  },
 }
 
 addonTable.CustomiseDialog.ColorsConfigOrder = {
@@ -626,6 +647,7 @@ addonTable.CustomiseDialog.ColorsConfigOrder = {
   "guild",
   "classColors",
   "difficulty",
+  "execute",
   "reaction",
   "interruptReady",
   "castTargetsYou",

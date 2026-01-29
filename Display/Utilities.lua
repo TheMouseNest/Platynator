@@ -83,14 +83,92 @@ local interruptMap = {
   ["DEMONHUNTER"] = {183752},
 }
 
-local interruptSpells = interruptMap[UnitClassBase("player")] or {}
+local executeMap = {
+  -- Hunter
+  [5331] = 0.2,
+  -- Warrior (Retail)
+  [163201] = 0.2, -- (Arms/Prot)
+  [5308] = 0.2, -- (Fury)
+  [281001] = 0.35, -- (Massacre, Arms/Prot)
+  [206315] = 0.35, -- (Massacre, Fury)
+  -- Monk (Retail)
+  [322109] = 0.15,
+  --Priest (Retail)
+  [32379] = 0.2,
+  [392507] = 0.35, -- (Deathspeaker)
+  -- Death Knight (Retail)
+  [343294] = 0.35,
+  -- Rogue
+  [328085] = 0.35,
+  -- Warlock
+  [198590] = 0.2, -- Drain soul
+  [17877] = 0.2, -- Shadowburn
+
+  --Warrior (Classic ranks)
+  [20658] = 0.2,
+  [20661] = 0.2,
+  [20662] = 0.2,
+  -- Hunter (Classic ranks)
+  [53351] = 0.2,
+  [61005] = 0.2,
+  [61006] = 0.2,
+  -- Monk (MoP)
+  [115080] = 0.1,
+  -- Paladin (Classic ranks)
+  [24275] = 0.2,
+  [24274] = 0.2,
+  [24239] = 0.2,
+  [27180] = 0.2,
+  [48805] = 0.2,
+  [48806] = 0.2,
+}
+
+local executeCurve
+if C_CurveUtil then
+  executeCurve = C_CurveUtil.CreateCurve()
+  executeCurve:SetType(Enum.LuaCurveType.Step)
+end
+
+local currentInterrupt
+local currentExecute = 0
+do
+  local interruptSpells = interruptMap[UnitClassBase("player")] or {}
+
+  local frame = CreateFrame("Frame")
+  frame:RegisterEvent("PLAYER_LOGIN")
+  frame:RegisterEvent("SPELLS_CHANGED")
+  frame:SetScript("OnEvent", function()
+    for _, s in ipairs(interruptSpells) do
+      if C_SpellBook.IsSpellKnown(s) or C_SpellBook.IsSpellKnown(s, Enum.SpellBookSpellBank.Pet) then
+        currentInterrupt = s
+      end
+    end
+
+    currentExecute = 0
+    for s, amount in pairs(executeMap) do
+      if C_SpellBook.IsSpellKnown(s) then
+        currentExecute = math.max(amount, currentExecute)
+      end
+    end
+
+    if executeCurve and currentExecute > 0 then
+      executeCurve:ClearPoints()
+      executeCurve:AddPoint(0, 1)
+      executeCurve:AddPoint(currentExecute, 0)
+    end
+  end)
+end
 
 function addonTable.Display.Utilities.GetInterruptSpell()
-  for _, s in ipairs(interruptSpells) do
-    if C_SpellBook.IsSpellKnown(s) or C_SpellBook.IsSpellKnown(s, Enum.SpellBookSpellBank.Pet) then
-      return s
-    end
-  end
+  return currentInterrupt
+end
+
+function addonTable.Display.Utilities.GetExecuteRange()
+  return currentExecute
+end
+
+function addonTable.Display.Utilities.GetExecuteCurve()
+  return executeCurve
 end
 
 if addonTable.Constants.IsClassic then

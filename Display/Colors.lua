@@ -57,6 +57,9 @@ do
   end)
 end
 
+local executeCurve = addonTable.Display.Utilities.GetExecuteCurve()
+local executeConverter = UIParent:CreateTexture()
+
 local GetInterruptSpell = addonTable.Display.Utilities.GetInterruptSpell
 
 local transparency = {r = 1, g = 1, b = 1, a = 0}
@@ -131,6 +134,7 @@ local kindToEvent = {
   focus = {"PLAYER_FOCUS_CHANGED"},
   threat = {"UNIT_THREAT_LIST_UPDATE"},
   quest = {"QUEST_LOG_UPDATE"},
+  execute = {"UNIT_HEALTH"},
   interruptReady = {
     "UNIT_SPELLCAST_START",
     "UNIT_SPELLCAST_STOP",
@@ -419,6 +423,20 @@ function addonTable.Display.GetColor(settings, state, unit)
     elseif s.kind == "fixed" then
       table.insert(colorQueue, {color = s.colors.fixed})
       break
+    elseif s.kind == "execute" then
+      local executeRange = addonTable.Display.Utilities.GetExecuteRange()
+      if executeRange > 0 then
+        if UnitHealthPercent then
+          local alpha = UnitHealthPercent(unit, true, executeCurve)
+          executeConverter:SetDesaturation(alpha)
+          table.insert(colorQueue, {state = {{value = executeConverter:IsDesaturated()}}, color = s.colors.execute})
+        else
+          local percent = UnitHealth(unit) / UnitHealthMax(unit)
+          if percent <= addonTable.Display.Utilities.GetExecuteRange() then
+            table.insert(colorQueue, {color = s.colors.execute})
+          end
+        end
+      end
     end
   end
 
