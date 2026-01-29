@@ -69,6 +69,7 @@ function addonTable.Display.GuildTextMixin:Strip()
   self.ApplyTextOverride = nil
 
   self.defaultText = nil
+  self:UnregisterAllEvents()
 end
 
 function addonTable.Display.GuildTextMixin:OnEvent()
