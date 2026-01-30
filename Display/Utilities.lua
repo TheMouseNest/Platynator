@@ -144,6 +144,7 @@ do
     for _, s in ipairs(interruptSpells) do
       if C_SpellBook.IsSpellKnownOrInSpellBook(s) or C_SpellBook.IsSpellKnownOrInSpellBook(s, Enum.SpellBookSpellBank.Pet) then
         currentInterrupt = s
+        break
       end
     end
 
