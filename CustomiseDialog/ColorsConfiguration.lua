@@ -675,6 +675,7 @@ addonTable.CustomiseDialog.ColorsConfigOrder = {
   "focus",
   "threat",
   "eliteType",
+  "rarity",
   "quest",
   "guild",
   "classColors",
