@@ -271,6 +271,14 @@ function addonTable.Display.GetColor(settings, state, unit)
           break
         end
       end
+    elseif s.kind == "rarity" then
+      local classification = UnitClassification(unit)
+
+      if classification == "rare" then
+        table.insert(colorQueue, {color = s.colors.rare})
+      elseif classification == "rareelite" then
+        table.insert(colorQueue, {color = s.colors.rareElite})
+      end
     elseif s.kind == "eliteType" then
       if (inRelevantInstance or not s.instancesOnly) and not addonTable.Display.Utilities.IsNeutralUnit(unit) then
         local classification = UnitClassification(unit)

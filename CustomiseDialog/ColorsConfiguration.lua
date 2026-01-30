@@ -186,6 +186,38 @@ addonTable.CustomiseDialog.ColorsConfig = {
       },
     },
   },
+  ["rarity"] = {
+    label = addonTable.Locales.RARITY,
+    default = {
+      kind = "rarity",
+      colors = {
+        rare = GetColor("d5d5d5"),
+        rareElite = GetColor("f8de7e"),
+      },
+    },
+    entries = {
+      {
+        label = addonTable.Locales.RARE,
+        kind = "colorPicker",
+        setter = function(details, value)
+          details.colors.rare = value
+        end,
+        getter = function(details)
+          return details.colors.rare
+        end,
+      },
+      {
+        label = addonTable.Locales.RARE_ELITE,
+        kind = "colorPicker",
+        setter = function(details, value)
+          details.colors.rareElite = value
+        end,
+        getter = function(details)
+          return details.colors.rareElite
+        end,
+      },
+    },
+  },
   ["eliteType"] = {
     label = addonTable.Locales.ELITE_TYPE,
     default = {
