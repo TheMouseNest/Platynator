@@ -70,7 +70,7 @@ end
 local interruptMap = {
   ["DEATHKNIGHT"] = {47528, 47476},
   ["WARRIOR"] = {6552},
-  ["WARLOCK"] = {19647, 1276467},
+  ["WARLOCK"] = {19647, 132409, 1276467},
   ["SHAMAN"] = {57994},
   ["ROGUE"] = {1766},
   ["PRIEST"] = {15487},
@@ -133,16 +133,22 @@ end
 local currentInterrupt
 local currentExecute = 0
 do
-  local interruptSpells = interruptMap[UnitClassBase("player")] or {}
+  local class = UnitClassBase("player")
+  local interruptSpells = interruptMap[class] or {}
 
   local frame = CreateFrame("Frame")
   frame:RegisterEvent("PLAYER_LOGIN")
   frame:RegisterEvent("SPELLS_CHANGED")
   frame:SetScript("OnEvent", function()
+    currentInterrupt = nil
     for _, s in ipairs(interruptSpells) do
-      if C_SpellBook.IsSpellKnown(s) or C_SpellBook.IsSpellKnown(s, Enum.SpellBookSpellBank.Pet) then
+      if C_SpellBook.IsSpellKnownOrInSpellBook(s) or C_SpellBook.IsSpellKnownOrInSpellBook(s, Enum.SpellBookSpellBank.Pet) then
         currentInterrupt = s
       end
+    end
+
+    if class == "WARLOCK" and currentInterrupt then -- While other spells exist the cooldown is still reported on the base
+      currentInterrupt = interruptSpells[1]
     end
 
     currentExecute = 0
