@@ -324,7 +324,7 @@ addonTable.Assets.PowerBars = {
 }
 
 addonTable.Assets.Markers = {
-  ["normal/cast-icon"] = {file = 236205, width = 120, height = 120, tag = "castIcon"},
+  ["normal/cast-icon"] = {file = addonTable.Constants.IsRetail and 236205 or 135753, width = 120, height = 120, tag = "castIcon"},
 
   ["normal/quest-gradient"] = {file = "Interface/AddOns/Platynator/Assets/%s/Markers/quest-gradient.png", width = 48, height = 170, has4k = true, tag = "quest"},
   ["normal/quest-boss-blizzard"] = {file = "Interface/AddOns/Platynator/Assets/%s/Markers/blizzard-quest-boss.png", width = 164, height = 208, has4k = true, tag = "quest"},
