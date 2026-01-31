@@ -130,9 +130,10 @@ function addonTable.Display.GetHealthBar(frame, parent)
 
     local borderDetails = addonTable.Assets.BarBordersSliced[details.border.asset]
 
-    frame.statusBarAbsorb:SetFrameLevel(frame:GetFrameLevel() + 1)
-    frame.statusBar:SetFrameLevel(frame:GetFrameLevel() + 2)
-    borderHolder:SetFrameLevel(frame:GetFrameLevel() + 4)
+    frame.statusBarCutaway:SetFrameLevel(frame:GetFrameLevel() + 1)
+    frame.statusBarAbsorb:SetFrameLevel(frame:GetFrameLevel() + 2)
+    frame.statusBar:SetFrameLevel(frame:GetFrameLevel() + 3)
+    borderHolder:SetFrameLevel(frame:GetFrameLevel() + 5)
 
     frame.statusBarAbsorb:SetStatusBarTexture(addonTable.Assets.BarBackgrounds[details.absorb.asset].file)
     frame.statusBarAbsorb:GetStatusBarTexture():SetVertexColor(details.absorb.color.r, details.absorb.color.g, details.absorb.color.b, details.absorb.color.a)
