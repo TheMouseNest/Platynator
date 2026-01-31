@@ -841,6 +841,8 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
           display = addonTable.Locales.ARCANE_FLURRY
         elseif w.details.kind == "level" then
           display = "60"
+        elseif w.details.kind == "quest" then
+          display = "3/7"
         end
         if display then
           w.text:SetText(display)

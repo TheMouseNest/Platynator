@@ -196,3 +196,99 @@ if addonTable.Constants.IsClassic then
     return tostring(value);
   end
 end
+
+if addonTable.Constants.IsRetail then
+  local questData = {}
+  do
+    local frame = CreateFrame("Frame")
+    frame:RegisterEvent("NAME_PLATE_UNIT_REMOVED")
+    frame:RegisterEvent("QUEST_LOG_UPDATE")
+    frame:SetScript("OnEvent", function(_, event, unit)
+      if event == "NAME_PLATE_UNIT_REMOVED" then
+        questData[unit] = nil
+      elseif event == "QUEST_LOG_UPDATE" then
+        questData = {}
+        addonTable.CallbackRegistry:TriggerEvent("QuestInfoUpdate")
+      end
+    end)
+  end
+
+  local questLineTypes = {
+    [Enum.TooltipDataLineType.QuestObjective] = true,
+    [Enum.TooltipDataLineType.QuestTitle] = true,
+    [Enum.TooltipDataLineType.QuestPlayer] = true,
+  }
+  local playerName = UnitName("player")
+
+  function addonTable.Display.Utilities.GetQuestInfo(unit)
+    if questData[unit] then
+      return questData[unit]
+    end
+    if addonTable.Display.Utilities.IsInRelevantInstance() then
+      questData[unit] = {}
+      return questData[unit]
+    end
+
+    local info = C_TooltipInfo.GetUnit(unit)
+    if info then
+      local lines = tFilter(info.lines, function(l)
+        return questLineTypes[l.type]
+      end, true)
+      local data = {}
+      local ignoreUntilTitle = false
+      for _, l in ipairs(lines) do
+        if not ignoreUntilTitle and l.type == Enum.TooltipDataLineType.QuestObjective then
+          local count1, count2 = l.leftText:match("(%d+)%/(%d+)")
+          if count1 ~= count2 then
+            table.insert(data, count1 .. "/" .. count2)
+          end
+          local percent = l.leftText:match("(%d+)%%")
+          if percent and percent ~= "100" then
+            table.insert(data, percent .. "%")
+          end
+        elseif l.type == Enum.TooltipDataLineType.QuestTitle then
+          ignoreUntilTitle = false
+        elseif l.type == Enum.TooltipDataLineType.QuestPlayer then
+          if l.leftText == playerName then
+            ignoreUntilTitle = false
+          else
+            ignoreUntilTitle = true
+          end
+        end
+      end
+      questData[unit] = data
+    else
+      questData[unit] = {}
+    end
+
+    return questData[unit]
+  end
+else
+  local questData = {}
+  local frame = CreateFrame("Frame")
+  frame:RegisterEvent("NAME_PLATE_UNIT_REMOVED")
+  frame:SetScript("OnEvent", function(_, _, unit)
+    questData[unit] = nil
+  end)
+
+  addonTable.Utilities.OnAddonLoaded("Questie", function()
+    Questie.API.RegisterOnReady(function()
+      addonTable.CallbackRegistry:TriggerEvent("QuestInfoUpdate")
+      Questie.API.RegisterForQuestUpdates(function()
+        questData = {}
+        addonTable.CallbackRegistry:TriggerEvent("QuestInfoUpdate")
+      end)
+    end)
+  end)
+
+  function addonTable.Display.Utilities.GetQuestInfo(unit)
+    if not Questie or not Questie.API.isReady then
+      return {}
+    end
+
+    questData[unit] = {Questie.API.GetQuestObjectiveIconForUnit(UnitGUID(unit)) ~= nil and "" or nil}
+
+    return questData[unit]
+  end
+
+end

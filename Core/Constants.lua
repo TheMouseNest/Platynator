@@ -31,7 +31,8 @@ addonTable.Constants.Events = {
 
   "TextOverrideUpdated",
 
-  "LegacyInterrupter"
+  "LegacyInterrupter",
+  "QuestInfoUpdate",
 }
 
 addonTable.Constants.RefreshReason = {

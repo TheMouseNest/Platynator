@@ -427,6 +427,21 @@ addonTable.CustomiseDialog.DesignWidgets = {
     },
   },
   {
+    name = addonTable.Locales.QUEST_OBJECTIVE,
+    kind = "texts",
+    default = {
+      kind = "quest",
+      scale = 1,
+      layer = 2,
+      anchor = {"TOPLEFT", -140, 50},
+      color = GetColor("FFFFFF"),
+      maxWidth = 0,
+      align = "CENTER",
+      shorten = "NONE",
+      truncate = false,
+    },
+  },
+  {
     name = addonTable.Locales.ICONS,
     special = "header",
   },

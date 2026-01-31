@@ -24,26 +24,6 @@ function addonTable.Display.AbsorbTextMixin:OnEvent()
   self:UpdateText()
 end
 
-local AbbreviateNumbersAlt
-if addonTable.Constants.IsClassic then
-  local NUMBER_ABBREVIATION_DATA_ALT = {
-    { breakpoint = 10000000,	abbreviation = SECOND_NUMBER_CAP_NO_SPACE,	significandDivisor = 1000000,	fractionDivisor = 1 },
-    { breakpoint = 1000000,		abbreviation = SECOND_NUMBER_CAP_NO_SPACE,	significandDivisor = 100000,		fractionDivisor = 10 },
-    { breakpoint = 10000,		abbreviation = FIRST_NUMBER_CAP_NO_SPACE,	significandDivisor = 1000,		fractionDivisor = 1 },
-    { breakpoint = 1000,		abbreviation = FIRST_NUMBER_CAP_NO_SPACE,	significandDivisor = 100,		fractionDivisor = 10 },
-  }
-
-  AbbreviateNumbersAlt = function(value)
-    for i, data in ipairs(NUMBER_ABBREVIATION_DATA_ALT) do
-      if value >= data.breakpoint then
-        local finalValue = math.floor(value / data.significandDivisor) / data.fractionDivisor;
-        return finalValue .. data.abbreviation;
-      end
-    end
-    return tostring(value);
-  end
-end
-
 local AbbreviateNumbersAlt = addonTable.Display.Utilities.AbbreviateNumbersAlt
 
 function addonTable.Display.AbsorbTextMixin:GetAbsorbValues()
@@ -52,7 +32,7 @@ end
 
 function addonTable.Display.AbsorbTextMixin:UpdateText()
   if UnitIsDeadOrGhost(self.unit) then
-    self.text:SetText("+0")
+    self.text:SetText("0")
     self.text:SetAlpha(0)
   else
     local raw = UnitGetTotalAbsorbs(self.unit)

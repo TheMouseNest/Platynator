@@ -6,7 +6,7 @@ addonTable.Display.QuestMarkerMixin = {}
 function addonTable.Display.QuestMarkerMixin:SetUnit(unit)
   self.unit = unit
   if self.unit then
-    self:RegisterEvent("QUEST_LOG_UPDATE")
+    addonTable.CallbackRegistry:RegisterCallback("QuestInfoUpdate", self.UpdateMarker, self)
     self:UpdateMarker()
   else
     self:Strip()
@@ -14,11 +14,11 @@ function addonTable.Display.QuestMarkerMixin:SetUnit(unit)
 end
 
 function addonTable.Display.QuestMarkerMixin:Strip()
-  self:UnregisterAllEvents()
+  addonTable.CallbackRegistry:UnregisterCallback("QuestInfoUpdate", self)
 end
 
 function addonTable.Display.QuestMarkerMixin:UpdateMarker()
-  self.marker:SetShown(C_QuestLog.UnitIsRelatedToActiveQuest and C_QuestLog.UnitIsRelatedToActiveQuest(self.unit))
+  self.marker:SetShown(#addonTable.Display.Utilities.GetQuestInfo(self.unit) > 0)
 end
 
 function addonTable.Display.QuestMarkerMixin:OnEvent(eventName, ...)
