@@ -147,10 +147,6 @@ do
       end
     end
 
-    if class == "WARLOCK" and currentInterrupt then -- While other spells exist the cooldown is still reported on the base
-      currentInterrupt = interruptSpells[1]
-    end
-
     currentExecute = 0
     for s, amount in pairs(executeMap) do
       if C_SpellBook.IsSpellKnown(s) then
