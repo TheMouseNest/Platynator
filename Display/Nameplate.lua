@@ -90,7 +90,6 @@ function addonTable.Display.NameplateMixin:OnLoad()
       GameTooltip_SetDefaultAnchor(GameTooltip, frame)
       if GameTooltip.SetUnitAuraByAuraInstanceID then
         GameTooltip:SetUnitAuraByAuraInstanceID(self.unit, frame.auraInstanceID)
-        GameTooltip:Show()
       elseif frame.auraIndex then
         if frame.auraIndex ~= -1 then
           GameTooltip:SetUnitAura(self.unit, frame.auraIndex, frame.auraFilter)
