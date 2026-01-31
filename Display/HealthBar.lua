@@ -34,7 +34,12 @@ function addonTable.Display.HealthBarMixin:SetUnit(unit)
     self:RegisterUnitEvent("UNIT_HEALTH", self.unit)
     self:RegisterUnitEvent("UNIT_MAXHEALTH", self.unit)
     self:RegisterUnitEvent("UNIT_ABSORB_AMOUNT_CHANGED", self.unit)
+
+    -- Disable animation for initial setup
+    local animate = self.animate
+    self.animate = nil
     self:UpdateHealth()
+    self.animate = animate
 
     if self.details.animate then
       self.oldHealth = UnitHealth(self.unit)
@@ -87,7 +92,7 @@ function addonTable.Display.HealthBarMixin:UpdateHealth()
       self.statusBarAbsorb:SetMinMaxValues(self.statusBar:GetMinMaxValues())
 
       local absorbs = self.calculator:GetDamageAbsorbs()
-      self.statusBarAbsorb:SetValue(absorbs)
+      self.statusBarAbsorb:SetValue(absorbs, self.animate)
       self.calculator:SetMaximumHealthMode(Enum.UnitMaximumHealthMode.Default)
       self.statusBar:SetValue(self.calculator:GetCurrentHealth(), self.animate)
     else
@@ -95,7 +100,7 @@ function addonTable.Display.HealthBarMixin:UpdateHealth()
       self.statusBar:SetMinMaxValues(0, maxHealth)
       self.statusBarCutaway:SetMinMaxValues(0, maxHealth)
       self.statusBarAbsorb:SetMinMaxValues(self.statusBar:GetMinMaxValues())
-      self.statusBarAbsorb:SetValue(UnitGetTotalAbsorbs(self.unit), self.details.animate and Enum.StatusBarInterpolation.ExponentialEaseOut or Enum.StatusBarInterpolation.Immediate)
+      self.statusBarAbsorb:SetValue(UnitGetTotalAbsorbs(self.unit), self.animate)
       self.statusBar:SetValue(UnitHealth(self.unit), self.animate)
     end
   else
