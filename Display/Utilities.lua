@@ -68,9 +68,9 @@ function addonTable.Display.Utilities.IsInRelevantInstance()
 end
 
 local interruptMap = {
-  ["DEATHKNIGHT"] = {47528, 47476},
+  ["DEATHKNIGHT"] = {47528},
   ["WARRIOR"] = {6552},
-  ["WARLOCK"] = {19647, 119910, 132409, 1276467, 89766},
+  ["WARLOCK"] = {19647, 89766, 119910, 132409, 1276467},
   ["SHAMAN"] = {57994},
   ["ROGUE"] = {1766},
   ["PRIEST"] = {15487},
