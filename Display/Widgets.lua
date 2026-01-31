@@ -102,6 +102,10 @@ function addonTable.Display.GetHealthBar(frame, parent)
   alpha:SetFromAlpha(1)
   alpha:SetToAlpha(0)
   alpha:SetDuration(0.3)
+  frame.statusBarCutawayMask = frame:CreateMaskTexture()
+  frame.statusBarCutawayMask:SetBlockingLoadsRequested(true)
+  frame.statusBarCutawayMask:SetTexture("Interface/AddOns/Platynator/Assets/Special/white.png", "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
+  frame.statusBarCutawayMask:SetTextureSliceMargins(1, 1, 1, 1)
 
   frame.statusBar = CreateFrame("StatusBar", nil, frame)
   frame.statusBar:SetPoint("CENTER")
@@ -145,8 +149,11 @@ function addonTable.Display.GetHealthBar(frame, parent)
     frame.statusBarCutaway:SetScale(1/borderDetails.lowerScale * details.scale)
     frame.statusBarCutaway:GetStatusBarTexture():RemoveMaskTexture(frame.mask)
     frame.statusBarCutaway:SetAlpha(0)
+    frame.statusBarCutawayMask:SetPoint("LEFT", frame.statusBar:GetStatusBarTexture(), "RIGHT")
+    frame.statusBarCutawayMask:SetScale(details.scale)
 
     frame.statusBarAbsorb:GetStatusBarTexture():AddMaskTexture(frame.mask)
+    frame.statusBarCutaway:GetStatusBarTexture():AddMaskTexture(frame.statusBarCutawayMask)
     frame.statusBarCutaway:GetStatusBarTexture():AddMaskTexture(frame.mask)
 
     if details.kind == "health" then
@@ -169,7 +176,8 @@ function addonTable.Display.GetHealthBar(frame, parent)
   function frame:ApplySize()
     SizeBar(frame, frame.details)
     local borderDetails = addonTable.Assets.BarBordersSliced[frame.details.border.asset]
-    frame.statusBarAbsorb:SetSize(frame.rawWidth * borderDetails.lowerScale, frame.rawHeight * borderDetails.lowerScale)
+    PixelUtil.SetSize(frame.statusBarAbsorb, frame.rawWidth * borderDetails.lowerScale, frame.rawHeight * borderDetails.lowerScale)
+    PixelUtil.SetSize(frame.statusBarCutawayMask, frame.rawWidth, frame.rawHeight)
   end
 
   return frame
