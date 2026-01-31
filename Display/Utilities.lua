@@ -267,8 +267,11 @@ else
     questData[unit] = nil
   end)
 
+  local QuestieTooltips
+
   addonTable.Utilities.OnAddonLoaded("Questie", function()
     Questie.API.RegisterOnReady(function()
+      QuestieTooltips = QuestieLoader:ImportModule("QuestieTooltips")
       addonTable.CallbackRegistry:TriggerEvent("QuestInfoUpdate")
       Questie.API.RegisterForQuestUpdates(function()
         questData = {}
@@ -282,9 +285,29 @@ else
       return {}
     end
 
-    questData[unit] = {Questie.API.GetQuestObjectiveIconForUnit(UnitGUID(unit)) ~= nil and "" or nil}
-
-    return questData[unit]
+    local npcID = UnitGUID(unit):match("Creature%-%d+%-%d+%-%d+%-%d+%-(%d+)")
+    if not npcID then
+      return {}
+    end
+    local status = pcall(function()
+      local data = QuestieTooltips.lookupByKey["m_" .. npcID]
+      if data then
+        local result = {}
+        for _, tooltip in pairs(data) do
+          if not tooltip.name then
+            local objective = tooltip.objective
+            if objective.Collected ~= objective.Needed then
+              table.insert(result, objective.Collected .. "/" .. objective.Needed)
+            end
+          end
+        end
+        questData[unit] = result
+      end
+    end)
+    if not status then
+      questData[unit] = {Questie.API.GetQuestObjectiveIconForUnit(UnitGUID(unit)) ~= nil and "" or nil}
+    end
+    return questData[unit] or {}
   end
 
 end
