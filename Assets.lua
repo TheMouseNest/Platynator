@@ -32,7 +32,8 @@ addonTable.Assets.BarBackgrounds = {
   ["transparent"] = {file = "Interface/AddOns/Platynator/Assets/Special/transparent.png", width = 1000, height = 125, isTransparent = true, group = 0, order = 0},
   ["black"] = {file = "Interface/AddOns/Platynator/Assets/Special/black.png", width = 1000, height = 125, group = 1, order = 1},
   ["grey"] = {file = "Interface/AddOns/Platynator/Assets/Special/grey.png", width = 1000, height = 125, group = 1, order = 2},
-  ["white"] = {file = "Interface/AddOns/Platynator/Assets/Special/white.png", width = 1000, height = 125, group = 1, order = 3},
+  ["grey-raid"] = {file = "Interface/AddOns/Platynator/Assets/Special/grey-raid.png", width = 1000, height = 125, group = 1, order = 3},
+  ["white"] = {file = "Interface/AddOns/Platynator/Assets/Special/white.png", width = 1000, height = 125, group = 1, order = 4},
 
   ["wide/bevelled"] = {file = "Interface/AddOns/Platynator/Assets/%s/BarBackgrounds/bevelled.png", width = 1000, height = 125, has4k = true, group = 2, order = 1},
   ["wide/bevelled-grey"] = {file = "Interface/AddOns/Platynator/Assets/%s/BarBackgrounds/bevelled-grey.png", width = 1000, height = 125, has4k = true, group = 2, order = 2},
