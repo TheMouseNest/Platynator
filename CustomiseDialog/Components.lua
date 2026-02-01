@@ -98,7 +98,7 @@ function addonTable.CustomiseDialog.Components.GetBasicDropdown(parent, labelTex
         local label, value = entryLabels[index], values[index]
         rootDescription:CreateRadio(label, isSelectedCallback, onSelectionCallback, value)
       end
-      rootDescription:SetScrollMode(20 * 20)
+      rootDescription:SetScrollMode(30 * 20)
     end)
   end
   frame.SetValue = function(_, _)

@@ -684,7 +684,7 @@ local function SetupFont(parent)
           button.fontString:SetFontObject(addonTable.Core.GetFontByID(label))
         end)
       end
-      rootDescription:SetScrollMode(20 * 20)
+      rootDescription:SetScrollMode(30 * 20)
     end)
   end
 
