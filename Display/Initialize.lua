@@ -44,7 +44,6 @@ function addonTable.Display.ManagerMixin:OnLoad()
   self:RegisterEvent("PLAYER_FOCUS_CHANGED")
   self:RegisterEvent("PLAYER_LOGIN")
   self:RegisterEvent("PLAYER_ENTERING_WORLD")
-  self:RegisterEvent("ZONE_CHANGED_NEW_AREA")
   if C_EventUtils.IsEventValid("GARRISON_UPDATE") then
     self:RegisterEvent("GARRISON_UPDATE")
   end
@@ -875,7 +874,7 @@ function addonTable.Display.ManagerMixin:OnEvent(eventName, ...)
       end
     end
     self:UpdateNamePlateSize()
-  elseif eventName == "PLAYER_ENTERING_WORLD" or eventName == "ZONE_CHANGED_NEW_AREA" then
+  elseif eventName == "PLAYER_ENTERING_WORLD" then
     self:UpdateInstanceShowState()
     self:UpdateNamePlateSize()
     self:UpdateClickable()

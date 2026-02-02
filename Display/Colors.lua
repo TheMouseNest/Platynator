@@ -72,7 +72,6 @@ local inRelevantInstance = false
 
 local instanceTracker = CreateFrame("Frame")
 instanceTracker:RegisterEvent("PLAYER_ENTERING_WORLD")
-instanceTracker:RegisterEvent("ZONE_CHANGED_NEW_AREA")
 instanceTracker:SetScript("OnEvent", function()
   inRelevantInstance = addonTable.Display.Utilities.IsInRelevantInstance()
   if PLATYNATOR_LAST_INSTANCE == nil or inRelevantInstance ~= PLATYNATOR_LAST_INSTANCE.inInstance or PLATYNATOR_LAST_INSTANCE.lastLFGInstanceID ~= select(10, GetInstanceInfo()) then
