@@ -472,6 +472,16 @@ addonTable.CustomiseDialog.WidgetsConfig = {
               return details.showWhenWowDoes
             end,
           },
+        },
+        {
+          label = addonTablle.Locales.SHOW_TITLE,
+          kind = "checkbox",
+          setter = function(details, value)
+            details.showTitle = value
+          end,
+          getter = function(details)
+            return details.showTitle
+          end,
         }
       },
       {
