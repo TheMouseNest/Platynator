@@ -129,6 +129,9 @@ local sootheSpells = {
   374346,
   19801,
   5938,
+
+  -- Arcane Torrent (Blood Elf Racial)
+  28730, 25046, 202719, 129597, 80483, 69179, 155145, 50613, 232633
 }
 
 local executeCurve
