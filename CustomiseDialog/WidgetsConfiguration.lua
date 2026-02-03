@@ -861,6 +861,21 @@ addonTable.CustomiseDialog.WidgetsConfig = {
     },
     ["buffs"] = {
       {
+        label = addonTable.Locales.GENERAL,
+        entries = {
+          {
+            label = addonTable.Locales.SHOW_ENRAGE_DISPEL,
+            kind = "checkbox",
+            setter = function(details, value)
+              details.showDispel.enrage = value
+            end,
+            getter = function(details)
+              return details.showDispel.enrage
+            end,
+          },
+        },
+      },
+      {
         label = addonTable.Locales.FILTERS,
         entries = {
           {

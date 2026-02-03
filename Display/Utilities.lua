@@ -124,6 +124,13 @@ local executeMap = {
   [48806] = 0.2,
 }
 
+local sootheSpells = {
+  2908,
+  374346,
+  19801,
+  5938,
+}
+
 local executeCurve
 if C_CurveUtil then
   executeCurve = C_CurveUtil.CreateCurve()
@@ -132,6 +139,7 @@ end
 
 local currentInterrupt
 local currentExecute = 0
+local isSootheAvailable = false
 do
   local class = UnitClassBase("player")
   local interruptSpells = interruptMap[class] or {}
@@ -159,6 +167,14 @@ do
       executeCurve:AddPoint(0, 1)
       executeCurve:AddPoint(currentExecute, 0)
     end
+
+    isSootheAvailable = false
+    for _, spellID in ipairs(sootheSpells) do
+      if C_SpellBook.IsSpellKnown(spellID) then
+        isSootheAvailable = true
+        break
+      end
+    end
   end)
 end
 
@@ -172,6 +188,10 @@ end
 
 function addonTable.Display.Utilities.GetExecuteCurve()
   return executeCurve
+end
+
+function addonTable.Display.Utilities.GetSootheAvailable()
+  return isSootheAvailable
 end
 
 if addonTable.Constants.IsClassic then

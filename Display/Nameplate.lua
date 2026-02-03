@@ -3,11 +3,18 @@ local addonTable = select(2, ...)
 
 local pandemicCurve
 local pandemicPercentage = 0.3
+local dispelCurve
 if C_CurveUtil then
   pandemicCurve = C_CurveUtil.CreateCurve()
   pandemicCurve:SetType(Enum.LuaCurveType.Step)
   pandemicCurve:AddPoint(0, 1)
-  pandemicCurve:AddPoint(0.3, 0)
+  pandemicCurve:AddPoint(pandemicPercentage, 0)
+
+  dispelCurve = C_CurveUtil.CreateColorCurve()
+  dispelCurve:SetType(Enum.LuaCurveType.Step)
+  dispelCurve:AddPoint(0, CreateColor(0, 0, 0, 0))
+  dispelCurve:AddPoint(9, CreateColor(0, 0, 0, 1))
+  dispelCurve:AddPoint(10, CreateColor(0, 0, 0, 0))
 end
 
 addonTable.Display.NameplateMixin = {}
@@ -31,6 +38,7 @@ function addonTable.Display.NameplateMixin:OnLoad()
 
   self.AurasManager = addonTable.Utilities.InitFrameWithMixin(self, addonTable.Display.AurasManagerMixin)
   local borderAsset = addonTable.Assets.BarBordersSliced["1px"]
+  local dispelAsset = addonTable.Assets.BarBordersSliced["slight"]
   self.AurasPool = CreateFramePool("Frame", self, "PlatynatorNameplateBuffButtonTemplate", nil, false, function(frame)
     frame.Border = frame:CreateTexture(nil, "OVERLAY")
     frame.Border:SetAllPoints(true)
@@ -85,6 +93,16 @@ function addonTable.Display.NameplateMixin:OnLoad()
       fb:SetTarget(frame.Pandemic.Right)
       frame.Pandemic.Animation:SetLooping("REPEAT")
       frame.Pandemic.Animation:Play()
+    end
+    frame.Dispel = CreateFrame("Frame", nil, frame)
+    frame.Dispel:SetAllPoints()
+    do
+      local dispelTexture = frame.Dispel:CreateTexture()
+      dispelTexture:SetAllPoints()
+      dispelTexture:SetScale(1/dispelAsset.lowerScale)
+      dispelTexture:SetTexture(dispelAsset.file)
+      dispelTexture:SetTextureSliceMargins(dispelAsset.width * dispelAsset.margin, dispelAsset.width * dispelAsset.margin, dispelAsset.height * dispelAsset.margin, dispelAsset.height * dispelAsset.margin)
+      dispelTexture:SetVertexColor(1, 0, 0)
     end
     frame:SetScript("OnEnter", function()
       GameTooltip_SetDefaultAnchor(GameTooltip, frame)
@@ -156,6 +174,8 @@ function addonTable.Display.NameplateMixin:OnLoad()
         anchor = "CENTER"
       end
 
+      local sootheAvailable = addonTable.Display.Utilities.GetSootheAvailable()
+
       frame.items = {}
       local texBase = 0.95 * (1 - details.height) / 2
       for _, auraInstanceID in ipairs(data) do
@@ -181,6 +201,8 @@ function addonTable.Display.NameplateMixin:OnLoad()
           auraFrame.Pandemic.Right:SetWidth(pandemicDim)
         end
 
+        auraFrame.Dispel:SetShown(sootheAvailable and details.showDispel.enrage)
+
         auraFrame.Icon:SetTexture(aura.icon);
         auraFrame.CountFrame.Count:SetText(aura.applicationsString)
         auraFrame.CountFrame.Count:SetFontObject(addonTable.CurrentFont)
@@ -204,14 +226,21 @@ function addonTable.Display.NameplateMixin:OnLoad()
           if details.showPandemic then
             auraFrame.Pandemic:SetAlpha(C_CurveUtil.EvaluateColorValueFromBoolean(auraFrame.durationSecret:IsZero(), 0, auraFrame.durationSecret:EvaluateRemainingPercent(pandemicCurve)))
           end
+          if sootheAvailable and details.showDispel.enrage then
+            auraFrame.Dispel:SetAlpha(C_UnitAuras.GetAuraDispelTypeColor(self.unit, aura.auraInstanceID, dispelCurve).a)
+          end
         elseif auraFrame.expirationTime then
           CooldownFrame_Set(auraFrame.Cooldown, aura.expirationTime - aura.duration, aura.duration, aura.duration > 0, true);
           if details.showPandemic then
             auraFrame.Pandemic:SetAlpha(aura.duration > 0 and aura.expirationTime - GetTime() <= aura.duration * pandemicPercentage and 1 or 0)
           end
+          if details.showDispel.enrage then
+            auraFrame.Dispel:SetAlpha(aura.dispelName == "" and 1 or 0)
+          end
         else
           auraFrame.Cooldown:Clear()
           auraFrame.Pandemic:SetAlpha(0)
+          auraFrame.Dispel:SetAlpha(0)
         end
 
         auraFrame:Show();

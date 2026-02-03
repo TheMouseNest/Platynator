@@ -130,6 +130,11 @@ function addonTable.Core.UpgradeDesign(design)
         important = true,
       }
     end
+    if aura.kind == "buffs" and aura.showDispel == nil then
+      aura.showDispel = {enrage = true}
+    elseif aura.kind ~= "buffs" then
+      aura.showDispel = {}
+    end
     if aura.kind == "crowdControl" and not aura.filters then
       aura.filters = {
         fromYou = false,
