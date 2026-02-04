@@ -243,7 +243,7 @@ if addonTable.Constants.IsRetail then
     if questData[unit] then
       return questData[unit]
     end
-    if addonTable.Display.Utilities.IsInRelevantInstance() then
+    if addonTable.Display.Utilities.IsInRelevantInstance() or C_Secrets.ShouldUnitIdentityBeSecret(unit) then
       questData[unit] = {}
       return questData[unit]
     end
