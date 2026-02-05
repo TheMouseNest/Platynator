@@ -101,7 +101,9 @@ function addonTable.Display.CastBarMixin:OnEvent(eventName, ...)
     self:ApplyCasting()
   end
 
-  self:ColorEventHandler(eventName)
+  if self:IsShown() then
+    self:ColorEventHandler(eventName)
+  end
 end
 
 function addonTable.Display.CastBarMixin:SetColor(...)
@@ -189,7 +191,8 @@ if UnitCastingDuration then
     local spellID = GetInterruptSpell()
     if spellID then
       local interruptDuration = C_Spell.GetSpellCooldownDuration(spellID)
-      self.interruptMarker:SetAlphaFromBoolean(interruptDuration:IsZero(), 0, self.uninterruptibleCheck)
+      self.uninterruptibleCheck = C_CurveUtil.EvaluateColorValueFromBoolean(interruptDuration:IsZero(), 0, self.uninterruptibleCheck)
+      self.interruptMarker:SetAlphaFromBoolean(self.uninterruptibleCheck)
       if adjustPosition then
         local castDuration
         if self.isChanneled then
@@ -266,7 +269,7 @@ else
       return
     end
     local spellID = GetInterruptSpell()
-    if spellID and not self.notInterruptible then
+    if spellID and not self.notInterruptible and self.interruptMarker:IsShown() then
       local info = C_Spell.GetSpellCooldown(spellID)
       endTime = info.duration + info.startTime
       self.interruptMarker:SetShown(endTime > 0)
