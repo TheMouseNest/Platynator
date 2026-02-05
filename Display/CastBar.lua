@@ -184,16 +184,12 @@ if UnitCastingDuration then
 
   function addonTable.Display.CastBarMixin:RefreshInterruptMarker(adjustPosition)
     if self.isChanneled == nil then
-      print("bail")
       return
     end
-    print("in")
     local spellID = GetInterruptSpell()
     if spellID then
-      print("got spell")
       local interruptDuration = C_Spell.GetSpellCooldownDuration(spellID)
       self.interruptMarker:SetAlphaFromBoolean(interruptDuration:IsZero(), 0, self.uninterruptibleCheck)
-      print(self.interruptMarker:GetAlpha())
       if adjustPosition then
         local castDuration
         if self.isChanneled then
