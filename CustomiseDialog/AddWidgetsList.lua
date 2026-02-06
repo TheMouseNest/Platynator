@@ -190,6 +190,24 @@ addonTable.CustomiseDialog.DesignWidgets = {
     },
   },
   {
+    name = addonTable.Locales.ANIMATED_BORDER,
+    kind = "highlights",
+    default = {
+      anchor = {"TOPLEFT", -140, 50},
+      kind = "animatedBorder",
+      asset = "pandemic",
+      width = 1,
+      height = 1,
+      borderWidth = 1,
+      color = GetColor("FFFFFF", 1),
+      autoColors = {
+        addonTable.CustomiseDialog.AddAlphaToColors(CopyTable(addonTable.CustomiseDialog.ColorsConfig["importantCast"].default)),
+      },
+      scale = 1,
+      layer = 3,
+    },
+  },
+  {
     name = addonTable.Locales.AURAS,
     special = "header",
   },

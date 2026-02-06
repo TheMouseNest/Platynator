@@ -63,6 +63,7 @@ Display/SoftTargetHighlight.lua
 Display/FocusHighlight.lua
 Display/MouseoverHighlight.lua
 Display/FixedHighlight.lua
+Display/AnimatedHighlight.lua
 Display/QuestMarker.lua
 Display/CannotInterruptMarker.lua
 Display/CastIconMarker.lua

@@ -27,7 +27,7 @@ local function GetLabelsValues(allAssets, filter, showHeight)
         height = 180/width * height
         width = 180
       end
-      local text = "|T".. (details.preview or details.file) .. ":" .. (height - 1) .. ":" .. (width - 1) .. "|t"
+      local text = "|T".. (details.preview or details.file or details.horizontal) .. ":" .. (height - 1) .. ":" .. (width - 1) .. "|t"
       if details.isTransparent then
         text = addonTable.Locales.NONE
       end
@@ -985,7 +985,13 @@ addonTable.CustomiseDialog.WidgetsConfig = {
             label = addonTable.Locales.VISUAL,
             kind = "dropdown",
             getInitData = function(details)
-              return GetLabelsValues(addonTable.Assets.Highlights)
+              if details.kind:match("^animated") then
+                return GetLabelsValues(addonTable.Assets.Highlights, function(asset)
+                  return asset.kind == details.kind
+                end)
+              else
+                return GetLabelsValues(addonTable.Assets.Highlights)
+              end
             end,
             setter = function(details, value)
               details.asset = value
@@ -1030,6 +1036,40 @@ addonTable.CustomiseDialog.WidgetsConfig = {
       },
     },
     ["automatic"] = {
+      {
+        label = addonTable.Locales.COLORS,
+        entries = {
+          {
+            label = "",
+            kind = "autoColors",
+            lockedElements = {},
+            addAlpha = true,
+            setter = function() end,
+            getter = function(details)
+              return details.autoColors
+            end,
+          },
+        },
+      },
+    },
+    ["animatedBorder"] = {
+      {
+        label = addonTable.Locales.GENERAL,
+        entries = {
+          {
+            label = addonTable.Locales.BORDER_WIDTH,
+            kind = "slider",
+            min = 50, max = 500,
+            valuePattern = "%d%%",
+            setter = function(details, value)
+              details.borderWidth = value / 100
+            end,
+            getter = function(details)
+              return details.borderWidth * 100
+            end,
+          },
+        }
+      },
       {
         label = addonTable.Locales.COLORS,
         entries = {
