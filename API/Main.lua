@@ -29,3 +29,26 @@ function Platynator.API.SetUnitTextOverride(unit, name, guild)
 
   addonTable.CallbackRegistry:TriggerEvent("TextOverrideUpdated", unit)
 end
+
+function Platynator.API.ImportString(importText, resultName)
+  assert(type(importText) == "string")
+
+  local status, data = pcall(C_EncodingUtil.DeserializeJSON, importText)
+  if not status then
+    error("Invalid Platynator import")
+  end
+
+  local result, reason = addonTable.CustomiseDialog.ImportData(data, resultName, true)
+
+  if result then
+    addonTable.Utilities.Message(addonTable.Locales.THANKS_FOR_USING_PLATYNATOR_DONATE .. " https://linktr.ee/plusmouse")
+  else
+    error("Invalid Platynator import")
+  end
+end
+
+EventRegistry:RegisterCallback("SetItemRef", function(_, link)
+  if link == "addon:platynatorsettings" then
+    addonTable.CustomiseDialog.Toggle()
+  end
+end)
