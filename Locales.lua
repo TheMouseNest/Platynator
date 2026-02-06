@@ -19,7 +19,6 @@ PLATYNATOR_LOCALES = Locales
 local L = Locales.enUS
 
 L["THANKS_FOR_USING_PLATYNATOR_DONATE"] = "Thanks for using Platynator. Consider donating to support development"
-L["OPEN_SETTINGS"] = "Open Settings"
 
 L["PLATYNATOR"] = "Platynator"
 L["DESIGNER"] = "Designer"
