@@ -1,6 +1,7 @@
 ---@class addonTablePlatynator
 local addonTable = select(2, ...)
 
+local print = print
 function addonTable.Utilities.Message(text)
   print("|cff96742a" .. addonTable.Locales.PLATYNATOR .. "|r: " .. text)
 end
