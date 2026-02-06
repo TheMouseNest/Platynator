@@ -21,12 +21,12 @@ addonTable.CustomiseDialog.DesignWidgets = {
       layer = 1,
       aggroColoursOnHostiles = true,
       background = {
-        asset = "wide/fade-bottom",
+        asset = "Platy: Fade Bottom",
         color = GetColor("FFFFFF", 1),
         applyColor = false,
       },
       foreground = {
-        asset = "wide/fade-bottom",
+        asset = "Platy: Fade Bottom",
       },
       border = {
         asset = "bold",
@@ -35,7 +35,7 @@ addonTable.CustomiseDialog.DesignWidgets = {
         height = 1,
       },
       absorb = {
-        asset = "wide/blizzard-absorb",
+        asset = "Platy: Blizzard Absorb",
         color = GetColor("FFFFFF", 1)
       },
       marker = {
@@ -68,12 +68,12 @@ addonTable.CustomiseDialog.DesignWidgets = {
         color = GetColor("FFFFFF"),
       },
       background = {
-        asset = "wide/fade-bottom",
+        asset = "Platy: Fade Bottom",
         color = GetColor("FFFFFF", 1),
         applyColor = false,
       },
       foreground = {
-        asset = "wide/fade-bottom",
+        asset = "Platy: Fade Bottom",
       },
       border = {
         asset = "bold",

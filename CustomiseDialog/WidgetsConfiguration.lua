@@ -1,6 +1,8 @@
 ---@class addonTablePlatynator
 local addonTable = select(2, ...)
 
+local LSM = LibStub("LibSharedMedia-3.0")
+
 local function GetLabelsValues(allAssets, filter, showHeight)
   local labels, values = {}, {}
 
@@ -36,6 +38,40 @@ local function GetLabelsValues(allAssets, filter, showHeight)
       elseif details.mode ~= nil and showHeight then
         text = text .. " " .. addonTable.Locales.PERCENT_BRACKETS:format(details.mode)
       end
+
+      table.insert(labels, text)
+      table.insert(values, key)
+    end
+  end
+
+  return labels, values
+end
+
+local function GetLabelsValuesBackgrounds()
+  local labels, values = {}, {}
+  local assets = LSM:List("statusbar")
+
+  local height = 20
+  local width = addonTable.Assets.BarBordersSize.width * height / addonTable.Assets.BarBordersSize.height
+
+  local allKeys = GetKeysArray(addonTable.Assets.BarBackgrounds)
+  table.sort(allKeys)
+  for _, key in ipairs(allKeys) do
+    local details = addonTable.Assets.BarBackgrounds[key]
+    local file = LSM:Fetch("statusbar", key)
+    local text = "|T".. file .. ":" .. (height - 1) .. ":" .. (width - 1) .. "|t " .. (key:gsub("Platy: ", ""))
+    if details.isTransparent then
+      text = addonTable.Locales.NONE
+    end
+
+    table.insert(labels, text)
+    table.insert(values, key)
+  end
+
+  for _, key in ipairs(assets) do
+    if not addonTable.Assets.BarBackgrounds[key] then
+      local file = LSM:Fetch("statusbar", key)
+      local text = "|T".. file .. ":" .. (height - 1) .. ":" .. (width - 1) .. "|t [Custom] " .. key
 
       table.insert(labels, text)
       table.insert(values, key)
@@ -148,7 +184,7 @@ addonTable.CustomiseDialog.WidgetsConfig = {
             label = addonTable.Locales.FOREGROUND,
             kind = "dropdown",
             getInitData = function()
-              return GetLabelsValues(addonTable.Assets.BarBackgrounds, nil, true)
+              return GetLabelsValuesBackgrounds()
             end,
             setter = function(details, value)
               details.foreground.asset = value
@@ -161,7 +197,7 @@ addonTable.CustomiseDialog.WidgetsConfig = {
             label = addonTable.Locales.BACKGROUND,
             kind = "dropdown",
             getInitData = function()
-              return GetLabelsValues(addonTable.Assets.BarBackgrounds, nil, true)
+              return GetLabelsValuesBackgrounds()
             end,
             setter = function(details, value)
               details.background.asset = value
@@ -226,7 +262,7 @@ addonTable.CustomiseDialog.WidgetsConfig = {
             label = addonTable.Locales.ABSORB,
             kind = "dropdown",
             getInitData = function()
-              return GetLabelsValues(addonTable.Assets.BarBackgrounds, nil, true)
+              return GetLabelsValuesBackgrounds()
             end,
             setter = function(details, value)
               details.absorb.asset = value
@@ -990,7 +1026,9 @@ addonTable.CustomiseDialog.WidgetsConfig = {
                   return asset.kind == details.kind
                 end)
               else
-                return GetLabelsValues(addonTable.Assets.Highlights)
+                return GetLabelsValues(addonTable.Assets.Highlights, function(asset)
+                  return not asset.kind or not asset.kind:match("^animated")
+                end)
               end
             end,
             setter = function(details, value)

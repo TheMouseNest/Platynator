@@ -1,6 +1,8 @@
 ---@class addonTablePlatynator
 local addonTable = select(2, ...)
 
+local LSM = LibStub("LibSharedMedia-3.0")
+
 function addonTable.Display.ApplyAnchor(frame, anchor)
   frame:ClearAllPoints()
   if #anchor == 0 then
@@ -22,15 +24,15 @@ local function InitBar(frame, details)
   end
 
   local borderDetails = addonTable.Assets.BarBordersSliced[details.border.asset]
-  local foregroundDetails = addonTable.Assets.BarBackgrounds[details.foreground.asset]
+  local foreground = LSM:Fetch("statusbar", details.foreground.asset, true) or LSM:Fetch("statusbar", "Platy: Solid White")
   frame.statusBar:SetScale(1/borderDetails.lowerScale * details.scale)
   frame.statusBar:SetMinMaxValues(0, 1)
   frame.statusBar:SetValue(1)
-  frame.statusBar:SetStatusBarTexture(foregroundDetails.file)
+  frame.statusBar:SetStatusBarTexture(foreground)
   frame.statusBar:GetStatusBarTexture():SetDrawLayer("ARTWORK")
 
-  local backgroundDetails = addonTable.Assets.BarBackgrounds[details.background.asset]
-  frame.background:SetTexture(backgroundDetails.file)
+  local background = LSM:Fetch("statusbar", details.background.asset, true) or LSM:Fetch("statusbar", "Platy: Solid Grey")
+  frame.background:SetTexture(background)
   frame.background:SetAllPoints()
   frame.background:SetScale(1/borderDetails.lowerScale * details.scale)
   frame.background:SetVertexColor(details.background.color.r, details.background.color.g, details.background.color.b, details.background.color.a)
@@ -139,13 +141,13 @@ function addonTable.Display.GetHealthBar(frame, parent)
     frame.statusBar:SetFrameLevel(frame:GetFrameLevel() + 3)
     borderHolder:SetFrameLevel(frame:GetFrameLevel() + 5)
 
-    frame.statusBarAbsorb:SetStatusBarTexture(addonTable.Assets.BarBackgrounds[details.absorb.asset].file)
+    frame.statusBarAbsorb:SetStatusBarTexture(LSM:Fetch("statusbar", details.absorb.asset, true) or LSM:Fetch("statusbar", "Platy: Absorb Wide"))
     frame.statusBarAbsorb:GetStatusBarTexture():SetVertexColor(details.absorb.color.r, details.absorb.color.g, details.absorb.color.b, details.absorb.color.a)
     frame.statusBarAbsorb:SetPoint("LEFT", frame.statusBar:GetStatusBarTexture(), "RIGHT")
     frame.statusBarAbsorb:SetScale(1/borderDetails.lowerScale * details.scale)
     frame.statusBarAbsorb:GetStatusBarTexture():RemoveMaskTexture(frame.mask)
 
-    frame.statusBarCutaway:SetStatusBarTexture(addonTable.Assets.BarBackgrounds[details.foreground.asset].file)
+    frame.statusBarCutaway:SetStatusBarTexture(LSM:Fetch("statusbar", details.foreground.asset, true) or LSM:Fetch("statusbar", "Platy: Solid White"))
     frame.statusBarCutaway:SetScale(1/borderDetails.lowerScale * details.scale)
     frame.statusBarCutaway:GetStatusBarTexture():RemoveMaskTexture(frame.mask)
     frame.statusBarCutaway:SetAlpha(0)
@@ -233,7 +235,7 @@ function addonTable.Display.GetCastBar(frame, parent)
         frame.interruptMarker:SetFillStyle("STANDARD")
         frame.interruptPositioner:SetFillStyle("STANDARD")
       end
-      self.statusBar:SetStatusBarTexture(addonTable.Assets.BarBackgrounds[frame.details.foreground.asset].file)
+      self.statusBar:SetStatusBarTexture(LSM:Fetch("statusbar", frame.details.foreground.asset, true) or LSM:Fetch("statusbar", "Platy: Solid White"))
       self.reverseStatusTexture:Hide()
 
       frame.marker:SetPoint("CENTER", frame.statusBar:GetStatusBarTexture(), "RIGHT")
@@ -273,9 +275,9 @@ function addonTable.Display.GetCastBar(frame, parent)
     frame.interruptMarker:SetFrameLevel(frame:GetFrameLevel() + 5)
     borderHolder:SetFrameLevel(frame:GetFrameLevel() + 6)
 
-    local foregroundDetails = addonTable.Assets.BarBackgrounds[details.foreground.asset]
+    local foreground = LSM:Fetch("statusbar", details.foreground.asset, true) or LSM:Fetch("statusbar", "Platy: Solid White")
     frame.reverseStatusTexture:Hide()
-    frame.reverseStatusTexture:SetTexture(foregroundDetails.file)
+    frame.reverseStatusTexture:SetTexture(foreground)
     frame.reverseStatusTexture:SetPoint("RIGHT", frame.statusBar:GetStatusBarTexture(), "LEFT")
     frame.reverseStatusTexture:SetHorizTile(true)
 
@@ -287,8 +289,6 @@ function addonTable.Display.GetCastBar(frame, parent)
       local color = details.interruptMarker.color
       frame.interruptMarkerPoint:SetVertexColor(color.r, color.g, color.b)
     end
-
-    local backgroundDetails = addonTable.Assets.BarBackgrounds[details.background.asset]
 
     frame.reverseStatusTexture:RemoveMaskTexture(frame.mask)
     frame.interruptMarkerPoint:RemoveMaskTexture(frame.mask)

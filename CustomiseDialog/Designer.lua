@@ -668,6 +668,7 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
         end
       end
     end
+    rootDescription:SetScrollMode(30 * 20)
   end)
 
   local deleteButton = CreateFrame("Button", nil, previewInset, "UIPanelDynamicResizeButtonTemplate")

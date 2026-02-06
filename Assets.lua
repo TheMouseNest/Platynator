@@ -29,25 +29,42 @@ LSM:Register(LSM.MediaType.FONT, "Diablo Heavy", "Interface/AddOns/Platynator/As
 LSM:Register(LSM.MediaType.FONT, "Atkinson Hyperlegible Next", "Interface/AddOns/Platynator/Assets/Fonts/AtkinsonHyperlegibleNext-Regular.otf")
 
 addonTable.Assets.BarBackgrounds = {
-  ["transparent"] = {file = "Interface/AddOns/Platynator/Assets/Special/transparent.png", width = 1000, height = 125, isTransparent = true, group = 0, order = 0},
-  ["black"] = {file = "Interface/AddOns/Platynator/Assets/Special/black.png", width = 1000, height = 125, group = 1, order = 1},
-  ["grey"] = {file = "Interface/AddOns/Platynator/Assets/Special/grey.png", width = 1000, height = 125, group = 1, order = 2},
-  ["grey-raid"] = {file = "Interface/AddOns/Platynator/Assets/Special/grey-raid.png", width = 1000, height = 125, group = 1, order = 3},
-  ["white"] = {file = "Interface/AddOns/Platynator/Assets/Special/white.png", width = 1000, height = 125, group = 1, order = 4},
+  ["Platy: Solid Transparency"] = {file = "Interface/AddOns/Platynator/Assets/Special/transparent.png", isTransparent = true},
+  ["Platy: Solid Black"] = {file = "Interface/AddOns/Platynator/Assets/Special/black.png"},
+  ["Platy: Solid Grey"] = {file = "Interface/AddOns/Platynator/Assets/Special/grey.png"},
+  ["Platy: Solid Grey (Raid)"] = {file = "Interface/AddOns/Platynator/Assets/Special/grey-raid.png"},
+  ["Platy: Solid White"] = {file = "Interface/AddOns/Platynator/Assets/Special/white.png"},
 
-  ["wide/bevelled"] = {file = "Interface/AddOns/Platynator/Assets/%s/BarBackgrounds/bevelled.png", width = 1000, height = 125, has4k = true, group = 2, order = 1},
-  ["wide/bevelled-grey"] = {file = "Interface/AddOns/Platynator/Assets/%s/BarBackgrounds/bevelled-grey.png", width = 1000, height = 125, has4k = true, group = 2, order = 2},
+  ["Platy: Bevelled"] = {file = "Interface/AddOns/Platynator/Assets/%s/BarBackgrounds/bevelled.png", has4k = true},
+  ["Platy: Bevelled Grey"] = {file = "Interface/AddOns/Platynator/Assets/%s/BarBackgrounds/bevelled-grey.png", has4k = true},
 
-  ["wide/fade-bottom"] = {file = "Interface/AddOns/Platynator/Assets/%s/BarBackgrounds/fade-bottom.png", width = 1000, height = 125, has4k = true, group = 3, order = 1},
-  ["wide/fade-top"] = {file = "Interface/AddOns/Platynator/Assets/%s/BarBackgrounds/fade-top.png", width = 1000, height = 125, has4k = true, group = 3, order = 2},
-  ["wide/fade-left"] = {file = "Interface/AddOns/Platynator/Assets/%s/BarBackgrounds/fade-left.png", width = 1000, height = 125, has4k = true, group = 3, order = 3},
-  ["wide/fade-right"] = {file = "Interface/AddOns/Platynator/Assets/%s/BarBackgrounds/fade-right.png", width = 1000, height = 125, has4k = true, group = 3, order = 4},
+  ["Platy: Fade Bottom"] = {file = "Interface/AddOns/Platynator/Assets/%s/BarBackgrounds/fade-bottom.png", has4k = true},
+  ["Platy: Fade Top"] = {file = "Interface/AddOns/Platynator/Assets/%s/BarBackgrounds/fade-top.png", has4k = true},
+  ["Platy: Fade Left"] = {file = "Interface/AddOns/Platynator/Assets/%s/BarBackgrounds/fade-left.png", has4k = true},
+  ["Platy: Fade Right"] = {file = "Interface/AddOns/Platynator/Assets/%s/BarBackgrounds/fade-right.png", has4k = true},
 
-  ["gw2"] = {file = "Interface/AddOns/Platynator/Assets/Special/BarBackgrounds/gw2.png", width = 1000, height = 125, group = 4, order = 1},
-  ["special/blizzard-cast-bar"] = {file = "Interface/AddOns/Platynator/Assets/Special/BarBackgrounds/blizzard-cast-bar.png", width = 1000, height = 125, group = 4, order = 2},
+  ["Platy: GW2"] = {file = "Interface/AddOns/Platynator/Assets/Special/BarBackgrounds/gw2.png"},
+  ["Platy: Blizzard Cast Bar"] = {file = "Interface/AddOns/Platynator/Assets/Special/BarBackgrounds/blizzard-cast-bar.png"},
 
-  ["wide/blizzard-absorb"] = {file = "Interface/AddOns/Platynator/Assets/%s/BarBackgrounds/blizzard-absorb.png", width = 1000, height = 125, has4k = true, group = 5, order = 1},
-  ["narrow/blizzard-absorb"] = {file = "Interface/AddOns/Platynator/Assets/%s/BarBackgrounds/blizzard-absorb-narrow.png", width = 1000, height = 63, has4k = true, group = 5, order = 2},
+  ["Platy: Absorb Wide"] = {file = "Interface/AddOns/Platynator/Assets/%s/BarBackgrounds/blizzard-absorb.png", has4k = true},
+  ["Platy: Absorb Narrow"] = {file = "Interface/AddOns/Platynator/Assets/%s/BarBackgrounds/blizzard-absorb-narrow.png", has4k = true},
+}
+
+addonTable.Assets.BarBackgroundsLegacyMap = {
+  ["transparent"] = "Platy: Solid Transparency",
+  ["black"] = "Platy: Solid Black",
+  ["grey"] = "Platy: Solid Grey",
+  ["grey-raid"] = "Platy: Solid Raid Grey",
+  ["wide/bevelled"] = "Platy: Bevelled",
+  ["wide/bevelled-grey"] = "Platy: Bevelled Grey",
+  ["wide/fade-bottom"] = "Platy: Fade Bottom",
+  ["wide/fade-top"] = "Platy: Fade Top",
+  ["wide/fade-left"] = "Platy: Fade Left",
+  ["wide/fade-right"] = "Platy: Fade Right",
+  ["gw2"] = "Platy: GW2",
+  ["special/blizzard-cast-bar"] = "Platy: Blizzard Cast Bar",
+  ["wide/blizzard-absorb"] = "Platy: Absorb Wide",
+  ["narrow/blizzard-absorb"] = "Platy: Absorb Narrow",
 }
 
 addonTable.Assets.BarBordersSliced = {
@@ -387,8 +404,16 @@ function addonTable.Assets.ApplyScale()
     DPIScale = "DPI96"
   end
 
+  local function IterateLSMBackground(list)
+    for key, entry in pairs(list) do
+      if entry.has4k then
+        entry.file = entry.file:format(DPIScale)
+      end
+      LSM:Register(LSM.MediaType.STATUSBAR, key, entry.file)
+    end
+  end
+
   local function Iterate(list)
-    dpiScale = dpiScale or 1
     for _, entry in pairs(list) do
       if entry.has4k then
         entry.file = entry.file:format(DPIScale)
@@ -441,7 +466,7 @@ function addonTable.Assets.ApplyScale()
     lowerScale = 2
   end
   IterateSlices(addonTable.Assets.BarBordersSliced, addonTable.Assets.BarBordersSliced)
-  Iterate(addonTable.Assets.BarBackgrounds)
+  IterateLSMBackground(addonTable.Assets.BarBackgrounds)
   IterateSlices(addonTable.Assets.BarMasks, addonTable.Assets.BarBordersSliced)
   IterateHighlights(addonTable.Assets.Highlights)
   Iterate(addonTable.Assets.HighlightsLegacy)
