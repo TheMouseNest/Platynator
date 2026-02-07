@@ -791,6 +791,9 @@ function addonTable.Display.ManagerMixin:UpdateFriendlyFont()
       local friendlyFontSize = _G[addonTable.CurrentFont]:GetFontHeight() * scale
       for index, size in ipairs(systemFontSizes) do
         if size >= friendlyFontSize or index == 5 then
+          if systemFontSizes[index - 1] and math.abs(systemFontSizes[index - 1] - friendlyFontSize) < math.abs(size - friendlyFontSize) then
+            index = index - 1
+          end
           C_CVar.SetCVar("nameplateSize", tostring(index))
           break
         end
