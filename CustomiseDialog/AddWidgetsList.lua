@@ -537,6 +537,18 @@ addonTable.CustomiseDialog.DesignWidgets = {
     },
   },
   {
+    name = addonTable.Locales.CLASS,
+    kind = "markers",
+    default = {
+      kind = "class",
+      scale = 1,
+      layer = 3,
+      asset = "normal/class",
+      color = GetColor("ffffff"),
+      anchor = {"TOPLEFT", -140, 50},
+    },
+  },
+  {
     name = addonTable.Locales.RAID_MARKER,
     kind = "markers",
     default = {

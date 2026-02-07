@@ -378,6 +378,8 @@ addonTable.Assets.Markers = {
   ["normal/blizzard-raid"] = {file = "Interface/TargetingFrame/UI-RaidTargetingIcons", preview = "Interface\\TargetingFrame\\UI-RaidTargetingIcon_1.blp", width = 150, height = 150, tag = "raid"},
 
   ["normal/blizzard-pvp"] = {file = "Interface/AddOns/Platynator/Assets/Special/Markers/pvp.png", width = 150, height = 150, tag = "pvp"},
+
+  ["normal/class"] = {file = "Interface/AddOns/Platynator/Assets/Special/Markers/classicon-monk.png", width = 200, height = 200, tag = "class"},
 }
 
 addonTable.Assets.SpecialBars = {

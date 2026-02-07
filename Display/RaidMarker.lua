@@ -22,8 +22,6 @@ function addonTable.Display.RaidMarkerMixin:OnEvent()
   self:UpdateMarker()
 end
 
-local fontString = UIParent:CreateFontString(nil, nil, "GameFontNormal")
-
 function addonTable.Display.RaidMarkerMixin:UpdateMarker()
   local index = GetRaidTargetIndex(self.unit)
   if type(index) ~= "nil" then

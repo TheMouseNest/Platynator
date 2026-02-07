@@ -71,6 +71,7 @@ Display/EliteMarker.lua
 Display/RareMarker.lua
 Display/RaidMarker.lua
 Display/PvPMarker.lua
+Display/ClassMarker.lua
 Display/Widgets.lua
 
 API/Main.lua
