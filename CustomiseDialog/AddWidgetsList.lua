@@ -35,7 +35,7 @@ addonTable.CustomiseDialog.DesignWidgets = {
         height = 1,
       },
       absorb = {
-        asset = "Platy: Blizzard Absorb",
+        asset = "Platy: Absorb Wide",
         color = GetColor("FFFFFF", 1)
       },
       marker = {
