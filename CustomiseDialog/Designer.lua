@@ -922,14 +922,18 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
       container.auras[1].CountFrame.Count:Show();
       container:SetSize(22 * container.count * details.scale, 20 * details.height * details.scale)
       container.Wrapper:SetHeight(20 * details.height)
+      container:SetSize(20 * details.scale, 20 * details.height * details.scale)
       container.Wrapper:SetScale(details.scale)
+      local anchor = details.anchor[1] or "CENTER"
+      container.Wrapper:SetPoint(anchor)
       container.details = details
       local texBase = 0.95 * (1 - details.height) / 2
-      for _, aura in ipairs(container.auras) do
+      for index, aura in ipairs(container.auras) do
         aura:SetHeight(20 * details.height)
         aura.Icon:SetHeight(20 * details.height)
         aura.Border:SetHeight(20 * details.height)
         aura.Icon:SetTexCoord(0.05, 0.95, 0.05 + texBase, 0.95 - texBase)
+        aura:SetPoint(anchor, (index - 1) * 22, 0)
       end
       table.insert(widgets, container)
       container:ClearAllPoints()
