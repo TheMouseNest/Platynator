@@ -511,7 +511,7 @@ function addonTable.Display.AurasManagerMixin:OnEvent(event, _, refreshData)
       end
 
       for _, aura in ipairs(refreshData.addedAuras) do
-        if self.auraData[aura.auraInstanceID] ~= nil then
+        if self.auraData[aura.auraInstanceID] ~= nil and aura.auraInstanceID ~= self.lossOfControlApplied then
           local stored = self.auraData[aura.auraInstanceID]
           local list = self[stored.kind]
           local index = tIndexOf(list, aura.auraInstanceID)
