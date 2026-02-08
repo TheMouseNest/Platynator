@@ -178,14 +178,16 @@ function addonTable.Display.ManagerMixin:OnLoad()
             UF:SetAlpha(0)
             locked = false
           end)
-          hooksecurefunc(nameplate.UnitFrame.AurasFrame, "RefreshAuras", function(af, data)
-            if not af:IsForbidden() then
-              local display = self.nameplateDisplays[af:GetParent().unit]
-              if display and display.unit then
-                display.AurasManager:OnEvent("", "", data or {isFullUpdate = true})
+          if not addonTable.Constants.AuraFilteringAvailable then
+            hooksecurefunc(nameplate.UnitFrame.AurasFrame, "RefreshAuras", function(af, data)
+              if not af:IsForbidden() then
+                local display = self.nameplateDisplays[af:GetParent().unit]
+                if display and display.unit then
+                  display.AurasManager:OnEvent("", "", data or {isFullUpdate = true})
+                end
               end
-            end
-          end)
+            end)
+          end
         end
       else
         nameplate.UnitFrame:SetParent(addonTable.hiddenFrame)
@@ -194,7 +196,7 @@ function addonTable.Display.ManagerMixin:OnLoad()
       if nameplate.UnitFrame.castBar then
         nameplate.UnitFrame.castBar:UnregisterAllEvents()
       end
-      if addonTable.Constants.IsRetail then
+      if addonTable.Constants.IsRetail and not addonTable.Constants.AuraFilteringAvailable then
         nameplate.UnitFrame:RegisterUnitEvent("UNIT_AURA", unit)
       end
       if nameplate.UnitFrame.WidgetContainer then
