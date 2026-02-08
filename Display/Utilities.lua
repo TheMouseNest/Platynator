@@ -197,7 +197,13 @@ function addonTable.Display.Utilities.GetSootheAvailable()
   return isSootheAvailable
 end
 
-if addonTable.Constants.IsClassic then
+local ignoredLocales = {
+  "zhTW",
+  "zhCN",
+  "koKR",
+  "ruRU",
+}
+if addonTable.Constants.IsMists and tIndexOf(ignoredLocales, GetLocale()) == nil then
   local NUMBER_ABBREVIATION_DATA_ALT = {
     { breakpoint = 10000000,	abbreviation = SECOND_NUMBER_CAP_NO_SPACE,	significandDivisor = 1000000,	fractionDivisor = 1 },
     { breakpoint = 1000000,		abbreviation = SECOND_NUMBER_CAP_NO_SPACE,	significandDivisor = 100000,		fractionDivisor = 10 },
