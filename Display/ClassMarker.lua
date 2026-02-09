@@ -49,6 +49,8 @@ function addonTable.Display.ClassMarkerMixin:SetUnit(unit)
 end
 
 function addonTable.Display.ClassMarkerMixin:Strip()
+  self.PostInit = nil
+  self.PostApplyAnchor = nil
   if self.border then
     self.border:Hide()
     borderPool:Release(self.border)
