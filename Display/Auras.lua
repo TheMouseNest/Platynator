@@ -83,7 +83,7 @@ function addonTable.Display.AurasManagerMixin:PostInit(buffs, debuffs, crowdCont
     end
     if addonTable.Constants.AuraFilteringAvailable then
       if debuffs.filters.important then
-        self.debuffFilter = self.debuffFilter .. "|INCLUDE_NAME_PLATE_ONLY"
+        self.debuffFilter = self.debuffFilter .. "|RAID"
       end
     end
     if C_UnitAuras.GetUnitAuraInstanceIDs then
