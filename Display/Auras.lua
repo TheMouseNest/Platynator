@@ -3,7 +3,6 @@ local addonTable = select(2, ...)
 
 local legacy = {}
 
-
 addonTable.Display.AurasManagerMixin = {}
 
 function addonTable.Display.AurasManagerMixin:OnLoad()
@@ -81,11 +80,11 @@ function addonTable.Display.AurasManagerMixin:PostInit(buffs, debuffs, crowdCont
     if debuffs.filters.fromYou then
       self.debuffFilter = self.debuffFilter .. "|PLAYER"
     end
-    if addonTable.Constants.AuraFilteringAvailable then
+    --[[if addonTable.Constants.AuraFilteringAvailable then
       if debuffs.filters.important then
-        self.debuffFilter = self.debuffFilter .. "|RAID"
+        self.debuffFilter = self.debuffFilter-- .. "|SOMETHING"
       end
-    end
+    end]]
     if C_UnitAuras.GetUnitAuraInstanceIDs then
       if debuffs.sorting.kind == "blizzard" then
         self.debuffSort = Enum.UnitAuraSortRule.Default
@@ -251,10 +250,12 @@ function addonTable.Display.AurasManagerMixin:SetUnit(unit)
       self.OnDebuffsUpdate(self.debuffs, self.debuffFilter)
       self.OnCrowdControlUpdate(self.crowdControl, self.crowdControlFilter)
     end
-    self:RegisterUnitEvent("UNIT_AURA", self.unit)
-    if addonTable.Constants.IsRetail and UnitIsPlayer(self.unit) then
-      self:RegisterUnitEvent("LOSS_OF_CONTROL_UPDATE", self.unit)
-      self:RegisterUnitEvent("LOSS_OF_CONTROL_ADDED", self.unit)
+    if self.buffsDetails or self.debuffsDetails or self.crowdControlDetails then
+      self:RegisterUnitEvent("UNIT_AURA", self.unit)
+      if addonTable.Constants.IsRetail and addonTable.Constants.AuraFilteringAvailable and UnitIsPlayer(self.unit) then
+        self:RegisterUnitEvent("LOSS_OF_CONTROL_UPDATE", self.unit)
+        self:RegisterUnitEvent("LOSS_OF_CONTROL_ADDED", self.unit)
+      end
     end
   else
     self:UnregisterAllEvents()
@@ -293,7 +294,7 @@ function addonTable.Display.AurasManagerMixin:FullRefresh()
     crowdControl = true,
   }
 
-  if addonTable.Constants.IsRetail then
+  if addonTable.Constants.IsRetail and not addonTable.Constants.AuraFilteringAvailable then
     self:UpdateLossOfControl()
   end
 
@@ -428,9 +429,9 @@ function addonTable.Display.AurasManagerMixin:OnEvent(event, _, refreshData)
   self:SortAurasAndReport(changes)
 end
 
-function addonTable.Display.AurasManagerMixin:AddAuras(addedAuras)
-  local changes = {}
-  if addonTable.Constants.AuraFilteringAvailable then
+if addonTable.Constants.AuraFilteringAvailable then
+  function addonTable.Display.AurasManagerMixin:AddAuras(addedAuras)
+    local changes = {}
     for _, aura in ipairs(addedAuras) do
       if self.auraData[aura.auraInstanceID] == nil then
         local keep = false
@@ -457,7 +458,11 @@ function addonTable.Display.AurasManagerMixin:AddAuras(addedAuras)
         end
       end
     end
-  elseif self.GetImportantAuras then
+    return changes
+  end
+elseif addonTable.Constants.IsRetail then
+  function addonTable.Display.AurasManagerMixin:AddAuras(addedAuras)
+    local changes = {}
     local important, crowdControl = self.GetImportantAuras()
 
     if self.lossOfControlApplied then
@@ -499,7 +504,11 @@ function addonTable.Display.AurasManagerMixin:AddAuras(addedAuras)
         changes[aura.kind] = true
       end
     end
-  else
+    return changes
+  end
+else
+  function addonTable.Display.AurasManagerMixin:AddAuras(addedAuras)
+    local changes = {}
     for _, aura in ipairs(addedAuras) do
       local keep = false
       if not self.isPlayer and self.buffsDetails and aura.isHelpful and
@@ -524,9 +533,8 @@ function addonTable.Display.AurasManagerMixin:AddAuras(addedAuras)
         changes[aura.kind] = true
       end
     end
+    return changes
   end
-
-  return changes
 end
 
 function addonTable.Display.AurasManagerMixin:SortAurasAndReport(changes)
