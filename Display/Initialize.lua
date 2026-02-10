@@ -249,7 +249,7 @@ function addonTable.Display.ManagerMixin:OnLoad()
           if UF and UF.HitTestFrame then
             self:UpdateStackingRegion(unit)
           end
-          display:InitializeWidgets(addonTable.Core.GetDesign(display.kind), addonTable.Core.GetDesignScale(display.kind))
+          display:InitializeWidgets(addonTable.Core.GetDesign(display.kind), addonTable.Core.GetDesignScale(display.kind), addonTable.Core.GetDesignCVarScale(display.kind))
           self:ListenToBuffs(display, unit)
           display:SetUnit(unit)
         end
@@ -258,6 +258,7 @@ function addonTable.Display.ManagerMixin:OnLoad()
         end
         self:UpdateFriendlyFont()
         self:UpdateNamePlateSize()
+        self:UpdateSimplifiedScale()
         self:UpdateStacking()
         self:UpdateTargetScale()
       end)
@@ -267,7 +268,7 @@ function addonTable.Display.ManagerMixin:OnLoad()
     end
     if state[addonTable.Constants.RefreshReason.Scale] or state[addonTable.Constants.RefreshReason.TargetBehaviour] then
       for unit, display in pairs(self.nameplateDisplays) do
-        display.offsetScale = addonTable.Core.GetDesignScale(display.kind) * UIParent:GetEffectiveScale() * addonTable.Config.Get(addonTable.Config.Options.GLOBAL_SCALE)
+        display.offsetScale = addonTable.Core.GetDesignScale(display.kind) * addonTable.Core.GetDesignCVarScale(display.kind) * UIParent:GetEffectiveScale() * addonTable.Config.Get(addonTable.Config.Options.GLOBAL_SCALE)
         display:UpdateVisual()
         if display.stackRegion then
           self:UpdateStackingRegion(unit)
@@ -551,7 +552,7 @@ function addonTable.Display.ManagerMixin:Install(unit, nameplate)
 
     newDisplay:Install(nameplate)
     if newDisplay.styleIndex ~= self.styleIndex then
-      newDisplay:InitializeWidgets(addonTable.Core.GetDesign(newDisplay.kind), addonTable.Core.GetDesignScale(newDisplay.kind))
+      newDisplay:InitializeWidgets(addonTable.Core.GetDesign(newDisplay.kind), addonTable.Core.GetDesignScale(newDisplay.kind), addonTable.Core.GetDesignCVarScale(newDisplay.kind))
       newDisplay.styleIndex = self.styleIndex
     end
     self:ListenToBuffs(newDisplay, unit)
@@ -692,10 +693,10 @@ function addonTable.Display.ManagerMixin:UpdateSimplifiedScale()
   end
 
   for unit, display in pairs(self.nameplateDisplays) do
-    display.offsetScale = addonTable.Core.GetDesignScale(display.kind) * UIParent:GetEffectiveScale() * addonTable.Config.Get(addonTable.Config.Options.GLOBAL_SCALE)
+    display.offsetScale = addonTable.Core.GetDesignScale(display.kind) * addonTable.Core.GetDesignCVarScale(display.kind) * UIParent:GetEffectiveScale() * addonTable.Config.Get(addonTable.Config.Options.GLOBAL_SCALE)
   end
 
-  C_CVar.SetCVar("nameplateSimplifiedScale", addonTable.Config.Get(addonTable.Config.Options.SIMPLIFIED_SCALE))
+  C_CVar.SetCVar("nameplateSimplifiedScale", addonTable.Config.Get(addonTable.Config.Options.SIMPLIFIED_SCALE) * addonTable.Core.GetDesign("enemySimplified").scale)
 end
 
 function addonTable.Display.ManagerMixin:UpdateObscuredAlpha()
@@ -866,7 +867,7 @@ function addonTable.Display.ManagerMixin:OnEvent(eventName, ...)
     if not addonTable.Constants.ParentedToNameplates then
       for unit, display in pairs(self.nameplateDisplays) do
         display:UpdateVisual()
-        display.offsetScale = addonTable.Core.GetDesignScale(display.kind) * UIParent:GetEffectiveScale() * addonTable.Config.Get(addonTable.Config.Options.GLOBAL_SCALE)
+        display.offsetScale = addonTable.Core.GetDesignScale(display.kind) * addonTable.Core.GetDesignCVarScale(display.kind) * UIParent:GetEffectiveScale() * addonTable.Config.Get(addonTable.Config.Options.GLOBAL_SCALE)
         if display.stackRegion then
           self:UpdateStackingRegion(unit)
         end
