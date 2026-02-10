@@ -252,7 +252,7 @@ function addonTable.Display.AurasManagerMixin:SetUnit(unit)
     end
     if self.buffsDetails or self.debuffsDetails or self.crowdControlDetails then
       self:RegisterUnitEvent("UNIT_AURA", self.unit)
-      if addonTable.Constants.IsRetail and addonTable.Constants.AuraFilteringAvailable and UnitIsPlayer(self.unit) then
+      if addonTable.Constants.IsRetail and not addonTable.Constants.AuraFilteringAvailable and UnitIsPlayer(self.unit) then
         self:RegisterUnitEvent("LOSS_OF_CONTROL_UPDATE", self.unit)
         self:RegisterUnitEvent("LOSS_OF_CONTROL_ADDED", self.unit)
       end
@@ -299,11 +299,30 @@ function addonTable.Display.AurasManagerMixin:FullRefresh()
   end
 
   local all = {}
-  if self.buffsDetails then
-    tAppendAll(all, C_UnitAuras.GetUnitAuras(self.unit, "HELPFUL"))
-  end
-  if self.debuffsDetails or self.crowdControlDetails then
-    tAppendAll(all, C_UnitAuras.GetUnitAuras(self.unit, "HARMFUL"))
+  if C_UnitAuras.GetUnitAuras then
+    if self.buffsDetails then
+      tAppendAll(all, C_UnitAuras.GetUnitAuras(self.unit, "HELPFUL"))
+    end
+    if self.debuffsDetails or self.crowdControlDetails then
+      tAppendAll(all, C_UnitAuras.GetUnitAuras(self.unit, "HARMFUL"))
+    end
+  else
+    local index = 1
+    while true do
+      local aura = C_UnitAuras.GetAuraDataByIndex(self.unit, index, "HELPFUL")
+      if not aura then
+        break
+      end
+      table.insert(all, aura)
+    end
+    index = 1
+    while true do
+      local aura = C_UnitAuras.GetAuraDataByIndex(self.unit, index, "HARMFUL")
+      if not aura then
+        break
+      end
+      table.insert(all, aura)
+    end
   end
   self:AddAuras(all)
 
