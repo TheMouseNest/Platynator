@@ -598,16 +598,8 @@ local hasSimplifiedScale = C_CVar.GetCVarInfo("nameplateSimplifiedScale")
 
 function addonTable.Core.GetDesignScale(kind)
   if kind:find("Simplified") then
-    return 1
-  else
-    return addonTable.Core.GetDesign(kind).scale
-  end
-end
-
-function addonTable.Core.GetDesignCVarScale(kind)
-  if kind:find("Simplified") then
     if hasSimplifiedScale then
-      return addonTable.Config.Get(addonTable.Config.Options.SIMPLIFIED_SCALE) * addonTable.Core.GetDesign(kind).scale
+      return addonTable.Config.Get(addonTable.Config.Options.SIMPLIFIED_SCALE)
     else
       return 0.3
     end
