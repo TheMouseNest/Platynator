@@ -289,9 +289,9 @@ function addonTable.Display.AurasManagerMixin:FullRefresh()
   self.crowdControl = {}
 
   local changes = {
-    buffs = true,
-    debuffs = true,
-    crowdControl = true,
+    buffs = self.buffsDetails ~= nil,
+    debuffs = self.debuffsDetails ~= nil,
+    crowdControl = self.crowdControlDetails ~= nil,
   }
 
   if addonTable.Constants.IsRetail and not addonTable.Constants.AuraFilteringAvailable then
