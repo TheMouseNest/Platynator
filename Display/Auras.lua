@@ -314,6 +314,7 @@ function addonTable.Display.AurasManagerMixin:FullRefresh()
         break
       end
       table.insert(all, aura)
+      index = index + 1
     end
     index = 1
     while true do
@@ -322,6 +323,7 @@ function addonTable.Display.AurasManagerMixin:FullRefresh()
         break
       end
       table.insert(all, aura)
+      index = index + 1
     end
   end
   self:AddAuras(all)
