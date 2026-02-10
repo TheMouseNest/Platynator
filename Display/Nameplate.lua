@@ -474,9 +474,9 @@ function addonTable.Display.NameplateMixin:SetUnit(unit)
 end
 
 function addonTable.Display.NameplateMixin:UpdateCastingState()
-  local _, t1 = UnitCastingInfo(self.unit)
-  local _, t2 = UnitChannelInfo(self.unit)
-  self.casting = type(t1) ~= "nil" or type(t2) ~= "nil"
+  local _, cast = UnitCastingInfo(self.unit)
+  local _, channel = UnitChannelInfo(self.unit)
+  self.casting = cast ~= nil or channel ~= nil
 end
 
 function addonTable.Display.NameplateMixin:UpdateForTarget()
