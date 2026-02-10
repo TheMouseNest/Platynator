@@ -206,10 +206,11 @@ function addonTable.Display.UnregisterForColorEvents(frame)
   frame.colorSettings = nil
 end
 
-function addonTable.Display.RegisterForColorEvents(frame, settings)
+function addonTable.Display.RegisterForColorEvents(frame, settings, defaultColor)
   local events = { FORCED = true }
   frame.colorState = { frequentUpdater = {} }
   frame.colorSettings = settings
+  frame.colorState.defaultColor = defaultColor or transparency
   for _, s in ipairs(settings) do
     local es = kindToEvent[s.kind]
     if es then
@@ -489,8 +490,9 @@ function addonTable.Display.GetColor(settings, state, unit)
     return nil
   end
 
+  local defaultColor = state.defaultColor
   if C_CurveUtil then
-    local r, g, b, a = 0, 0, 0, 0
+    local r, g, b, a = defaultColor.r, defaultColor.g, defaultColor.b, defaultColor.a or 1
     for index = #colorQueue, 1, -1 do
       local details = colorQueue[index]
       local c = details.color
@@ -510,7 +512,7 @@ function addonTable.Display.GetColor(settings, state, unit)
     end
     return r, g, b, a
   else
-    local color = transparency
+    local color = defaultColor
     for index = #colorQueue, 1, -1 do
       local details = colorQueue[index]
       if details.state == nil then

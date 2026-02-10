@@ -10,7 +10,7 @@ function addonTable.Display.CreatureTextMixin:SetUnit(unit)
     self.defaultText = UnitName(self.unit)
     self.text:SetText(self.defaultText)
 
-    addonTable.Display.RegisterForColorEvents(self, self.details.autoColors)
+    addonTable.Display.RegisterForColorEvents(self, self.details.autoColors, self.details.color)
     self:SetColor(addonTable.Display.GetColor(self.details.autoColors, self.colorState, self.unit))
 
     if self.details.showWhenWowDoes then
