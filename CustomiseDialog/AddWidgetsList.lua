@@ -310,6 +310,8 @@ addonTable.CustomiseDialog.DesignWidgets = {
       align = "CENTER",
       shorten = "NONE",
       truncate = false,
+      playerGuild = true,
+      npcRole = true,
     },
   },
   {
