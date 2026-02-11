@@ -1123,6 +1123,7 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
       tabManager:SetHeight(30)
       function tabManager:SetTab(label)
         local currentTab
+        local visibleTab
         for index, t in ipairs(tabs) do
           if t.button.label ~= label then
             PanelTemplates_DeselectTab(t.button)
@@ -1131,6 +1132,14 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
             currentTab = t
             settingsContainer.tabIndex = index
           end
+          if t.button:IsShown() and not visibleTab then
+            visibleTab = t
+          end
+        end
+        if not currentTab.button:IsShown() then
+          currentTab:Hide()
+          PanelTemplates_DeselectTab(currentTab.button)
+          currentTab = visibleTab
         end
         PanelTemplates_SelectTab(currentTab.button)
         currentTab.details = nil
