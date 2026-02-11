@@ -76,18 +76,6 @@ function addonTable.Display.ManagerMixin:OnLoad()
   self.ModifiedUFs = {}
   self.HookedUFs = {}
   self.unitToNameplate = {}
-  if not addonTable.Constants.ParentedToNameplates then
-    self.AlphaImporter = CreateFrame("Frame", nil, self)
-    self.AlphaImporter:SetScript("OnUpdate", function()
-      for unit, nameplate in pairs(self.unitToNameplate) do
-        local display = self.nameplateDisplays[unit]
-        display:SetAlpha(nameplate:GetAlpha() * display.overrideAlpha)
-        if display:GetFrameLevel() ~= nameplate:GetFrameLevel() then
-          display:SetFrameLevel(nameplate:GetFrameLevel())
-        end
-      end
-    end)
-  end
   -- Apply Platynator settings to aura layout
   local function RelayoutAuras(list, filter)
     if list:IsForbidden() then
@@ -195,9 +183,6 @@ function addonTable.Display.ManagerMixin:OnLoad()
       nameplate.UnitFrame:UnregisterAllEvents()
       if nameplate.UnitFrame.castBar then
         nameplate.UnitFrame.castBar:UnregisterAllEvents()
-      end
-      if addonTable.Constants.IsRetail and not addonTable.Constants.AuraFilteringAvailable then
-        nameplate.UnitFrame:RegisterUnitEvent("UNIT_AURA", unit)
       end
       if nameplate.UnitFrame.WidgetContainer then
         nameplate.UnitFrame.WidgetContainer:SetParent(nameplate)
@@ -453,33 +438,21 @@ function addonTable.Display.ManagerMixin:UpdateInstanceShowState()
 end
 
 function addonTable.Display.ManagerMixin:ListenToBuffs(display, unit)
-  if addonTable.Constants.IsRetail and self.ModifiedUFs[unit] then
-    local DebuffListFrame = self.ModifiedUFs[unit].AurasFrame.DebuffListFrame
-    local BuffListFrame = self.ModifiedUFs[unit].AurasFrame.BuffListFrame
-    local CrowdControlListFrame = self.ModifiedUFs[unit].AurasFrame.CrowdControlListFrame
+  if addonTable.Constants.IsRetail and self.ModifiedUFs[unit] and display.DebuffDisplay.details and display.DebuffDisplay.details.filters.important then
+    local UF = self.ModifiedUFs[unit]
+    UF:RegisterUnitEvent("UNIT_AURA", unit)
+
+    local DebuffListFrame = UF.AurasFrame.DebuffListFrame
 
     display.AurasManager:SetGetImportantAuras(function()
-      local important, crowdControl = {}, {}
+      local important = {}
 
       for _, child in ipairs(DebuffListFrame:GetLayoutChildren()) do
         important[child.auraInstanceID] = true
       end
-      for _, child in ipairs(BuffListFrame:GetLayoutChildren()) do
-        important[child.auraInstanceID] = true
-      end
-      for _, child in ipairs(CrowdControlListFrame:GetLayoutChildren()) do
-        crowdControl[child.auraInstanceID] = true
-      end
 
-      return important, crowdControl
+      return important
     end)
-
-
-    local auras = addonTable.Core.GetDesign(display.kind).auras
-    local designInfo = {}
-    for _, a in ipairs(auras) do
-      designInfo[a.kind] = a
-    end
   end
 end
 
@@ -868,19 +841,10 @@ function addonTable.Display.ManagerMixin:OnEvent(eventName, ...)
     self:UpdateObscuredAlpha()
     self:UpdateClickable()
   elseif eventName == "UI_SCALE_CHANGED" then
-    if not addonTable.Constants.ParentedToNameplates then
-      for unit, display in pairs(self.nameplateDisplays) do
-        display:UpdateVisual()
-        display.offsetScale = addonTable.Core.GetDesignScale(display.kind) * UIParent:GetEffectiveScale() * addonTable.Config.Get(addonTable.Config.Options.GLOBAL_SCALE)
-        if display.stackRegion then
-          self:UpdateStackingRegion(unit)
-        end
-      end
-    else
-      for unit, display in pairs(self.nameplateDisplays) do
-        if display.stackRegion then
-          self:UpdateStackingRegion(unit)
-        end
+    for unit, display in pairs(self.nameplateDisplays) do
+      display.offsetScale = addonTable.Core.GetDesignScale(display.kind) * UIParent:GetEffectiveScale() * addonTable.Config.Get(addonTable.Config.Options.GLOBAL_SCALE)
+      if display.stackRegion then
+        self:UpdateStackingRegion(unit)
       end
     end
     self:UpdateNamePlateSize()
@@ -900,13 +864,8 @@ function addonTable.Display.ManagerMixin:OnEvent(eventName, ...)
     self:UpdateFriendlyFont()
   elseif eventName == "VARIABLES_LOADED" then
     if addonTable.Constants.IsRetail then
-      C_CVar.SetCVarBitfield(NamePlateConstants.ENEMY_NPC_AURA_DISPLAY_CVAR, Enum.NamePlateEnemyNpcAuraDisplay.Buffs, true)
       C_CVar.SetCVarBitfield(NamePlateConstants.ENEMY_NPC_AURA_DISPLAY_CVAR, Enum.NamePlateEnemyNpcAuraDisplay.Debuffs, true)
-      C_CVar.SetCVarBitfield(NamePlateConstants.ENEMY_NPC_AURA_DISPLAY_CVAR, Enum.NamePlateEnemyNpcAuraDisplay.CrowdControl, true)
-
-      C_CVar.SetCVarBitfield(NamePlateConstants.ENEMY_PLAYER_AURA_DISPLAY_CVAR, Enum.NamePlateEnemyPlayerAuraDisplay.Buffs, true)
       C_CVar.SetCVarBitfield(NamePlateConstants.ENEMY_PLAYER_AURA_DISPLAY_CVAR, Enum.NamePlateEnemyPlayerAuraDisplay.Debuffs, true)
-      C_CVar.SetCVarBitfield(NamePlateConstants.ENEMY_PLAYER_AURA_DISPLAY_CVAR, Enum.NamePlateEnemyPlayerAuraDisplay.LossOfControl, true)
 
       --C_CVar.SetCVarBitfield(NamePlateConstants.FRIENDLY_PLAYER_AURA_DISPLAY_CVAR, Enum.NamePlateFriendlyPlayerAuraDisplay.Buffs, true)
       --C_CVar.SetCVarBitfield(NamePlateConstants.FRIENDLY_PLAYER_AURA_DISPLAY_CVAR, Enum.NamePlateFriendlyPlayerAuraDisplay.Debuffs, true)
