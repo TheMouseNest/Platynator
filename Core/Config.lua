@@ -34,7 +34,7 @@ local settings = {
   SHOW_FRIENDLY_IN_INSTANCES = {key = "show_friendly_in_instances_1", default = "always", refresh = {addonTable.Constants.RefreshReason.ShowBehaviour}},
   SIMPLIFIED_NAMEPLATES = {key = "simplified_nameplates", default = {minion = true, minor = true, instancesNormal = true}, refresh = {addonTable.Constants.RefreshReason.Simplified}},
 
-  SIMPLIFIED_SCALE = {key = "simplified_scale", default = 0.4, refresh = {addonTable.Constants.RefreshReason.SimplifiedScale}},
+  SIMPLIFIED_SCALE = {key = "simplified_scale", default = 0.6, refresh = {addonTable.Constants.RefreshReason.SimplifiedScale}},
 
   APPLY_CVARS = {key = "apply_cvars", default = true},
 }

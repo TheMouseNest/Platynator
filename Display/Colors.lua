@@ -17,15 +17,48 @@ local roleMap = {
   ["HEALER"] = roleType.Healer,
 }
 
-local function GetPlayerRole()
-  if not C_SpecializationInfo.GetSpecialization then
-    return roleType.Damage
-  end
-  local specIndex = C_SpecializationInfo.GetSpecialization()
-  local _, _, _, _, role = C_SpecializationInfo.GetSpecializationInfo(specIndex)
+local isTank = false
+local _, playerClass = UnitClass("player")
 
-  return roleMap[role]
+local function GetPlayerRole()
+  if addonTable.Constants.IsEra or addonTable.Constants.IsBC or addonTable.Constants.IsWrath then
+    -- we're in classic
+    local form = GetShapeshiftForm()
+    if (playerClass == "WARRIOR" and form == 2) or (playerClass == "DRUID" and form == 1) then
+      return roleType.Tank
+    elseif playerClass == "PALADIN" and C_UnitAuras.GetUnitAuraBySpellID("player", 25780) ~= nil then
+      return roleType.Tank
+    end
+  else
+    local specIndex = C_SpecializationInfo.GetSpecialization()
+    local _, _, _, _, role = C_SpecializationInfo.GetSpecializationInfo(specIndex)
+
+    return roleMap[role]
+  end
+  return roleType.Damage
 end
+
+do
+  local specializationMonitor = CreateFrame("Frame")
+  specializationMonitor:RegisterEvent("PLAYER_LOGIN")
+
+  if addonTable.Constants.IsEra or addonTable.Constants.IsBC or addonTable.Constants.IsWrath then
+    if playerClass == "WARRIOR" or playerClass == "DRUID" then
+      specializationMonitor:RegisterEvent("UPDATE_SHAPESHIFT_FORM")
+    elseif playerClass == "PALADIN" then
+      specializationMonitor:RegisterUnitEvent("UNIT_AURA", "player")
+    end
+  elseif C_EventUtils.IsEventValid("PLAYER_SPECIALIZATION_CHANGED") then
+    specializationMonitor:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
+  end
+
+  specializationMonitor:SetScript("OnEvent", function()
+    isTank = GetPlayerRole() == roleType.Tank
+  end)
+end
+
+local executeCurve = addonTable.Display.Utilities.GetExecuteCurve()
+local executeConverter = UIParent:CreateTexture()
 
 local GetInterruptSpell = addonTable.Display.Utilities.GetInterruptSpell
 
@@ -76,7 +109,7 @@ local stateToCalculator = {
     state.channelInfo = {UnitChannelInfo(unit)}
   end,
   quest = function(state, unit)
-    state.quest = C_QuestLog.UnitIsRelatedToActiveQuest and C_QuestLog.UnitIsRelatedToActiveQuest(unit)
+    state.quest = #addonTable.Display.Utilities.GetQuestInfo(unit) > 0
   end,
   threat = function(state, unit)
     state.threat = UnitThreatSituation("player", unit)
@@ -101,6 +134,7 @@ local kindToEvent = {
   focus = {"PLAYER_FOCUS_CHANGED"},
   threat = {"UNIT_THREAT_LIST_UPDATE"},
   quest = {"QUEST_LOG_UPDATE"},
+  execute = {"UNIT_HEALTH"},
   interruptReady = {
     "UNIT_SPELLCAST_START",
     "UNIT_SPELLCAST_STOP",
@@ -110,8 +144,6 @@ local kindToEvent = {
     "UNIT_SPELLCAST_NOT_INTERRUPTIBLE",
     "UNIT_SPELLCAST_CHANNEL_START",
     "UNIT_SPELLCAST_CHANNEL_STOP",
-    "ACTIONBAR_UPDATE_USABLE",
-    "SPELL_UPDATE_USABLE",
   },
   uninterruptableCast = {
     "UNIT_SPELLCAST_START",
@@ -150,15 +182,35 @@ local kindToEvent = {
     "UNIT_SPELLCAST_CHANNEL_STOP",
   },
 }
+local kindToCallback = {
+  quest = {"QuestInfoUpdate"},
+}
 
 function addonTable.Display.UnregisterForColorEvents(frame)
+  if frame.colorState then
+    for _, s in ipairs(frame.colorSettings) do
+      local ec = kindToCallback[s.kind]
+      if ec then
+        for _, e in ipairs(ec) do
+          addonTable.CallbackRegistry:UnregisterCallback(e, frame.colorState)
+        end
+      end
+    end
+    if frame.colorState.timer then
+      frame.colorState.timer:Cancel()
+    end
+  end
+
   frame.ColorEventHandler = nil
   frame.colorState = nil
+  frame.colorSettings = nil
 end
 
-function addonTable.Display.RegisterForColorEvents(frame, settings)
-  local events = {}
-  frame.colorState = {}
+function addonTable.Display.RegisterForColorEvents(frame, settings, defaultColor)
+  local events = { FORCED = true }
+  frame.colorState = { frequentUpdater = {} }
+  frame.colorSettings = settings
+  frame.colorState.defaultColor = defaultColor or transparency
   for _, s in ipairs(settings) do
     local es = kindToEvent[s.kind]
     if es then
@@ -176,15 +228,33 @@ function addonTable.Display.RegisterForColorEvents(frame, settings)
         end
       end
     end
+    local ec = kindToCallback[s.kind]
+    if ec then
+      for _, e in ipairs(ec) do
+        addonTable.CallbackRegistry:RegisterCallback(e, function()
+          frame:SetColor(addonTable.Display.GetColor(settings, frame.colorState, frame.unit))
+        end, frame.colorState)
+      end
+    end
   end
 
   function frame:ColorEventHandler(eventName)
     if events[eventName] then
       local calculator = eventToCalulator[eventName]
       if calculator then
-        calculator(frame.colorState, self.unit)
+        calculator(self.colorState, self.unit)
       end
-      self:SetColor(addonTable.Display.GetColor(settings, frame.colorState, self.unit))
+      self:SetColor(addonTable.Display.GetColor(settings, self.colorState, self.unit))
+      if next(self.colorState.frequentUpdater) then
+        if not self.colorState.timer then
+          self.colorState.timer = C_Timer.NewTicker(0.1, function()
+            self:ColorEventHandler("FORCED")
+          end)
+        end
+      elseif self.colorState.timer then
+        self.colorState.timer:Cancel()
+        self.colorState.timer = nil
+      end
     end
   end
 end
@@ -205,7 +275,7 @@ function addonTable.Display.GetColor(settings, state, unit)
         break
       end
     elseif s.kind == "target" then
-      if UnitIsUnit("target", unit) and not IsTargetLoose() then
+      if UnitIsUnit("target", unit) then
         table.insert(colorQueue, {color = s.colors.target})
         break
       end
@@ -223,20 +293,27 @@ function addonTable.Display.GetColor(settings, state, unit)
       local threat = state.threat
       local hostile = state.hostile
       if (inRelevantInstance or not s.instancesOnly) and (threat or (hostile and not s.combatOnly) or (inRelevantInstance and UnitAffectingCombat(unit))) then
-        local role = GetPlayerRole()
-        if (role == roleType.Tank and (threat == 0 or threat == nil) and not DoesOtherTankHaveAggro(unit)) or (role ~= roleType.Tank and threat == 3) then
+        if (isTank and (threat == 0 or threat == nil) and not DoesOtherTankHaveAggro(unit)) or (not isTank and threat == 3) then
           table.insert(colorQueue, {color = s.colors.warning})
           break
         elseif threat == 1 or threat == 2 then
           table.insert(colorQueue, {color = s.colors.transition})
           break
-        elseif s.useSafeColor and ((role == roleType.Tank and threat == 3) or (role ~= roleType.Tank and (threat == 0 or threat == nil))) then
+        elseif s.useSafeColor and ((isTank and threat == 3) or (not isTank and (threat == 0 or threat == nil))) then
           table.insert(colorQueue, {color = s.colors.safe})
           break
-        elseif role == roleType.Tank and (threat == 0 or threat == nil) and DoesOtherTankHaveAggro(unit) then
+        elseif isTank and (threat == 0 or threat == nil) and DoesOtherTankHaveAggro(unit) then
           table.insert(colorQueue, {color = s.colors.offtank})
           break
         end
+      end
+    elseif s.kind == "rarity" then
+      local classification = UnitClassification(unit)
+
+      if classification == "rare" then
+        table.insert(colorQueue, {color = s.colors.rare})
+      elseif classification == "rareelite" then
+        table.insert(colorQueue, {color = s.colors.rareElite})
       end
     elseif s.kind == "eliteType" then
       if (inRelevantInstance or not s.instancesOnly) and not addonTable.Display.Utilities.IsNeutralUnit(unit) then
@@ -244,7 +321,7 @@ function addonTable.Display.GetColor(settings, state, unit)
         if classification == "elite" then
           local level = UnitEffectiveLevel(unit)
           local playerLevel = PLATYNATOR_LAST_INSTANCE.level
-          if level >= playerLevel + 2 then
+          if level >= playerLevel + 2 or level == -1 then
             table.insert(colorQueue, {color = s.colors.boss})
             break
           elseif level == playerLevel + 1 then
@@ -313,9 +390,11 @@ function addonTable.Display.GetColor(settings, state, unit)
       if notInterruptible == nil then
         notInterruptible = channelInfo[7]
       end
+      state.frequentUpdater.interruptReady = nil
       if notInterruptible ~= nil then
         local spellID = GetInterruptSpell()
         if spellID then
+          state.frequentUpdater.interruptReady = true
           if C_Spell.GetSpellCooldownDuration then
             local duration = C_Spell.GetSpellCooldownDuration(spellID)
             table.insert(colorQueue, {state = {{value = duration:IsZero()}, {value = notInterruptible, invert = true}}, color = s.colors.ready})
@@ -390,6 +469,20 @@ function addonTable.Display.GetColor(settings, state, unit)
     elseif s.kind == "fixed" then
       table.insert(colorQueue, {color = s.colors.fixed})
       break
+    elseif s.kind == "execute" then
+      local executeRange = addonTable.Display.Utilities.GetExecuteRange()
+      if executeRange > 0 then
+        if UnitHealthPercent then
+          local alpha = UnitHealthPercent(unit, true, executeCurve)
+          executeConverter:SetDesaturation(alpha)
+          table.insert(colorQueue, {state = {{value = executeConverter:IsDesaturated()}}, color = s.colors.execute})
+        else
+          local percent = UnitHealth(unit) / UnitHealthMax(unit)
+          if percent <= addonTable.Display.Utilities.GetExecuteRange() then
+            table.insert(colorQueue, {color = s.colors.execute})
+          end
+        end
+      end
     end
   end
 
@@ -397,8 +490,9 @@ function addonTable.Display.GetColor(settings, state, unit)
     return nil
   end
 
+  local defaultColor = state.defaultColor
   if C_CurveUtil then
-    local r, g, b, a = 0, 0, 0, 0
+    local r, g, b, a = defaultColor.r, defaultColor.g, defaultColor.b, defaultColor.a or 1
     for index = #colorQueue, 1, -1 do
       local details = colorQueue[index]
       local c = details.color
@@ -418,7 +512,7 @@ function addonTable.Display.GetColor(settings, state, unit)
     end
     return r, g, b, a
   else
-    local color = transparency
+    local color = defaultColor
     for index = #colorQueue, 1, -1 do
       local details = colorQueue[index]
       if details.state == nil then

@@ -75,6 +75,7 @@ function addonTable.Display.CastIconMarkerMixin:OnEvent(eventName, ...)
           self.background:Hide()
         end
       end
+      self.timer = nil
     end)
   else
     self:ApplyCasting()
@@ -88,6 +89,12 @@ function addonTable.Display.CastIconMarkerMixin:ApplyCasting()
   end
 
   if type(texture) ~= "nil" then
+    if self.timer then
+      self.timer:Cancel()
+      self.interrupted = nil
+      self.timer = nil
+    end
+
     self.marker:SetTexture(texture)
     self.marker:Show()
     if self.background then

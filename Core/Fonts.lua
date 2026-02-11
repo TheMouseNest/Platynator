@@ -9,27 +9,32 @@ function addonTable.Core.GetFontByDesign(design)
   local id = design.font.asset
   local outline = design.font.outline and "OUTLINE" or ""
   local shadow = design.font.shadow and "SHADOW" or ""
-  local key = id:lower() .. outline .. shadow
+  local slug = ""
+  if addonTable.Constants.IsRetail and (outline ~= "" or shadow == "") then
+    slug = design.font.slug and "SLUG" or ""
+  end
+  local key = id:lower() .. outline .. shadow .. slug
   if not fonts[key] then
-    addonTable.Core.CreateFont(id, outline, shadow, false)
-    if not fonts[key] and not fonts[addonTable.Constants.DefaultFont:lower() .. outline .. shadow] then
-      addonTable.Core.CreateFont(addonTable.Constants.DefaultFont, outline, shadow, true)
+    addonTable.Core.CreateFont(id, outline, shadow, slug, false)
+    if not fonts[key] and not fonts[addonTable.Constants.DefaultFont:lower() .. outline .. shadow .. slug] then
+      addonTable.Core.CreateFont(addonTable.Constants.DefaultFont, outline, shadow, slug, true)
     end
   end
-  return fonts[key] or fonts[addonTable.Constants.DefaultFont:lower() .. outline .. shadow]
+  return fonts[key] or fonts[addonTable.Constants.DefaultFont:lower() .. outline .. shadow .. slug]
 end
 
 function addonTable.Core.GetFontByID(id)
   local outline = ""
   local shadow = ""
-  local key = id:lower() .. outline .. shadow
+  local slug = ""
+  local key = id:lower() .. outline .. shadow .. slug
   if not fonts[key] then
-    addonTable.Core.CreateFont(id, outline, shadow, false)
-    if not fonts[key] and not fonts[addonTable.Constants.DefaultFont:lower() .. outline .. shadow] then
-      addonTable.Core.CreateFont(addonTable.Constants.DefaultFont, outline, shadow, true)
+    addonTable.Core.CreateFont(id, outline, shadow, slug, false)
+    if not fonts[key] and not fonts[addonTable.Constants.DefaultFont:lower() .. outline .. shadow .. slug] then
+      addonTable.Core.CreateFont(addonTable.Constants.DefaultFont, outline, shadow, slug, true)
     end
   end
-  return fonts[key] or fonts[addonTable.Constants.DefaultFont:lower() .. outline .. shadow]
+  return fonts[key] or fonts[addonTable.Constants.DefaultFont:lower() .. outline .. shadow .. slug]
 end
 
 local alphabet = addonTable.Constants.FontFamilies
@@ -72,8 +77,8 @@ local function GetMembers(overrideFile, outline)
   return members
 end
 
-function addonTable.Core.CreateFont(assetKey, outline, shadow, useDefault)
-  local key = assetKey:lower() .. outline .. shadow
+function addonTable.Core.CreateFont(assetKey, outline, shadow, slug, useDefault)
+  local key = assetKey:lower() .. outline .. shadow .. slug
   if fonts[key] then
     error("duplicate font creation " .. key)
   end
@@ -88,11 +93,11 @@ function addonTable.Core.CreateFont(assetKey, outline, shadow, useDefault)
     return
   end
 
-  if addonTable.Constants.IsMidnight and (outline ~= "" or shadow == "") then
-    outline = outline .. " SLUG"
+  local flags = outline .. slug
+  if outline ~= "" and slug ~= "" then
+    flags = outline .. " " .. slug
   end
-
-  local font = CreateFontFamily(globalName, GetMembers(path, outline))
+  local font = CreateFontFamily(globalName, GetMembers(path, flags))
   font:SetTextColor(1, 1, 1)
   fonts[key] = globalName
 

@@ -7,7 +7,7 @@ local significantFiguresCaches = {}
 
 function addonTable.Display.HealthTextMixin:PostInit()
   if self.details.significantFigures > 0 then
-    if addonTable.Constants.IsMidnight then
+    if addonTable.Constants.IsRetail then
       if not significantFiguresCaches[self.details.significantFigures] then
         local breakpoints = {
           {breakpoint = 100, fractionDivisor = 10^(self.details.significantFigures - 3), significandDivisor = 1/10^(self.details.significantFigures - 3), abbreviation = "", abbreviationIsGlobal = false},

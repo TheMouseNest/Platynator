@@ -21,7 +21,7 @@ local cvars = {
   ["clampTargetNameplateToScreen"] = "1",
 }
 
-if addonTable.Constants.IsMidnight then
+if addonTable.Constants.IsRetail then
   cvars["nameplateOverlapH"] = "1"
   cvars["nameplateOverlapV"] = "1"
 end

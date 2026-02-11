@@ -1,0 +1,620 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="120mm"
+   height="33mm"
+   viewBox="0 0 120 33"
+   version="1.1"
+   id="svg1"
+   inkscape:version="1.4.3 (0d15f75042, 2025-12-25)"
+   sodipodi:docname="important animated.svg"
+   inkscape:export-filename="pandemic.png"
+   inkscape:export-xdpi="2540"
+   inkscape:export-ydpi="2540"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#5e1ec0"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="mm"
+     showborder="true"
+     inkscape:zoom="2.8284271"
+     inkscape:cx="192.50982"
+     inkscape:cy="22.627417"
+     inkscape:window-width="2560"
+     inkscape:window-height="1366"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1"
+     showguides="false" />
+  <defs
+     id="defs1">
+    <pattern
+       inkscape:collect="always"
+       xlink:href="#pattern4"
+       preserveAspectRatio="xMidYMid"
+       id="pattern14"
+       patternTransform="matrix(0.06614582,0,0,0.27779326,1.5267181e-8,9.0000004)" />
+    <pattern
+       inkscape:collect="always"
+       xlink:href="#pattern3-3-4"
+       preserveAspectRatio="xMidYMid"
+       id="pattern13"
+       patternTransform="matrix(0.06614582,0,0,0.27779326,1.5267181e-8,5.9999999)" />
+    <pattern
+       inkscape:collect="always"
+       xlink:href="#pattern4-0"
+       preserveAspectRatio="xMidYMid"
+       id="pattern11"
+       patternTransform="matrix(0.06614582,0,0,0.27779326,1.3789358e-7,24)"
+       x="80"
+       y="0" />
+    <pattern
+       inkscape:collect="always"
+       xlink:href="#pattern3-3-4-6"
+       preserveAspectRatio="xMidYMid"
+       id="pattern10"
+       patternTransform="matrix(0.06614582,0,0,0.27779326,1.3789358e-7,21)"
+       x="70"
+       y="0" />
+    <pattern
+       inkscape:collect="always"
+       xlink:href="#pattern4"
+       preserveAspectRatio="xMidYMid"
+       id="pattern5"
+       patternTransform="matrix(0.06614582,0,0,0.27779326,1.5267181e-8,12.000005)"
+       x="40"
+       y="0" />
+    <pattern
+       inkscape:collect="always"
+       xlink:href="#pattern3-3-4"
+       preserveAspectRatio="xMidYMid"
+       id="pattern4"
+       patternTransform="matrix(0.26458332,0,0,0.27779326,6.1068727e-8,9.0000004)"
+       x="30"
+       y="0" />
+    <pattern
+       inkscape:collect="always"
+       xlink:href="#pattern2"
+       preserveAspectRatio="xMidYMid"
+       id="pattern3"
+       patternTransform="scale(0.06614582,0.27779326)"
+       x="0"
+       y="0" />
+    <pattern
+       patternUnits="userSpaceOnUse"
+       width="111.07997"
+       height="10.799397"
+       patternTransform="scale(1)"
+       preserveAspectRatio="xMidYMid"
+       id="pattern2"
+       inkscape:label="pattern2">
+      <rect
+         style="fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.755906;stroke-linecap:round"
+         id="rect1"
+         width="55.539761"
+         height="10.799397"
+         x="0"
+         y="2.0980593e-16" />
+      <rect
+         style="fill:none;fill-opacity:1;stroke:none;stroke-width:0.755906;stroke-linecap:round"
+         id="rect1-36"
+         width="55.539761"
+         height="10.799397"
+         x="55.540207"
+         y="0" />
+    </pattern>
+    <pattern
+       patternUnits="userSpaceOnUse"
+       width="111.07997"
+       height="10.799397"
+       patternTransform="scale(1)"
+       preserveAspectRatio="xMidYMid"
+       id="pattern2-6"
+       inkscape:label="pattern2">
+      <rect
+         style="fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.755906;stroke-linecap:round"
+         id="rect1-1"
+         width="55.539761"
+         height="10.799397"
+         x="0"
+         y="2.0980593e-16" />
+      <rect
+         style="fill:none;fill-opacity:1;stroke:none;stroke-width:0.755906;stroke-linecap:round"
+         id="rect1-36-8"
+         width="55.539761"
+         height="10.799397"
+         x="55.540207"
+         y="0" />
+    </pattern>
+    <pattern
+       patternUnits="userSpaceOnUse"
+       width="111.07997"
+       height="10.799397"
+       patternTransform="scale(1)"
+       preserveAspectRatio="xMidYMid"
+       id="pattern2-7"
+       inkscape:label="pattern2">
+      <rect
+         style="fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.755906;stroke-linecap:round"
+         id="rect1-5"
+         width="55.539761"
+         height="10.799397"
+         x="0"
+         y="2.0980593e-16" />
+      <rect
+         style="fill:none;fill-opacity:1;stroke:none;stroke-width:0.755906;stroke-linecap:round"
+         id="rect1-36-9"
+         width="55.539761"
+         height="10.799397"
+         x="55.540207"
+         y="0" />
+    </pattern>
+    <pattern
+       inkscape:collect="always"
+       xlink:href="#pattern2-61"
+       preserveAspectRatio="xMidYMid"
+       id="pattern3-3"
+       patternTransform="matrix(0.06614582,0,0,0.27779326,9.3970503e-8,3)"
+       x="10"
+       y="0" />
+    <pattern
+       patternUnits="userSpaceOnUse"
+       width="111.07997"
+       height="10.799397"
+       patternTransform="scale(1)"
+       preserveAspectRatio="xMidYMid"
+       id="pattern2-61"
+       inkscape:label="pattern2">
+      <rect
+         style="fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.755906;stroke-linecap:round"
+         id="rect1-2"
+         width="55.539761"
+         height="10.799397"
+         x="0"
+         y="2.0980593e-16" />
+      <rect
+         style="fill:none;fill-opacity:1;stroke:none;stroke-width:0.755906;stroke-linecap:round"
+         id="rect1-36-93"
+         width="55.539761"
+         height="10.799397"
+         x="55.540207"
+         y="0" />
+    </pattern>
+    <pattern
+       inkscape:collect="always"
+       xlink:href="#pattern2-61-5"
+       preserveAspectRatio="xMidYMid"
+       id="pattern3-3-4"
+       patternTransform="matrix(0.26458332,0,0,0.27779326,6.1068727e-8,5.9999999)"
+       x="20"
+       y="0" />
+    <pattern
+       patternUnits="userSpaceOnUse"
+       width="111.07997"
+       height="10.799397"
+       patternTransform="scale(1)"
+       preserveAspectRatio="xMidYMid"
+       id="pattern2-61-5"
+       inkscape:label="pattern2">
+      <rect
+         style="fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.755906;stroke-linecap:round"
+         id="rect1-2-0"
+         width="55.539761"
+         height="10.799397"
+         x="0"
+         y="2.0980593e-16" />
+      <rect
+         style="fill:none;fill-opacity:1;stroke:none;stroke-width:0.755906;stroke-linecap:round"
+         id="rect1-36-93-3"
+         width="55.539761"
+         height="10.799397"
+         x="55.540207"
+         y="0" />
+    </pattern>
+    <pattern
+       inkscape:collect="always"
+       xlink:href="#pattern4-0"
+       preserveAspectRatio="xMidYMid"
+       id="pattern5-2"
+       patternTransform="matrix(0.06614582,0,0,0.27779326,1.3789358e-7,27.000005)"
+       x="90"
+       y="0" />
+    <pattern
+       inkscape:collect="always"
+       xlink:href="#pattern3-3-4-6"
+       preserveAspectRatio="xMidYMid"
+       id="pattern4-0"
+       patternTransform="matrix(0.26458332,0,0,0.27779326,6.1068727e-8,9.0000004)"
+       x="30"
+       y="0" />
+    <pattern
+       inkscape:collect="always"
+       xlink:href="#pattern2-61-5-1"
+       preserveAspectRatio="xMidYMid"
+       id="pattern3-3-4-6"
+       patternTransform="matrix(0.26458332,0,0,0.27779326,6.1068727e-8,5.9999999)"
+       x="20"
+       y="0" />
+    <pattern
+       patternUnits="userSpaceOnUse"
+       width="111.07997"
+       height="10.799397"
+       patternTransform="scale(1)"
+       preserveAspectRatio="xMidYMid"
+       id="pattern2-61-5-1"
+       inkscape:label="pattern2">
+      <rect
+         style="fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.755906;stroke-linecap:round"
+         id="rect1-2-0-5"
+         width="55.539761"
+         height="10.799397"
+         x="0"
+         y="2.0980593e-16" />
+      <rect
+         style="fill:none;fill-opacity:1;stroke:none;stroke-width:0.755906;stroke-linecap:round"
+         id="rect1-36-93-3-5"
+         width="55.539761"
+         height="10.799397"
+         x="55.540207"
+         y="0" />
+    </pattern>
+    <pattern
+       inkscape:collect="always"
+       xlink:href="#pattern2-76"
+       preserveAspectRatio="xMidYMid"
+       id="pattern3-4"
+       patternTransform="matrix(0.06614582,0,0,0.27779326,1.3789358e-7,15)"
+       x="50"
+       y="0" />
+    <pattern
+       patternUnits="userSpaceOnUse"
+       width="111.07997"
+       height="10.799397"
+       patternTransform="scale(1)"
+       preserveAspectRatio="xMidYMid"
+       id="pattern2-76"
+       inkscape:label="pattern2">
+      <rect
+         style="fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.755906;stroke-linecap:round"
+         id="rect1-56"
+         width="55.539761"
+         height="10.799397"
+         x="0"
+         y="2.0980593e-16" />
+      <rect
+         style="fill:none;fill-opacity:1;stroke:none;stroke-width:0.755906;stroke-linecap:round"
+         id="rect1-36-937"
+         width="55.539761"
+         height="10.799397"
+         x="55.540207"
+         y="0" />
+    </pattern>
+    <pattern
+       inkscape:collect="always"
+       xlink:href="#pattern2-61-2"
+       preserveAspectRatio="xMidYMid"
+       id="pattern3-3-45"
+       patternTransform="matrix(0.06614582,0,0,0.27779326,1.3789358e-7,18)"
+       x="60"
+       y="0" />
+    <pattern
+       patternUnits="userSpaceOnUse"
+       width="111.07997"
+       height="10.799397"
+       patternTransform="scale(1)"
+       preserveAspectRatio="xMidYMid"
+       id="pattern2-61-2"
+       inkscape:label="pattern2">
+      <rect
+         style="fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.755906;stroke-linecap:round"
+         id="rect1-2-5"
+         width="55.539761"
+         height="10.799397"
+         x="0"
+         y="2.0980593e-16" />
+      <rect
+         style="fill:none;fill-opacity:1;stroke:none;stroke-width:0.755906;stroke-linecap:round"
+         id="rect1-36-93-4"
+         width="55.539761"
+         height="10.799397"
+         x="55.540207"
+         y="0" />
+    </pattern>
+    <pattern
+       inkscape:collect="always"
+       xlink:href="#pattern2-61-5-1"
+       preserveAspectRatio="xMidYMid"
+       id="pattern1"
+       patternTransform="matrix(0.26458332,0,0,0.27779326,6.1068727e-8,5.9999999)"
+       x="20"
+       y="0" />
+    <pattern
+       patternUnits="userSpaceOnUse"
+       width="111.07997"
+       height="10.799397"
+       patternTransform="scale(1)"
+       preserveAspectRatio="xMidYMid"
+       id="pattern6"
+       inkscape:label="pattern2">
+      <rect
+         style="fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.755906;stroke-linecap:round"
+         id="rect2-7"
+         width="55.539761"
+         height="10.799397"
+         x="0"
+         y="2.0980593e-16" />
+      <rect
+         style="fill:none;fill-opacity:1;stroke:none;stroke-width:0.755906;stroke-linecap:round"
+         id="rect3-4"
+         width="55.539761"
+         height="10.799397"
+         x="55.540207"
+         y="0" />
+    </pattern>
+    <pattern
+       inkscape:collect="always"
+       xlink:href="#pattern3-3-4-6"
+       preserveAspectRatio="xMidYMid"
+       id="pattern7"
+       patternTransform="matrix(0.26458332,0,0,0.27779326,6.1068727e-8,9.0000004)"
+       x="30"
+       y="0" />
+    <pattern
+       inkscape:collect="always"
+       xlink:href="#pattern2-61-5-1"
+       preserveAspectRatio="xMidYMid"
+       id="pattern8"
+       patternTransform="matrix(0.26458332,0,0,0.27779326,6.1068727e-8,5.9999999)"
+       x="20"
+       y="0" />
+    <pattern
+       patternUnits="userSpaceOnUse"
+       width="111.07997"
+       height="10.799397"
+       patternTransform="scale(1)"
+       preserveAspectRatio="xMidYMid"
+       id="pattern9"
+       inkscape:label="pattern2">
+      <rect
+         style="fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.755906;stroke-linecap:round"
+         id="rect8"
+         width="55.539761"
+         height="10.799397"
+         x="0"
+         y="2.0980593e-16" />
+      <rect
+         style="fill:none;fill-opacity:1;stroke:none;stroke-width:0.755906;stroke-linecap:round"
+         id="rect9"
+         width="55.539761"
+         height="10.799397"
+         x="55.540207"
+         y="0" />
+    </pattern>
+    <pattern
+       inkscape:collect="always"
+       xlink:href="#pattern2-61-5-1-4"
+       preserveAspectRatio="xMidYMid"
+       id="pattern3-3-4-6-1"
+       patternTransform="matrix(0.26458332,0,0,0.27779326,6.1068727e-8,5.9999999)"
+       x="20"
+       y="0" />
+    <pattern
+       patternUnits="userSpaceOnUse"
+       width="111.07997"
+       height="10.799397"
+       patternTransform="scale(1)"
+       preserveAspectRatio="xMidYMid"
+       id="pattern2-61-5-1-4"
+       inkscape:label="pattern2">
+      <rect
+         style="fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.755906;stroke-linecap:round"
+         id="rect1-2-0-5-9"
+         width="55.539761"
+         height="10.799397"
+         x="0"
+         y="2.0980593e-16" />
+      <rect
+         style="fill:none;fill-opacity:1;stroke:none;stroke-width:0.755906;stroke-linecap:round"
+         id="rect1-36-93-3-5-2"
+         width="55.539761"
+         height="10.799397"
+         x="55.540207"
+         y="0" />
+    </pattern>
+    <pattern
+       inkscape:collect="always"
+       xlink:href="#pattern3-3-4-6-1"
+       preserveAspectRatio="xMidYMid"
+       id="pattern1-6"
+       patternTransform="matrix(0.26458332,0,0,0.27779326,6.1068727e-8,9.0000004)"
+       x="30"
+       y="0" />
+    <pattern
+       inkscape:collect="always"
+       xlink:href="#pattern2-61-5-1-4"
+       preserveAspectRatio="xMidYMid"
+       id="pattern2-8"
+       patternTransform="matrix(0.26458332,0,0,0.27779326,6.1068727e-8,5.9999999)"
+       x="20"
+       y="0" />
+    <pattern
+       patternUnits="userSpaceOnUse"
+       width="111.07997"
+       height="10.799397"
+       patternTransform="scale(1)"
+       preserveAspectRatio="xMidYMid"
+       id="pattern3-9"
+       inkscape:label="pattern2">
+      <rect
+         style="fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.755906;stroke-linecap:round"
+         id="rect2-2"
+         width="55.539761"
+         height="10.799397"
+         x="0"
+         y="2.0980593e-16" />
+      <rect
+         style="fill:none;fill-opacity:1;stroke:none;stroke-width:0.755906;stroke-linecap:round"
+         id="rect3-6"
+         width="55.539761"
+         height="10.799397"
+         x="55.540207"
+         y="0" />
+    </pattern>
+    <pattern
+       inkscape:collect="always"
+       xlink:href="#pattern2-61-5-1-4"
+       preserveAspectRatio="xMidYMid"
+       id="pattern4-4"
+       patternTransform="matrix(0.26458332,0,0,0.27779326,6.1068727e-8,5.9999999)"
+       x="20"
+       y="0" />
+    <pattern
+       patternUnits="userSpaceOnUse"
+       width="111.07997"
+       height="10.799397"
+       patternTransform="scale(1)"
+       preserveAspectRatio="xMidYMid"
+       id="pattern5-9"
+       inkscape:label="pattern2">
+      <rect
+         style="fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.755906;stroke-linecap:round"
+         id="rect4-5"
+         width="55.539761"
+         height="10.799397"
+         x="0"
+         y="2.0980593e-16" />
+      <rect
+         style="fill:none;fill-opacity:1;stroke:none;stroke-width:0.755906;stroke-linecap:round"
+         id="rect5"
+         width="55.539761"
+         height="10.799397"
+         x="55.540207"
+         y="0" />
+    </pattern>
+    <pattern
+       inkscape:collect="always"
+       xlink:href="#pattern2-61-2-4"
+       preserveAspectRatio="xMidYMid"
+       id="pattern3-3-45-0"
+       patternTransform="matrix(0.06614582,0,0,0.27779326,2.2325812e-7,29.999999)"
+       x="100"
+       y="0" />
+    <pattern
+       patternUnits="userSpaceOnUse"
+       width="111.07997"
+       height="10.799397"
+       patternTransform="scale(1)"
+       preserveAspectRatio="xMidYMid"
+       id="pattern2-61-2-4"
+       inkscape:label="pattern2">
+      <rect
+         style="fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.755906;stroke-linecap:round"
+         id="rect1-2-5-8"
+         width="55.539761"
+         height="10.799397"
+         x="0"
+         y="2.0980593e-16" />
+      <rect
+         style="fill:none;fill-opacity:1;stroke:none;stroke-width:0.755906;stroke-linecap:round"
+         id="rect1-36-93-4-7"
+         width="55.539761"
+         height="10.799397"
+         x="55.540207"
+         y="0" />
+    </pattern>
+  </defs>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <rect
+       style="fill:url(#pattern3);stroke:none;stroke-width:0.135553"
+       width="120"
+       height="3"
+       x="-1.9012569e-15"
+       y="0"
+       id="rect2" />
+    <rect
+       style="fill:url(#pattern3-3);stroke:none;stroke-width:0.135553"
+       width="120"
+       height="3"
+       x="-2.1649349e-15"
+       y="3"
+       id="rect2-4" />
+    <rect
+       style="fill:url(#pattern13);stroke:none;stroke-width:0.135553"
+       width="120"
+       height="3"
+       x="-1.4016566e-15"
+       y="6"
+       id="rect2-4-0" />
+    <rect
+       style="fill:url(#pattern14);stroke:none;stroke-width:0.135553"
+       width="120"
+       height="3"
+       x="-1.4016566e-15"
+       y="9"
+       id="rect3" />
+    <rect
+       style="fill:url(#pattern5);stroke:none;stroke-width:0.135553"
+       width="120"
+       height="3"
+       x="-1.4016566e-15"
+       y="12"
+       id="rect4" />
+    <rect
+       style="fill:url(#pattern3-4);stroke:none;stroke-width:0.135553"
+       width="120"
+       height="3"
+       x="-1.731254e-15"
+       y="15"
+       id="rect10" />
+    <rect
+       style="fill:url(#pattern3-3-45);stroke:none;stroke-width:0.135553"
+       width="120"
+       height="3"
+       x="-1.731254e-15"
+       y="18"
+       id="rect2-4-07" />
+    <rect
+       style="fill:url(#pattern10);stroke:none;stroke-width:0.135553"
+       width="120"
+       height="3"
+       x="-1.731254e-15"
+       y="21"
+       id="rect2-4-0-8" />
+    <rect
+       style="fill:url(#pattern11);stroke:none;stroke-width:0.135553"
+       width="120"
+       height="3"
+       x="-1.731254e-15"
+       y="24"
+       id="rect11" />
+    <rect
+       style="fill:url(#pattern5-2);stroke:none;stroke-width:0.135553"
+       width="120"
+       height="3"
+       x="-1.731254e-15"
+       y="27"
+       id="rect4-6" />
+    <rect
+       style="fill:url(#pattern3-3-45-0);stroke:none;stroke-width:0.135553"
+       width="120"
+       height="3"
+       x="-9.2287289e-16"
+       y="30"
+       id="rect2-4-07-2" />
+  </g>
+</svg>

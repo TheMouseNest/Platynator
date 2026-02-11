@@ -3,11 +3,18 @@ local addonTable = select(2, ...)
 
 local pandemicCurve
 local pandemicPercentage = 0.3
+local dispelCurve
 if C_CurveUtil then
   pandemicCurve = C_CurveUtil.CreateCurve()
   pandemicCurve:SetType(Enum.LuaCurveType.Step)
   pandemicCurve:AddPoint(0, 1)
-  pandemicCurve:AddPoint(0.3, 0)
+  pandemicCurve:AddPoint(pandemicPercentage, 0)
+
+  dispelCurve = C_CurveUtil.CreateColorCurve()
+  dispelCurve:SetType(Enum.LuaCurveType.Step)
+  dispelCurve:AddPoint(0, CreateColor(0, 0, 0, 0))
+  dispelCurve:AddPoint(9, CreateColor(0, 0, 0, 1))
+  dispelCurve:AddPoint(10, CreateColor(0, 0, 0, 0))
 end
 
 addonTable.Display.NameplateMixin = {}
@@ -30,7 +37,15 @@ function addonTable.Display.NameplateMixin:OnLoad()
   self.CrowdControlDisplay:SetSize(10, 10)
 
   self.AurasManager = addonTable.Utilities.InitFrameWithMixin(self, addonTable.Display.AurasManagerMixin)
+  local borderAsset = addonTable.Assets.BarBordersSliced["1px"]
+  local dispelAsset = addonTable.Assets.BarBordersSliced["slight"]
   self.AurasPool = CreateFramePool("Frame", self, "PlatynatorNameplateBuffButtonTemplate", nil, false, function(frame)
+    frame.Border = frame:CreateTexture(nil, "OVERLAY")
+    frame.Border:SetAllPoints(true)
+    frame.Border:SetScale(1/borderAsset.lowerScale)
+    frame.Border:SetTexture(borderAsset.file)
+    frame.Border:SetTextureSliceMargins(borderAsset.width * borderAsset.margin, borderAsset.width * borderAsset.margin, borderAsset.height * borderAsset.margin, borderAsset.height * borderAsset.margin)
+    frame.Border:SetVertexColor(0, 0, 0)
     frame.Cooldown:SetCountdownAbbrevThreshold(20)
     frame.Cooldown.Text = frame.Cooldown:GetRegions()
     frame.Pandemic = CreateFrame("Frame", nil, frame)
@@ -79,11 +94,20 @@ function addonTable.Display.NameplateMixin:OnLoad()
       frame.Pandemic.Animation:SetLooping("REPEAT")
       frame.Pandemic.Animation:Play()
     end
+    frame.Dispel = CreateFrame("Frame", nil, frame)
+    frame.Dispel:SetAllPoints()
+    do
+      local dispelTexture = frame.Dispel:CreateTexture()
+      dispelTexture:SetAllPoints()
+      dispelTexture:SetScale(1/dispelAsset.lowerScale)
+      dispelTexture:SetTexture(dispelAsset.file)
+      dispelTexture:SetTextureSliceMargins(dispelAsset.width * dispelAsset.margin, dispelAsset.width * dispelAsset.margin, dispelAsset.height * dispelAsset.margin, dispelAsset.height * dispelAsset.margin)
+      dispelTexture:SetVertexColor(1, 0, 0)
+    end
     frame:SetScript("OnEnter", function()
       GameTooltip_SetDefaultAnchor(GameTooltip, frame)
       if GameTooltip.SetUnitAuraByAuraInstanceID then
         GameTooltip:SetUnitAuraByAuraInstanceID(self.unit, frame.auraInstanceID)
-        GameTooltip:Show()
       elseif frame.auraIndex then
         if frame.auraIndex ~= -1 then
           GameTooltip:SetUnitAura(self.unit, frame.auraIndex, frame.auraFilter)
@@ -150,6 +174,8 @@ function addonTable.Display.NameplateMixin:OnLoad()
         anchor = "CENTER"
       end
 
+      local sootheAvailable = addonTable.Display.Utilities.GetSootheAvailable()
+
       frame.items = {}
       local texBase = 0.95 * (1 - details.height) / 2
       for _, auraInstanceID in ipairs(data) do
@@ -175,6 +201,8 @@ function addonTable.Display.NameplateMixin:OnLoad()
           auraFrame.Pandemic.Right:SetWidth(pandemicDim)
         end
 
+        auraFrame.Dispel:SetShown(sootheAvailable and details.showDispel.enrage)
+
         auraFrame.Icon:SetTexture(aura.icon);
         auraFrame.CountFrame.Count:SetText(aura.applicationsString)
         auraFrame.CountFrame.Count:SetFontObject(addonTable.CurrentFont)
@@ -189,7 +217,8 @@ function addonTable.Display.NameplateMixin:OnLoad()
         end
 
         PixelUtil.SetSize(auraFrame, 20, 20 * details.height)
-        PixelUtil.SetSize(auraFrame.Icon, 19, 19 * details.height)
+        PixelUtil.SetSize(auraFrame.Border, 20, 20 * details.height)
+        PixelUtil.SetSize(auraFrame.Icon, 20, 20 * details.height)
         auraFrame.Icon:SetTexCoord(0.05, 0.95, 0.05 + texBase, 0.95 - texBase)
 
         if aura.durationSecret then
@@ -197,14 +226,21 @@ function addonTable.Display.NameplateMixin:OnLoad()
           if details.showPandemic then
             auraFrame.Pandemic:SetAlpha(C_CurveUtil.EvaluateColorValueFromBoolean(auraFrame.durationSecret:IsZero(), 0, auraFrame.durationSecret:EvaluateRemainingPercent(pandemicCurve)))
           end
+          if sootheAvailable and details.showDispel.enrage then
+            auraFrame.Dispel:SetAlpha(C_UnitAuras.GetAuraDispelTypeColor(self.unit, aura.auraInstanceID, dispelCurve).a)
+          end
         elseif auraFrame.expirationTime then
           CooldownFrame_Set(auraFrame.Cooldown, aura.expirationTime - aura.duration, aura.duration, aura.duration > 0, true);
           if details.showPandemic then
             auraFrame.Pandemic:SetAlpha(aura.duration > 0 and aura.expirationTime - GetTime() <= aura.duration * pandemicPercentage and 1 or 0)
           end
+          if details.showDispel.enrage then
+            auraFrame.Dispel:SetAlpha(aura.dispelName == "" and 1 or 0)
+          end
         else
           auraFrame.Cooldown:Clear()
           auraFrame.Pandemic:SetAlpha(0)
+          auraFrame.Dispel:SetAlpha(0)
         end
 
         auraFrame:Show();
@@ -438,9 +474,9 @@ function addonTable.Display.NameplateMixin:SetUnit(unit)
 end
 
 function addonTable.Display.NameplateMixin:UpdateCastingState()
-  local _, t1 = UnitCastingInfo(self.unit)
-  local _, t2 = UnitChannelInfo(self.unit)
-  self.casting = type(t1) ~= "nil" or type(t2) ~= "nil"
+  local _, cast = UnitCastingInfo(self.unit)
+  local _, channel = UnitChannelInfo(self.unit)
+  self.casting = cast ~= nil or channel ~= nil
 end
 
 function addonTable.Display.NameplateMixin:UpdateForTarget()
@@ -480,7 +516,7 @@ function addonTable.Display.NameplateMixin:UpdateForFocus()
 end
 
 function addonTable.Display.NameplateMixin:UpdateVisual()
-  local scaleMod = addonTable.Constants.IsMidnight and 1 or UIParent:GetEffectiveScale()
+  local scaleMod = addonTable.Constants.IsRetail and 1 or UIParent:GetEffectiveScale()
   if not self.unit then
     if not addonTable.Constants.ParentedToNameplates then
       self.overrideAlpha = 1

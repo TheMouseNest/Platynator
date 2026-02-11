@@ -1,4 +1,4 @@
-## Interface: 120000, 110207, 50503, 38000, 20505, 11508
+## Interface: 120001, 120000, 50503, 38000, 20505, 11508
 ## Title: Platynator
 ## Version: @project-version@
 ## Author: plusmouse
@@ -56,12 +56,14 @@ Display/CastTargetText.lua
 Display/CastInterrupterText.lua
 Display/LevelText.lua
 Display/UnitTargetText.lua
+Display/QuestText.lua
 Display/AutomaticHighlight.lua
 Display/TargetHighlight.lua
 Display/SoftTargetHighlight.lua
 Display/FocusHighlight.lua
 Display/MouseoverHighlight.lua
 Display/FixedHighlight.lua
+Display/AnimatedHighlight.lua
 Display/QuestMarker.lua
 Display/CannotInterruptMarker.lua
 Display/CastIconMarker.lua
@@ -69,6 +71,7 @@ Display/EliteMarker.lua
 Display/RareMarker.lua
 Display/RaidMarker.lua
 Display/PvPMarker.lua
+Display/ClassMarker.lua
 Display/Widgets.lua
 
 API/Main.lua

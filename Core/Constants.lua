@@ -5,11 +5,13 @@ addonTable.Constants = {
   IsRetail = WOW_PROJECT_ID == WOW_PROJECT_MAINLINE,
   IsMists = WOW_PROJECT_ID == WOW_PROJECT_MISTS_CLASSIC,
   --IsCata = WOW_PROJECT_ID == WOW_PROJECT_CATACLYSM_CLASSIC,
-  --IsWrath = WOW_PROJECT_ID == WOW_PROJECT_WRATH_CLASSIC,
+  IsWrath = WOW_PROJECT_ID == WOW_PROJECT_WRATH_CLASSIC,
+  IsBC = WOW_PROJECT_ID == WOW_PROJECT_BURNING_CRUSADE_CLASSIC,
   IsEra = WOW_PROJECT_ID == WOW_PROJECT_CLASSIC,
   IsClassic = WOW_PROJECT_ID ~= WOW_PROJECT_MAINLINE,
 
-  IsMidnight = select(4, GetBuildInfo()) >= 120000,
+  IsMidnight = select(4, GetBuildInfo()) >= 120001,
+  AuraFilteringAvailable = false and select(4, GetBuildInfo()) >= 120001,
 
   DeathKnightMaxRunes = 6,
 
@@ -30,7 +32,8 @@ addonTable.Constants.Events = {
 
   "TextOverrideUpdated",
 
-  "LegacyInterrupter"
+  "LegacyInterrupter",
+  "QuestInfoUpdate",
 }
 
 addonTable.Constants.RefreshReason = {

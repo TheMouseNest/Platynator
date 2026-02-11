@@ -102,7 +102,7 @@ function addonTable.Display.ManagerMixin:OnLoad()
   end)
 
   NamePlateDriverFrame:UnregisterEvent("DISPLAY_SIZE_CHANGED")
-  if not addonTable.Constants.IsMidnight then
+  if not addonTable.Constants.IsRetail then
     NamePlateDriverFrame:UnregisterEvent("CVAR_UPDATE")
   end
 
@@ -192,17 +192,19 @@ function addonTable.Display.ManagerMixin:OnLoad()
       return
     end
     local nameplate = C_NamePlate.GetNamePlateForUnit(unit, issecure())
-    if nameplate and unit and (addonTable.Constants.IsMidnight or not UnitIsUnit("player", unit)) then
-      if addonTable.Constants.IsMidnight then
+    if nameplate and unit and (addonTable.Constants.IsRetail or not UnitIsUnit("player", unit)) then
+      if addonTable.Constants.IsRetail then
         nameplate.UnitFrame:SetAlpha(0)
         nameplate.UnitFrame.AurasFrame.DebuffListFrame:SetParent(addonTable.hiddenFrame)
         nameplate.UnitFrame.AurasFrame.BuffListFrame:SetParent(addonTable.hiddenFrame)
         nameplate.UnitFrame.AurasFrame.CrowdControlListFrame:SetParent(addonTable.hiddenFrame)
+        nameplate.UnitFrame.AurasFrame.LossOfControlFrame:SetParent(addonTable.hiddenFrame)
         for _, key in ipairs(reparentedKeys) do
           nameplate.UnitFrame[key]:SetParent(addonTable.hiddenFrame)
         end
         if not self.HookedUFs[nameplate.UnitFrame] then
           self.HookedUFs[nameplate.UnitFrame] = true
+          local locked = false
           hooksecurefunc(nameplate.UnitFrame, "SetAlpha", function(UF)
             if locked or UF:IsForbidden() then
               return
@@ -211,14 +213,16 @@ function addonTable.Display.ManagerMixin:OnLoad()
             UF:SetAlpha(0)
             locked = false
           end)
-          hooksecurefunc(nameplate.UnitFrame.AurasFrame, "RefreshAuras", function(af, data)
-            if not af:IsForbidden() then
-              local display = self.nameplateDisplays[af:GetParent().unit]
-              if display and display.unit then
-                display.AurasManager:OnEvent("", "", data)
+          if not addonTable.Constants.AuraFilteringAvailable then
+            hooksecurefunc(nameplate.UnitFrame.AurasFrame, "RefreshAuras", function(af, data)
+              if not af:IsForbidden() then
+                local display = self.nameplateDisplays[af:GetParent().unit]
+                if display and display.unit then
+                  display.AurasManager:OnEvent("", "", data or {isFullUpdate = true})
+                end
               end
-            end
-          end)
+            end)
+          end
         end
       else
         nameplate.UnitFrame:SetParent(addonTable.hiddenFrame)
@@ -227,7 +231,7 @@ function addonTable.Display.ManagerMixin:OnLoad()
       if nameplate.UnitFrame.castBar then
         nameplate.UnitFrame.castBar:UnregisterAllEvents()
       end
-      if addonTable.Constants.IsMidnight then
+      if addonTable.Constants.IsRetail and not addonTable.Constants.AuraFilteringAvailable then
         nameplate.UnitFrame:RegisterUnitEvent("UNIT_AURA", unit)
       end
       if nameplate.UnitFrame.WidgetContainer then
@@ -240,14 +244,10 @@ function addonTable.Display.ManagerMixin:OnLoad()
     if self.ModifiedUFs[unit] then
       local UF = self.ModifiedUFs[unit]
       -- Restore original anchors and parents to various things we changed
-      if addonTable.Constants.IsMidnight then
+      if addonTable.Constants.IsRetail then
         for _, key in ipairs(reparentedKeys) do
           UF[key]:SetParent(UF)
         end
-        UF.AurasFrame.LossOfControlFrame:ClearAllPoints()
-        UF.AurasFrame.LossOfControlFrame:SetPoint("LEFT", UF.HealthBarsContainer.healthBar, "RIGHT", 5, 0);
-        UF.AurasFrame.LossOfControlFrame:SetParent(UF.AurasFrame)
-        UF.AurasFrame.LossOfControlFrame:SetScale(1)
         UF.AurasFrame.DebuffListFrame:SetParent(UF.AurasFrame)
         UF.AurasFrame.BuffListFrame:SetParent(UF.AurasFrame)
         UF.AurasFrame.CrowdControlListFrame:SetParent(UF.AurasFrame)
@@ -364,7 +364,7 @@ function addonTable.Display.ManagerMixin:UpdateStacking()
     self:RegisterEvent("PLAYER_REGEN_ENABLED")
     return
   end
-  if addonTable.Constants.IsMidnight then
+  if addonTable.Constants.IsRetail then
     local state = addonTable.Config.Get(addonTable.Config.Options.STACKING_NAMEPLATES)
     C_CVar.SetCVarBitfield("nameplateStackingTypes", Enum.NamePlateStackType.Enemy, state.enemy)
     C_CVar.SetCVarBitfield("nameplateStackingTypes", Enum.NamePlateStackType.Friendly, state.friend)
@@ -450,17 +450,19 @@ function addonTable.Display.ManagerMixin:UpdateInstanceShowState()
     return
   end
 
+  local relevantInstance = addonTable.Display.Utilities.IsInRelevantInstance()
+
   if state == "name_only" and C_CVar.GetCVarInfo("nameplateShowOnlyNameForFriendlyPlayerUnits") then
-    C_CVar.SetCVar("nameplateShowOnlyNameForFriendlyPlayerUnits", "1")
+    C_CVar.SetCVar("nameplateShowOnlyNameForFriendlyPlayerUnits", relevantInstance and "1" or "0")
   end
   if state == "name_only" and C_CVar.GetCVarInfo("nameplateUseClassColorForFriendlyPlayerUnitNames") then
-    C_CVar.SetCVar("nameplateUseClassColorForFriendlyPlayerUnitNames", "1")
+    C_CVar.SetCVar("nameplateUseClassColorForFriendlyPlayerUnitNames", relevantInstance and "1" or "0")
   end
 
   local values = GetCVarsForNameplates()
   local currentShow = addonTable.Config.Get(addonTable.Config.Options.SHOW_NAMEPLATES)
 
-  if addonTable.Display.Utilities.IsInRelevantInstance() then
+  if relevantInstance then
     if not self.toggledFriendly and
       (state == "name_only" and not currentShow.friendlyPlayer
       or state == "never" and (currentShow.friendlyPlayer or currentShow.friendlyNPC)
@@ -488,7 +490,7 @@ function addonTable.Display.ManagerMixin:UpdateInstanceShowState()
 end
 
 function addonTable.Display.ManagerMixin:ListenToBuffs(display, unit)
-  if addonTable.Constants.IsMidnight and self.ModifiedUFs[unit] then
+  if addonTable.Constants.IsRetail and self.ModifiedUFs[unit] then
     local DebuffListFrame = self.ModifiedUFs[unit].AurasFrame.DebuffListFrame
     local BuffListFrame = self.ModifiedUFs[unit].AurasFrame.BuffListFrame
     local CrowdControlListFrame = self.ModifiedUFs[unit].AurasFrame.CrowdControlListFrame
@@ -515,17 +517,6 @@ function addonTable.Display.ManagerMixin:ListenToBuffs(display, unit)
     for _, a in ipairs(auras) do
       designInfo[a.kind] = a
     end
-    local LossOfControlFrame = self.ModifiedUFs[unit].AurasFrame.LossOfControlFrame
-    LossOfControlFrame:SetParent(display.CrowdControlDisplay)
-    if designInfo.crowdControl then
-      LossOfControlFrame:ClearAllPoints()
-      if type(designInfo.crowdControl.anchor[1]) == "string" then
-        LossOfControlFrame:SetPoint(designInfo.crowdControl.anchor[1], display.CrowdControlDisplay)
-      else
-        LossOfControlFrame:SetPoint("CENTER")
-      end
-      LossOfControlFrame:SetScale(designInfo.crowdControl.scale)
-    end
   end
 end
 
@@ -544,7 +535,7 @@ function addonTable.Display.ManagerMixin:Install(unit, nameplate)
   end
   local nameplate = C_NamePlate.GetNamePlateForUnit(unit, issecure())
   -- NOTE: the nameplate _name_ does not correspond to the unit
-  if nameplate and unit and (addonTable.Constants.IsMidnight or not UnitIsUnit("player", unit)) then
+  if nameplate and unit and (addonTable.Constants.IsRetail or not UnitIsUnit("player", unit)) then
     local shouldSimplify = false
     local newDisplay
     if not UnitCanAttack("player", unit) then
@@ -675,7 +666,7 @@ function addonTable.Display.ManagerMixin:UpdateNamePlateSize()
   local width = addonTable.Rect.width * globalScale
   local height = addonTable.Rect.height * globalScale
 
-  if C_NamePlate.SetNamePlateEnemySize and not addonTable.Constants.IsMidnight then
+  if C_NamePlate.SetNamePlateEnemySize and not addonTable.Constants.IsRetail then
     width = width * addonTable.Config.Get(addonTable.Config.Options.CLICK_REGION_SCALE_X) * UIParent:GetScale()
     height = height * addonTable.Config.Get(addonTable.Config.Options.CLICK_REGION_SCALE_Y) * UIParent:GetScale()
     local stackState = addonTable.Config.Get(addonTable.Config.Options.STACKING_NAMEPLATES)
@@ -707,6 +698,11 @@ function addonTable.Display.ManagerMixin:UpdateNamePlateSize()
 end
 
 function addonTable.Display.ManagerMixin:UpdateClickable()
+  if InCombatLockdown() then
+    self:RegisterEvent("PLAYER_REGEN_ENABLED")
+    return
+  end
+
   local state = addonTable.Config.Get(addonTable.Config.Options.CLICKABLE_NAMEPLATES)
   if C_NamePlateManager and C_NamePlateManager.SetNamePlateHitTestInsets then
     local value = 10000
@@ -840,6 +836,9 @@ function addonTable.Display.ManagerMixin:UpdateFriendlyFont()
       local friendlyFontSize = _G[addonTable.CurrentFont]:GetFontHeight() * scale
       for index, size in ipairs(systemFontSizes) do
         if size >= friendlyFontSize or index == 5 then
+          if systemFontSizes[index - 1] and math.abs(systemFontSizes[index - 1] - friendlyFontSize) < math.abs(size - friendlyFontSize) then
+            index = index - 1
+          end
           C_CVar.SetCVar("nameplateSize", tostring(index))
           break
         end
@@ -919,6 +918,7 @@ function addonTable.Display.ManagerMixin:OnEvent(eventName, ...)
     self:UpdateTargetScale()
     self:UpdateSimplifiedScale()
     self:UpdateObscuredAlpha()
+    self:UpdateClickable()
   elseif eventName == "UI_SCALE_CHANGED" then
     if not addonTable.Constants.ParentedToNameplates then
       for unit, display in pairs(self.nameplateDisplays) do
@@ -951,7 +951,7 @@ function addonTable.Display.ManagerMixin:OnEvent(eventName, ...)
     PlatynatorNameplateCooldownFont:SetFont(file, 14, flags)
     self:UpdateFriendlyFont()
   elseif eventName == "VARIABLES_LOADED" then
-    if addonTable.Constants.IsMidnight then
+    if addonTable.Constants.IsRetail then
       C_CVar.SetCVarBitfield(NamePlateConstants.ENEMY_NPC_AURA_DISPLAY_CVAR, Enum.NamePlateEnemyNpcAuraDisplay.Buffs, true)
       C_CVar.SetCVarBitfield(NamePlateConstants.ENEMY_NPC_AURA_DISPLAY_CVAR, Enum.NamePlateEnemyNpcAuraDisplay.Debuffs, true)
       C_CVar.SetCVarBitfield(NamePlateConstants.ENEMY_NPC_AURA_DISPLAY_CVAR, Enum.NamePlateEnemyNpcAuraDisplay.CrowdControl, true)
@@ -960,9 +960,9 @@ function addonTable.Display.ManagerMixin:OnEvent(eventName, ...)
       C_CVar.SetCVarBitfield(NamePlateConstants.ENEMY_PLAYER_AURA_DISPLAY_CVAR, Enum.NamePlateEnemyPlayerAuraDisplay.Debuffs, true)
       C_CVar.SetCVarBitfield(NamePlateConstants.ENEMY_PLAYER_AURA_DISPLAY_CVAR, Enum.NamePlateEnemyPlayerAuraDisplay.LossOfControl, true)
 
-      C_CVar.SetCVarBitfield(NamePlateConstants.FRIENDLY_PLAYER_AURA_DISPLAY_CVAR, Enum.NamePlateFriendlyPlayerAuraDisplay.Buffs, true)
-      C_CVar.SetCVarBitfield(NamePlateConstants.FRIENDLY_PLAYER_AURA_DISPLAY_CVAR, Enum.NamePlateFriendlyPlayerAuraDisplay.Debuffs, true)
-      C_CVar.SetCVarBitfield(NamePlateConstants.FRIENDLY_PLAYER_AURA_DISPLAY_CVAR, Enum.NamePlateFriendlyPlayerAuraDisplay.LossOfControl, true)
+      --C_CVar.SetCVarBitfield(NamePlateConstants.FRIENDLY_PLAYER_AURA_DISPLAY_CVAR, Enum.NamePlateFriendlyPlayerAuraDisplay.Buffs, true)
+      --C_CVar.SetCVarBitfield(NamePlateConstants.FRIENDLY_PLAYER_AURA_DISPLAY_CVAR, Enum.NamePlateFriendlyPlayerAuraDisplay.Debuffs, true)
+      --C_CVar.SetCVarBitfield(NamePlateConstants.FRIENDLY_PLAYER_AURA_DISPLAY_CVAR, Enum.NamePlateFriendlyPlayerAuraDisplay.LossOfControl, true)
 
       C_CVar.SetCVar("nameplateMinScale", 1)
     end

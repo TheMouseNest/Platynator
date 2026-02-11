@@ -93,7 +93,13 @@ function addonTable.CustomiseDialog.Components.GetBasicDropdown(parent, labelTex
     for index = 1, #entryLabels do
       table.insert(entries, {entryLabels[index], values[index]})
     end
-    MenuUtil.CreateRadioMenu(dropdown, isSelectedCallback, onSelectionCallback, unpack(entries))
+    dropdown:SetupMenu(function(menu, rootDescription)
+      for index = 1, #entryLabels do
+        local label, value = entryLabels[index], values[index]
+        rootDescription:CreateRadio(label, isSelectedCallback, onSelectionCallback, value)
+      end
+      rootDescription:SetScrollMode(30 * 20)
+    end)
   end
   frame.SetValue = function(_, _)
     dropdown:GenerateMenu()

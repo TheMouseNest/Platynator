@@ -29,23 +29,42 @@ LSM:Register(LSM.MediaType.FONT, "Diablo Heavy", "Interface/AddOns/Platynator/As
 LSM:Register(LSM.MediaType.FONT, "Atkinson Hyperlegible Next", "Interface/AddOns/Platynator/Assets/Fonts/AtkinsonHyperlegibleNext-Regular.otf")
 
 addonTable.Assets.BarBackgrounds = {
-  ["transparent"] = {file = "Interface/AddOns/Platynator/Assets/Special/transparent.png", width = 1000, height = 125, isTransparent = true, group = 0, order = 0},
-  ["black"] = {file = "Interface/AddOns/Platynator/Assets/Special/black.png", width = 1000, height = 125, group = 1, order = 1},
-  ["grey"] = {file = "Interface/AddOns/Platynator/Assets/Special/grey.png", width = 1000, height = 125, group = 1, order = 2},
-  ["white"] = {file = "Interface/AddOns/Platynator/Assets/Special/white.png", width = 1000, height = 125, group = 1, order = 3},
+  ["Platy: Solid Transparency"] = {file = "Interface/AddOns/Platynator/Assets/Special/transparent.png", isTransparent = true},
+  ["Platy: Solid Black"] = {file = "Interface/AddOns/Platynator/Assets/Special/black.png"},
+  ["Platy: Solid Grey"] = {file = "Interface/AddOns/Platynator/Assets/Special/grey.png"},
+  ["Platy: Solid Grey (Raid)"] = {file = "Interface/AddOns/Platynator/Assets/Special/grey-raid.png"},
+  ["Platy: Solid White"] = {file = "Interface/AddOns/Platynator/Assets/Special/white.png"},
 
-  ["wide/bevelled"] = {file = "Interface/AddOns/Platynator/Assets/%s/BarBackgrounds/bevelled.png", width = 1000, height = 125, has4k = true, group = 2, order = 1},
-  ["wide/bevelled-grey"] = {file = "Interface/AddOns/Platynator/Assets/%s/BarBackgrounds/bevelled-grey.png", width = 1000, height = 125, has4k = true, group = 2, order = 2},
+  ["Platy: Bevelled"] = {file = "Interface/AddOns/Platynator/Assets/%s/BarBackgrounds/bevelled.png", has4k = true},
+  ["Platy: Bevelled Grey"] = {file = "Interface/AddOns/Platynator/Assets/%s/BarBackgrounds/bevelled-grey.png", has4k = true},
 
-  ["wide/fade-bottom"] = {file = "Interface/AddOns/Platynator/Assets/%s/BarBackgrounds/fade-bottom.png", width = 1000, height = 125, has4k = true, group = 3, order = 1},
-  ["wide/fade-top"] = {file = "Interface/AddOns/Platynator/Assets/%s/BarBackgrounds/fade-top.png", width = 1000, height = 125, has4k = true, group = 3, order = 2},
-  ["wide/fade-left"] = {file = "Interface/AddOns/Platynator/Assets/%s/BarBackgrounds/fade-left.png", width = 1000, height = 125, has4k = true, group = 3, order = 3},
-  ["wide/fade-right"] = {file = "Interface/AddOns/Platynator/Assets/%s/BarBackgrounds/fade-right.png", width = 1000, height = 125, has4k = true, group = 3, order = 4},
+  ["Platy: Fade Bottom"] = {file = "Interface/AddOns/Platynator/Assets/%s/BarBackgrounds/fade-bottom.png", has4k = true},
+  ["Platy: Fade Top"] = {file = "Interface/AddOns/Platynator/Assets/%s/BarBackgrounds/fade-top.png", has4k = true},
+  ["Platy: Fade Left"] = {file = "Interface/AddOns/Platynator/Assets/%s/BarBackgrounds/fade-left.png", has4k = true},
+  ["Platy: Fade Right"] = {file = "Interface/AddOns/Platynator/Assets/%s/BarBackgrounds/fade-right.png", has4k = true},
 
-  ["special/blizzard-cast-bar"] = {file = "Interface/AddOns/Platynator/Assets/Special/BarBackgrounds/blizzard-cast-bar.png", width = 1000, height = 125, group = 4, order = 1},
+  ["Platy: GW2"] = {file = "Interface/AddOns/Platynator/Assets/Special/BarBackgrounds/gw2.png"},
+  ["Platy: Blizzard Cast Bar"] = {file = "Interface/AddOns/Platynator/Assets/Special/BarBackgrounds/blizzard-cast-bar.png"},
 
-  ["wide/blizzard-absorb"] = {file = "Interface/AddOns/Platynator/Assets/%s/BarBackgrounds/blizzard-absorb.png", width = 1000, height = 125, has4k = true, group = 5, order = 1},
-  ["narrow/blizzard-absorb"] = {file = "Interface/AddOns/Platynator/Assets/%s/BarBackgrounds/blizzard-absorb-narrow.png", width = 1000, height = 63, has4k = true, group = 5, order = 2},
+  ["Platy: Absorb Wide"] = {file = "Interface/AddOns/Platynator/Assets/%s/BarBackgrounds/blizzard-absorb.png", has4k = true},
+  ["Platy: Absorb Narrow"] = {file = "Interface/AddOns/Platynator/Assets/%s/BarBackgrounds/blizzard-absorb-narrow.png", has4k = true},
+}
+
+addonTable.Assets.BarBackgroundsLegacyMap = {
+  ["transparent"] = "Platy: Solid Transparency",
+  ["black"] = "Platy: Solid Black",
+  ["grey"] = "Platy: Solid Grey",
+  ["grey-raid"] = "Platy: Solid Raid Grey",
+  ["wide/bevelled"] = "Platy: Bevelled",
+  ["wide/bevelled-grey"] = "Platy: Bevelled Grey",
+  ["wide/fade-bottom"] = "Platy: Fade Bottom",
+  ["wide/fade-top"] = "Platy: Fade Top",
+  ["wide/fade-left"] = "Platy: Fade Left",
+  ["wide/fade-right"] = "Platy: Fade Right",
+  ["gw2"] = "Platy: GW2",
+  ["special/blizzard-cast-bar"] = "Platy: Blizzard Cast Bar",
+  ["wide/blizzard-absorb"] = "Platy: Absorb Wide",
+  ["narrow/blizzard-absorb"] = "Platy: Absorb Narrow",
 }
 
 addonTable.Assets.BarBordersSliced = {
@@ -61,6 +80,7 @@ addonTable.Assets.BarBordersSliced = {
   ["round-thin"] = {file = "Interface/AddOns/Platynator/Assets/%s/BarBorders/round-thin-square.png", width = 48, height = 48, has4k = true, masked = true, tag = "round-thin", margin = 0.48, extra = 0, minSize = 50, modifier = 0.3, DPIScale = 1/2, group = 2, order = 3},
 
   ["soft"] = {file = "Interface/AddOns/Platynator/Assets/%s/BarBorders/soft-square.png", width = 66, height = 66, has4k = true, masked = true, tag = "soft", margin = 0.33, extra = 9, minSize = 50, modifier = 0.25, DPIScale = 4/6, group = 3, order = 1},
+  ["gw2"] = {file = "Interface/AddOns/Platynator/Assets/Special/BarBorders/gw2.png", width = 33, height = 33, masked = false, tag = "gw2", margin = 0.3, extra = 12, minSize = 50, modifier = 1, group = 3, order = 2},
 
   ["blizzard-health"] = {file = "Interface/AddOns/Platynator/Assets/%s/BarBorders/blizzard-health-square.png", width = 48, height = 48, has4k = true, masked = true, tag = "blizzard-health", margin = 0.4, extra = 0, minSize = 100, modifier = 0.3, DPIScale = 1/2, group = 4, order = 1},
   ["blizzard-cast-bar"] = {file = "Interface/AddOns/Platynator/Assets/%s/BarBorders/blizzard-cast-bar-square.png", width = 48, height = 48, has4k = true, masked = true, tag = "blizzard-cast-bar", margin = 0.35, extra = 0, minSize = 50, modifier = 0.35, DPIScale = 1/2, group = 4, order = 2},
@@ -159,6 +179,7 @@ addonTable.Assets.Highlights = {
   ["round-thin"] = {file = "Interface/AddOns/Platynator/Assets/%s/BarBorders/round-thin-square.png", width = 48, height = 48, has4k = true, masked = true, tag = "round-thin", margin = 0.48, extra = 0, minSize = 50, modifier = 0.3, DPIScale = 1/2, mode = renderMode.Sliced, group = 2, order = 3},
 
   ["soft"] = {file = "Interface/AddOns/Platynator/Assets/%s/BarBorders/soft-square.png", width = 66, height = 66, has4k = true, masked = true, tag = "soft", margin = 0.33, extra = 9, minSize = 50, modifier = 0.25, DPIScale = 4/6, mode = renderMode.Sliced, group = 3, order = 1},
+  ["gw2"] = {file = "Interface/AddOns/Platynator/Assets/Special/BarBorders/gw2.png", width = 33, height = 33, masked = false, tag = "gw2", margin = 0.3, extra = 8, minSize = 50, modifier = 1, mode = renderMode.Sliced, group = 3, order = 2},
 
   ["blizzard-health"] = {file = "Interface/AddOns/Platynator/Assets/%s/BarBorders/blizzard-health-square.png", width = 48, height = 48, has4k = true, masked = true, tag = "blizzard-health", margin = 0.4, extra = 0, minSize = 100, modifier = 0.3, DPIScale = 1/2, mode = renderMode.Sliced, group = 4, order = 1},
   ["blizzard-bold-health"] = {file = "Interface/AddOns/Platynator/Assets/%s/Highlights/blizzard-health-bold-square.png", width = 48, height = 48, has4k = true, masked = true, tag = "blizzard-bold-health", margin = 0.4, extra = 0, minSize = 100, modifier = 0.3, DPIScale = 1/2, mode = renderMode.Sliced, group = 4, order = 2},
@@ -183,8 +204,13 @@ addonTable.Assets.Highlights = {
   ["double-arrows-down"] = {file = "Interface/AddOns/Platynator/Assets/%s/Highlights/double-arrows-down.png", width = 173, height = 153, has4k = true, mode = renderMode.Fixed, tag = "arrows", group = 9, order = 3},
   ["solid-arrows"] = {file = "Interface/AddOns/Platynator/Assets/%s/Highlights/arrows-solid.png", width = 97, height = 69, has4k = true, margin = 0.5, extra = 0, padding = 0, modifier = 0.30, shiftModifierH = 1.27, shiftModifierV = 1.36, DPIScale = 8/10, mode = renderMode.Sliced, tag = "arrows", group = 9, order = 4},
   ["solid-arrow-down"] = {file = "Interface/AddOns/Platynator/Assets/%s/Highlights/arrow-solid-down.png", width = 207, height = 132, has4k = true, mode = renderMode.Fixed, tag = "arrows", group = 9, order = 5},
+  ["hi-vis-arrows"] = {file = "Interface/AddOns/Platynator/Assets/%s/Highlights/hi-vis-arrows.png", width = 158, height = 50, has4k = true, margin = 0.5, extra = 0, padding = 0, modifier = 0.42, shiftModifierH = 1.41, shiftModifierV = 1, DPIScale = 8/10, mode = renderMode.Sliced, tag = "arrows", group = 9, order = 6},
+  ["hi-vis-arrow-down"] = {file = "Interface/AddOns/Platynator/Assets/%s/Highlights/hi-vis-arrow-down.png", width = 125, height = 185, has4k = true, mode = renderMode.Fixed, tag = "arrows", group = 9, order = 7},
 
   ["blizzard-classic-level"] = {file = "Interface/AddOns/Platynator/Assets/%s/Highlights/blizzard-classic-level.png", width = 178, height = 125, has4k = true, mode = renderMode.Fixed, tag = "blizzard-classic-level", group = 10, order = 1},
+
+  ["important"] = {width = 1000, height = 125, preview = "Interface/AddOns/Platynator/Assets/Special/Animations/important-preview.png", horizontal = "Interface/AddOns/Platynator/Assets/Special/Animations/important.png", vertical = "Interface/AddOns/Platynator/Assets/Special/Animations/important-90.png", columns = 1, rows = 11, duration = 0.5, kind = "animatedBorder", group = 10, order = 2},
+  ["pandemic"] = {width = 1000, height = 125, preview = "Interface/AddOns/Platynator/Assets/Special/Animations/pandemic-preview.png", horizontal = "Interface/AddOns/Platynator/Assets/Special/Animations/pandemic.png", vertical = "Interface/AddOns/Platynator/Assets/Special/Animations/pandemic-90.png", columns = 1, rows = 11, duration = 0.5, kind = "animatedBorder", group = 10, order = 3},
 }
 
 addonTable.Assets.HighlightsLegacy = {
@@ -285,10 +311,10 @@ addonTable.Assets.HighlightsLegacy = {
   ["75/arrows-out-close"] = {width = 1000, height = 94, mode = legacyMode.Percent75, tag = "arrows-out-close"},
   ["50/arrows-out-close"] = {width = 1000, height = 63, mode = legacyMode.Percent50, tag = "arrows-out-close"},
 
-  ["wide/arrows"] = {width = 1230, height = 164, mode = legacyMode.Percent100, tag = "arrows"},
-  ["wide/double-arrows"] = {width = 1351, height = 173, mode = legacyMode.Percent100, tag = "arrows"},
+  ["wide/arrows"] = {width = 1000, height = 125, mode = legacyMode.Percent100, tag = "arrows"},
+  ["wide/double-arrows"] = {width = 1000, height = 125, mode = legacyMode.Percent100, tag = "arrows"},
   ["normal/double-arrows-down"] = {width = 173, height = 153, mode = legacyMode.Percent100, tag = "arrows"},
-  ["normal/solid-arrows"] = {width = 1265, height = 173, mode = legacyMode.Percent100, tag = "arrows"},
+  ["normal/solid-arrows"] = {width = 1000, height = 125, mode = legacyMode.Percent100, tag = "arrows"},
   ["normal/solid-arrow-down"] = {width = 207, height = 132, mode = legacyMode.Percent100, tag = "arrows"},
 
   ["200/feathered"] = {width = 1000, height = 250, mode = legacyMode.Percent200, tag = "feathered"},
@@ -305,6 +331,7 @@ addonTable.Assets.HighlightsLegacy = {
 addonTable.Assets.BarPositionHighlights = {
   ["none"] = {file = "", width = 0, height = 0},
   ["wide/glow"] = {file = "Interface/AddOns/Platynator/Assets/%s/BarPosition/highlight.png", width = 54, height = 125, has4k = true, mode = legacyMode.Percent100},
+  ["gw2"] = {file = "Interface/AddOns/Platynator/Assets/Special/BarPosition/gw2.png", width = 137, height = 125, mode = legacyMode.Percent100},
 }
 
 addonTable.Assets.PowerBars = {
@@ -320,7 +347,7 @@ addonTable.Assets.PowerBars = {
 }
 
 addonTable.Assets.Markers = {
-  ["normal/cast-icon"] = {file = 236205, width = 120, height = 120, tag = "castIcon"},
+  ["normal/cast-icon"] = {file = addonTable.Constants.IsRetail and 236205 or 135753, width = 120, height = 120, tag = "castIcon"},
 
   ["normal/quest-gradient"] = {file = "Interface/AddOns/Platynator/Assets/%s/Markers/quest-gradient.png", width = 48, height = 170, has4k = true, tag = "quest"},
   ["normal/quest-boss-blizzard"] = {file = "Interface/AddOns/Platynator/Assets/%s/Markers/blizzard-quest-boss.png", width = 164, height = 208, has4k = true, tag = "quest"},
@@ -329,6 +356,7 @@ addonTable.Assets.Markers = {
   ["normal/shield-gradient"] = {file = "Interface/AddOns/Platynator/Assets/%s/Markers/shield-gradient.png", width = 150, height = 155, has4k = true, tag = "cannotInterrupt"},
   ["normal/shield-soft"] = {file = "Interface/AddOns/Platynator/Assets/%s/Markers/shield-soft.png", width = 160, height = 165, has4k = true, tag = "cannotInterrupt"},
   ["normal/blizzard-shield"] = {file = "Interface/AddOns/Platynator/Assets/%s/Markers/blizzard-shield.png", width = 136, height = 165, has4k = true, tag = "cannotInterrupt"},
+  ["normal/gw2-shield"] = {file = "Interface/AddOns/Platynator/Assets/Special/Markers/gw2-shield.png", width = 165, height = 165, has4k = true, tag = "cannotInterrupt"},
 
   ["special/blizzard-elite"] = {file = "Interface/AddOns/Platynator/Assets/Special/Markers/eliterarecombo-blizzard.png", width = 150, height = 155, mode = legacyMode.Special, tag = "elite"},
   ["normal/blizzard-elite"] = {file = "Interface/AddOns/Platynator/Assets/Special/Markers/elite-blizzard.png", width = 150, height = 155},
@@ -352,6 +380,8 @@ addonTable.Assets.Markers = {
   ["normal/blizzard-raid"] = {file = "Interface/TargetingFrame/UI-RaidTargetingIcons", preview = "Interface\\TargetingFrame\\UI-RaidTargetingIcon_1.blp", width = 150, height = 150, tag = "raid"},
 
   ["normal/blizzard-pvp"] = {file = "Interface/AddOns/Platynator/Assets/Special/Markers/pvp.png", width = 150, height = 150, tag = "pvp"},
+
+  ["normal/class"] = {file = "Interface/AddOns/Platynator/Assets/Special/Markers/classicon-monk.png", width = 200, height = 200, tag = "class"},
 }
 
 addonTable.Assets.SpecialBars = {
@@ -378,8 +408,16 @@ function addonTable.Assets.ApplyScale()
     DPIScale = "DPI96"
   end
 
+  local function IterateLSMBackground(list)
+    for key, entry in pairs(list) do
+      if entry.has4k then
+        entry.file = entry.file:format(DPIScale)
+      end
+      LSM:Register(LSM.MediaType.STATUSBAR, key, entry.file)
+    end
+  end
+
   local function Iterate(list)
-    dpiScale = dpiScale or 1
     for _, entry in pairs(list) do
       if entry.has4k then
         entry.file = entry.file:format(DPIScale)
@@ -432,7 +470,7 @@ function addonTable.Assets.ApplyScale()
     lowerScale = 2
   end
   IterateSlices(addonTable.Assets.BarBordersSliced, addonTable.Assets.BarBordersSliced)
-  Iterate(addonTable.Assets.BarBackgrounds)
+  IterateLSMBackground(addonTable.Assets.BarBackgrounds)
   IterateSlices(addonTable.Assets.BarMasks, addonTable.Assets.BarBordersSliced)
   IterateHighlights(addonTable.Assets.Highlights)
   Iterate(addonTable.Assets.HighlightsLegacy)

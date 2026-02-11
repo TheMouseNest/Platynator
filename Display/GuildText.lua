@@ -25,33 +25,37 @@ function addonTable.Display.GuildTextMixin:SetUnit(unit)
   if self.unit then
     self.defaultText = ""
     if UnitIsPlayer(self.unit) then
-      local guild = GetGuildInfo(self.unit)
-      if guild then
-        self.defaultText = guild
+      if self.details.playerGuild then
+        local guild = GetGuildInfo(self.unit)
+        if guild then
+          self.defaultText = guild
+        end
       end
     elseif not UnitIsBattlePetCompanion(self.unit) and not addonTable.Display.Utilities.IsInRelevantInstance() then
-      local text
-      if C_TooltipInfo then
-        local tooltipData = C_TooltipInfo.GetUnit(self.unit)
-        local line = tooltipData.lines[isColorBlindMode and 3 or 2]
-        if not issecretvalue and line or (issecretvalue and not issecretvalue(line) and line and not issecretvalue(line.leftText)) then
-          text = line.leftText
+      if self.details.npcRole then
+        local text
+        if C_TooltipInfo then
+          local tooltipData = C_TooltipInfo.GetUnit(self.unit)
+          local line = tooltipData.lines[isColorBlindMode and 3 or 2]
+          if not issecretvalue and line or (issecretvalue and not issecretvalue(line) and line and not issecretvalue(line.leftText)) then
+            text = line.leftText
+          end
+        else
+          tooltip:SetOwner(WorldFrame, "ANCHOR_NONE")
+          tooltip:SetUnit(self.unit)
+          local line = _G[tooltip:GetName() .. "TextLeft" .. (isColorBlindMode and 3 or 2)]
+          if line then
+            text = line:GetText()
+          end
         end
-      else
-        tooltip:SetOwner(WorldFrame, "ANCHOR_NONE")
-        tooltip:SetUnit(self.unit)
-        local line = _G[tooltip:GetName() .. "TextLeft" .. (isColorBlindMode and 3 or 2)]
-        if line then
-          text = line:GetText()
+        if text and not text:match(invalidPattern1) and not text:match(invalidPattern2) then
+          self.defaultText = text
         end
-      end
-      if text and not text:match(invalidPattern1) and not text:match(invalidPattern2) then
-        self.defaultText = text
       end
     end
     self.text:SetText(self.defaultText)
     if self.details.showWhenWowDoes then
-      self:SetShown(UnitShouldDisplayName(self.unit))
+      self:SetShown(UnitIsUnit(self.unit, "target") or UnitShouldDisplayName(self.unit))
       self:RegisterUnitEvent("UNIT_HEALTH", self.unit)
     end
   else
@@ -65,6 +69,7 @@ function addonTable.Display.GuildTextMixin:Strip()
   self.ApplyTextOverride = nil
 
   self.defaultText = nil
+  self:UnregisterAllEvents()
 end
 
 function addonTable.Display.GuildTextMixin:OnEvent()
@@ -73,7 +78,7 @@ end
 
 function addonTable.Display.GuildTextMixin:ApplyTarget()
   if self.details.showWhenWowDoes then
-    self:SetShown(UnitShouldDisplayName(self.unit))
+    self:SetShown(UnitIsUnit(self.unit, "target") or UnitShouldDisplayName(self.unit))
   end
 end
 

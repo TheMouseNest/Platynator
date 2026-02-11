@@ -186,6 +186,38 @@ addonTable.CustomiseDialog.ColorsConfig = {
       },
     },
   },
+  ["rarity"] = {
+    label = addonTable.Locales.RARITY,
+    default = {
+      kind = "rarity",
+      colors = {
+        rare = GetColor("d5d5d5"),
+        rareElite = GetColor("f8de7e"),
+      },
+    },
+    entries = {
+      {
+        label = addonTable.Locales.RARE,
+        kind = "colorPicker",
+        setter = function(details, value)
+          details.colors.rare = value
+        end,
+        getter = function(details)
+          return details.colors.rare
+        end,
+      },
+      {
+        label = addonTable.Locales.RARE_ELITE,
+        kind = "colorPicker",
+        setter = function(details, value)
+          details.colors.rareElite = value
+        end,
+        getter = function(details)
+          return details.colors.rareElite
+        end,
+      },
+    },
+  },
   ["eliteType"] = {
     label = addonTable.Locales.ELITE_TYPE,
     default = {
@@ -613,6 +645,27 @@ addonTable.CustomiseDialog.ColorsConfig = {
       },
     }
   },
+  ["execute"] = {
+    label = addonTable.Locales.EXECUTE,
+    default = {
+      kind = "execute",
+      colors = {
+        execute = GetColor("D1D1D1"),
+      },
+    },
+    entries = {
+      {
+        label = addonTable.Locales.EXECUTE,
+        kind = "colorPicker",
+        setter = function(details, value)
+          details.colors.execute = value
+        end,
+        getter = function(details)
+          return details.colors.execute
+        end,
+      },
+    }
+  },
 }
 
 addonTable.CustomiseDialog.ColorsConfigOrder = {
@@ -622,10 +675,12 @@ addonTable.CustomiseDialog.ColorsConfigOrder = {
   "focus",
   "threat",
   "eliteType",
+  "rarity",
   "quest",
   "guild",
   "classColors",
   "difficulty",
+  "execute",
   "reaction",
   "interruptReady",
   "castTargetsYou",

@@ -668,6 +668,7 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
         end
       end
     end
+    rootDescription:SetScrollMode(30 * 20)
   end)
 
   local deleteButton = CreateFrame("Button", nil, previewInset, "UIPanelDynamicResizeButtonTemplate")
@@ -689,6 +690,7 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
       debuffs = {135959},
       crowdControl = {135860},
     }
+    local asset = addonTable.Assets.BarBordersSliced["1px"]
     for kind, w in pairs(auraContainers) do
       w:SetSize(10, 10)
       w.Wrapper = CreateFrame("Frame", nil, w)
@@ -698,6 +700,12 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
       w.auras = {}
       for index, tex in ipairs(textures[kind]) do
         local buff = CreateFrame("Frame", nil, w.Wrapper, "PlatynatorNameplateBuffButtonTemplate")
+        buff.Border = buff:CreateTexture(nil, "OVERLAY")
+        buff.Border:SetAllPoints(true)
+        buff.Border:SetScale(1/asset.lowerScale)
+        buff.Border:SetTexture(asset.file)
+        buff.Border:SetTextureSliceMargins(asset.width * asset.margin, asset.width * asset.margin, asset.height * asset.margin, asset.height * asset.margin)
+        buff.Border:SetVertexColor(0, 0, 0)
         buff:Show()
         buff.Icon:SetTexture(tex)
         buff:SetPoint("LEFT", (index - 1) * 22, 0)
@@ -765,9 +773,11 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
         w.statusBar:SetValue(70)
         if w.details.kind == "cast" then
           if w.details.interruptMarker.asset ~= "none" then
+            w.interruptPositioner:SetMinMaxValues(0, 100)
+            w.interruptPositioner:SetValue(0)
             w.interruptMarker:Show()
             w.interruptMarker:SetMinMaxValues(0, 100)
-            w.interruptMarker:SetValue(10)
+            w.interruptMarker:SetValue(80)
           else
             w.interruptMarker:Hide()
           end
@@ -832,6 +842,8 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
           display = addonTable.Locales.ARCANE_FLURRY
         elseif w.details.kind == "level" then
           display = "60"
+        elseif w.details.kind == "quest" then
+          display = "3/7"
         end
         if display then
           w.text:SetText(display)
@@ -910,13 +922,18 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
       container.auras[1].CountFrame.Count:Show();
       container:SetSize(22 * container.count * details.scale, 20 * details.height * details.scale)
       container.Wrapper:SetHeight(20 * details.height)
+      container:SetSize(20 * details.scale, 20 * details.height * details.scale)
       container.Wrapper:SetScale(details.scale)
+      local anchor = details.anchor[1] or "CENTER"
+      container.Wrapper:SetPoint(anchor)
       container.details = details
       local texBase = 0.95 * (1 - details.height) / 2
-      for _, aura in ipairs(container.auras) do
+      for index, aura in ipairs(container.auras) do
         aura:SetHeight(20 * details.height)
-        aura.Icon:SetHeight(19 * details.height)
+        aura.Icon:SetHeight(20 * details.height)
+        aura.Border:SetHeight(20 * details.height)
         aura.Icon:SetTexCoord(0.05, 0.95, 0.05 + texBase, 0.95 - texBase)
+        aura:SetPoint(anchor, (index - 1) * 22, 0)
       end
       table.insert(widgets, container)
       container:ClearAllPoints()

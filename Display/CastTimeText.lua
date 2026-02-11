@@ -27,7 +27,6 @@ function addonTable.Display.CastTimeLeftTextMixin:Strip()
     self.timer:Cancel()
     self.timer = nil
   end
-  self:SetScript("OnUpdate", nil)
   self.duration = nil
   self.endTime = nil
   self:UnregisterAllEvents()
@@ -45,6 +44,10 @@ function addonTable.Display.CastTimeLeftTextMixin:ApplyCasting()
     isChanneled = true
   end
 
+  if self.timer then
+    self.timer:Cancel()
+  end
+
   if type(name) ~= "nil" then
     self:Show()
     if UnitChannelDuration then
@@ -54,18 +57,17 @@ function addonTable.Display.CastTimeLeftTextMixin:ApplyCasting()
         self.duration = UnitCastingDuration(self.unit)
       end
       self.text:SetText(string.format("%.1f", self.duration:GetRemainingDuration()))
-      self:SetScript("OnUpdate", function()
+      self.timer = C_Timer.NewTicker(0.005, function()
         self.text:SetText(string.format("%.1f", self.duration:GetRemainingDuration()))
       end)
     else
       self.endTime = endTime / 1000
       self.text:SetText(string.format("%.1f", self.endTime - GetTime()))
-      self:SetScript("OnUpdate", function()
+      self.timer = C_Timer.NewTicker(0.005, function()
         self.text:SetText(string.format("%.1f", self.endTime - GetTime()))
       end)
     end
   else
-    self:SetScript("OnUpdate", nil)
     self:Hide()
   end
 end
