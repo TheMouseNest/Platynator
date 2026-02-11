@@ -104,16 +104,22 @@ local stateToEvent = {
 
 local stateToCalculator = {
   cast = function(state, unit)
+    local wasInfo = state.castInfo and (state.castInfo[2] or state.channelInfo[2])
     state.cast = true
     state.castInfo = {UnitCastingInfo(unit)}
     state.channelInfo = {UnitChannelInfo(unit)}
+    return (wasInfo or state.castInfo[2] or state.channelInfo[2]) ~= nil
   end,
   quest = function(state, unit)
+    local wasQuest = state.quest == true
     state.quest = #addonTable.Display.Utilities.GetQuestInfo(unit) > 0
+    return wasQuest ~= state.quest
   end,
   threat = function(state, unit)
+    local oldThreat, oldHostile = state.threat, state.hostile
     state.threat = UnitThreatSituation("player", unit)
     state.hostile = UnitCanAttack("player", unit) and UnitIsEnemy(unit, "player")
+    return oldThreat ~= state.threat or oldHostile ~= state.hostile
   end
 }
 
@@ -241,19 +247,22 @@ function addonTable.Display.RegisterForColorEvents(frame, settings, defaultColor
   function frame:ColorEventHandler(eventName)
     if events[eventName] then
       local calculator = eventToCalulator[eventName]
+      local process = true
       if calculator then
-        calculator(self.colorState, self.unit)
+        process = calculator(self.colorState, self.unit)
       end
-      self:SetColor(addonTable.Display.GetColor(settings, self.colorState, self.unit))
-      if next(self.colorState.frequentUpdater) then
-        if not self.colorState.timer then
-          self.colorState.timer = C_Timer.NewTicker(0.1, function()
-            self:ColorEventHandler("FORCED")
-          end)
+      if process then
+        self:SetColor(addonTable.Display.GetColor(settings, self.colorState, self.unit))
+        if next(self.colorState.frequentUpdater) then
+          if not self.colorState.timer then
+            self.colorState.timer = C_Timer.NewTicker(0.1, function()
+              self:ColorEventHandler("FORCED")
+            end)
+          end
+        elseif self.colorState.timer then
+          self.colorState.timer:Cancel()
+          self.colorState.timer = nil
         end
-      elseif self.colorState.timer then
-        self.colorState.timer:Cancel()
-        self.colorState.timer = nil
       end
     end
   end
