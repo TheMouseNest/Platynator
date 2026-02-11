@@ -253,6 +253,7 @@ addonTable.CustomiseDialog.DesignWidgets = {
         dispelable = false,
         important = true,
       },
+      showDispel = {enrage = true},
     },
   },
   {
