@@ -419,9 +419,7 @@ function addonTable.Display.ManagerMixin:UpdateInstanceShowState()
 
   if state == "name_only" and C_CVar.GetCVarInfo("nameplateShowOnlyNameForFriendlyPlayerUnits") then
     C_CVar.SetCVar("nameplateShowOnlyNameForFriendlyPlayerUnits", relevantInstance and "1" or "0")
-  end
-  if state == "name_only" and C_CVar.GetCVarInfo("nameplateUseClassColorForFriendlyPlayerUnitNames") then
-    C_CVar.SetCVar("nameplateUseClassColorForFriendlyPlayerUnitNames", relevantInstance and "1" or "0")
+    C_CVar.SetCVar("nameplateUseClassColorForFriendlyPlayerUnitNames", addonTable.Display.Utilities.IsInRelevantInstance() and self.friendlyNameOnlyClassColors and "1" or "0")
   end
 
   local values = GetCVarsForNameplates()
@@ -779,12 +777,19 @@ function addonTable.Display.ManagerMixin:UpdateFriendlyFont()
   if state == "name_only" then
     local design = addonTable.Core.GetDesign("friend")
     local scale
+    self.friendlyNameOnlyClassColors = false
     for _, t in ipairs(design.texts) do
       if t.kind == "creatureName" then
+        for _, c in ipairs(t.autoColors) do
+          if c.kind == "classColors" then
+            self.friendlyNameOnlyClassColors = true
+          end
+        end
         scale = t.scale
         break
       end
     end
+    C_CVar.SetCVar("nameplateUseClassColorForFriendlyPlayerUnitNames", addonTable.Display.Utilities.IsInRelevantInstance() and self.friendlyNameOnlyClassColors and "1" or "0")
     if scale then
       ChangeFont(SystemFont_NamePlate_Outlined, _G[addonTable.CurrentFont])
       ChangeFont(SystemFont_NamePlate, _G[addonTable.CurrentFont])
