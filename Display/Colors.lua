@@ -94,9 +94,6 @@ local stateToEvent = {
     "UNIT_SPELLCAST_CHANNEL_START",
     "UNIT_SPELLCAST_CHANNEL_STOP",
   },
-  quest = {
-    "QUEST_LOG_UPDATE",
-  },
   threat = {
     "UNIT_THREAT_LIST_UPDATE",
   }
@@ -109,11 +106,6 @@ local stateToCalculator = {
     state.castInfo = {UnitCastingInfo(unit)}
     state.channelInfo = {UnitChannelInfo(unit)}
     return (wasInfo or state.castInfo[2] or state.channelInfo[2]) ~= nil
-  end,
-  quest = function(state, unit)
-    local wasQuest = state.quest == true
-    state.quest = #addonTable.Display.Utilities.GetQuestInfo(unit) > 0
-    return wasQuest ~= state.quest
   end,
   threat = function(state, unit)
     local oldThreat, oldHostile = state.threat, state.hostile
@@ -139,7 +131,6 @@ local kindToEvent = {
   softTarget = {"PLAYER_TARGET_CHANGED", "PLAYER_SOFT_ENEMY_CHANGED", "PLAYER_SOFT_FRIEND_CHANGED"},
   focus = {"PLAYER_FOCUS_CHANGED"},
   threat = {"UNIT_THREAT_LIST_UPDATE"},
-  quest = {"QUEST_LOG_UPDATE"},
   execute = {"UNIT_HEALTH"},
   interruptReady = {
     "UNIT_SPELLCAST_START",
@@ -351,7 +342,7 @@ function addonTable.Display.GetColor(settings, state, unit)
         end
       end
     elseif s.kind == "quest" then
-      if state.quest then
+      if #addonTable.Display.Utilities.GetQuestInfo(unit) > 0 then
         if IsNeutral(unit) then
           table.insert(colorQueue, {color = s.colors.neutral})
           break
