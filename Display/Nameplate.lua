@@ -1,6 +1,8 @@
 ---@class addonTablePlatynator
 local addonTable = select(2, ...)
 
+local LSM = LibStub("LibSharedMedia-3.0")
+
 local pandemicCurve
 local pandemicPercentage = 0.3
 local dispelCurve
@@ -37,14 +39,14 @@ function addonTable.Display.NameplateMixin:OnLoad()
   self.CrowdControlDisplay:SetSize(10, 10)
 
   self.AurasManager = addonTable.Utilities.InitFrameWithMixin(self, addonTable.Display.AurasManagerMixin)
-  local borderAsset = addonTable.Assets.BarBordersSliced["1px"]
-  local dispelAsset = addonTable.Assets.BarBordersSliced["slight"]
+  local borderAsset = LSM:Fetch("nineslice", "Platy: 1px")
+  local dispelAsset = LSM:Fetch("nineslice", "Platy: 4px")
   self.AurasPool = CreateFramePool("Frame", self, "PlatynatorNameplateBuffButtonTemplate", nil, false, function(frame)
     frame.Border = frame:CreateTexture(nil, "OVERLAY")
     frame.Border:SetAllPoints(true)
-    frame.Border:SetScale(1/borderAsset.lowerScale)
+    frame.Border:SetScale(borderAsset.scaleModifier)
     frame.Border:SetTexture(borderAsset.file)
-    frame.Border:SetTextureSliceMargins(borderAsset.width * borderAsset.margin, borderAsset.width * borderAsset.margin, borderAsset.height * borderAsset.margin, borderAsset.height * borderAsset.margin)
+    frame.Border:SetTextureSliceMargins(borderAsset.margins.left, borderAsset.margins.top, borderAsset.margins.right, borderAsset.margins.bottom)
     frame.Border:SetVertexColor(0, 0, 0)
     frame.Cooldown:SetCountdownAbbrevThreshold(20)
     frame.Cooldown.Text = frame.Cooldown:GetRegions()
@@ -99,9 +101,9 @@ function addonTable.Display.NameplateMixin:OnLoad()
     do
       local dispelTexture = frame.Dispel:CreateTexture()
       dispelTexture:SetAllPoints()
-      dispelTexture:SetScale(1/dispelAsset.lowerScale)
+      dispelTexture:SetScale(dispelAsset.scaleModifier)
       dispelTexture:SetTexture(dispelAsset.file)
-      dispelTexture:SetTextureSliceMargins(dispelAsset.width * dispelAsset.margin, dispelAsset.width * dispelAsset.margin, dispelAsset.height * dispelAsset.margin, dispelAsset.height * dispelAsset.margin)
+      dispelTexture:SetTextureSliceMargins(dispelAsset.margins.left, dispelAsset.margins.top, dispelAsset.margins.right, dispelAsset.margins.bottom)
       dispelTexture:SetVertexColor(1, 0, 0)
     end
     frame:SetScript("OnEnter", function()

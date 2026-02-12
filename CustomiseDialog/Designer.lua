@@ -1,6 +1,8 @@
 ---@class addonTablePlatynator
 local addonTable = select(2, ...)
 
+local LSM = LibStub("LibSharedMedia-3.0")
+
 local function Announce()
   if addonTable.Config.Get(addonTable.Config.Options.STYLE):match("^_") then
     addonTable.Config.Set(addonTable.Config.Options.STYLE, addonTable.Constants.CustomName)
@@ -287,8 +289,12 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
   table.insert(allFrames, styleDropdown)
 
   local designScale = addonTable.CustomiseDialog.Components.GetSlider(container, addonTable.Locales.STYLE_SCALE, 1, 300, function(val) return ("%d%%"):format(val) end, function(value)
-    addonTable.CustomiseDialog.GetCurrentDesign().scale = value / 100
-    Announce()
+    local design = addonTable.CustomiseDialog.GetCurrentDesign()
+    local oldScale = design.scale
+    design.scale = value / 100
+    if oldScale ~= design.scale then
+      Announce()
+    end
   end)
   designScale:SetValue(addonTable.CustomiseDialog.GetCurrentDesign().scale * 100)
   designScale.noAuto = true
@@ -690,7 +696,7 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
       debuffs = {135959},
       crowdControl = {135860},
     }
-    local asset = addonTable.Assets.BarBordersSliced["1px"]
+    local asset = LSM:Fetch("nineslice", "Platy: 1px")
     for kind, w in pairs(auraContainers) do
       w:SetSize(10, 10)
       w.Wrapper = CreateFrame("Frame", nil, w)
@@ -702,9 +708,9 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
         local buff = CreateFrame("Frame", nil, w.Wrapper, "PlatynatorNameplateBuffButtonTemplate")
         buff.Border = buff:CreateTexture(nil, "OVERLAY")
         buff.Border:SetAllPoints(true)
-        buff.Border:SetScale(1/asset.lowerScale)
+        buff.Border:SetScale(asset.scaleModifier)
         buff.Border:SetTexture(asset.file)
-        buff.Border:SetTextureSliceMargins(asset.width * asset.margin, asset.width * asset.margin, asset.height * asset.margin, asset.height * asset.margin)
+        buff.Border:SetTextureSliceMargins(asset.margins.left, asset.margins.top, asset.margins.right, asset.margins.bottom)
         buff.Border:SetVertexColor(0, 0, 0)
         buff:Show()
         buff.Icon:SetTexture(tex)
@@ -996,7 +1002,11 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
           end
           local oldValue = e.getter(parent.details)
           e.setter(parent.details, value)
-          if oldValue ~= e.getter(parent.details) then
+          if type(oldValue) == "table" then
+            if not tCompare(oldValue, e.getter(parent.details)) then
+              Announce()
+            end
+          elseif oldValue ~= e.getter(parent.details) then
             Announce()
           end
         end
@@ -1019,7 +1029,11 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
             if not parent.details then
               return false
             end
-            return value == e.getter(parent.details)
+            if type(value) == "table" then
+              return tCompare(value, e.getter(parent.details))
+            else
+              return value == e.getter(parent.details)
+            end
           end, Setter)
         elseif e.kind == "checkbox" then
           frame = addonTable.CustomiseDialog.Components.GetCheckbox(parent, e.label, 28, Setter)

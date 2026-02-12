@@ -23,9 +23,16 @@ local function InitBar(frame, details)
     frame:Strip()
   end
 
-  local borderDetails = addonTable.Assets.BarBordersSliced[details.border.asset]
+  local borderDetails = LSM:Fetch("ninesliceborder", details.border.asset, true) or LSM:Fetch("ninesliceborder", "Platy: 4px")
+  local borderSliceDetails = LSM:Fetch("nineslice", borderDetails.nineslice)
+
+  frame.lowerScale = 1/borderSliceDetails.scaleModifier
+  frame.rawWidth, frame.rawHeight = details.border.width * addonTable.Assets.BarBordersSize.width, details.border.height * addonTable.Assets.BarBordersSize.height
+  frame.borderWidth = frame.rawWidth + (borderSliceDetails.padding.left + borderSliceDetails.padding.right) / 2
+  frame.borderHeight = frame.rawHeight + (borderSliceDetails.padding.top + borderSliceDetails.padding.bottom) / 2
+
   local foreground = LSM:Fetch("statusbar", details.foreground.asset, true) or LSM:Fetch("statusbar", "Platy: Solid White")
-  frame.statusBar:SetScale(1/borderDetails.lowerScale * details.scale)
+  frame.statusBar:SetScale(borderSliceDetails.scaleModifier * details.scale)
   frame.statusBar:SetMinMaxValues(0, 1)
   frame.statusBar:SetValue(1)
   frame.statusBar:SetStatusBarTexture(foreground)
@@ -34,12 +41,12 @@ local function InitBar(frame, details)
   local background = LSM:Fetch("statusbar", details.background.asset, true) or LSM:Fetch("statusbar", "Platy: Solid Grey")
   frame.background:SetTexture(background)
   frame.background:SetAllPoints()
-  frame.background:SetScale(1/borderDetails.lowerScale * details.scale)
+  frame.background:SetScale(borderSliceDetails.scaleModifier * details.scale)
   frame.background:SetVertexColor(details.background.color.r, details.background.color.g, details.background.color.b, details.background.color.a)
-  frame.border:SetTexture(borderDetails.file)
-  frame.border:SetScale(1/borderDetails.lowerScale * details.scale)
+  frame.border:SetTexture(borderSliceDetails.file)
+  frame.border:SetScale(borderSliceDetails.scaleModifier * details.scale)
   frame.border:SetVertexColor(details.border.color.r, details.border.color.g, details.border.color.b, details.border.color.a)
-  frame.border:SetTextureSliceMargins(borderDetails.width * borderDetails.margin, borderDetails.height * borderDetails.margin, borderDetails.width * borderDetails.margin, borderDetails.height * borderDetails.margin)
+  frame.border:SetTextureSliceMargins(borderSliceDetails.margins.left, borderSliceDetails.margins.top, borderSliceDetails.margins.right, borderSliceDetails.margins.bottom)
   if details.marker.asset ~= "none" then
     frame.marker:Show()
     local markerDetails = addonTable.Assets.BarPositionHighlights[details.marker.asset]
@@ -53,11 +60,11 @@ local function InitBar(frame, details)
   frame.background:RemoveMaskTexture(frame.mask)
   frame.marker:RemoveMaskTexture(frame.mask)
 
-  local maskDetails = addonTable.Assets.BarMasks[details.border.asset]
+  local maskDetails = borderDetails.mask
   frame.mask:SetBlockingLoadsRequested(true)
   if maskDetails then
     frame.mask:SetTexture(maskDetails.file, "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
-    frame.mask:SetTextureSliceMargins(maskDetails.width * maskDetails.margin, maskDetails.height * maskDetails.margin, maskDetails.width * maskDetails.margin, maskDetails.height * maskDetails.margin)
+    frame.mask:SetTextureSliceMargins(maskDetails.margins.left, maskDetails.margins.top, maskDetails.margins.right, maskDetails.margins.bottom)
   else
     frame.mask:SetTexture("Interface/AddOns/Platynator/Assets/Special/white.png", "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
     frame.mask:SetTextureSliceMargins(1, 1, 1, 1)
@@ -74,20 +81,16 @@ local function InitBar(frame, details)
 end
 
 local function SizeBar(frame, details)
-  local width, height = details.border.width * addonTable.Assets.BarBordersSize.width, details.border.height * addonTable.Assets.BarBordersSize.height
-  local borderDetails = addonTable.Assets.BarBordersSliced[details.border.asset]
-  PixelUtil.SetSize(frame, width * details.scale, height * details.scale)
-  frame.rawWidth = width
-  frame.rawHeight = height
+  PixelUtil.SetSize(frame, frame.rawWidth * details.scale, frame.rawHeight * details.scale)
 
-  PixelUtil.SetSize(frame.statusBar, width * borderDetails.lowerScale, height * borderDetails.lowerScale)
-  PixelUtil.SetSize(frame.border, (width + borderDetails.extra / 2) * borderDetails.lowerScale, (height + borderDetails.extra / 2) * borderDetails.lowerScale)
+  PixelUtil.SetSize(frame.statusBar, frame.rawWidth * frame.lowerScale, frame.rawHeight * frame.lowerScale)
+  PixelUtil.SetSize(frame.border, frame.borderWidth * frame.lowerScale, frame.borderHeight * frame.lowerScale)
   if details.marker.asset ~= "none" then
     local markerDetails = addonTable.Assets.BarPositionHighlights[details.marker.asset]
-    PixelUtil.SetSize(frame.marker, markerDetails.width * details.scale * borderDetails.lowerScale, height * borderDetails.lowerScale)
+    PixelUtil.SetSize(frame.marker, markerDetails.width * details.scale * frame.lowerScale, frame.rawHeight * frame.lowerScale)
   end
 
-  PixelUtil.SetSize(frame.mask, width, height)
+  PixelUtil.SetSize(frame.mask, frame.rawWidth, frame.rawHeight)
 end
 
 function addonTable.Display.GetHealthBar(frame, parent)
@@ -134,7 +137,8 @@ function addonTable.Display.GetHealthBar(frame, parent)
   function frame:Init(details)
     InitBar(frame, details)
 
-    local borderDetails = addonTable.Assets.BarBordersSliced[details.border.asset]
+    local borderDetails = LSM:Fetch("ninesliceborder", details.border.asset, true) or LSM:Fetch("ninesliceborder", "Platy: 4px")
+    local borderSliceDetails = LSM:Fetch("nineslice", borderDetails.nineslice)
 
     frame.statusBarCutaway:SetFrameLevel(frame:GetFrameLevel() + 1)
     frame.statusBarAbsorb:SetFrameLevel(frame:GetFrameLevel() + 2)
@@ -144,11 +148,11 @@ function addonTable.Display.GetHealthBar(frame, parent)
     frame.statusBarAbsorb:SetStatusBarTexture(LSM:Fetch("statusbar", details.absorb.asset, true) or LSM:Fetch("statusbar", "Platy: Absorb Wide"))
     frame.statusBarAbsorb:GetStatusBarTexture():SetVertexColor(details.absorb.color.r, details.absorb.color.g, details.absorb.color.b, details.absorb.color.a)
     frame.statusBarAbsorb:SetPoint("LEFT", frame.statusBar:GetStatusBarTexture(), "RIGHT")
-    frame.statusBarAbsorb:SetScale(1/borderDetails.lowerScale * details.scale)
+    frame.statusBarAbsorb:SetScale(borderSliceDetails.scaleModifier * details.scale)
     frame.statusBarAbsorb:GetStatusBarTexture():RemoveMaskTexture(frame.mask)
 
     frame.statusBarCutaway:SetStatusBarTexture(LSM:Fetch("statusbar", details.foreground.asset, true) or LSM:Fetch("statusbar", "Platy: Solid White"))
-    frame.statusBarCutaway:SetScale(1/borderDetails.lowerScale * details.scale)
+    frame.statusBarCutaway:SetScale(borderSliceDetails.scaleModifier * details.scale)
     frame.statusBarCutaway:GetStatusBarTexture():RemoveMaskTexture(frame.mask)
     frame.statusBarCutaway:SetAlpha(0)
     frame.statusBarCutawayMask:SetPoint("LEFT", frame.statusBar:GetStatusBarTexture(), "RIGHT")
@@ -177,8 +181,7 @@ function addonTable.Display.GetHealthBar(frame, parent)
 
   function frame:ApplySize()
     SizeBar(frame, frame.details)
-    local borderDetails = addonTable.Assets.BarBordersSliced[frame.details.border.asset]
-    PixelUtil.SetSize(frame.statusBarAbsorb, frame.rawWidth * borderDetails.lowerScale, frame.rawHeight * borderDetails.lowerScale)
+    PixelUtil.SetSize(frame.statusBarAbsorb, frame.rawWidth * frame.lowerScale, frame.rawHeight * frame.lowerScale)
     PixelUtil.SetSize(frame.statusBarCutawayMask, frame.rawWidth, frame.rawHeight)
   end
 
@@ -269,7 +272,8 @@ function addonTable.Display.GetCastBar(frame, parent)
   function frame:Init(details)
     InitBar(frame, details)
 
-    local borderDetails = addonTable.Assets.BarBordersSliced[details.border.asset]
+    local borderDetails = LSM:Fetch("ninesliceborder", details.border.asset, true) or LSM:Fetch("ninesliceborder", "Platy: 4px")
+    local borderSliceDetails = LSM:Fetch("nineslice", borderDetails.nineslice)
 
     frame.statusBar:SetFrameLevel(frame:GetFrameLevel() + 2)
     frame.interruptMarker:SetFrameLevel(frame:GetFrameLevel() + 5)
@@ -281,8 +285,8 @@ function addonTable.Display.GetCastBar(frame, parent)
     frame.reverseStatusTexture:SetPoint("RIGHT", frame.statusBar:GetStatusBarTexture(), "LEFT")
     frame.reverseStatusTexture:SetHorizTile(true)
 
-    frame.interruptMarker:SetScale(1/borderDetails.lowerScale)
-    frame.interruptPositioner:SetScale(1/borderDetails.lowerScale)
+    frame.interruptMarker:SetScale(borderSliceDetails.scaleModifier)
+    frame.interruptPositioner:SetScale(borderSliceDetails.scaleModifier)
     if details.interruptMarker.asset ~= "none" then
       local markerDetails = addonTable.Assets.BarPositionHighlights[details.interruptMarker.asset]
       frame.interruptMarkerPoint:SetTexture(markerDetails.file)
@@ -317,14 +321,18 @@ function addonTable.Display.GetCastBar(frame, parent)
   function frame:ApplySize()
     local details = frame.details
     SizeBar(frame, details)
-    local borderDetails = addonTable.Assets.BarBordersSliced[details.border.asset]
-    frame.reverseStatusTexture:SetHeight(frame.rawHeight * borderDetails.lowerScale)
-    frame.interruptMarkerPoint:SetHeight(frame.rawHeight * borderDetails.lowerScale)
-    frame.interruptMarker:SetSize(frame.rawWidth * borderDetails.lowerScale, frame.rawHeight * borderDetails.lowerScale)
-    frame.interruptPositioner:SetSize(frame.rawWidth * borderDetails.lowerScale, frame.rawHeight * borderDetails.lowerScale)
+
+    local borderDetails = LSM:Fetch("ninesliceborder", details.border.asset, true) or LSM:Fetch("ninesliceborder", "Platy: 4px")
+    local borderSliceDetails = LSM:Fetch("nineslice", borderDetails.nineslice)
+
+    local lowerScale = 1 / borderSliceDetails.scaleModifier
+    frame.reverseStatusTexture:SetHeight(frame.rawHeight * lowerScale)
+    frame.interruptMarkerPoint:SetHeight(frame.rawHeight * lowerScale)
+    frame.interruptMarker:SetSize(frame.rawWidth * lowerScale, frame.rawHeight * lowerScale)
+    frame.interruptPositioner:SetSize(frame.rawWidth * lowerScale, frame.rawHeight * lowerScale)
     if details.interruptMarker.asset ~= "none" then
       local markerDetails = addonTable.Assets.BarPositionHighlights[details.interruptMarker.asset]
-      PixelUtil.SetSize(frame.interruptMarkerPoint, markerDetails.width * details.scale * borderDetails.lowerScale, frame.rawHeight * borderDetails.lowerScale)
+      PixelUtil.SetSize(frame.interruptMarkerPoint, markerDetails.width * details.scale * lowerScale, frame.rawHeight * lowerScale)
     end
   end
 
@@ -390,19 +398,17 @@ function addonTable.Display.GetHighlight(frame, parent)
   frame.highlight:SetAllPoints()
 
   function frame:Init(details)
-    local highlightDetails = addonTable.Assets.Highlights[details.asset]
+    local highlightDetails = (details.sliced and (LSM:Fetch("nineslice", details.asset, true) or LSM:Fetch("nineslice", "Platy: 7px"))) or (LSM:Fetch("platynator/sizedtexture", details.asset, true) or LSM:Fetch("platynator/sizedtexture", "Platy: Glow"))
     frame.details = details
 
     frame.highlight:SetTexture(highlightDetails.file)
     frame.highlight:SetVertexColor(details.color.r, details.color.g, details.color.b, details.color.a)
     frame.highlight:SetScale(details.scale)
 
-    if highlightDetails.mode == addonTable.Assets.RenderMode.Sliced then
-      frame.highlight:SetScale(1/highlightDetails.lowerScale * details.scale)
-      frame.highlight:SetTextureSliceMargins(highlightDetails.width * highlightDetails.margin, highlightDetails.height * highlightDetails.margin, highlightDetails.width * highlightDetails.margin, highlightDetails.height * highlightDetails.margin)
-    elseif highlightDetails.mode == addonTable.Assets.RenderMode.Fixed then
-      frame.highlight:ClearTextureSlice()
-    elseif highlightDetails.mode == addonTable.Assets.RenderMode.Stretch then
+    if details.sliced then
+      frame.highlight:SetScale(highlightDetails.scaleModifier * details.scale)
+      frame.highlight:SetTextureSliceMargins(highlightDetails.margins.left, highlightDetails.margins.top, highlightDetails.margins.right, highlightDetails.margins.bottom)
+    else
       frame.highlight:ClearTextureSlice()
     end
 
@@ -435,15 +441,12 @@ function addonTable.Display.GetHighlight(frame, parent)
 
   function frame:ApplySize()
     local details = frame.details
-    local highlightDetails = addonTable.Assets.Highlights[details.asset]
-    if highlightDetails.mode == addonTable.Assets.RenderMode.Sliced then
-      local width, height = details.width * addonTable.Assets.BarBordersSize.width * highlightDetails.shiftModifierH, details.height * addonTable.Assets.BarBordersSize.height * highlightDetails.shiftModifierV
+    local highlightDetails = (details.sliced and (LSM:Fetch("nineslice", details.asset, true) or LSM:Fetch("nineslice", "Platy: 7px"))) or (LSM:Fetch("platynator/sizedtexture", details.asset, true) or LSM:Fetch("platynator/sizedtexture", "Platy: Glow"))
+    if details.sliced then
+      local width, height = details.width * addonTable.Assets.BarBordersSize.width, details.height * addonTable.Assets.BarBordersSize.height
       PixelUtil.SetSize(frame, width * details.scale, height * details.scale)
-      PixelUtil.SetSize(frame.highlight, (width + highlightDetails.extra / 2) * highlightDetails.lowerScale, (height + highlightDetails.extra / 2) * highlightDetails.lowerScale)
-    elseif highlightDetails.mode == addonTable.Assets.RenderMode.Fixed then
-      PixelUtil.SetSize(frame, highlightDetails.width * details.scale, highlightDetails.height * details.scale)
-      PixelUtil.SetSize(frame.highlight, highlightDetails.width, highlightDetails.height)
-    elseif highlightDetails.mode == addonTable.Assets.RenderMode.Stretch then
+      PixelUtil.SetSize(frame.highlight, (width + (highlightDetails.padding.left + highlightDetails.padding.right) / 2) / highlightDetails.scaleModifier, (height + (highlightDetails.padding.top + highlightDetails.padding.bottom) / 2) / highlightDetails.scaleModifier)
+    else
       PixelUtil.SetSize(frame, highlightDetails.width * details.width * details.scale, highlightDetails.height * details.height * details.scale)
       PixelUtil.SetSize(frame.highlight, highlightDetails.width * details.width, highlightDetails.height * details.height)
     end
@@ -487,11 +490,12 @@ function addonTable.Display.GetAnimatedBorderHighlight(frame, parent)
     frame.Animation:Play()
   end
 
+  frame.currentOffset = 0
+
   function frame:Init(details)
     local highlightDetails = addonTable.Assets.Highlights[details.asset]
+    frame.defaultBorderDim = highlightDetails.defaultWidth
     frame.details = details
-
-    assert(highlightDetails.kind == "animatedBorder", "Needs an appropriate animated texture")
 
     frame.Top:SetTexture(highlightDetails.horizontal)
     frame.Bottom:SetTexture(highlightDetails.horizontal)
@@ -530,15 +534,17 @@ function addonTable.Display.GetAnimatedBorderHighlight(frame, parent)
   end
 
   function frame:ApplyAnchor()
+    local details = frame.details
     ApplyAnchor(frame, frame.details.anchor)
+
+    frame.currentOffset = offset
   end
 
   function frame:ApplySize()
     local details = frame.details
-    local highlightDetails = addonTable.Assets.Highlights[details.asset]
     PixelUtil.SetSize(frame, addonTable.Assets.BarBordersSize.width * details.width * details.scale, addonTable.Assets.BarBordersSize.height * details.height * details.scale)
 
-    local dim = PixelUtil.ConvertPixelsToUIForRegion(1 * details.borderWidth, frame)
+    local dim = PixelUtil.ConvertPixelsToUIForRegion(details.borderWidth * frame.defaultBorderDim, frame)
     frame.Top:SetHeight(dim)
     frame.Bottom:SetHeight(dim)
     frame.Left:SetWidth(dim)
