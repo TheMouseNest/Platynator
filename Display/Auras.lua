@@ -223,11 +223,13 @@ end
 
 function addonTable.Display.AurasManagerMixin:DoesBuffFilterIn(auraInstanceID)
   if not self.buffsDetails.filters.important then
-    return not C_UnitAuras.IsAuraFilteredOutByInstanceID(self.unit, auraInstanceID, self.buffFilter)
+    if self.buffsDetails.filters.dispelable then
+      return not C_UnitAuras.IsAuraFilteredOutByInstanceID(self.unit, auraInstanceID, self.buffFilter .. "|RAID_PLAYER_DISPELLABLE")
+    else
+      return not C_UnitAuras.IsAuraFilteredOutByInstanceID(self.unit, auraInstanceID, self.buffFilter)
+    end
   elseif self.isFriendly then
     return not C_UnitAuras.IsAuraFilteredOutByInstanceID(self.unit, auraInstanceID, self.buffFilter .. "|PLAYER")
-  elseif self.buffsDetails.filters.dispelable then
-    return C_UnitAuras.IsAuraFilteredOutByInstanceID(self.unit, auraInstanceID, self.buffFilter .. "|RAID_PLAYER_DISPELLABLE")
   else
     return not (C_UnitAuras.IsAuraFilteredOutByInstanceID(self.unit, auraInstanceID, self.buffFilter .. "|IMPORTANT") and C_UnitAuras.IsAuraFilteredOutByInstanceID(self.unit, auraInstanceID, self.buffFilter .. "|RAID_PLAYER_DISPELLABLE"))
   end
@@ -341,7 +343,7 @@ function addonTable.Display.AurasManagerMixin:OnEvent(event, _, refreshData)
   local changes = {}
 
   if refreshData.addedAuras then
-    Mixin(changes, self:AddAuras(refreshData.addedAuras))
+    changes = self:AddAuras(refreshData.addedAuras)
   end
 
   if refreshData.updatedAuraInstanceIDs then

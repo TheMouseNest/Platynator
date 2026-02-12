@@ -166,16 +166,14 @@ function addonTable.Display.ManagerMixin:OnLoad()
             UF:SetAlpha(0)
             locked = false
           end)
-          if not addonTable.Constants.AuraFilteringAvailable then
-            hooksecurefunc(nameplate.UnitFrame.AurasFrame, "RefreshAuras", function(af, data)
-              if not af:IsForbidden() then
-                local display = self.nameplateDisplays[af:GetParent().unit]
-                if display and display.unit then
-                  display.AurasManager:OnEvent("", "", data or {isFullUpdate = true})
-                end
+          hooksecurefunc(nameplate.UnitFrame.AurasFrame, "RefreshAuras", function(af, data)
+            if not af:IsForbidden() then
+              local display = self.nameplateDisplays[af:GetParent().unit]
+              if display and display.unit then
+                display.AurasManager:OnEvent("", "", data or {isFullUpdate = true})
               end
-            end)
-          end
+            end
+          end)
         end
       else
         nameplate.UnitFrame:SetParent(addonTable.hiddenFrame)
@@ -438,21 +436,25 @@ function addonTable.Display.ManagerMixin:UpdateInstanceShowState()
 end
 
 function addonTable.Display.ManagerMixin:ListenToBuffs(display, unit)
-  if addonTable.Constants.IsRetail and self.ModifiedUFs[unit] and display.DebuffDisplay.details and display.DebuffDisplay.details.filters.important then
+  if addonTable.Constants.IsRetail and self.ModifiedUFs[unit] then
     local UF = self.ModifiedUFs[unit]
-    UF:RegisterUnitEvent("UNIT_AURA", unit)
+    if display.DebuffDisplay.details and display.DebuffDisplay.details.filters.important then
+      UF:RegisterUnitEvent("UNIT_AURA", unit)
 
-    local DebuffListFrame = UF.AurasFrame.DebuffListFrame
+      local DebuffListFrame = UF.AurasFrame.DebuffListFrame
 
-    display.AurasManager:SetGetImportantAuras(function()
-      local important = {}
+      display.AurasManager:SetGetImportantAuras(function()
+        local important = {}
 
-      for _, child in ipairs(DebuffListFrame:GetLayoutChildren()) do
-        important[child.auraInstanceID] = true
-      end
+        for _, child in ipairs(DebuffListFrame:GetLayoutChildren()) do
+          important[child.auraInstanceID] = true
+        end
 
-      return important
-    end)
+        return important
+      end)
+    else
+      UF:UnregisterEvent("UNIT_AURA")
+    end
   end
 end
 
@@ -867,11 +869,7 @@ function addonTable.Display.ManagerMixin:OnEvent(eventName, ...)
       C_CVar.SetCVarBitfield(NamePlateConstants.ENEMY_NPC_AURA_DISPLAY_CVAR, Enum.NamePlateEnemyNpcAuraDisplay.Debuffs, true)
       C_CVar.SetCVarBitfield(NamePlateConstants.ENEMY_PLAYER_AURA_DISPLAY_CVAR, Enum.NamePlateEnemyPlayerAuraDisplay.Debuffs, true)
 
-      --C_CVar.SetCVarBitfield(NamePlateConstants.FRIENDLY_PLAYER_AURA_DISPLAY_CVAR, Enum.NamePlateFriendlyPlayerAuraDisplay.Buffs, true)
       --C_CVar.SetCVarBitfield(NamePlateConstants.FRIENDLY_PLAYER_AURA_DISPLAY_CVAR, Enum.NamePlateFriendlyPlayerAuraDisplay.Debuffs, true)
-      --C_CVar.SetCVarBitfield(NamePlateConstants.FRIENDLY_PLAYER_AURA_DISPLAY_CVAR, Enum.NamePlateFriendlyPlayerAuraDisplay.LossOfControl, true)
-
-      C_CVar.SetCVar("nameplateMinScale", 1)
     end
     addonTable.Display.SetCVars()
 
