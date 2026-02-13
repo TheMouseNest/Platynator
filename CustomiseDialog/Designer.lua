@@ -856,6 +856,7 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
         end
 
       elseif w.kind == "specialBars" and w.details.kind == "power" then
+        w:SetMaxPower(6)
         for i, segment in ipairs(w.segments) do
           if w.details.perPointColorsEnabled and w.details.perPointColors and w.details.perPointColors[i] then
             local c = w.details.perPointColors[i]
@@ -868,8 +869,6 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
             segment.foreground:Show()
           elseif i <= 6 then
             segment.foreground:Hide()
-          else
-            segment:Hide()
           end
         end
       elseif w.kind == "markers" then

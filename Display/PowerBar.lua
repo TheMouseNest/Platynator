@@ -129,6 +129,8 @@ function addonTable.Display.PowerBarMixin:ApplyTarget()
       end
     end
 
+    self:SetMaxPower(maxPower)
+
     for i, segment in ipairs(self.segments) do
       local color = powerColor
       if self.details.perPointColorsEnabled and self.details.perPointColors and self.details.perPointColors[i] then
@@ -141,12 +143,6 @@ function addonTable.Display.PowerBarMixin:ApplyTarget()
         segment.foreground:Show()
       else
         segment.foreground:Hide()
-      end
-
-      if i > maxPower then
-        segment:Hide()
-      else
-        segment:Show()
       end
     end
   else

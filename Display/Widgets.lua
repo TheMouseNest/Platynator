@@ -367,15 +367,15 @@ function addonTable.Display.GetPower(frame, parent)
     end
 
     frame.details = details
+    frame.maxPower = addonTable.Constants.MaxPower
 
     local blankDetails = addonTable.Assets.PowerBars[details.blank]
     local filledDetails = addonTable.Assets.PowerBars[details.filled]
     for i, segment in ipairs(frame.segments) do
-      segment:SetPoint("LEFT", frame, "LEFT", (i - 1) * frame:GetWidth() / 7, 0)
-
       segment.background:SetTexture(blankDetails.file)
       segment.foreground:SetTexture(filledDetails.file)
     end
+    self:RepositionSegments()
 
     Mixin(frame, addonTable.Display.PowerBarMixin)
 
@@ -396,10 +396,36 @@ function addonTable.Display.GetPower(frame, parent)
     PixelUtil.SetSize(frame, blankDetails.width * details.scale, blankDetails.height * details.scale)
 
     local w, h = self:GetWidth() / 7, self:GetHeight()
+    local xOffset = -(self.maxPower / 2 * w)
     for i, segment in ipairs(frame.segments) do
       PixelUtil.SetSize(segment, w, h)
-      segment:SetPoint("LEFT", frame, "LEFT", (i - 1) * w, 0)
     end
+    self:RepositionSegments()
+  end
+
+  function frame:RepositionSegments()
+    local w = self:GetWidth() / 7
+    local xOffset = -(self.maxPower / 2 * w)
+    for i, segment in ipairs(frame.segments) do
+      segment:SetPoint("LEFT", frame, "CENTER", xOffset + (i - 1) * w, 0)
+    end
+  end
+
+  function frame:SetMaxPower(maxPower)
+    if self.maxPower == maxPower then
+      return
+    end
+
+    self.maxPower = maxPower
+    for i, segment in ipairs(self.segments) do
+      if i > maxPower then
+        segment:Hide()
+      else
+        segment:Show()
+      end
+    end
+
+    self:RepositionSegments()
   end
 end
 
