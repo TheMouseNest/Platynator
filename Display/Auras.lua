@@ -26,7 +26,7 @@ function addonTable.Display.AurasManagerMixin:PostInit(buffs, debuffs, crowdCont
   if buffs then
     if addonTable.Constants.IsRetail then
       if buffs.filters.important then
-        self.buffFilter = self.buffFilter .. "|INCLUDE_NAME_PLATE_ONLY"
+        self.buffFilter = self.buffFilter .. "|RAID_IN_COMBAT|INCLUDE_NAME_PLATE_ONLY"
       end
       if buffs.filters.dispelable then
         self.buffFilter = self.buffFilter .. "|RAID_PLAYER_DISPELLABLE"
