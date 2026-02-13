@@ -213,14 +213,17 @@ function addonTable.Assets.ApplyScale()
     end
   end
 
-  local function ResizeSlicedAssets(list)
-    for _, entry in pairs(list) do
+  local function ResizeSlicedAssets(list, scales)
+    for key, entry in pairs(list) do
       if entry.has4k then
         entry.file = entry.file:format(DPIScale)
         if DPIScale ~= "DPI144" then
-          entry.width = entry.DPIScale * entry.width
-          entry.height = entry.DPIScale * entry.height
-          entry.modifier = entry.modifier / entry.DPIScale
+          local scale = scales[key].DPIScale
+          entry.width = scale * entry.width
+          entry.height = scale * entry.height
+          if entry.modifier then
+            entry.modifier = entry.modifier / scale
+          end
         end
       end
     end
@@ -237,8 +240,8 @@ function addonTable.Assets.ApplyScale()
   end
 
   local function IterateLSMSlicedBorder(list, masks)
-    ResizeSlicedAssets(list)
-    ResizeSlicedAssets(masks)
+    ResizeSlicedAssets(list, list)
+    ResizeSlicedAssets(masks, list)
     for key, entry in pairs(list) do
       LSM:Register("nineslice", key, {
         file = entry.file,
@@ -265,7 +268,7 @@ function addonTable.Assets.ApplyScale()
   local function IterateLSMHighlights(list)
     for key, entry in pairs(list) do
       if entry.mode == renderMode.Sliced then
-        ResizeSlicedAssets({entry})
+        ResizeSlicedAssets({entry}, {entry})
         LSM:Register("nineslice", key, {
           file = entry.file,
           previewWidth = entry.width,
