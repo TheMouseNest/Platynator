@@ -128,9 +128,22 @@ function addonTable.Display.PowerBarMixin:ApplyTarget()
         maxPower = maxPower / powerDivisor
       end
     end
-    self.background:SetValue(maxPower)
-    self.main:SetValue(currentPower)
-    self.main:GetStatusBarTexture():SetVertexColor(powerColor.r, powerColor.g, powerColor.b)
+
+    for i, segment in ipairs(self.segments) do
+      segment.foreground:SetVertexColor(powerColor.r, powerColor.g, powerColor.b)
+
+      if i <= currentPower then
+        segment.foreground:Show()
+      else
+        segment.foreground:Hide()
+      end
+
+      if i > maxPower then
+        segment:Hide()
+      else
+        segment:Show()
+      end
+    end
   else
     self:Hide()
   end
