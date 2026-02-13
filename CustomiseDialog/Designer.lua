@@ -857,9 +857,15 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
 
       elseif w.kind == "specialBars" and w.details.kind == "power" then
         for i, segment in ipairs(w.segments) do
+          if w.details.perPointColorsEnabled and w.details.perPointColors and w.details.perPointColors[i] then
+            local c = w.details.perPointColors[i]
+            segment.foreground:SetVertexColor(c.r, c.g, c.b)
+          else
+            segment.foreground:SetVertexColor(234/255, 61/255, 247/255)
+          end
+
           if i <= 4 then
             segment.foreground:Show()
-            segment.foreground:SetVertexColor(234/255, 61/255, 247/255)
           elseif i <= 6 then
             segment.foreground:Hide()
           else

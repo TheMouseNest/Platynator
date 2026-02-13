@@ -130,7 +130,12 @@ function addonTable.Display.PowerBarMixin:ApplyTarget()
     end
 
     for i, segment in ipairs(self.segments) do
-      segment.foreground:SetVertexColor(powerColor.r, powerColor.g, powerColor.b)
+      local color = powerColor
+      if self.details.perPointColorsEnabled and self.details.perPointColors and self.details.perPointColors[i] then
+        color = self.details.perPointColors[i]
+      end
+
+      segment.foreground:SetVertexColor(color.r, color.g, color.b)
 
       if i <= currentPower then
         segment.foreground:Show()

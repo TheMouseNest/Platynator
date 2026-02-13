@@ -116,6 +116,26 @@ local function GetLabelsValuesBorders()
   return labels, values
 end
 
+local function GetPerPointColorEntry(index)
+  return {
+    label = addonTable.Locales.POINT_N:format(index),
+    kind = "colorPicker",
+    setter = function(details, value)
+      if not details.perPointColors then
+        details.perPointColors = {}
+      end
+      details.perPointColors[index] = value
+    end,
+    getter = function(details)
+      local color = details.perPointColors and details.perPointColors[index]
+      if not color then
+        return { r = 1, g = 1, b = 1, a = 1}
+      end
+      return color
+    end,
+  }
+end
+
 local function GetLabelsValuesHighlightsAnimated()
   local labels, values = {}, {}
 
@@ -1300,6 +1320,28 @@ addonTable.CustomiseDialog.WidgetsConfig = {
               return details.blank
             end
           },
+        }
+      },
+      {
+        label = addonTable.Locales.PER_POINT_COLORS,
+        entries = {
+          {
+            label = addonTable.Locales.ENABLED,
+            kind = "checkbox",
+            setter = function(details, value)
+              details.perPointColorsEnabled = value
+            end,
+            getter = function(details)
+              return details.perPointColorsEnabled or false
+            end,
+          },
+          GetPerPointColorEntry(1),
+          GetPerPointColorEntry(2),
+          GetPerPointColorEntry(3),
+          GetPerPointColorEntry(4),
+          GetPerPointColorEntry(5),
+          GetPerPointColorEntry(6),
+          GetPerPointColorEntry(7)
         }
       }
     }
