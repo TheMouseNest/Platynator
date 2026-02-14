@@ -17,7 +17,7 @@ function addonTable.Display.AurasManagerMixin:OnLoad()
 end
 
 function addonTable.Display.AurasManagerMixin:PostInit(buffs, debuffs, crowdControl)
-  self.processingAuras = (self.buffsDetails or self.debuffsDetails or self.crowdControlDetails) and (
+  self.processingAuras = (buffs or debuffs or crowdControl) and (
     not addonTable.Constants.IsRetail or not (debuffs and debuffs.filters.important or buffs and buffs.filters.important)
   )
 
