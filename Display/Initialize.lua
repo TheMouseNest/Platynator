@@ -438,15 +438,20 @@ end
 function addonTable.Display.ManagerMixin:ListenToBuffs(display, unit)
   if addonTable.Constants.IsRetail and self.ModifiedUFs[unit] then
     local UF = self.ModifiedUFs[unit]
-    if display.DebuffDisplay.details and display.DebuffDisplay.details.filters.important then
+    if display.DebuffDisplay.details and (display.DebuffDisplay.details.filters.important or display.BuffDisplay.details.filters.important) then
       UF:RegisterUnitEvent("UNIT_AURA", unit)
 
       local DebuffListFrame = UF.AurasFrame.DebuffListFrame
+      local BuffListFrame = UF.AurasFrame.BuffListFrame
 
       display.AurasManager:SetGetImportantAuras(function()
         local important = {}
 
         for _, child in ipairs(DebuffListFrame:GetLayoutChildren()) do
+          important[child.auraInstanceID] = true
+        end
+
+        for _, child in ipairs(BuffListFrame:GetLayoutChildren()) do
           important[child.auraInstanceID] = true
         end
 
@@ -867,7 +872,9 @@ function addonTable.Display.ManagerMixin:OnEvent(eventName, ...)
   elseif eventName == "VARIABLES_LOADED" then
     if addonTable.Constants.IsRetail then
       C_CVar.SetCVarBitfield(NamePlateConstants.ENEMY_NPC_AURA_DISPLAY_CVAR, Enum.NamePlateEnemyNpcAuraDisplay.Debuffs, true)
+      C_CVar.SetCVarBitfield(NamePlateConstants.ENEMY_NPC_AURA_DISPLAY_CVAR, Enum.NamePlateEnemyNpcAuraDisplay.Buffs, true)
       C_CVar.SetCVarBitfield(NamePlateConstants.ENEMY_PLAYER_AURA_DISPLAY_CVAR, Enum.NamePlateEnemyPlayerAuraDisplay.Debuffs, true)
+      C_CVar.SetCVarBitfield(NamePlateConstants.ENEMY_PLAYER_AURA_DISPLAY_CVAR, Enum.NamePlateEnemyPlayerAuraDisplay.Buffs, true)
 
       --C_CVar.SetCVarBitfield(NamePlateConstants.FRIENDLY_PLAYER_AURA_DISPLAY_CVAR, Enum.NamePlateFriendlyPlayerAuraDisplay.Debuffs, true)
     end

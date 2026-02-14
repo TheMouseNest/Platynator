@@ -17,7 +17,9 @@ function addonTable.Display.AurasManagerMixin:OnLoad()
 end
 
 function addonTable.Display.AurasManagerMixin:PostInit(buffs, debuffs, crowdControl)
-  self.processingAuras = not addonTable.Constants.IsRetail or not debuffs or not debuffs.filters.important
+  self.processingAuras = (self.buffsDetails or self.debuffsDetails or self.crowdControlDetails) and (
+    not addonTable.Constants.IsRetail or not (debuffs and debuffs.filters.important or buffs and buffs.filters.important)
+  )
 
   self:Reset()
 
@@ -26,7 +28,7 @@ function addonTable.Display.AurasManagerMixin:PostInit(buffs, debuffs, crowdCont
   if buffs then
     if addonTable.Constants.IsRetail then
       if buffs.filters.important then
-        self.buffFilter = self.buffFilter .. "|RAID_IN_COMBAT|INCLUDE_NAME_PLATE_ONLY"
+        self.buffFilter = self.buffFilter .. "|INCLUDE_NAME_PLATE_ONLY"
       end
       if buffs.filters.dispelable then
         self.buffFilter = self.buffFilter .. "|RAID_PLAYER_DISPELLABLE"
@@ -217,11 +219,11 @@ function addonTable.Display.AurasManagerMixin:DoesDebuffFilterIn(auraInstanceID)
   if not self.debuffsDetails.filters.important then
     return not C_UnitAuras.IsAuraFilteredOutByInstanceID(self.unit, auraInstanceID, self.debuffFilter)
   else
-    return self.knownImportant[auraInstanceID]
+    return self.knownImportant[auraInstanceID] and not C_UnitAuras.IsAuraFilteredOutByInstanceID(self.unit, auraInstanceID, self.debuffFilter)
   end
 end
 
-function addonTable.Display.AurasManagerMixin:DoesBuffFilterIn(auraInstanceID)
+function addonTable.Display.AurasManagerMixin:DoesBuffFilterIn(auraInstanceID, dispelName)
   if not self.buffsDetails.filters.important then
     if self.buffsDetails.filters.dispelable then
       return not C_UnitAuras.IsAuraFilteredOutByInstanceID(self.unit, auraInstanceID, self.buffFilter .. "|RAID_PLAYER_DISPELLABLE")
@@ -229,9 +231,11 @@ function addonTable.Display.AurasManagerMixin:DoesBuffFilterIn(auraInstanceID)
       return not C_UnitAuras.IsAuraFilteredOutByInstanceID(self.unit, auraInstanceID, self.buffFilter)
     end
   elseif self.isFriendly then
-    return not C_UnitAuras.IsAuraFilteredOutByInstanceID(self.unit, auraInstanceID, self.buffFilter .. "|PLAYER")
+    return not C_UnitAuras.IsAuraFilteredOutByInstanceID(self.unit, auraInstanceID, self.buffFilter .. "|RAID_IN_COMBAT|PLAYER")
+  elseif self.buffsDetails.filters.dispelable then
+    return self.knownImportant[auraInstanceID] and dispelName ~= nil and not C_UnitAuras.IsAuraFilteredOutByInstanceID(self.unit, auraInstanceID, self.buffFilter)
   else
-    return not (C_UnitAuras.IsAuraFilteredOutByInstanceID(self.unit, auraInstanceID, self.buffFilter .. "|IMPORTANT") and C_UnitAuras.IsAuraFilteredOutByInstanceID(self.unit, auraInstanceID, self.buffFilter .. "|RAID_PLAYER_DISPELLABLE"))
+    return self.knownImportant[auraInstanceID] and not C_UnitAuras.IsAuraFilteredOutByInstanceID(self.unit, auraInstanceID, self.buffFilter)
   end
 end
 
@@ -249,7 +253,7 @@ function addonTable.Display.AurasManagerMixin:SetUnit(unit)
       self.OnDebuffsUpdate(self.debuffs, self.debuffFilter)
       self.OnCrowdControlUpdate(self.crowdControl, self.crowdControlFilter)
     end
-    if self.processingAuras and (self.buffsDetails or self.debuffsDetails or self.crowdControlDetails) then
+    if self.processingAuras then
       self:RegisterUnitEvent("UNIT_AURA", self.unit)
     end
   else
@@ -396,7 +400,7 @@ if addonTable.Constants.IsRetail then
     for _, aura in ipairs(addedAuras) do
       if self.auraData[aura.auraInstanceID] == nil then
         local keep = false
-        if self.buffsDetails and self:DoesBuffFilterIn(aura.auraInstanceID) then
+        if self.buffsDetails and self:DoesBuffFilterIn(aura.auraInstanceID, aura.dispelName) then
           keep = true
           table.insert(self.buffs, aura.auraInstanceID)
           aura.kind = "buffs"
@@ -425,7 +429,7 @@ else
     for _, aura in ipairs(addedAuras) do
       local keep = false
       if not self.isPlayer and self.buffsDetails and aura.isHelpful and
-        not legacy.blacklistedBuffs[aura.spellId] and ((not self.buffsDetails.dispelable and not self.buffsDetails.important) or type(aura.dispelName) ~= "nil") then
+        not legacy.blacklistedBuffs[aura.spellId] and ((not self.buffsDetails.dispelable and not self.buffsDetails.important) or aura.dispelName ~= nil) then
         keep = true
         table.insert(self.buffs, aura.auraInstanceID)
         aura.kind = "buffs"
