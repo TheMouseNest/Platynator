@@ -12,6 +12,7 @@ addonTable.Constants = {
 
   IsMidnight = select(4, GetBuildInfo()) >= 120001,
 
+  MaxPower = 7,
   DeathKnightMaxRunes = 6,
 
   ButtonFrameOffset = 5,
