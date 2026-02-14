@@ -30,9 +30,6 @@ function addonTable.Display.AurasManagerMixin:PostInit(buffs, debuffs, crowdCont
       if buffs.filters.important then
         self.buffFilter = self.buffFilter .. "|INCLUDE_NAME_PLATE_ONLY"
       end
-      if buffs.filters.dispelable then
-        self.buffFilter = self.buffFilter .. "|RAID_PLAYER_DISPELLABLE"
-      end
       if buffs.sorting.kind == "blizzard" then
         self.buffSort = Enum.UnitAuraSortRule.Default
       else
@@ -226,7 +223,7 @@ end
 function addonTable.Display.AurasManagerMixin:DoesBuffFilterIn(auraInstanceID, dispelName)
   if not self.buffsDetails.filters.important then
     if self.buffsDetails.filters.dispelable then
-      return not C_UnitAuras.IsAuraFilteredOutByInstanceID(self.unit, auraInstanceID, self.buffFilter .. "|RAID_PLAYER_DISPELLABLE")
+      return dispelName ~= nil and not C_UnitAuras.IsAuraFilteredOutByInstanceID(self.unit, auraInstanceID, self.buffFilter)
     else
       return not C_UnitAuras.IsAuraFilteredOutByInstanceID(self.unit, auraInstanceID, self.buffFilter)
     end
