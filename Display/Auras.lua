@@ -389,7 +389,7 @@ end
 if addonTable.Constants.IsRetail then
   function addonTable.Display.AurasManagerMixin:AddAuras(addedAuras)
     local changes = {}
-    if self.debuffsDetails and self.debuffsDetails.filters.important then
+    if self.debuffsDetails and self.debuffsDetails.filters.important or self.buffsDetails and self.buffsDetails.filters.important then
       self.knownImportant = self.GetImportantAuras()
     else
       self.knownImportant = {}
