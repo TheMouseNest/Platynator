@@ -207,6 +207,14 @@ local function SetupGeneral(parent)
     --addonTable.Skins.AddFrame("Button", importButton)
   end
 
+  local blizzardWidgetScale = addonTable.CustomiseDialog.Components.GetSlider(container, addonTable.Locales.BLIZZARD_EXTRA_WIDGETS_SCALE, 1, 300, function(val) return ("%d%%"):format(val) end, function(value)
+    addonTable.Config.Set(addonTable.Config.Options.BLIZZARD_WIDGET_SCALE, value/100)
+  end)
+  blizzardWidgetScale:SetValue(addonTable.Config.Get(addonTable.Config.Options.BLIZZARD_WIDGET_SCALE) * 100)
+
+  blizzardWidgetScale:SetPoint("TOP", allFrames[#allFrames], "BOTTOM", 0, -70)
+  table.insert(allFrames, blizzardWidgetScale)
+
   container:SetScript("OnShow", function()
     for _, f in ipairs(allFrames) do
       if f.SetValue and f.option then
@@ -214,6 +222,7 @@ local function SetupGeneral(parent)
       end
     end
     globalScale:SetValue(addonTable.Config.Get(addonTable.Config.Options.GLOBAL_SCALE) * 100)
+    blizzardWidgetScale:SetValue(addonTable.Config.Get(addonTable.Config.Options.BLIZZARD_WIDGET_SCALE) * 100)
   end)
 
   return container

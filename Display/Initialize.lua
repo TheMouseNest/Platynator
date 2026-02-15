@@ -184,6 +184,7 @@ function addonTable.Display.ManagerMixin:OnLoad()
       end
       if nameplate.UnitFrame.WidgetContainer then
         nameplate.UnitFrame.WidgetContainer:SetParent(nameplate)
+        nameplate.UnitFrame.WidgetContainer:SetScale(addonTable.Config.Get(addonTable.Config.Options.BLIZZARD_WIDGET_SCALE))
       end
       self.ModifiedUFs[unit] = nameplate.UnitFrame
     end
@@ -204,6 +205,7 @@ function addonTable.Display.ManagerMixin:OnLoad()
       end
       if UF.WidgetContainer then
         UF.WidgetContainer:SetParent(UF)
+        UF.WidgetContainer:SetScale(1)
       end
       self.ModifiedUFs[unit] = nil
     end
@@ -303,6 +305,10 @@ function addonTable.Display.ManagerMixin:OnLoad()
       addonTable.Display.SetCVars()
     elseif settingName == addonTable.Config.Options.OBSCURED_ALPHA then
       self:UpdateObscuredAlpha()
+    elseif settingName == addonTable.Config.Options.BLIZZARD_WIDGET_SCALE then
+      for unit, _ in pairs(self.nameplateDisplays) do
+        self.ModifiedUFs[unit].WidgetContainer:SetScale(addonTable.Config.Get(addonTable.Config.Options.BLIZZARD_WIDGET_SCALE))
+      end
     end
   end)
 end

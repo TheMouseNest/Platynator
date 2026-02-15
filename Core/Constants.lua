@@ -42,6 +42,7 @@ addonTable.Constants.RefreshReason = {
   Simplified = 6,
   SimplifiedScale = 7,
   Clickable = 8,
+  BlizzardWidgetScale = 9,
 }
 
 addonTable.Constants.OldFontMapping = {
