@@ -78,7 +78,8 @@ local assignmentsPossibilities = {
   ["instance"] = { check = addonTable.Display.Utilities.IsInRelevantInstance },
   ["dungeon"] = { check = function() return IsInstanceType("party") end },
   ["raid"] = { check = function() return IsInstanceType("raid") end },
-  ["pvp"] = { check = function() return IsInstanceType("arenas") end },
+  ["arena"] = { check = function() return IsInstanceType("arena") end },
+  ["battleground"] = { check = function() return IsInstanceType("pvp") end },
   ["delve"] = { check = function() return IsDifficulty(208) end },
 }
 

@@ -74,7 +74,7 @@ function addonTable.Display.Utilities.IsInRelevantInstance()
     return false
   end
   local _, instanceType = GetInstanceInfo()
-  return instanceType == "raid" or instanceType == "party" or instanceType == "arenas"
+  return instanceType == "raid" or instanceType == "party" or instanceType == "arena" or instanceType == "pvp"
 end
 
 local interruptMap = {

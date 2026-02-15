@@ -27,11 +27,13 @@ local contextCriteria = {
   {key = "minor", label = addonTable.Locales.MINOR},
   {key = "trivial", label = addonTable.Locales.TRIVIAL},
 
-  {title = addonTable.Locales.INSTANCE_TYPE},
+  {title = addonTable.Locales.LOCATION},
+  {key = "world", label = addonTable.Locales.WORLD},
   {key = "relevant-instance", label = addonTable.Locales.RELEVANT_INSTANCE},
   {key = "dungeon", label = addonTable.Locales.DUNGEON},
   {key = "raid", label = addonTable.Locales.RAID},
-  {key = "pvp", label = addonTable.Locales.PVP},
+  {key = "arena", label = addonTable.Locales.ARENA},
+  {key = "battleground", label = addonTable.Locales.BATTLEGROUND},
   {key = "delve", label = addonTable.Locales.DELVE},
 }
 
@@ -39,6 +41,14 @@ function addonTable.CustomiseDialog.GetMainStyleSelection(parent)
   local container = CreateFrame("Frame", nil, parent)
 
   local allFrames = {}
+
+  local holderPool = CreateFramePool("Frame", container, nil, nil, false, function(frame)
+    frame.criteriaDropdown = CreateFrame("DropdownButton", nil, frame, "WowStyle1DropdownTemplate")
+    frame.criteriaDropdown:SetWidth(250)
+    frame.criteriaDropdown:SetDefaultText(addonTable.Locales.SELECT_CRITERIA)
+    frame.styleDropdown = CreateFrame("DropdownButton", nil, frame, "WowStyle1DropdownTemplate")
+    frame.styleDropdown:SetWidth(250)
+  end)
 
   local dropdown = addonTable.CustomiseDialog.Components.GetBasicDropdown(container, "")
   dropdown.DropDown:SetupMenu(function(menu, rootDescription)
