@@ -11,7 +11,13 @@ local settings = {
   LEGACY_DESIGN = {key = "design_all", default = {}},
 
   DESIGNS = {key = "designs", default = {}, refresh = {addonTable.Constants.RefreshReason.Design}},
-  DESIGNS_ASSIGNED = {key = "designs_assigned", default = {["friend"] = "_name-only", ["enemy"] = "_deer", ["enemySimplified"] = "_hare_simplified"}, refresh = {addonTable.Constants.RefreshReason.Design}},
+  DESIGNS_ASSIGNED = {key = "designs_assigned", default = {
+    { criteria = {"cannot-attack"}, style = "_name-only", simplified = false },
+    { criteria = {"can-attack", "dungeon", "normal-npc"}, style = "_hare_simplified", simplified = true},
+    { criteria = {"can-attack", "minion"}, style = "_hare_simplified", simplified = true},
+    { criteria = {"can-attack", "minor"}, style = "_hare_simplified", simplified = true},
+    { criteria = {"can-attack"}, style = "_deer", simplified = false },
+  }},
 
   TARGET_SCALE = {key = "target_scale", default = 1.2, refresh = {addonTable.Constants.RefreshReason.TargetBehaviour}},
   CAST_SCALE = {key = "cast_scale", default = 1.1, refresh = {addonTable.Constants.RefreshReason.TargetBehaviour}},

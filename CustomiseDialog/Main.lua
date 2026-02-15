@@ -546,7 +546,7 @@ local function SetupStyleSelect(parent)
     return addonTable.Config.Get(addonTable.Config.Options.DESIGNS_ASSIGNED)["friend"] == value
   end, function(value)
     addonTable.Config.Get(addonTable.Config.Options.DESIGNS_ASSIGNED)["friend"] = value
-    addonTable.CallbackRegistry:TriggerEvent("RefreshStateChange", {[addonTable.Constants.RefreshReason.Design] = true})
+    addonTable.CallbackRegistry:TriggerEvent("SettingChanged", addonTable.Config.Options.DESIGNS_ASSIGNED)
   end)
   friendlyStyleDropdown:SetPoint("TOP")
   table.insert(allFrames, friendlyStyleDropdown)

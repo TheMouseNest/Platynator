@@ -6,6 +6,13 @@ function addonTable.Display.Initialize()
   local manager = CreateFrame("Frame")
   Mixin(manager, addonTable.Display.ManagerMixin)
   manager:OnLoad()
+
+  local switcher = CreateFrame("Frame")
+  Mixin(switcher, addonTable.Display.DesignForContextMixin)
+  switcher:OnLoad()
+
+  addonTable.Display.Manager = manager
+  addonTable.Display.Switcher = switcher
 end
 
 addonTable.Display.ManagerMixin = {}
@@ -212,7 +219,7 @@ function addonTable.Display.ManagerMixin:OnLoad()
   end)
 
   addonTable.CallbackRegistry:RegisterCallback("RefreshStateChange", function(_, state)
-    if state[addonTable.Constants.RefreshReason.Design] then
+    if state[addonTable.Constants.RefreshReason.Design] or state[addonTable.Constants.RefreshReason.DesignSelection] then
       self:SetScript("OnUpdate", function()
         local design = addonTable.Core.GetDesign("enemy")
         addonTable.CurrentFont = addonTable.Core.GetFontByDesign(design)

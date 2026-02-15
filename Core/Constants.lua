@@ -35,14 +35,15 @@ addonTable.Constants.Events = {
 
 addonTable.Constants.RefreshReason = {
   Design = 1,
-  Scale = 2,
-  TargetBehaviour = 3,
-  StackingBehaviour = 4,
-  ShowBehaviour = 5,
-  Simplified = 6,
-  SimplifiedScale = 7,
-  Clickable = 8,
-  BlizzardWidgetScale = 9,
+  DesignSelection = 2,
+  Scale = 3,
+  TargetBehaviour = 4,
+  StackingBehaviour = 5,
+  ShowBehaviour = 6,
+  Simplified = 7,
+  SimplifiedScale = 8,
+  Clickable = 9,
+  BlizzardWidgetScale = 10,
 }
 
 addonTable.Constants.OldFontMapping = {
