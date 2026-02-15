@@ -840,7 +840,7 @@ end
 local TabSetups = {
   {callback = SetupGeneral, name = addonTable.Locales.GENERAL},
   {callback = addonTable.CustomiseDialog.GetMainDesigner, name = addonTable.Locales.DESIGNER},
-  {callback = SetupStyleSelect, name = addonTable.Locales.STYLE_SELECT},
+  {callback = addonTable.CustomiseDialog.GetMainStyleSelection, name = addonTable.Locales.STYLE_SELECT},
   {callback = SetupBehaviour, name = addonTable.Locales.BEHAVIOUR},
   {callback = SetupPositioning, name = addonTable.Locales.POSITIONING},
   {callback = SetupFont, name = addonTable.Locales.FONT},

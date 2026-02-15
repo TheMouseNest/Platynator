@@ -86,6 +86,7 @@ CustomiseDialog/ColorsConfiguration.lua
 CustomiseDialog/AddWidgetsList.lua
 CustomiseDialog/WidgetsConfiguration.lua
 CustomiseDialog/Designer.lua
+CustomiseDialog/StyleSelection.lua
 CustomiseDialog/ImportDialog.lua
 CustomiseDialog/ImportExport.lua
 CustomiseDialog/Main.lua

@@ -26,12 +26,12 @@ end
 
 local IsNeutral = addonTable.Display.Utilities.IsNeutralUnit
 
-local function IsEnemy(unit)
+local function IsHostile(unit)
   return not UnitIsFriend("player", unit) and not IsNeutral(unit)
 end
 
 local function IsFriendly(unit)
-  return return UnitIsFriend("player", unit)
+  return UnitIsFriend("player", unit)
 end
 
 local function IsInstanceType(t)
@@ -58,18 +58,17 @@ local assignmentsPossibilities = {
   ["can-attack"] = { frequent = true, check = function(unit) return UnitCanAttack("player", unit) end },
   ["cannot-attack"] = { frequent = true, check = function(unit) return not UnitCanAttack("player", unit) end },
 
-  ["in-combat"] = { frequent = true, check = function(unit) return IsInCombat(unit) end},
-  ["out-combat"] = { frequent = true, check = function(unit) return not IsInCombat(unit) end},
+  ["in-combat"] = { frequent = true, check = function(unit) return IsInCombat(unit) end },
+  ["out-combat"] = { frequent = true, check = function(unit) return not IsInCombat(unit) end },
 
   ["friendly"] = { faction = true, check = IsFriendly},
-  ["enemy"] = { faction = true, check = IsEnemy},
+  ["hostile"] = { faction = true, check = IsHostile},
   ["neutral"] = { faction = true, check = IsNeutral },
 
   ["player"] = { check = IsPlayer },
-  ["normal-npc"] = { check = IsNPC },
+  ["npc"] = { check = IsNPC },
   ["minion"] = { check = IsMinion },
   ["minor"] = { check = IsMinor },
-  ["pet"] = { check = IsPet },
 
   ["rare"] = { check = function(unit) local c = UnitClassification(unit); return c == "rare" or c == "rareelite" end },
   ["elite"] = { check = function(unit) local c = UnitClassification(unit); return c == "elite" or c == "rareelite" end },
@@ -77,10 +76,10 @@ local assignmentsPossibilities = {
   ["trivial"] = { check = function(unit) return UnitClassification(unit) == "trivial" end },
 
   ["instance"] = { check = addonTable.Display.Utilities.IsInRelevantInstance },
-  ["dungeon"] = { check = function() return IsInstanceType("party") end},
-  ["raid"] = { check = function() return IsInstanceType("raid") end},
-  ["pvp"] = { check = function() return IsInstanceType("arenas") end},
-  ["delve"] = { check = function() return IsDifficulty(208) end},
+  ["dungeon"] = { check = function() return IsInstanceType("party") end },
+  ["raid"] = { check = function() return IsInstanceType("raid") end },
+  ["pvp"] = { check = function() return IsInstanceType("arenas") end },
+  ["delve"] = { check = function() return IsDifficulty(208) end },
 }
 
 addonTable.Display.DesignForContextMixin = {}
