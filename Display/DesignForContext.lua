@@ -44,15 +44,7 @@ local function IsDifficulty(d)
   return difficultyID == d
 end
 
-local function IsInCombat(unit)
-  return InCombatLockdown() and
-    UnitAffectingCombat(unit) and
-    (
-      UnitIsFriend(unit) or
-      UnitThreatSituation("player", unit) ~= nil or
-      IsInGroup("player") and (UnitInParty(unit .. "target") or UnitInRaid(unit .. "target")) and UnitThreatSituation(unit .. "target") ~= nil
-    )
-end
+local IsInCombat = addonTable.Display.Utilities.IsInCombatWith
 
 local assignmentsPossibilities = {
   ["can-attack"] = { frequent = true, check = function(unit) return UnitCanAttack("player", unit) end },
