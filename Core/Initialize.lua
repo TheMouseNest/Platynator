@@ -474,13 +474,25 @@ function addonTable.Core.MigrateSettings()
     addonTable.Config.Set(addonTable.Config.Options.STYLE, mapping["friend"])
   end
 
-  for _, design in pairs(addonTable.Config.Get(addonTable.Config.Options.DESIGNS)) do
-    addonTable.Core.UpgradeDesign(design)
+  local mapping = addonTable.Config.Get(addonTable.Config.Options.DESIGNS_ASSIGNED)
+  if mapping["enemy"] then
+    if mapping["enemySimplified"] == nil or addonTable.Core.GetDesignByName(mapping["enemySimplified"]) == nil then
+      mapping["enemySimplified"] = "_hare_simplified"
+    end
+
+    mapping = {
+      { criteria = {"cannot-attack"}, style = mapping["friend"], simplified = false },
+      { criteria = {"can-attack", "dungeon", "npc"}, style = mapping["enemySimplified"], simplified = true},
+      { criteria = {"can-attack", "minion"}, style = mapping["enemySimplified"], simplified = true},
+      { criteria = {"can-attack", "minor"}, style = mapping["enemySimplified"], simplified = true},
+      { criteria = {"can-attack"}, style = mapping["enemy"], simplified = false },
+    }
+
+    addonTable.Config.Set(addonTable.Config.Options.DESIGNS_ASSIGNED, mapping)
   end
 
-  local mapping = addonTable.Config.Get(addonTable.Config.Options.DESIGNS_ASSIGNED)
-  if mapping["enemySimplified"] == nil or addonTable.Core.GetDesignByName(mapping["enemySimplified"]) == nil then
-    mapping["enemySimplified"] = "_hare_simplified"
+  for _, design in pairs(addonTable.Config.Get(addonTable.Config.Options.DESIGNS)) do
+    addonTable.Core.UpgradeDesign(design)
   end
 
   local simplified = addonTable.Config.Get(addonTable.Config.Options.SIMPLIFIED_NAMEPLATES)

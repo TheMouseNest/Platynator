@@ -37,33 +37,37 @@ local contextCriteria = {
   {key = "delve", label = addonTable.Locales.DELVE},
 }
 
+local function AddCriteria(rootDescription, isSet, onSet)
+  for _, entry in ipairs(contextCriteria) do
+    if entry.title then
+      rootDescription:CreateTitle(entry.title)
+    else
+      rootDescription:CreateCheckbox(entry.label, function()
+        return isSet(entry.key)
+      end,
+      function()
+        onSet(entry.key)
+      end)
+    end
+  end
+  rootDescription:SetScrollMode(30 * 20)
+end
+
 function addonTable.CustomiseDialog.GetMainStyleSelection(parent)
   local container = CreateFrame("Frame", nil, parent)
 
   local allFrames = {}
 
   local holderPool = CreateFramePool("Frame", container, nil, nil, false, function(frame)
+    frame:SetPoint("LEFT", 30, 0)
+    frame:SetPoint("RIGHT", -30, 0)
     frame.criteriaDropdown = CreateFrame("DropdownButton", nil, frame, "WowStyle1DropdownTemplate")
     frame.criteriaDropdown:SetWidth(250)
     frame.criteriaDropdown:SetDefaultText(addonTable.Locales.SELECT_CRITERIA)
+    frame.criteriaDropdown:SetPoint("RIGHT", frame, "CENTER", -50, 0)
     frame.styleDropdown = CreateFrame("DropdownButton", nil, frame, "WowStyle1DropdownTemplate")
     frame.styleDropdown:SetWidth(250)
-  end)
-
-  local dropdown = addonTable.CustomiseDialog.Components.GetBasicDropdown(container, "")
-  dropdown.DropDown:SetupMenu(function(menu, rootDescription)
-    for _, entry in ipairs(contextCriteria) do
-      if entry.title then
-        rootDescription:CreateTitle(entry.title)
-      else
-        rootDescription:CreateCheckbox(entry.label, function()
-          return false
-        end,
-        function()
-          print(entry.key)
-        end)
-      end
-    end
+    frame.styleDropdown:SetPoint("LEFT", frame, "CENTER", -32, 0)
   end)
 
   return container

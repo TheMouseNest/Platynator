@@ -13,7 +13,7 @@ local settings = {
   DESIGNS = {key = "designs", default = {}, refresh = {addonTable.Constants.RefreshReason.Design}},
   DESIGNS_ASSIGNED = {key = "designs_assigned", default = {
     { criteria = {"cannot-attack"}, style = "_name-only", simplified = false },
-    { criteria = {"can-attack", "dungeon", "normal-npc"}, style = "_hare_simplified", simplified = true},
+    { criteria = {"can-attack", "dungeon", "npc"}, style = "_hare_simplified", simplified = true},
     { criteria = {"can-attack", "minion"}, style = "_hare_simplified", simplified = true},
     { criteria = {"can-attack", "minor"}, style = "_hare_simplified", simplified = true},
     { criteria = {"can-attack"}, style = "_deer", simplified = false },

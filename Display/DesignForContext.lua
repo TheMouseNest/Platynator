@@ -86,3 +86,21 @@ end
 
 function addonTable.Display.DesignForContextMixin:RefreshDesignAssignments()
 end
+
+function addonTable.Display.DesignForContextMixin:GetAssignedStyle(unit)
+  local assignments = addonTable.Config.Get(addonTable.Config.Options.DESIGNS_ASSIGNED)
+
+  for _, settings in ipairs(assignments) do
+    local hit = true
+    for _, criteria in ipairs(settings.criteria) do
+      if not assignmentsPossibilities[criteria].check(unit) then
+        hit = false
+        break
+      end
+    end
+
+    if hit then
+      return settings.style
+    end
+  end
+end
