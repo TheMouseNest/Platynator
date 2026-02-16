@@ -61,7 +61,7 @@ function addonTable.Display.Utilities.IsInCombatWith(unit)
     (
       UnitIsFriend("player", unit) or
       UnitThreatSituation("player", unit) ~= nil or
-      IsInGroup("player") and (UnitInParty(unit .. "target") or UnitInRaid(unit .. "target")) and UnitThreatSituation(unit .. "target", unit) ~= nil
+      IsInGroup() and (UnitInParty(unit .. "target") or UnitInRaid(unit .. "target")) and UnitThreatSituation(unit .. "target", unit) ~= nil
     )
 end
 
