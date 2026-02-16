@@ -35,6 +35,7 @@ local settings = {
   SIMPLIFIED_NAMEPLATES = {key = "simplified_nameplates", default = {minion = true, minor = true, instancesNormal = true}, refresh = {addonTable.Constants.RefreshReason.Simplified}},
 
   SIMPLIFIED_SCALE = {key = "simplified_scale", default = 0.6, refresh = {addonTable.Constants.RefreshReason.SimplifiedScale}},
+  BLIZZARD_WIDGET_SCALE = {key = "blizzard_widget_scale", default = 1.2},
 
   APPLY_CVARS = {key = "apply_cvars", default = true},
 }

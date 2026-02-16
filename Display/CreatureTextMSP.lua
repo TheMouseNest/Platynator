@@ -89,6 +89,7 @@ function addonTable.Display.CreatureTextMSPMixin:StripInternal()
   self.text:SetTextColor(c.r, c.g, c.b)
   self:UnregisterCallback()
   self:UnregisterAllEvents()
+  addonTable.Display.UnregisterForColorEvents(self)
 end
 
 function addonTable.Display.CreatureTextMSPMixin:Strip()

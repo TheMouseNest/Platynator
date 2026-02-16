@@ -5,8 +5,6 @@ for key, translation in pairs(PLATYNATOR_LOCALES[GetLocale()]) do
   addonTable.Locales[key] = translation
 end
 for key, translation in pairs(addonTable.Locales) do
-  _G["PLATYNATOR_L_" .. key] = translation
-
   if key:match("^BINDING") then
     _G["BINDING_NAME_" .. key:match("BINDING_(.*)")] = translation
   end

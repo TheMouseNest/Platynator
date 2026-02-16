@@ -3,6 +3,8 @@ local addonTable = select(2, ...)
 
 local LSM = LibStub("LibSharedMedia-3.0")
 
+local textureHeight = 20
+
 local function GetLabelsValues(allAssets, filter, showHeight)
   local labels, values = {}, {}
 
@@ -23,7 +25,7 @@ local function GetLabelsValues(allAssets, filter, showHeight)
   for _, key in ipairs(allKeys) do
     if not filter or filter(allAssets[key]) then
       local details = allAssets[key]
-      local height = 20
+      local height = textureHeight
       local width = details.width * height/details.height
       if width > 180 then
         height = 180/width * height
@@ -51,7 +53,7 @@ local function GetLabelsValuesBackgrounds()
   local labels, values = {}, {}
   local assets = LSM:List("statusbar")
 
-  local height = 20
+  local height = textureHeight
   local width = addonTable.Assets.BarBordersSize.width * height / addonTable.Assets.BarBordersSize.height
 
   local allKeys = GetKeysArray(addonTable.Assets.BarBackgrounds)
@@ -81,21 +83,150 @@ local function GetLabelsValuesBackgrounds()
   return labels, values
 end
 
-local sizes = {
-  addonTable.Assets.Mode.Percent50,
-  addonTable.Assets.Mode.Percent75,
-  addonTable.Assets.Mode.Percent100,
-  addonTable.Assets.Mode.Percent125,
-  addonTable.Assets.Mode.Percent150,
-  addonTable.Assets.Mode.Percent175,
-  addonTable.Assets.Mode.Percent200,
-}
-local sizeFormatter = function(val)
-  return ({"50%", "75%", "100%", "125%", "150%", "175%", "200%"})[val] or UNKNOWN
+local function GetLabelsValuesBorders()
+  local labels, values = {}, {}
+  local assets = LSM:List("ninesliceborder")
+
+  local height = textureHeight
+
+  local allKeys = GetKeysArray(addonTable.Assets.BarBordersSliced)
+  table.sort(allKeys)
+  for _, key in ipairs(allKeys) do
+    local details = addonTable.Assets.BarBordersSliced[key]
+    local file = LSM:Fetch("nineslice", LSM:Fetch("ninesliceborder", key).nineslice).file
+    local text = "|T".. file .. ":" .. (height - 1) .. ":" .. (height - 1) .. "|t " .. (key:gsub("Platy: ", ""))
+    if details.isTransparent then
+      text = addonTable.Locales.NONE
+    end
+
+    table.insert(labels, text)
+    table.insert(values, key)
+  end
+
+  for _, key in ipairs(assets) do
+    if not addonTable.Assets.BarBordersSliced[key] then
+      local file = LSM:Fetch(LSM:Fetch("ninesliceborder", key).nineslice).file
+      local text = "|T".. file .. ":" .. (height - 1) .. ":" .. (height - 1) .. "|t [Custom] " .. key
+
+      table.insert(labels, text)
+      table.insert(values, key)
+    end
+  end
+
+  return labels, values
 end
 
-local minSize = 1
-local maxSize = 7
+local function GetLabelsValuesHighlightsAnimated()
+  local labels, values = {}, {}
+
+  local height = textureHeight - 1
+  local width = addonTable.Assets.BarBordersSize.width * height / addonTable.Assets.BarBordersSize.height
+
+  local allKeys = tFilter(GetKeysArray(addonTable.Assets.Highlights), function(a)
+    local assetDetails = addonTable.Assets.Highlights[a]
+    return assetDetails.kind and assetDetails.kind:match("^animated")
+  end, true)
+
+  table.sort(allKeys)
+
+  for _, key in ipairs(allKeys) do
+    local file = addonTable.Assets.Highlights[key].preview
+    local text = "|T".. file .. ":" .. height .. ":" .. width .. "|t " .. (key:gsub("Platy: ", ""))
+
+    table.insert(labels, text)
+    table.insert(values, {sliced = nil, asset = key})
+  end
+
+  return labels, values
+end
+
+local function GetLabelsValuesHighlightsNotAnimated()
+  local labels, values = {}, {}
+  local slicedAssets = LSM:List("nineslice")
+  local regularAssets = LSM:List("platynator/sizedtexture")
+
+  local platySliced = GetKeysArray(addonTable.Assets.BarBordersSliced)
+  tAppendAll(platySliced, tFilter(GetKeysArray(addonTable.Assets.Highlights), function(a)
+    return addonTable.Assets.Highlights[a].mode == addonTable.Assets.RenderMode.Sliced
+  end, true))
+  local platyRegular = tFilter(GetKeysArray(addonTable.Assets.Highlights), function(a)
+    local assetDetails = addonTable.Assets.Highlights[a]
+    return assetDetails.mode ~= addonTable.Assets.RenderMode.Sliced
+      and (not assetDetails.kind or not assetDetails.kind:match("^animated"))
+  end, true)
+
+  local together = {}
+  for _, key in ipairs(platySliced) do
+    table.insert(together, {sliced = true, asset = key})
+  end
+  for _, key in ipairs(platyRegular) do
+    table.insert(together, {sliced = false, asset = key})
+  end
+  table.sort(together, function(a, b)
+    return a.asset < b.asset
+  end)
+
+  local height = textureHeight - 1
+
+  local seen = {}
+
+  for _, keyDetails in ipairs(together) do
+    seen[keyDetails.asset] = true
+    if keyDetails.sliced then
+      local details = addonTable.Assets.BarBordersSliced[keyDetails.asset]
+      if not details or not details.isTransparent then
+        local assetDetails = LSM:Fetch("nineslice", keyDetails.asset)
+        local width = assetDetails.previewWidth * height/assetDetails.previewHeight
+        local text = "|T".. assetDetails.file .. ":" .. height .. ":" .. width .. "|t " .. (keyDetails.asset:gsub("Platy: ", ""))
+
+        table.insert(labels, text)
+        table.insert(values, {sliced = true, asset = keyDetails.asset})
+      end
+    else
+      local details = LSM:Fetch("platynator/sizedtexture", keyDetails.asset)
+
+      local width = details.width * height/details.height
+      if width > 180 then
+        height = 180/width * height
+        width = 180
+      end
+
+      local text = "|T".. details.file .. ":" .. height .. ":" .. width .. "|t " .. (keyDetails.asset:gsub("Platy: ", ""))
+
+      table.insert(labels, text)
+      table.insert(values, {sliced = false, asset = keyDetails.asset})
+    end
+  end
+
+  for _, key in ipairs(slicedAssets) do
+    if not seen[key] then
+      local file = LSM:Fetch("nineslice", key).file
+      local text = "|T".. file .. ":" .. height .. ":" .. height .. "|t [Custom]" .. key
+
+      table.insert(labels, text)
+      table.insert(values, {sliced = true, asset = key})
+    end
+  end
+
+  for _, key in ipairs(regularAssets) do
+    if not seen[key] then
+      local details = LSM:Fetch("platynator/sizedtexture", key)
+
+      local width = details.width * height/details.height
+      if width > 180 then
+        height = 180/width * height
+        width = 180
+      end
+
+      local text = "|T".. details.file .. ":" .. height .. ":" .. width .. "|t [Custom]" .. key
+
+      table.insert(labels, text)
+      table.insert(values, {sliced = false, asset = key})
+    end
+  end
+
+  return labels, values
+end
 
 addonTable.CustomiseDialog.WidgetsConfig = {
   ["bars"] = {
@@ -161,7 +292,7 @@ addonTable.CustomiseDialog.WidgetsConfig = {
             label = addonTable.Locales.BORDER,
             kind = "dropdown",
             getInitData = function(details)
-              return GetLabelsValues(addonTable.Assets.BarBordersSliced)
+              return GetLabelsValuesBorders()
             end,
             setter = function(details, value)
               details.border.asset = value
@@ -991,10 +1122,6 @@ addonTable.CustomiseDialog.WidgetsConfig = {
             min = 50, max = 300,
             valuePattern = "%d%%",
             setter = function(details, value)
-              local asset = addonTable.Assets.Highlights[details.asset]
-              if asset.mode == addonTable.Assets.RenderMode.Fixed then
-                return
-              end
               details.height = value / 100
             end,
             getter = function(details)
@@ -1007,10 +1134,6 @@ addonTable.CustomiseDialog.WidgetsConfig = {
             min = 50, max = 300,
             valuePattern = "%d%%",
             setter = function(details, value)
-              local asset = addonTable.Assets.Highlights[details.asset]
-              if asset.mode == addonTable.Assets.RenderMode.Fixed then
-                return
-              end
               details.width = value / 100
             end,
             getter = function(details)
@@ -1022,25 +1145,21 @@ addonTable.CustomiseDialog.WidgetsConfig = {
             kind = "dropdown",
             getInitData = function(details)
               if details.kind:match("^animated") then
-                return GetLabelsValues(addonTable.Assets.Highlights, function(asset)
-                  return asset.kind == details.kind
-                end)
+                return GetLabelsValuesHighlightsAnimated()
               else
-                return GetLabelsValues(addonTable.Assets.Highlights, function(asset)
-                  return not asset.kind or not asset.kind:match("^animated")
-                end)
+                return GetLabelsValuesHighlightsNotAnimated()
               end
             end,
             setter = function(details, value)
-              details.asset = value
-              local asset = addonTable.Assets.Highlights[details.asset]
-              if asset.mode == addonTable.Assets.RenderMode.Fixed then
-                details.width = 1
-                details.height = 1
-              end
+              details.sliced = value.sliced
+              details.asset = value.asset
             end,
             getter = function(details)
-              return details.asset
+              if details.kind:match("^animated") then
+                return {asset = details.asset}
+              else
+                return {sliced = details.sliced, asset = details.asset}
+              end
             end
           },
           {

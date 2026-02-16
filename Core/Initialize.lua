@@ -285,7 +285,9 @@ function addonTable.Core.UpgradeDesign(design)
       }
       bar.colors = nil
     end
-    if not addonTable.Assets.BarBordersSliced[bar.border.asset] then
+    if addonTable.Assets.BarBordersSlicedLegacy[bar.border.asset] then
+      bar.border.asset = addonTable.Assets.BarBordersSlicedLegacy[bar.border.asset]
+    elseif not addonTable.Assets.BarBordersSliced[bar.border.asset] and addonTable.Assets.BarBordersLegacy[bar.border.asset] then
       local size = addonTable.Assets.BarBordersLegacy[bar.border.asset].mode
       bar.border.asset = addonTable.Assets.BarBordersLegacy[bar.border.asset].tag
       bar.border.width = 1
@@ -301,6 +303,10 @@ function addonTable.Core.UpgradeDesign(design)
           color = CopyTable(bar.border.color),
           anchor = {"RIGHT", 84 * bar.scale, 0}
         })
+      end
+
+      if addonTable.Assets.BarBordersSlicedLegacy[bar.border.asset] then
+        bar.border.asset = addonTable.Assets.BarBordersSlicedLegacy[bar.border.asset]
       end
     end
     if bar.kind == "cast" and bar.interruptMarker == nil then
@@ -393,10 +399,10 @@ function addonTable.Core.UpgradeDesign(design)
       highlight.includeTarget = true
     end
 
-    if not addonTable.Assets.Highlights[highlight.asset] then
+    if addonTable.Assets.HighlightsLegacy[highlight.asset] then
       local old = addonTable.Assets.HighlightsLegacy[highlight.asset]
       highlight.asset = addonTable.Assets.HighlightsLegacy[highlight.asset].tag
-      local new = addonTable.Assets.Highlights[highlight.asset]
+      local new = addonTable.Assets.HighlightsLegacy2[highlight.asset]
 
       if new.mode == addonTable.Assets.RenderMode.Sliced then
         local baseWidth, baseHeight = 125, 15.625
@@ -408,6 +414,18 @@ function addonTable.Core.UpgradeDesign(design)
       else
         highlight.width = 1
         highlight.height = 1
+      end
+    end
+
+    if addonTable.Assets.HighlightsLegacy2[highlight.asset] then
+      local legacyDetails = addonTable.Assets.HighlightsLegacy2[highlight.asset]
+      highlight.asset = legacyDetails.new
+      if legacyDetails.shiftModifierH then
+        highlight.width = highlight.width * legacyDetails.shiftModifierH
+        highlight.height = highlight.height * legacyDetails.shiftModifierV
+      end
+      if not highlight.kind:match("^animated") then
+        highlight.sliced = legacyDetails.mode == addonTable.Assets.RenderMode.Sliced
       end
     end
 

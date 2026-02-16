@@ -55,6 +55,16 @@ function addonTable.Display.Utilities.GetUnitDifficulty(unit)
   end
 end
 
+function addonTable.Display.Utilities.IsInCombatWith(unit)
+  return InCombatLockdown() and
+    UnitAffectingCombat(unit) and
+    (
+      UnitIsFriend("player", unit) or
+      UnitThreatSituation("player", unit) ~= nil or
+      IsInGroup() and (UnitInParty(unit .. "target") or UnitInRaid(unit .. "target")) and UnitThreatSituation(unit .. "target", unit) ~= nil
+    )
+end
+
 function addonTable.Display.Utilities.ConvertColor(color)
   return CreateColor(color.r, color.g, color.b, color.a)
 end

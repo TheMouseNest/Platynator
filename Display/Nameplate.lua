@@ -1,6 +1,8 @@
 ---@class addonTablePlatynator
 local addonTable = select(2, ...)
 
+local LSM = LibStub("LibSharedMedia-3.0")
+
 local pandemicCurve
 local pandemicPercentage = 0.3
 local dispelCurve
@@ -37,14 +39,14 @@ function addonTable.Display.NameplateMixin:OnLoad()
   self.CrowdControlDisplay:SetSize(10, 10)
 
   self.AurasManager = addonTable.Utilities.InitFrameWithMixin(self, addonTable.Display.AurasManagerMixin)
-  local borderAsset = addonTable.Assets.BarBordersSliced["1px"]
-  local dispelAsset = addonTable.Assets.BarBordersSliced["slight"]
+  local borderAsset = LSM:Fetch("nineslice", "Platy: 1px")
+  local dispelAsset = LSM:Fetch("nineslice", "Platy: 4px")
   self.AurasPool = CreateFramePool("Frame", self, "PlatynatorNameplateBuffButtonTemplate", nil, false, function(frame)
     frame.Border = frame:CreateTexture(nil, "OVERLAY")
     frame.Border:SetAllPoints(true)
-    frame.Border:SetScale(1/borderAsset.lowerScale)
+    frame.Border:SetScale(borderAsset.scaleModifier)
     frame.Border:SetTexture(borderAsset.file)
-    frame.Border:SetTextureSliceMargins(borderAsset.width * borderAsset.margin, borderAsset.width * borderAsset.margin, borderAsset.height * borderAsset.margin, borderAsset.height * borderAsset.margin)
+    frame.Border:SetTextureSliceMargins(borderAsset.margins.left, borderAsset.margins.top, borderAsset.margins.right, borderAsset.margins.bottom)
     frame.Border:SetVertexColor(0, 0, 0)
     frame.Cooldown:SetCountdownAbbrevThreshold(20)
     frame.Cooldown.Text = frame.Cooldown:GetRegions()
@@ -99,9 +101,9 @@ function addonTable.Display.NameplateMixin:OnLoad()
     do
       local dispelTexture = frame.Dispel:CreateTexture()
       dispelTexture:SetAllPoints()
-      dispelTexture:SetScale(1/dispelAsset.lowerScale)
+      dispelTexture:SetScale(dispelAsset.scaleModifier)
       dispelTexture:SetTexture(dispelAsset.file)
-      dispelTexture:SetTextureSliceMargins(dispelAsset.width * dispelAsset.margin, dispelAsset.width * dispelAsset.margin, dispelAsset.height * dispelAsset.margin, dispelAsset.height * dispelAsset.margin)
+      dispelTexture:SetTextureSliceMargins(dispelAsset.margins.left, dispelAsset.margins.top, dispelAsset.margins.right, dispelAsset.margins.bottom)
       dispelTexture:SetVertexColor(1, 0, 0)
     end
     frame:SetScript("OnEnter", function()
@@ -311,11 +313,7 @@ end
 
 function addonTable.Display.NameplateMixin:InitializeWidgets(design, scale)
   self.offsetScale = (scale or 1) * UIParent:GetEffectiveScale() * addonTable.Config.Get(addonTable.Config.Options.GLOBAL_SCALE)
-  if addonTable.Constants.ParentedToNameplates then
-    self.scale = design.scale
-  else
-    self.scale = scale * design.scale or design.scale
-  end
+  self.scale = design.scale
 
   self.lastScale = self:GetEffectiveScale()
 
@@ -397,10 +395,6 @@ function addonTable.Display.NameplateMixin:Install(nameplate)
   -- We force a sizing immediately to avoid 0 size widgets breaking the textures from the Blizz animations
   self:ApplyPixelPerfectSizing()
   self:SetScript("OnUpdate", nil)
-
-  if not addonTable.Constants.ParentedToNameplates then
-    self:SetAlpha(0)
-  end
 end
 
 function addonTable.Display.NameplateMixin:SetUnit(unit)
@@ -518,11 +512,7 @@ end
 function addonTable.Display.NameplateMixin:UpdateVisual()
   local scaleMod = addonTable.Constants.IsRetail and 1 or UIParent:GetEffectiveScale()
   if not self.unit then
-    if not addonTable.Constants.ParentedToNameplates then
-      self.overrideAlpha = 1
-    else
-      self:SetAlpha(1)
-    end
+    self:SetAlpha(1)
     self:SetScale(self.scale * addonTable.Config.Get(addonTable.Config.Options.GLOBAL_SCALE) * scaleMod)
     return
   end
@@ -531,10 +521,7 @@ function addonTable.Display.NameplateMixin:UpdateVisual()
   local alpha = 1
   local isTarget = UnitIsUnit("target", self.unit) or UnitIsUnit("softenemy", self.unit) or UnitIsUnit("softfriend", self.unit)
   if isTarget then
-    if not addonTable.Constants.ParentedToNameplates then
-      scale = scale * addonTable.Config.Get(addonTable.Config.Options.TARGET_SCALE)
-    end
-    -- Nothing to do if its parented to the nameplate, as that will handle scaling for us
+    -- Nothing to do as its parented to the nameplate, as that will handle scaling for us
   elseif self.casting then
     scale = scale * addonTable.Config.Get(addonTable.Config.Options.CAST_SCALE)
     alpha = alpha * addonTable.Config.Get(addonTable.Config.Options.CAST_ALPHA)
@@ -542,11 +529,7 @@ function addonTable.Display.NameplateMixin:UpdateVisual()
     alpha = alpha * addonTable.Config.Get(addonTable.Config.Options.NOT_TARGET_ALPHA)
   end
   self:SetScale(self.scale * scale * addonTable.Config.Get(addonTable.Config.Options.GLOBAL_SCALE) * scaleMod)
-  if not addonTable.Constants.ParentedToNameplates then
-    self.overrideAlpha = alpha
-  else
-    self:SetAlpha(alpha)
-  end
+  self:SetAlpha(alpha)
 end
 
 function addonTable.Display.NameplateMixin:UpdateSoftInteract()

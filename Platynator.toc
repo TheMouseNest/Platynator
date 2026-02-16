@@ -78,6 +78,7 @@ API/Main.lua
 
 Design.lua
 Assets.lua
+AssetsLegacy.lua
 
 CustomiseDialog/Components.lua
 CustomiseDialog/ColorsConfiguration.lua
