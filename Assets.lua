@@ -126,8 +126,8 @@ addonTable.Assets.Highlights = {
 
 addonTable.Assets.BarPositionHighlights = {
   ["none"] = {file = "", width = 0, height = 0},
-  ["wide/glow"] = {file = "Interface/AddOns/Platynator/Assets/%s/BarPosition/highlight.png", width = 54, height = 125, has4k = true},
-  ["gw2"] = {file = "Interface/AddOns/Platynator/Assets/Special/BarPosition/gw2.png", width = 137, height = 125},
+  ["wide/glow"] = {file = "Interface/AddOns/Platynator/Assets/%s/BarPosition/highlight.png", width = 54, height = 125, mask = "Interface/AddOns/Platynator/Assets/%s/BarPosition/highlight-mask.png", offset = 0.25, has4k = true},
+  ["gw2"] = {file = "Interface/AddOns/Platynator/Assets/Special/BarPosition/gw2.png", width = 137, height = 125, offset = 0.5},
 }
 
 addonTable.Assets.PowerBars = {
@@ -233,6 +233,9 @@ function addonTable.Assets.ApplyScale()
     for _, entry in pairs(list) do
       if entry.has4k then
         entry.file = entry.file:format(DPIScale)
+        if type(entry.mask) == "string" then
+          entry.mask = entry.mask:format(DPIScale)
+        end
       end
       entry.width = entry.width / 8
       entry.height = entry.height / 8

@@ -51,9 +51,16 @@ local function InitBar(frame, details)
     frame.marker:Show()
     local markerDetails = addonTable.Assets.BarPositionHighlights[details.marker.asset]
     frame.marker:SetTexture(markerDetails.file)
-    frame.marker:SetPoint("CENTER", frame.statusBar:GetStatusBarTexture(), "RIGHT")
+    if markerDetails.mask then
+      frame.edgeMask:SetBlockingLoadsRequested(true)
+      frame.edgeMask:SetTexture(markerDetails.mask, "CLAMPTOWHITE", "CLAMPTOWHITE")
+      frame.statusBar:GetStatusBarTexture():AddMaskTexture(frame.edgeMask)
+    else
+      frame.statusBar:GetStatusBarTexture():RemoveMaskTexture(frame.edgeMask)
+    end
   else
     frame.marker:Hide()
+    frame.statusBar:GetStatusBarTexture():RemoveMaskTexture(frame.edgeMask)
   end
 
   frame.statusBar:GetStatusBarTexture():RemoveMaskTexture(frame.mask)
@@ -62,13 +69,8 @@ local function InitBar(frame, details)
 
   local maskDetails = borderDetails.mask
   frame.mask:SetBlockingLoadsRequested(true)
-  if maskDetails then
-    frame.mask:SetTexture(maskDetails.file, "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
-    frame.mask:SetTextureSliceMargins(maskDetails.margins.left, maskDetails.margins.top, maskDetails.margins.right, maskDetails.margins.bottom)
-  else
-    frame.mask:SetTexture("Interface/AddOns/Platynator/Assets/Special/white.png", "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
-    frame.mask:SetTextureSliceMargins(1, 1, 1, 1)
-  end
+  frame.mask:SetTexture(maskDetails.file, "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
+  frame.mask:SetTextureSliceMargins(maskDetails.margins.left, maskDetails.margins.top, maskDetails.margins.right, maskDetails.margins.bottom)
   frame.mask:SetScale(details.scale)
 
   frame.statusBar:GetStatusBarTexture():AddMaskTexture(frame.mask)
@@ -88,9 +90,19 @@ local function SizeBar(frame, details)
   if details.marker.asset ~= "none" then
     local markerDetails = addonTable.Assets.BarPositionHighlights[details.marker.asset]
     PixelUtil.SetSize(frame.marker, markerDetails.width * details.scale * frame.lowerScale, frame.rawHeight * frame.lowerScale)
+    PixelUtil.SetSize(frame.edgeMask, markerDetails.width * details.scale, frame.rawHeight * details.scale)
   end
 
   PixelUtil.SetSize(frame.mask, frame.rawWidth, frame.rawHeight)
+end
+
+local function AnchorBar(frame, details)
+  ApplyAnchor(frame, frame.details.anchor)
+  if details.marker.asset ~= "none" then
+    local markerDetails = addonTable.Assets.BarPositionHighlights[details.marker.asset]
+    PixelUtil.SetPoint(frame.marker, "RIGHT", frame.statusBar:GetStatusBarTexture(), "RIGHT", markerDetails.width * details.scale * frame.lowerScale * markerDetails.offset, 0)
+    PixelUtil.SetPoint(frame.edgeMask, "RIGHT", frame.statusBar:GetStatusBarTexture(), "RIGHT", markerDetails.width * details.scale * markerDetails.offset + 1, 0)
+  end
 end
 
 function addonTable.Display.GetHealthBar(frame, parent)
@@ -129,6 +141,8 @@ function addonTable.Display.GetHealthBar(frame, parent)
 
   frame.mask = frame:CreateMaskTexture()
   frame.mask:SetPoint("CENTER")
+
+  frame.edgeMask = frame:CreateMaskTexture()
 
   frame.background = frame:CreateTexture()
   frame.background:SetPoint("CENTER")
@@ -176,7 +190,7 @@ function addonTable.Display.GetHealthBar(frame, parent)
   end
 
   function frame:ApplyAnchor()
-    ApplyAnchor(frame, frame.details.anchor)
+    AnchorBar(frame, frame.details)
   end
 
   function frame:ApplySize()
@@ -252,6 +266,8 @@ function addonTable.Display.GetCastBar(frame, parent)
   frame.mask = frame:CreateMaskTexture()
   frame.mask:SetPoint("CENTER")
 
+  frame.edgeMask = frame:CreateMaskTexture()
+
   frame.background = frame:CreateTexture()
   frame.background:SetPoint("CENTER")
   frame.background:SetDrawLayer("BACKGROUND")
@@ -315,7 +331,7 @@ function addonTable.Display.GetCastBar(frame, parent)
   end
 
   function frame:ApplyAnchor()
-    ApplyAnchor(frame, frame.details.anchor)
+    AnchorBar(frame, frame.details)
   end
 
   function frame:ApplySize()
