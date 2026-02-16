@@ -275,6 +275,7 @@ local function FilterCommon(a1, a2)
   local res = {}
   for _, id in ipairs(a2) do
     if include[id] then
+      include[id] = nil
       table.insert(res, id)
     end
   end
