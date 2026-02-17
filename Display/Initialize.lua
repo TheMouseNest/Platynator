@@ -18,21 +18,7 @@ end
 addonTable.Display.ManagerMixin = {}
 function addonTable.Display.ManagerMixin:OnLoad()
   self.styleIndex = 0
-  self.friendDisplayPool = CreateFramePool("Frame", UIParent, nil, nil, false, function(frame)
-    Mixin(frame, addonTable.Display.NameplateMixin)
-    frame.kind = "friend"
-    frame:OnLoad()
-  end)
-  self.enemyDisplayPool = CreateFramePool("Frame", UIParent, nil, nil, false, function(frame)
-    Mixin(frame, addonTable.Display.NameplateMixin)
-    frame.kind = "enemy"
-    frame:OnLoad()
-  end)
-  self.enemySimplifiedDisplayPool = CreateFramePool("Frame", UIParent, nil, nil, false, function(frame)
-    Mixin(frame, addonTable.Display.NameplateMixin)
-    frame.kind = "enemySimplified"
-    frame:OnLoad()
-  end)
+  self.pools = {}
   self.nameplateDisplays = {}
 
   self.MouseoverMonitor = nil
@@ -221,7 +207,7 @@ function addonTable.Display.ManagerMixin:OnLoad()
   addonTable.CallbackRegistry:RegisterCallback("RefreshStateChange", function(_, state)
     if state[addonTable.Constants.RefreshReason.Design] or state[addonTable.Constants.RefreshReason.DesignSelection] then
       self:SetScript("OnUpdate", function()
-        local design = addonTable.Core.GetDesign("enemy")
+        local design = addonTable.Core.GetDesignByName("_deer") --XXX: Fixme
         addonTable.CurrentFont = addonTable.Core.GetFontByDesign(design)
         PlatynatorNameplateCooldownFont:SetFont(design.font.asset, 13, design.font.outline and "OUTLINE" or "")
         if design.font.shadow then
@@ -241,7 +227,8 @@ function addonTable.Display.ManagerMixin:OnLoad()
           if UF and UF.HitTestFrame then
             self:UpdateStackingRegion(unit)
           end
-          display:InitializeWidgets(addonTable.Core.GetDesign(display.kind), addonTable.Core.GetDesignScale(display.kind))
+          local designName, isSimplified = addonTable.Display.Switcher:GetAssignedDesign(display.unit)
+          display:InitializeWidgets(addonTable.Core.GetDesignByName(designName), isSimplified and addonTable.Config.Get(addonTable.Config.Options.SIMPLIFIED_SCALE) or 1)
           self:ListenToBuffs(display, unit)
           display:SetUnit(unit)
         end
@@ -259,7 +246,9 @@ function addonTable.Display.ManagerMixin:OnLoad()
     end
     if state[addonTable.Constants.RefreshReason.Scale] or state[addonTable.Constants.RefreshReason.TargetBehaviour] then
       for unit, display in pairs(self.nameplateDisplays) do
-        display.offsetScale = addonTable.Core.GetDesignScale(display.kind) * UIParent:GetEffectiveScale() * addonTable.Config.Get(addonTable.Config.Options.GLOBAL_SCALE)
+        local _, isSimplified = addonTable.Display.Switcher:GetAssignedDesign(display.unit)
+        local scale = isSimplified and addonTable.Config.Get(addonTable.Config.Options.SIMPLIFIED_SCALE) or 1
+        display.offsetScale = scale * UIParent:GetEffectiveScale() * addonTable.Config.Get(addonTable.Config.Options.GLOBAL_SCALE)
         display:UpdateVisual()
         if display.stackRegion then
           self:UpdateStackingRegion(unit)
@@ -320,6 +309,19 @@ function addonTable.Display.ManagerMixin:OnLoad()
   end)
 end
 
+function addonTable.Display.ManagerMixin:GetPool(index)
+  if self.pools[index] then
+    return self.pools[index]
+  else
+    self.pools[index] = CreateFramePool("Frame", UIParent, nil, nil, false, function(frame)
+      Mixin(frame, addonTable.Display.NameplateMixin)
+      frame.index = index
+      frame:OnLoad()
+    end)
+    return self.pools[index]
+  end
+end
+
 function addonTable.Display.ManagerMixin:UpdateStacking()
   if InCombatLockdown() then
     self:RegisterEvent("PLAYER_REGEN_ENABLED")
@@ -330,8 +332,8 @@ function addonTable.Display.ManagerMixin:UpdateStacking()
     C_CVar.SetCVarBitfield("nameplateStackingTypes", Enum.NamePlateStackType.Enemy, state.enemy)
     C_CVar.SetCVarBitfield("nameplateStackingTypes", Enum.NamePlateStackType.Friendly, state.friend)
   else
-    C_CVar.SetCVar("nameplateOverlapH", addonTable.StackRect.width / addonTable.Rect.width * addonTable.Config.Get(addonTable.Config.Options.STACK_REGION_SCALE_X) / addonTable.Config.Get(addonTable.Config.Options.CLICK_REGION_SCALE_X))
-    C_CVar.SetCVar("nameplateOverlapV", addonTable.StackRect.height / addonTable.Rect.height * addonTable.Config.Get(addonTable.Config.Options.STACK_REGION_SCALE_Y) / addonTable.Config.Get(addonTable.Config.Options.CLICK_REGION_SCALE_Y))
+    C_CVar.SetCVar("nameplateOverlapH", addonTable.Config.Get(addonTable.Config.Options.STACK_REGION_SCALE_X) / addonTable.Config.Get(addonTable.Config.Options.CLICK_REGION_SCALE_X))
+    C_CVar.SetCVar("nameplateOverlapV", addonTable.Config.Get(addonTable.Config.Options.STACK_REGION_SCALE_Y) / addonTable.Config.Get(addonTable.Config.Options.CLICK_REGION_SCALE_Y))
     if addonTable.Config.Get(addonTable.Config.Options.CLOSER_TO_SCREEN_EDGES) then
       C_CVar.SetCVar("nameplateOtherTopInset", "0.05")
       C_CVar.SetCVar("nameplateLargeTopInset", "0.07")
@@ -478,9 +480,9 @@ end
 function addonTable.Display.ManagerMixin:UpdateStackingRegion(unit)
   local stackRegion = self.nameplateDisplays[unit].stackRegion
   local globalScale = addonTable.Config.Get(addonTable.Config.Options.GLOBAL_SCALE)
-  local newWidth = addonTable.StackRect.width * addonTable.Config.Get(addonTable.Config.Options.STACK_REGION_SCALE_X) * globalScale
-  local newHeight = addonTable.StackRect.height * addonTable.Config.Get(addonTable.Config.Options.STACK_REGION_SCALE_Y) * globalScale
-  stackRegion:SetPoint("BOTTOMLEFT", stackRegion:GetParent(), "CENTER", addonTable.StackRect.left - (newWidth - addonTable.StackRect.width)/2, addonTable.StackRect.bottom - (newHeight - addonTable.StackRect.height)/2)
+  local newWidth = addonTable.Assets.BarBordersSize.width * addonTable.Config.Get(addonTable.Config.Options.STACK_REGION_SCALE_X) * globalScale
+  local newHeight = addonTable.Assets.BarBordersSize.height * addonTable.Config.Get(addonTable.Config.Options.STACK_REGION_SCALE_Y) * globalScale
+  stackRegion:SetPoint("BOTTOMLEFT", stackRegion:GetParent(), "CENTER", newWidth/2, newHeight/2)
   stackRegion:SetSize(newWidth, newHeight)
 end
 
@@ -491,23 +493,10 @@ function addonTable.Display.ManagerMixin:Install(unit, nameplate)
   local nameplate = C_NamePlate.GetNamePlateForUnit(unit, issecure())
   -- NOTE: the nameplate _name_ does not correspond to the unit
   if nameplate and unit and (addonTable.Constants.IsRetail or not UnitIsUnit("player", unit)) then
-    local shouldSimplify = false
-    local newDisplay
-    if not UnitCanAttack("player", unit) then
-      newDisplay = self.friendDisplayPool:Acquire()
-    else
-      local simplifiedSettings = addonTable.Config.Get(addonTable.Config.Options.SIMPLIFIED_NAMEPLATES)
-      local classification = UnitClassification(unit)
-      shouldSimplify = C_NamePlateManager and C_NamePlateManager.SetNamePlateSimplified and (
-        simplifiedSettings.instancesNormal and classification == "normal" and addonTable.Display.Utilities.IsInRelevantInstance() or
-        simplifiedSettings.minor and classification == "minus" or
-        simplifiedSettings.minion and UnitIsMinion and UnitIsMinion(unit)
-      )
-      if shouldSimplify then
-        newDisplay = self.enemySimplifiedDisplayPool:Acquire()
-      else
-        newDisplay = self.enemyDisplayPool:Acquire()
-      end
+    local designName, shouldSimplify, index = addonTable.Display.Switcher:GetAssignedDesign(unit)
+    local newDisplay = self:GetPool(index):Acquire()
+    if not addonTable.Constants.IsRetail then
+      shouldSimplify = false
     end
     if C_NamePlateManager and C_NamePlateManager.SetNamePlateSimplified then
       C_NamePlateManager.SetNamePlateSimplified(unit, shouldSimplify)
@@ -541,7 +530,7 @@ function addonTable.Display.ManagerMixin:Install(unit, nameplate)
 
     newDisplay:Install(nameplate)
     if newDisplay.styleIndex ~= self.styleIndex then
-      newDisplay:InitializeWidgets(addonTable.Core.GetDesign(newDisplay.kind), addonTable.Core.GetDesignScale(newDisplay.kind))
+      newDisplay:InitializeWidgets(addonTable.Core.GetDesignByName(designName), shouldSimplify and addonTable.Config.Get(addonTable.Config.Options.SIMPLIFIED_SCALE) or 1)
       newDisplay.styleIndex = self.styleIndex
     end
     self:ListenToBuffs(newDisplay, unit)
@@ -556,13 +545,7 @@ function addonTable.Display.ManagerMixin:Uninstall(unit)
     if display.stackRegion then
       display.stackRegion:SetParent(display)
     end
-    if display.kind == "friend" then
-      self.friendDisplayPool:Release(display)
-    elseif display.kind == "enemySimplified" then
-      self.enemySimplifiedDisplayPool:Release(display)
-    else
-      self.enemyDisplayPool:Release(display)
-    end
+    self.pools[display.index]:Release(display)
     self.nameplateDisplays[unit] = nil
     self.unitToNameplate[unit] = nil
   end
@@ -610,8 +593,8 @@ function addonTable.Display.ManagerMixin:UpdateNamePlateSize()
   end
 
   local globalScale = addonTable.Config.Get(addonTable.Config.Options.GLOBAL_SCALE)
-  local width = addonTable.Rect.width * globalScale
-  local height = addonTable.Rect.height * globalScale
+  local width = addonTable.Assets.BarBordersSize.width * globalScale
+  local height = addonTable.Assets.BarBordersSize.height * globalScale
 
   if C_NamePlate.SetNamePlateEnemySize and not addonTable.Constants.IsRetail then
     width = width * addonTable.Config.Get(addonTable.Config.Options.CLICK_REGION_SCALE_X) * UIParent:GetScale()
@@ -682,7 +665,9 @@ function addonTable.Display.ManagerMixin:UpdateSimplifiedScale()
   end
 
   for unit, display in pairs(self.nameplateDisplays) do
-    display.offsetScale = addonTable.Core.GetDesignScale(display.kind) * UIParent:GetEffectiveScale() * addonTable.Config.Get(addonTable.Config.Options.GLOBAL_SCALE)
+    local _, isSimplified = addonTable.Display.Switcher:GetAssignedDesign(display.unit)
+    local scale = isSimplified and addonTable.Config.Get(addonTable.Config.Options.SIMPLIFIED_SCALE) or 1
+    display.offsetScale = scale * UIParent:GetEffectiveScale() * addonTable.Config.Get(addonTable.Config.Options.GLOBAL_SCALE)
   end
 
   C_CVar.SetCVar("nameplateSimplifiedScale", addonTable.Config.Get(addonTable.Config.Options.SIMPLIFIED_SCALE))
@@ -767,7 +752,7 @@ function addonTable.Display.ManagerMixin:UpdateFriendlyFont()
 
   local state = addonTable.Config.Get(addonTable.Config.Options.SHOW_FRIENDLY_IN_INSTANCES)
   if state == "name_only" then
-    local design = addonTable.Core.GetDesign("friend")
+    local design = addonTable.Core.GetDesignByName("_name-only") --XXX: Fixme
     local scale
     self.friendlyNameOnlyClassColors = false
     for _, t in ipairs(design.texts) do
@@ -843,10 +828,7 @@ function addonTable.Display.ManagerMixin:OnEvent(eventName, ...)
   elseif eventName == "UNIT_FACTION" then
     local unit = ...
     local display = self.nameplateDisplays[unit]
-    if display and ((display.kind == "friend" and UnitCanAttack("player", unit)) or (display.kind == "enemy" and not UnitCanAttack("player", unit))) then
-      self:Uninstall(unit)
-      self:Install(unit, nameplate)
-    end
+    --XXX: FIXME, nameplate style wapping
   elseif eventName == "GLOBAL_MOUSE_UP" then
     self:UpdateForMouseover()
     self:UnregisterEvent("GLOBAL_MOUSE_UP")
@@ -861,7 +843,9 @@ function addonTable.Display.ManagerMixin:OnEvent(eventName, ...)
     self:UpdateClickable()
   elseif eventName == "UI_SCALE_CHANGED" then
     for unit, display in pairs(self.nameplateDisplays) do
-      display.offsetScale = addonTable.Core.GetDesignScale(display.kind) * UIParent:GetEffectiveScale() * addonTable.Config.Get(addonTable.Config.Options.GLOBAL_SCALE)
+      local _, isSimplified = addonTable.Display.Switcher:GetAssignedDesign(display.unit)
+      local scale = isSimplified and addonTable.Config.Get(addonTable.Config.Options.SIMPLIFIED_SCALE) or 1
+      display.offsetScale = scale * UIParent:GetEffectiveScale() * addonTable.Config.Get(addonTable.Config.Options.GLOBAL_SCALE)
       if display.stackRegion then
         self:UpdateStackingRegion(unit)
       end
@@ -874,7 +858,7 @@ function addonTable.Display.ManagerMixin:OnEvent(eventName, ...)
   elseif eventName == "GARRISON_UPDATE" then
     self:UpdateInstanceShowState()
   elseif eventName == "PLAYER_LOGIN" then
-    local design = addonTable.Core.GetDesign("enemy")
+    local design = addonTable.Core.GetDesignByName("_deer") --XXX: Fixme
 
     addonTable.CurrentFont = addonTable.Core.GetFontByDesign(design)
     CreateFont("PlatynatorNameplateCooldownFont")

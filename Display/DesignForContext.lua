@@ -80,6 +80,7 @@ function addonTable.Display.DesignForContextMixin:OnLoad()
   addonTable.CallbackRegistry:RegisterCallback("DesignsAssigned", function(_, settingName)
     if settingName == addonTable.Config.Options.DESIGNS_ASSIGNED then
       self:RefreshDesignAssignments()
+      addonTable.CallbackRegistry:TriggerCallback("RefreshStateChange", {[addonTable.Constants.RefreshReason.DesignSelection] = true})
     end
   end)
 end
@@ -87,10 +88,10 @@ end
 function addonTable.Display.DesignForContextMixin:RefreshDesignAssignments()
 end
 
-function addonTable.Display.DesignForContextMixin:GetAssignedStyle(unit)
+function addonTable.Display.DesignForContextMixin:GetAssignedDesign(unit)
   local assignments = addonTable.Config.Get(addonTable.Config.Options.DESIGNS_ASSIGNED)
 
-  for _, settings in ipairs(assignments) do
+  for index, settings in ipairs(assignments) do
     local hit = true
     for _, criteria in ipairs(settings.criteria) do
       if not assignmentsPossibilities[criteria].check(unit) then
@@ -100,7 +101,9 @@ function addonTable.Display.DesignForContextMixin:GetAssignedStyle(unit)
     end
 
     if hit then
-      return settings.style
+      return settings.style, settings.simplified or false, index
     end
   end
+
+  return "_deer", false, 0
 end
