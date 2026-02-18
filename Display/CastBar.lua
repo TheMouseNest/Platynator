@@ -55,7 +55,7 @@ function addonTable.Display.CastBarMixin:SetUnit(unit)
 end
 
 function addonTable.Display.CastBarMixin:StripInternal()
-  self:SetReverseFill(false)
+  self:RefreshInterruptMarker(false)
   if self.timer then
     self.timer:Cancel()
     self.timer = nil
@@ -76,7 +76,6 @@ function addonTable.Display.CastBarMixin:OnEvent(eventName, ...)
   if eventName == "UNIT_SPELLCAST_INTERRUPTED" or eventName == "UNIT_SPELLCAST_CHANNEL_STOP" and select(4, ...) ~= nil then
     self.interrupted = true
     self:Show()
-    self:SetReverseFill(false)
     self.statusBar:SetMinMaxValues(0, 1)
     self.statusBar:SetValue(1)
     if self.timer then
@@ -108,7 +107,6 @@ end
 
 function addonTable.Display.CastBarMixin:SetColor(...)
   self.statusBar:GetStatusBarTexture():SetVertexColor(...)
-  self.reverseStatusTexture:SetVertexColor(...)
   self.marker:SetVertexColor(...)
   if self.details.background.applyColor then
     local mod = self.details.background.color
@@ -157,10 +155,9 @@ if UnitCastingDuration then
         self.timer = nil
       end
 
-      self:SetReverseFill(self.isChanneled)
       self:Show()
 
-      self.statusBar:SetTimerDuration(castDuration)
+      self.statusBar:SetTimerDuration(castDuration, nil, self.isChanneled and Enum.StatusBarTimerDirection.RemainingTime or Enum.StatusBarTimerDirection.ElapsedTime)
       local spellID
       if self.showInterruptMarker then
         spellID = GetInterruptSpell()
@@ -168,6 +165,7 @@ if UnitCastingDuration then
       self.interruptMarker:SetShown(spellID ~= nil)
       self.interruptPositioner:SetShown(spellID ~= nil)
       if spellID then
+        self:ReverseInterruptMarker(isChanneled)
         local interruptDuration = C_Spell.GetSpellCooldownDuration(spellID)
         self.interruptPositioner:SetMinMaxValues(0, castDuration:GetTotalDuration())
         self.interruptMarker:SetMinMaxValues(0, castDuration:GetTotalDuration())
@@ -211,7 +209,6 @@ else
       self.interrupted = nil
       self.notInterruptible = notInterruptible
 
-      self:SetReverseFill(self.isChanneled)
       self:Show()
 
       if self.timer then
@@ -233,24 +230,31 @@ else
         self.interruptPositioner:SetMinMaxValues(self.statusBar:GetMinMaxValues())
         self.interruptMarker:SetMinMaxValues(self.statusBar:GetMinMaxValues())
         local info = C_Spell.GetSpellCooldown(spellID)
-        endTime = info.duration + info.startTime
-        if endTime > 0 then
+        interruptEndTime = info.duration + info.startTime
+        if interruptEndTime > 0 then
+          self:RefreshInterruptMarker(self.isChanneled)
           self.interruptMarker:Show()
           self.interruptPositioner:SetValue(self.statusBar:GetValue())
-          self.interruptMarker:SetValue(endTime - GetTime())
+          self.interruptMarker:SetValue(interruptEndTime - GetTime())
           self.timer = C_Timer.NewTicker(0.1, function()
             self:RefreshInterruptMarker()
           end)
         else
-          endTime = nil
           self.interruptMarker:Hide()
         end
       end
 
-      self.timer = C_Timer.NewTicker(0.005, function()
+      if self.isChanneled then
+        self.timer = C_Timer.NewTicker(0.005, function()
+          self.statusBar:SetValue(endTime / 1000 - (GetTime() - startTime / 1000))
+        end)
+        self.statusBar:SetValue(endTime / 1000 - (GetTime() - startTime / 1000))
+      else
+        self.timer = C_Timer.NewTicker(0.005, function()
+          self.statusBar:SetValue(GetTime() - startTime / 1000)
+        end)
         self.statusBar:SetValue(GetTime() - startTime / 1000)
-      end)
-      self.statusBar:SetValue(GetTime() - startTime / 1000)
+      end
     else
       self:ClearCast()
     end
