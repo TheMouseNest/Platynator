@@ -337,6 +337,9 @@ function addonTable.Core.UpgradeDesign(design)
     if text.kind == "target" and text.applyClassColors == nil then
       text.applyClassColors = false
     end
+    if text.kind == "creatureName" and text.showPlayersTitle == nil then
+      text.showPlayersTitle = false
+    end
     if (text.kind == "creatureName" or text.kind == "guild") and text.showWhenWowDoes == nil then
       text.showWhenWowDoes = false
     end
