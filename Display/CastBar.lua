@@ -245,9 +245,9 @@ else
 
       if self.isChanneled then
         self.timer = C_Timer.NewTicker(0.005, function()
-          self.statusBar:SetValue(endTime / 1000 - (GetTime() - startTime / 1000))
+          self.statusBar:SetValue(endTime / 1000 - GetTime())
         end)
-        self.statusBar:SetValue(endTime / 1000 - (GetTime() - startTime / 1000))
+        self.statusBar:SetValue(endTime / 1000 - GetTime())
       else
         self.timer = C_Timer.NewTicker(0.005, function()
           self.statusBar:SetValue(GetTime() - startTime / 1000)
