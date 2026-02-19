@@ -221,25 +221,31 @@ function addonTable.Display.AurasManagerMixin:DoesDebuffFilterIn(auraInstanceID)
 end
 
 function addonTable.Display.AurasManagerMixin:DoesBuffFilterIn(auraInstanceID, dispelName)
-  if not self.buffsDetails.filters.important then
-    if self.buffsDetails.filters.dispelable then
-      return dispelName ~= nil and not C_UnitAuras.IsAuraFilteredOutByInstanceID(self.unit, auraInstanceID, self.buffFilter)
-    else
-      return not C_UnitAuras.IsAuraFilteredOutByInstanceID(self.unit, auraInstanceID, self.buffFilter)
-    end
-  elseif self.isFriendly then
-    return not C_UnitAuras.IsAuraFilteredOutByInstanceID(self.unit, auraInstanceID, self.buffFilter .. "|RAID_IN_COMBAT|PLAYER")
-  elseif self.buffsDetails.filters.dispelable then
-    return self.knownImportant[auraInstanceID] and dispelName ~= nil and not C_UnitAuras.IsAuraFilteredOutByInstanceID(self.unit, auraInstanceID, self.buffFilter)
-  elseif self.isPlayer then
-    return self.knownImportant[auraInstanceID] and not (
+  if C_UnitAuras.IsAuraFilteredOutByInstanceID(self.unit, auraInstanceID, self.buffFilter) then
+    return false
+  end
+
+  if not self.isFriendly and self.isPlayer and self.buffsDetails.defensive and (
       C_UnitAuras.IsAuraFilteredOutByInstanceID(self.unit, auraInstanceID, self.buffFilter .. "|RAID_IN_COMBAT") and
       C_UnitAuras.IsAuraFilteredOutByInstanceID(self.unit, auraInstanceID, self.buffFilter .. "|BIG_DEFENSIVE") and
       C_UnitAuras.IsAuraFilteredOutByInstanceID(self.unit, auraInstanceID, self.buffFilter .. "|EXTERNAL_DEFENSIVE")
-    )
-  else
-    return self.knownImportant[auraInstanceID] and not C_UnitAuras.IsAuraFilteredOutByInstanceID(self.unit, auraInstanceID, self.buffFilter)
+    ) then
+    return false
   end
+
+  if self.buffsDetails.filters.important and not self.knownImportant[auraInstanceID] then
+    return false
+  end
+
+  if self.buffsDetails.filters.dispelable and dispelName == nil then
+    return false
+  end
+
+  if self.isFriendly and C_UnitAuras.IsAuraFilteredOutByInstanceID(self.unit, auraInstanceID, self.buffFilter .. "|RAID_IN_COMBAT|PLAYER") then
+    return false
+  end
+
+  return true
 end
 
 function addonTable.Display.AurasManagerMixin:SetUnit(unit)

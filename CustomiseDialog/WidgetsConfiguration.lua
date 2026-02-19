@@ -1056,6 +1056,16 @@ addonTable.CustomiseDialog.WidgetsConfig = {
             end,
           },
           {
+            label = addonTable.Locales.DEFENSIVE,
+            kind = "checkbox",
+            setter = function(details, value)
+              details.filters.defensive = value
+            end,
+            getter = function(details)
+              return details.filters.defensive
+            end,
+          },
+          {
             label = addonTable.Locales.DISPELLABLE,
             kind = "checkbox",
             setter = function(details, value)

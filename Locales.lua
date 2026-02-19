@@ -119,6 +119,7 @@ L["ON_CAST_TRANSPARENCY"] = "On cast transparency"
 L["ON_NOT_TARGET_TRANSPARENCY"] = "On not target transparency"
 L["ON_MOUSEOVER_TRANSPARENCY"] = "On mouseover transparency"
 L["OBSCURED_TRANSPARENCY"] = "Obscured transparency"
+L["DEFENSIVE"] = "Defensive"
 L["SIMPLIFIED_SCALE"] = "Simplified scale"
 
 L["FOREGROUND"] = "Foreground"
