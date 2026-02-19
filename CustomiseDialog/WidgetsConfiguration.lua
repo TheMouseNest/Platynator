@@ -703,7 +703,6 @@ addonTable.CustomiseDialog.WidgetsConfig = {
             getter = function(details)
               return details.applyClassColors
             end,
-            hide = addonTable.Constants.IsRetail,
           },
         }
       }
@@ -1064,6 +1063,7 @@ addonTable.CustomiseDialog.WidgetsConfig = {
             getter = function(details)
               return details.filters.defensive
             end,
+            hide = addonTable.Constants.IsClassic,
           },
           {
             label = addonTable.Locales.DISPELLABLE,
