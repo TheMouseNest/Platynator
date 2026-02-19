@@ -225,7 +225,7 @@ function addonTable.Display.AurasManagerMixin:DoesBuffFilterIn(auraInstanceID, d
     return false
   end
 
-  if not self.isFriendly and self.isPlayer and self.buffsDetails.defensive and (
+  if not self.isFriendly and self.isPlayer and self.buffsDetails.filters.defensive and (
       C_UnitAuras.IsAuraFilteredOutByInstanceID(self.unit, auraInstanceID, self.buffFilter .. "|RAID_IN_COMBAT") and
       C_UnitAuras.IsAuraFilteredOutByInstanceID(self.unit, auraInstanceID, self.buffFilter .. "|BIG_DEFENSIVE") and
       C_UnitAuras.IsAuraFilteredOutByInstanceID(self.unit, auraInstanceID, self.buffFilter .. "|EXTERNAL_DEFENSIVE")
