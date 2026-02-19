@@ -225,12 +225,11 @@ else
       end
       self.interruptMarker:SetShown(spellID ~= nil)
       self.interruptPositioner:SetShown(spellID ~= nil)
-      local endTime
       if spellID then
         self.interruptPositioner:SetMinMaxValues(self.statusBar:GetMinMaxValues())
         self.interruptMarker:SetMinMaxValues(self.statusBar:GetMinMaxValues())
         local info = C_Spell.GetSpellCooldown(spellID)
-        interruptEndTime = info.duration + info.startTime
+        local interruptEndTime = info.duration + info.startTime
         if interruptEndTime > 0 then
           self:RefreshInterruptMarker(self.isChanneled)
           self.interruptMarker:Show()
