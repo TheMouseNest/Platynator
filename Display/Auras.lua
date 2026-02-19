@@ -644,6 +644,8 @@ legacy.crowdControlSpells = {
 [5211] = true,
 [6798] = true,
 [8983] = true,
+--scatter shot
+[19503] = true,
 }
 
 legacy.blacklistedBuffs = {
