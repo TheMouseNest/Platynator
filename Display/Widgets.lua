@@ -321,20 +321,23 @@ end
 function addonTable.Display.GetPower(frame, parent)
   frame = frame or CreateFrame("Frame", nil, parent or UIParent)
 
-  frame.background = CreateFrame("StatusBar", nil, frame)
-  frame.background:SetAllPoints()
-  if addonTable.Constants.IsRetail then
-    frame.background:SetFillStyle(Enum.StatusBarFillStyle.Center)
-  else
-    frame.background:SetFillStyle("CENTER")
+  frame.segments = {}
+  for i = 1, addonTable.Constants.MaxPower do
+    local segmentFrame = CreateFrame("Frame", nil, frame)
+    segmentFrame.background = segmentFrame:CreateTexture(nil, "BACKGROUND")
+    segmentFrame.background:SetAllPoints()
+    segmentFrame.background:SetTexCoord(0, 1 / 7, 0, 1)
+    segmentFrame.foreground = segmentFrame:CreateTexture(nil, "ARTWORK")
+    segmentFrame.foreground:SetAllPoints()
+    segmentFrame.foreground:SetTexCoord(0, 1 / 7, 0, 1)
+    frame.segments[i] = segmentFrame
   end
-  frame.background:SetMinMaxValues(0, 7)
-
-  frame.main = CreateFrame("StatusBar", nil, frame)
-  frame.main:SetMinMaxValues(0, 7)
 
   frame:SetScript("OnSizeChanged", function()
-    PixelUtil.SetSize(frame.main, frame:GetSize())
+    local w, h = frame:GetWidth() / 7, frame:GetHeight()
+    for _, segment in ipairs(frame.segments) do
+      PixelUtil.SetSize(segment, w, h)
+    end
   end)
 
   function frame:Init(details)
@@ -343,11 +346,15 @@ function addonTable.Display.GetPower(frame, parent)
     end
 
     frame.details = details
+    frame.maxPower = addonTable.Constants.MaxPower
 
     local blankDetails = addonTable.Assets.PowerBars[details.blank]
-    self.background:SetStatusBarTexture(blankDetails.file)
-    self.main:SetStatusBarTexture(addonTable.Assets.PowerBars[details.filled].file)
-    self.main:SetPoint("LEFT", frame.background:GetStatusBarTexture())
+    local filledDetails = addonTable.Assets.PowerBars[details.filled]
+    for i, segment in ipairs(frame.segments) do
+      segment.background:SetTexture(blankDetails.file)
+      segment.foreground:SetTexture(filledDetails.file)
+    end
+    self:RepositionSegments()
 
     Mixin(frame, addonTable.Display.PowerBarMixin)
 
@@ -366,7 +373,38 @@ function addonTable.Display.GetPower(frame, parent)
     local details = frame.details
     local blankDetails = addonTable.Assets.PowerBars[frame.details.blank]
     PixelUtil.SetSize(frame, blankDetails.width * details.scale, blankDetails.height * details.scale)
-    PixelUtil.SetSize(self.main, self.background:GetSize())
+
+    local w, h = self:GetWidth() / 7, self:GetHeight()
+    local xOffset = -(self.maxPower / 2 * w)
+    for i, segment in ipairs(frame.segments) do
+      PixelUtil.SetSize(segment, w, h)
+    end
+    self:RepositionSegments()
+  end
+
+  function frame:RepositionSegments()
+    local w = self:GetWidth() / 7
+    local xOffset = -(self.maxPower / 2 * w)
+    for i, segment in ipairs(frame.segments) do
+      segment:SetPoint("LEFT", frame, "CENTER", xOffset + (i - 1) * w, 0)
+    end
+  end
+
+  function frame:SetMaxPower(maxPower)
+    if self.maxPower == maxPower then
+      return
+    end
+
+    self.maxPower = maxPower
+    for i, segment in ipairs(self.segments) do
+      if i > maxPower then
+        segment:Hide()
+      else
+        segment:Show()
+      end
+    end
+
+    self:RepositionSegments()
   end
 end
 
