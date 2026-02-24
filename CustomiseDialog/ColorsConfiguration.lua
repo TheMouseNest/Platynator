@@ -33,21 +33,21 @@ local function BuildSection(label, key)
         kind = "texture",
         label = addonTable.Locales.FOREGROUND,
         getter = function(details)
-          return details.textures and details.textures[key] or ""
+          return details.foreground and details.foreground[key] or ""
         end,
         setter = function(details, value)
           if value == "" then
-            if details.textures then
-              details.textures[key] = nil
-              if next(details.textures) == nil then
-                details.textures = nil
+            if details.foreground then
+              details.foreground[key] = nil
+              if next(details.foreground) == nil then
+                details.foreground = nil
               end
             end
           else
-            if not details.textures then
-              details.textures = {}
+            if not details.foreground then
+              details.foreground = {}
             end
-            details.textures[key] = value
+            details.foreground[key] = value
           end
         end,
       },

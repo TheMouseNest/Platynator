@@ -269,22 +269,22 @@ function addonTable.Display.GetColor(settings, state, unit)
   for _, s in ipairs(settings) do
     if s.kind == "tapped" then
       if IsTapped(unit) then
-        table.insert(colorQueue, {color = s.colors.tapped, texture = s.textures and s.textures.tapped})
+        table.insert(colorQueue, {color = s.colors.tapped, texture = s.foreground and s.foreground.tapped})
         break
       end
     elseif s.kind == "target" then
       if UnitIsUnit("target", unit) then
-        table.insert(colorQueue, {color = s.colors.target, texture = s.textures and s.textures.target})
+        table.insert(colorQueue, {color = s.colors.target, texture = s.foreground and s.foreground.target})
         break
       end
     elseif s.kind == "softTarget" then
       if not UnitIsUnit("target", unit) and (UnitIsUnit("softenemy", unit) or UnitIsUnit("softfriend", unit)) then
-        table.insert(colorQueue, {color = s.colors.softTarget, texture = s.textures and s.textures.softTarget})
+        table.insert(colorQueue, {color = s.colors.softTarget, texture = s.foreground and s.foreground.softTarget})
         break
       end
     elseif s.kind == "focus" then
       if UnitIsUnit("focus", unit) then
-        table.insert(colorQueue, {color = s.colors.focus, texture = s.textures and s.textures.focus})
+        table.insert(colorQueue, {color = s.colors.focus, texture = s.foreground and s.foreground.focus})
         break
       end
     elseif s.kind == "threat" then
@@ -292,16 +292,16 @@ function addonTable.Display.GetColor(settings, state, unit)
       local hostile = state.hostile
       if not state.isPlayer and (inRelevantInstance or not s.instancesOnly) and (threat or (hostile and not s.combatOnly) or IsInCombatWith(unit)) then
         if (isTank and (threat == 0 or threat == nil) and not DoesOtherTankHaveAggro(unit)) or (not isTank and threat == 3) then
-          table.insert(colorQueue, {color = s.colors.warning, texture = s.textures and s.textures.warning})
+          table.insert(colorQueue, {color = s.colors.warning, texture = s.foreground and s.foreground.warning})
           break
         elseif threat == 1 or threat == 2 then
-          table.insert(colorQueue, {color = s.colors.transition, texture = s.textures and s.textures.transition})
+          table.insert(colorQueue, {color = s.colors.transition, texture = s.foreground and s.foreground.transition})
           break
         elseif s.useSafeColor and ((isTank and threat == 3) or (not isTank and (threat == 0 or threat == nil))) then
-          table.insert(colorQueue, {color = s.colors.safe, texture = s.textures and s.textures.safe})
+          table.insert(colorQueue, {color = s.colors.safe, texture = s.foreground and s.foreground.safe})
           break
         elseif isTank and (threat == 0 or threat == nil) and DoesOtherTankHaveAggro(unit) then
-          table.insert(colorQueue, {color = s.colors.offtank, texture = s.textures and s.textures.offtank})
+          table.insert(colorQueue, {color = s.colors.offtank, texture = s.foreground and s.foreground.offtank})
           break
         end
       end
@@ -309,9 +309,9 @@ function addonTable.Display.GetColor(settings, state, unit)
       local classification = UnitClassification(unit)
 
       if classification == "rare" then
-        table.insert(colorQueue, {color = s.colors.rare, texture = s.textures and s.textures.rare})
+        table.insert(colorQueue, {color = s.colors.rare, texture = s.foreground and s.foreground.rare})
       elseif classification == "rareelite" then
-        table.insert(colorQueue, {color = s.colors.rareElite, texture = s.textures and s.textures.rareElite})
+        table.insert(colorQueue, {color = s.colors.rareElite, texture = s.foreground and s.foreground.rareElite})
       end
     elseif s.kind == "eliteType" then
       if (inRelevantInstance or not s.instancesOnly) and not addonTable.Display.Utilities.IsNeutralUnit(unit) then
@@ -322,33 +322,33 @@ function addonTable.Display.GetColor(settings, state, unit)
           if level == playerLevel or addonTable.Constants.IsClassic then
             local class = UnitClassBase(unit)
             if class == "PALADIN" then
-              table.insert(colorQueue, {color = s.colors.caster, texture = s.textures and s.textures.caster})
+              table.insert(colorQueue, {color = s.colors.caster, texture = s.foreground and s.foreground.caster})
             else
-              table.insert(colorQueue, {color = s.colors.melee, texture = s.textures and s.textures.melee})
+              table.insert(colorQueue, {color = s.colors.melee, texture = s.foreground and s.foreground.melee})
             end
             break
           elseif level >= playerLevel + 2 or level == -1 then
-            table.insert(colorQueue, {color = s.colors.boss, texture = s.textures and s.textures.boss})
+            table.insert(colorQueue, {color = s.colors.boss, texture = s.foreground and s.foreground.boss})
             break
           elseif level == playerLevel + 1 then
-            table.insert(colorQueue, {color = s.colors.miniboss, texture = s.textures and s.textures.miniboss})
+            table.insert(colorQueue, {color = s.colors.miniboss, texture = s.foreground and s.foreground.miniboss})
             break
           end
         elseif classification == "normal" or classification == "trivial" then
-          table.insert(colorQueue, {color = s.colors.trivial, texture = s.textures and s.textures.trivial})
+          table.insert(colorQueue, {color = s.colors.trivial, texture = s.foreground and s.foreground.trivial})
           break
         end
       end
     elseif s.kind == "quest" then
       if #addonTable.Display.Utilities.GetQuestInfo(unit) > 0 then
         if IsNeutral(unit) then
-          table.insert(colorQueue, {color = s.colors.neutral, texture = s.textures and s.textures.neutral})
+          table.insert(colorQueue, {color = s.colors.neutral, texture = s.foreground and s.foreground.neutral})
           break
         elseif UnitIsFriend("player", unit) then
-          table.insert(colorQueue, {color = s.colors.friendly, texture = s.textures and s.textures.friendly})
+          table.insert(colorQueue, {color = s.colors.friendly, texture = s.foreground and s.foreground.friendly})
           break
         else
-          table.insert(colorQueue, {color = s.colors.hostile, texture = s.textures and s.textures.hostile})
+          table.insert(colorQueue, {color = s.colors.hostile, texture = s.foreground and s.foreground.hostile})
           break
         end
       end
@@ -357,7 +357,7 @@ function addonTable.Display.GetColor(settings, state, unit)
         local playerGuild, _, _, playerRealm = GetGuildInfo("player")
         local unitGuild, _, _, unitRealm = GetGuildInfo(unit)
         if playerGuild ~= nil and playerGuild == unitGuild and playerRealm == unitRealm then
-          table.insert(colorQueue, {color = s.colors.guild, texture = s.textures and s.textures.guild})
+          table.insert(colorQueue, {color = s.colors.guild, texture = s.foreground and s.foreground.guild})
           break
         end
       end
@@ -369,18 +369,18 @@ function addonTable.Display.GetColor(settings, state, unit)
       end
     elseif s.kind == "reaction" then
       if IsNeutral(unit) then
-        table.insert(colorQueue, {color = s.colors.neutral, texture = s.textures and s.textures.neutral})
+        table.insert(colorQueue, {color = s.colors.neutral, texture = s.foreground and s.foreground.neutral})
       elseif IsUnfriendly(unit) then
-        table.insert(colorQueue, {color = s.colors.unfriendly, texture = s.textures and s.textures.unfriendly})
+        table.insert(colorQueue, {color = s.colors.unfriendly, texture = s.foreground and s.foreground.unfriendly})
       elseif UnitIsFriend("player", unit) and not UnitCanAttack("player", unit) then
-        table.insert(colorQueue, {color = s.colors.friendly, texture = s.textures and s.textures.friendly})
+        table.insert(colorQueue, {color = s.colors.friendly, texture = s.foreground and s.foreground.friendly})
       else
-        table.insert(colorQueue, {color = s.colors.hostile, texture = s.textures and s.textures.hostile})
+        table.insert(colorQueue, {color = s.colors.hostile, texture = s.foreground and s.foreground.hostile})
       end
       break
     elseif s.kind == "difficulty" then
       local difficultyKey = addonTable.Display.Utilities.GetUnitDifficulty(unit)
-      table.insert(colorQueue, {color = s.colors[difficultyKey], texture = s.textures and s.textures[difficultyKey]})
+      table.insert(colorQueue, {color = s.colors[difficultyKey], texture = s.foreground and s.foreground[difficultyKey]})
       break
     elseif s.kind == "interruptReady" then
       local castInfo = state.castInfo
@@ -396,11 +396,11 @@ function addonTable.Display.GetColor(settings, state, unit)
           state.frequentUpdater.interruptReady = true
           if C_Spell.GetSpellCooldownDuration then
             local duration = C_Spell.GetSpellCooldownDuration(spellID)
-            table.insert(colorQueue, {color = s.colors.ready, texture = s.textures and s.textures.ready, state = {{value = duration:IsZero()}, {value = notInterruptible, invert = true}}})
+            table.insert(colorQueue, {color = s.colors.ready, texture = s.foreground and s.foreground.ready, state = {{value = duration:IsZero()}, {value = notInterruptible, invert = true}}})
           else
             local cooldownInfo = C_Spell.GetSpellCooldown(spellID)
             if notInterruptible == false and cooldownInfo.startTime == 0 then
-              table.insert(colorQueue, {color = s.colors.ready, texture = s.textures and s.textures.ready})
+              table.insert(colorQueue, {color = s.colors.ready, texture = s.foreground and s.foreground.ready})
               break
             end
           end
@@ -415,9 +415,9 @@ function addonTable.Display.GetColor(settings, state, unit)
       end
       if name ~= nil then
         if UnitIsSpellTarget then
-          table.insert(colorQueue, {color = s.colors.targeted, texture = s.textures and s.textures.targeted, state = {{value = UnitIsSpellTarget(unit, "player")}}})
+          table.insert(colorQueue, {color = s.colors.targeted, texture = s.foreground and s.foreground.targeted, state = {{value = UnitIsSpellTarget(unit, "player")}}})
         elseif UnitIsUnit(unit .. "target", "player") then
-          table.insert(colorQueue, {color = s.colors.targeted, texture = s.textures and s.textures.targeted})
+          table.insert(colorQueue, {color = s.colors.targeted, texture = s.foreground and s.foreground.targeted})
           break
         end
       end
@@ -429,7 +429,7 @@ function addonTable.Display.GetColor(settings, state, unit)
         uninterruptable = channelInfo[7]
       end
       if uninterruptable ~= nil then
-        table.insert(colorQueue, {color = s.colors.uninterruptable, texture = s.textures and s.textures.uninterruptable, state = {{value = uninterruptable}}})
+        table.insert(colorQueue, {color = s.colors.uninterruptable, texture = s.foreground and s.foreground.uninterruptable, state = {{value = uninterruptable}}})
       end
     elseif s.kind == "importantCast" then
       if C_Spell.IsSpellImportant then
@@ -444,9 +444,9 @@ function addonTable.Display.GetColor(settings, state, unit)
         if spellID ~= nil then
           local isImportant = C_Spell.IsSpellImportant(spellID)
           if isChannel then
-            table.insert(colorQueue, {color = s.colors.channel, texture = s.textures and s.textures.channel, state = {{value = isImportant}}})
+            table.insert(colorQueue, {color = s.colors.channel, texture = s.foreground and s.foreground.channel, state = {{value = isImportant}}})
           else
-            table.insert(colorQueue, {color = s.colors.cast, texture = s.textures and s.textures.cast, state = {{value = isImportant}}})
+            table.insert(colorQueue, {color = s.colors.cast, texture = s.foreground and s.foreground.cast, state = {{value = isImportant}}})
           end
         end
       end
@@ -460,13 +460,13 @@ function addonTable.Display.GetColor(settings, state, unit)
         isChannel = true
       end
       if text ~= nil then
-        table.insert(colorQueue, {color = isChannel and s.colors.channel or s.colors.cast, texture = s.textures and s.textures[isChannel and "channel" or "cast"]})
+        table.insert(colorQueue, {color = isChannel and s.colors.channel or s.colors.cast, texture = s.foreground and s.foreground[isChannel and "channel" or "cast"]})
       else
-        table.insert(colorQueue, {color = s.colors.interrupted, texture = s.textures and s.textures.interrupted})
+        table.insert(colorQueue, {color = s.colors.interrupted, texture = s.foreground and s.foreground.interrupted})
       end
       break
     elseif s.kind == "fixed" then
-      table.insert(colorQueue, {color = s.colors.fixed, texture = s.textures and s.textures.fixed})
+      table.insert(colorQueue, {color = s.colors.fixed, texture = s.foreground and s.foreground.fixed})
       break
     elseif s.kind == "execute" then
       local executeRange = addonTable.Display.Utilities.GetExecuteRange()
@@ -474,11 +474,11 @@ function addonTable.Display.GetColor(settings, state, unit)
         if UnitHealthPercent then
           local alpha = UnitHealthPercent(unit, true, executeCurve)
           executeConverter:SetDesaturation(alpha)
-          table.insert(colorQueue, {color = s.colors.execute, texture = s.textures and s.textures.execute, state = {{value = executeConverter:IsDesaturated()}}})
+          table.insert(colorQueue, {color = s.colors.execute, texture = s.foreground and s.foreground.execute, state = {{value = executeConverter:IsDesaturated()}}})
         else
           local percent = UnitHealth(unit) / UnitHealthMax(unit)
           if percent <= addonTable.Display.Utilities.GetExecuteRange() then
-            table.insert(colorQueue, {color = s.colors.execute, texture = s.textures and s.textures.execute})
+            table.insert(colorQueue, {color = s.colors.execute, texture = s.foreground and s.foreground.execute})
           end
         end
       end
