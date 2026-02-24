@@ -454,7 +454,7 @@ else
           table.insert(self.crowdControl, aura.auraInstanceID)
           aura.kind = "crowdControl"
         end
-      elseif self.debuffsDetails and aura.isHarmful and (not self.debuffsDetails.filters.important or aura.nameplateShowPersonal or legacy.whitelistedDebuffs[aura.spellId] or addonTable.Constants.IsClassic) and aura.sourceUnit == "player" then
+      elseif self.debuffsDetails and aura.isHarmful and (not self.debuffsDetails.filters.fromYou or aura.sourceUnit == "player") then
         keep = true
         table.insert(self.debuffs, aura.auraInstanceID)
         aura.kind = "debuffs"
@@ -615,13 +615,15 @@ legacy.crowdControlSpells = {
 [326450] = true,
 [117405] = true,
 [236077] = true,
---adding druid ccs ids
---pounce
+
+--Druid (all ranks)
+-- Pounce
 [9005] = true,
 [9823] = true,
 [9827] = true,
 [27006] = true,
---roots
+[49803] = true,
+-- Entangling Roots
 [339] = true,
 [1062] = true,
 [5195] = true,
@@ -629,24 +631,118 @@ legacy.crowdControlSpells = {
 [9852] = true,
 [9853] = true,
 [26989] = true,
---hibernate
+[53308] = true,
+-- Hibernate
 [2637] = true,
 [18657] = true,
 [18658] = true,
---maim
+-- Maim
 [22570] = true,
---soothe animal
+-- Soothe animal
 [2908] = true,
 [8955] = true,
 [9901] = true,
 [26995] = true,
---cyclone
+-- Cyclone
 [33786] = true,
---bash
+-- Bash
 [5211] = true,
 [6798] = true,
 [8983] = true,
---scatter shot
+
+--Warlock
+-- Fear
+[5782] = true,
+[6213] = true,
+[6215] = true,
+-- Death Coil
+[6789] = true,
+[17925] = true,
+[17926] = true,
+[27223] = true,
+-- Howl of terror
+[5484] = true,
+[17928] = true,
+-- Banish
+[710] = true,
+[18647] = true,
+
+--Warrior
+[5246] = true, -- Intimidating Shout
+[12809] = true, -- Concussion Blow
+-- Charge
+[7922] = true, -- Charge
+-- Intercept
+[20253] = true,
+[20614] = true,
+[20615] = true,
+[25273] = true,
+[25274] = true,
+
+--Mage
+-- Polymorph
+[118] = true,
+[12824] = true,
+[12825] = true,
+[12826] = true,
+-- Frost Nova
+[122] = true,
+[865] = true,
+[6131] = true,
+[10230] = true,
+[42917] = true,
+-- Dragon's Breath
+[31661] = true,
+[33041] = true,
+[33042] = true,
+[33043] = true,
+[42949] = true,
+[42950] = true,
+
+--Rogue
+-- Sap
+[6770] = true,
+[2070] = true,
+[11297] = true,
+[51724] = true,
+-- Blind
+[2094] = true,
+-- Gouge
+[38764] = true,
+-- Kidney Shot
+[408] = true,
+[8643] = true,
+-- Cheap Shot
+[1833] = true,
+
+--Priest
+-- Psychic Scream
+[8122] = true,
+[8124] = true,
+[10888] = true,
+[10890] = true,
+-- Mind Soothe
+[25596] = true,
+
+--Paladin
+-- Hammer of Justice
+[853] = true,
+[5588] = true,
+[5589] = true,
+[10308] = true,
+-- Repentance
+[20066] = true,
+
+--Hunter
+-- Freezing Trap
+[1499] = true,
+[14310] = true,
+[14311] = true,
+-- Scare Beast
+[1513] = true,
+[14326] = true,
+[14327] = true,
+-- Scatter shot
 [19503] = true,
 }
 
