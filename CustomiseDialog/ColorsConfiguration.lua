@@ -10,7 +10,7 @@ function addonTable.CustomiseDialog.AddAlphaToColors(details)
   for _, c in pairs(details.colors) do
     c.a = 1
   end
-  
+
   return details
 end
 
@@ -260,11 +260,11 @@ addonTable.CustomiseDialog.ColorsConfig = {
     default = {
       kind = "difficulty",
       colors = {
-        impossible = { r = 1.00, g = 0.10, b = 0.10 },
-        verydifficult = { r = 1.00, g = 0.50, b = 0.25 },
-        difficult = { r = 1.00, g = 0.82, b = 0.00 },
-        standard = { r = 0.25, g = 0.75, b = 0.25 },
-        trivial = { r = 0.50, g = 0.50, b = 0.50 },
+        impossible = {r = 1.00, g = 0.10, b = 0.10},
+        verydifficult = {r = 1.00, g = 0.50, b = 0.25},
+        difficult = {r = 1.00, g = 0.82, b = 0.00},
+        standard = {r = 0.25, g = 0.75, b = 0.25},
+        trivial = {r = 0.50, g = 0.50, b = 0.50},
       },
     },
     entries = {
