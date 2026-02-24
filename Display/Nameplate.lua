@@ -522,6 +522,11 @@ function addonTable.Display.NameplateMixin:UpdateVisual()
   local isTarget = UnitIsUnit("target", self.unit) or UnitIsUnit("softenemy", self.unit) or UnitIsUnit("softfriend", self.unit)
   if isTarget then
     -- Nothing to do as its parented to the nameplate, as that will handle scaling for us
+  elseif UnitIsUnit("mouseover", self.unit) then
+    alpha = alpha * addonTable.Config.Get(addonTable.Config.Options.MOUSEOVER_ALPHA)
+    if self.casting then
+      scale = scale * addonTable.Config.Get(addonTable.Config.Options.CAST_SCALE)
+    end
   elseif self.casting then
     scale = scale * addonTable.Config.Get(addonTable.Config.Options.CAST_SCALE)
     alpha = alpha * addonTable.Config.Get(addonTable.Config.Options.CAST_ALPHA)

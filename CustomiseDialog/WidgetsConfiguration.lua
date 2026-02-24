@@ -703,7 +703,6 @@ addonTable.CustomiseDialog.WidgetsConfig = {
             getter = function(details)
               return details.applyClassColors
             end,
-            hide = addonTable.Constants.IsRetail,
           },
         }
       }
@@ -1054,6 +1053,17 @@ addonTable.CustomiseDialog.WidgetsConfig = {
             getter = function(details)
               return details.filters.important
             end,
+          },
+          {
+            label = addonTable.Locales.DEFENSIVE,
+            kind = "checkbox",
+            setter = function(details, value)
+              details.filters.defensive = value
+            end,
+            getter = function(details)
+              return details.filters.defensive
+            end,
+            hide = addonTable.Constants.IsClassic,
           },
           {
             label = addonTable.Locales.DISPELLABLE,

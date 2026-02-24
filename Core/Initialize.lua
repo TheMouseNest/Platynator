@@ -130,6 +130,9 @@ function addonTable.Core.UpgradeDesign(design)
         important = true,
       }
     end
+    if aura.kind == "buffs" and aura.filters.defensive == nil then
+      aura.filters.defensive = false
+    end
     if aura.kind == "buffs" and aura.showDispel == nil then
       aura.showDispel = {enrage = true}
     elseif aura.kind ~= "buffs" then
@@ -621,15 +624,9 @@ function addonTable.Core.GetDesign(kind)
   return addonTable.Core.GetDesignByName(name)
 end
 
-local hasSimplifiedScale = C_CVar.GetCVarInfo("nameplateSimplifiedScale")
-
 function addonTable.Core.GetDesignScale(kind)
   if kind:find("Simplified") then
-    if hasSimplifiedScale then
-      return addonTable.Config.Get(addonTable.Config.Options.SIMPLIFIED_SCALE)
-    else
-      return 0.3
-    end
+    return addonTable.Config.Get(addonTable.Config.Options.SIMPLIFIED_SCALE)
   else
     return 1
   end

@@ -26,5 +26,5 @@ jobs:
       with:
         args: -p 1361299 -a YK9EdeKL
       env:
+        GITHUB_OAUTH: ${{ secrets.GITHUB_TOKEN }}
         CF_API_KEY: ${{ secrets.plusmouse_curseforge }}
-        WAGO_API_TOKEN: ${{ secrets.plusmouse_wago }}

@@ -19,10 +19,8 @@ function addonTable.Display.HealthBarMixin:PostInit()
   end
   if addonTable.Constants.IsRetail then
     self.calculator = CreateUnitHealPredictionCalculator()
-    if self.calculator.SetMaximumHealthMode then
-      self.calculator:SetMaximumHealthMode(Enum.UnitMaximumHealthMode.WithAbsorbs)
-      self.calculator:SetDamageAbsorbClampMode(Enum.UnitDamageAbsorbClampMode.MaximumHealth)
-    end
+    self.calculator:SetMaximumHealthMode(Enum.UnitMaximumHealthMode.WithAbsorbs)
+    self.calculator:SetDamageAbsorbClampMode(Enum.UnitDamageAbsorbClampMode.MaximumHealth)
 
     self.animate = self.details.animate and Enum.StatusBarInterpolation.ExponentialEaseOut or Enum.StatusBarInterpolation.Immediate
   end
@@ -82,27 +80,18 @@ end
 
 function addonTable.Display.HealthBarMixin:UpdateHealth()
   if self.calculator then
-    if self.calculator.GetMaximumHealth then
-      UnitGetDetailedHealPrediction(self.unit, nil, self.calculator)
+    UnitGetDetailedHealPrediction(self.unit, nil, self.calculator)
 
-      self.calculator:SetMaximumHealthMode(Enum.UnitMaximumHealthMode.WithAbsorbs)
-      self.statusBar:SetMinMaxValues(0, self.calculator:GetMaximumHealth())
+    self.calculator:SetMaximumHealthMode(Enum.UnitMaximumHealthMode.WithAbsorbs)
+    self.statusBar:SetMinMaxValues(0, self.calculator:GetMaximumHealth())
 
-      self.statusBarCutaway:SetMinMaxValues(self.statusBar:GetMinMaxValues())
-      self.statusBarAbsorb:SetMinMaxValues(self.statusBar:GetMinMaxValues())
+    self.statusBarCutaway:SetMinMaxValues(self.statusBar:GetMinMaxValues())
+    self.statusBarAbsorb:SetMinMaxValues(self.statusBar:GetMinMaxValues())
 
-      local absorbs = self.calculator:GetDamageAbsorbs()
-      self.statusBarAbsorb:SetValue(absorbs, self.animate)
-      self.calculator:SetMaximumHealthMode(Enum.UnitMaximumHealthMode.Default)
-      self.statusBar:SetValue(self.calculator:GetCurrentHealth(), self.animate)
-    else
-      local maxHealth = UnitHealthMax(self.unit)
-      self.statusBar:SetMinMaxValues(0, maxHealth)
-      self.statusBarCutaway:SetMinMaxValues(0, maxHealth)
-      self.statusBarAbsorb:SetMinMaxValues(self.statusBar:GetMinMaxValues())
-      self.statusBarAbsorb:SetValue(UnitGetTotalAbsorbs(self.unit), self.animate)
-      self.statusBar:SetValue(UnitHealth(self.unit), self.animate)
-    end
+    local absorbs = self.calculator:GetDamageAbsorbs()
+    self.statusBarAbsorb:SetValue(absorbs, self.animate)
+    self.calculator:SetMaximumHealthMode(Enum.UnitMaximumHealthMode.Default)
+    self.statusBar:SetValue(self.calculator:GetCurrentHealth(), self.animate)
   else
     local absorbs = UnitGetTotalAbsorbs(self.unit)
     local maxHealth = UnitHealthMax(self.unit)
