@@ -3,8 +3,6 @@ local addonTable = select(2, ...)
 
 local legacy = {}
 
-local shouldIgnoreImportant = select(2, UnitClass("player")) == "MONK"
-
 addonTable.Display.AurasManagerMixin = {}
 
 function addonTable.Display.AurasManagerMixin:OnLoad()
@@ -215,7 +213,7 @@ function addonTable.Display.AurasManagerMixin:Reset()
 end
 
 function addonTable.Display.AurasManagerMixin:DoesDebuffFilterIn(auraInstanceID)
-  if not self.debuffsDetails.filters.important or shouldIgnoreImportant then
+  if not self.debuffsDetails.filters.important then
     return not C_UnitAuras.IsAuraFilteredOutByInstanceID(self.unit, auraInstanceID, self.debuffFilter)
   else
     return self.knownImportant[auraInstanceID] and not C_UnitAuras.IsAuraFilteredOutByInstanceID(self.unit, auraInstanceID, self.debuffFilter)
