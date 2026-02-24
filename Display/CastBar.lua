@@ -3,6 +3,7 @@ local addonTable = select(2, ...)
 
 addonTable.Display.CastBarMixin = {}
 
+local LSM = LibStub("LibSharedMedia-3.0")
 local ConvertColor = addonTable.Display.Utilities.ConvertColor
 
 local GetInterruptSpell = addonTable.Display.Utilities.GetInterruptSpell
@@ -21,6 +22,8 @@ function addonTable.Display.CastBarMixin:PostInit()
   end
 
   self.showInterruptMarker = self.details.interruptMarker.asset ~= "none"
+  self.defaultForegroundAsset = self.details.foreground.asset
+  self.currentForegroundAsset = self.defaultForegroundAsset
 end
 
 function addonTable.Display.CastBarMixin:SetUnit(unit)
@@ -70,6 +73,8 @@ end
 function addonTable.Display.CastBarMixin:Strip()
   self:StripInternal()
   self.modColors = nil
+  self.defaultForegroundAsset = nil
+  self.currentForegroundAsset = nil
 end
 
 function addonTable.Display.CastBarMixin:OnEvent(eventName, ...)
@@ -108,6 +113,7 @@ end
 function addonTable.Display.CastBarMixin:SetColor(...)
   self.statusBar:GetStatusBarTexture():SetVertexColor(...)
   self.marker:SetVertexColor(...)
+  local textureOverride = self.colorState and self.colorState.textureOverride
   if self.details.background.applyColor then
     local mod = self.details.background.color
     if self.modColors then
@@ -115,6 +121,14 @@ function addonTable.Display.CastBarMixin:SetColor(...)
     else
       local r, g, b = ...
       self.background:SetVertexColor(r, g, b, mod.a)
+    end
+  end
+  if self.colorState then
+    local newAsset = textureOverride or self.defaultForegroundAsset
+    if newAsset and newAsset ~= self.currentForegroundAsset then
+      self.currentForegroundAsset = newAsset
+      local tex = LSM:Fetch("statusbar", newAsset, true) or LSM:Fetch("statusbar", "Platy: Solid White")
+      self.statusBar:GetStatusBarTexture():SetTexture(tex)
     end
   end
 end

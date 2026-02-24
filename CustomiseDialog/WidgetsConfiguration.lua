@@ -228,6 +228,8 @@ local function GetLabelsValuesHighlightsNotAnimated()
   return labels, values
 end
 
+addonTable.CustomiseDialog.GetLabelsValuesBackgrounds = GetLabelsValuesBackgrounds
+
 addonTable.CustomiseDialog.WidgetsConfig = {
   ["bars"] = {
     ["*"] = {

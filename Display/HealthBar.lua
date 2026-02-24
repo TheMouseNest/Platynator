@@ -3,6 +3,7 @@ local addonTable = select(2, ...)
 
 addonTable.Display.HealthBarMixin = {}
 
+local LSM = LibStub("LibSharedMedia-3.0")
 local ConvertColor = addonTable.Display.Utilities.ConvertColor
 
 function addonTable.Display.HealthBarMixin:PostInit()
@@ -24,6 +25,8 @@ function addonTable.Display.HealthBarMixin:PostInit()
 
     self.animate = self.details.animate and Enum.StatusBarInterpolation.ExponentialEaseOut or Enum.StatusBarInterpolation.Immediate
   end
+  self.defaultForegroundAsset = self.details.foreground.asset
+  self.currentForegroundAsset = self.defaultForegroundAsset
 end
 
 function addonTable.Display.HealthBarMixin:SetUnit(unit)
@@ -60,12 +63,14 @@ function addonTable.Display.HealthBarMixin:Strip()
   self.modColors = nil
   self.animate = nil
   self.calculator = nil
-
+  self.defaultForegroundAsset = nil
+  self.currentForegroundAsset = nil
 end
 
 function addonTable.Display.HealthBarMixin:SetColor(...)
   self.statusBar:GetStatusBarTexture():SetVertexColor(...)
   self.statusBarCutaway:GetStatusBarTexture():SetVertexColor(...)
+  local textureOverride = self.colorState and self.colorState.textureOverride
   if self.details.background.applyColor then
     local mod = self.details.background.color
     if self.modColors then
@@ -76,6 +81,15 @@ function addonTable.Display.HealthBarMixin:SetColor(...)
     end
   end
   self.marker:SetVertexColor(...)
+  if self.colorState then
+    local newAsset = textureOverride or self.defaultForegroundAsset
+    if newAsset and newAsset ~= self.currentForegroundAsset then
+      self.currentForegroundAsset = newAsset
+      local tex = LSM:Fetch("statusbar", newAsset, true) or LSM:Fetch("statusbar", "Platy: Solid White")
+      self.statusBar:GetStatusBarTexture():SetTexture(tex)
+      self.statusBarCutaway:GetStatusBarTexture():SetTexture(tex)
+    end
+  end
 end
 
 function addonTable.Display.HealthBarMixin:UpdateHealth()

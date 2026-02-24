@@ -224,6 +224,8 @@ function addonTable.CustomiseDialog.Components.GetColorPicker(parent, label, off
   local text = holder:CreateFontString(nil, nil, "GameFontHighlight")
   text:SetPoint("RIGHT", holder, "CENTER", -22 - offset, 0)
   text:SetText(label)
+  holder.Text = text
+  holder.Swatch = swatch
 
   function holder:SetValue(color)
     swatch.currentColor = CopyTable(color)

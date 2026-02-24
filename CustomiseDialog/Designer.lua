@@ -154,58 +154,170 @@ local function GetAutomaticColors(rootParent, lockedElements, addAlpha)
   optionsContainer:SetPoint("TOPLEFT", colorsListContainer, "TOPRIGHT", 10, 0)
   optionsContainer:SetPoint("BOTTOMRIGHT", container)
 
+  local textureLabels, textureValues = addonTable.CustomiseDialog.GetLabelsValuesBackgrounds()
+  table.insert(textureLabels, 1, addonTable.Locales.USE_GLOBAL_TEXTURE)
+  table.insert(textureValues, 1, "")
+
   local configsByKind = {}
   for kind, colorDetails in pairs(addonTable.CustomiseDialog.ColorsConfig) do
     local allFrames = {}
-    local yOffset = 0
+    local pendingSpacing = 0
+    local contentHeight = 0
     local parent = CreateFrame("Frame", nil, optionsContainer)
     parent:SetAllPoints()
 
-    for _, e in ipairs(colorDetails.entries) do
-      local frame
+    local contentParent = parent
+    local scrollFrame, scrollChild
+    local needsScroll = #colorDetails.entries > 2
+
+    if needsScroll then
+      scrollFrame = CreateFrame("ScrollFrame", nil, parent, "UIPanelScrollFrameTemplate")
+      scrollFrame:SetPoint("TOPLEFT", 0, -5)
+      scrollFrame:SetPoint("BOTTOMRIGHT", -30, -10)
+      scrollChild = CreateFrame("Frame", nil, scrollFrame)
+      scrollChild:SetPoint("TOPLEFT")
+      scrollChild:SetPoint("TOPRIGHT")
+      scrollFrame:SetScrollChild(scrollChild)
+      scrollFrame:SetScript("OnSizeChanged", function(_, width)
+        scrollChild:SetWidth(width)
+      end)
+      contentParent = scrollChild
+    end
+
+    local function PlaceFrame(frame)
+      if #allFrames == 0 then
+        frame:SetPoint("TOP", 0, -pendingSpacing)
+      else
+        frame:SetPoint("TOP", allFrames[#allFrames], "BOTTOM", 0, -pendingSpacing)
+      end
+      contentHeight = contentHeight + pendingSpacing + frame:GetHeight()
+      table.insert(allFrames, frame)
+      pendingSpacing = 0
+    end
+
+    local function ApplySectionLayout(frame)
+      frame:ClearAllPoints()
+      frame:SetPoint("LEFT", contentParent, "LEFT", 0, 0)
+      frame:SetPoint("RIGHT", contentParent, "RIGHT", -10, 0)
+
+      if frame.Text and frame.Swatch then
+        frame.Text:ClearAllPoints()
+        frame.Text:SetPoint("LEFT", frame, "LEFT", 10, 0)
+        frame.Text:SetPoint("RIGHT", frame, "LEFT", 106, 0)
+        frame.Text:SetJustifyH("RIGHT")
+        frame.Swatch:ClearAllPoints()
+        frame.Swatch:SetPoint("LEFT", frame, "LEFT", 124, 0)
+      end
+
+      if frame.Label and frame.DropDown then
+        frame.Label:ClearAllPoints()
+        frame.Label:SetPoint("LEFT", frame, "LEFT", 10, 0)
+        frame.Label:SetPoint("RIGHT", frame, "LEFT", 106, 0)
+        frame.Label:SetJustifyH("RIGHT")
+        frame.DropDown:ClearAllPoints()
+        frame.DropDown:SetPoint("LEFT", frame, "LEFT", 124, 0)
+        frame.DropDown:SetWidth(209)
+      end
+    end
+
+    local function CreateBoundSetterGetter(entry)
       local function Setter(value)
         if not parent.details then
           return
         end
-        local oldValue = e.getter(parent.details)
-        e.setter(parent.details, value)
-        if oldValue ~= e.getter(parent.details) then
+        local oldValue = entry.getter(parent.details)
+        entry.setter(parent.details, value)
+        if oldValue ~= entry.getter(parent.details) then
           Announce()
         end
       end
-      local function Getter(value)
+      local function Getter()
         if not parent.details then
           return
         end
-        return e.getter(parent.details)
+        return entry.getter(parent.details)
+      end
+      return Setter, Getter
+    end
+
+    local function CreateFrameForKind(entry, inSection, setter, getter)
+      local frame
+      if entry.kind == "checkbox" then
+        frame = addonTable.CustomiseDialog.Components.GetCheckbox(contentParent, entry.label, -30, setter)
+      elseif entry.kind == "colorPicker" then
+        frame = addonTable.CustomiseDialog.Components.GetColorPicker(contentParent, inSection and (entry.label or addonTable.Locales.COLOR) or entry.label, -30, setter)
+      elseif entry.kind == "texture" then
+        frame = addonTable.CustomiseDialog.Components.GetBasicDropdown(contentParent, entry.label or addonTable.Locales.FOREGROUND, function(value)
+          if not parent.details then
+            return false
+          end
+          return value == getter()
+        end, setter)
+        frame.kind = "dropdown"
+        frame.getInitData = function()
+          return textureLabels, textureValues
+        end
+      end
+      return frame
+    end
+
+    local function RenderEntry(entry, inSection)
+      if entry.kind == "spacer" then
+        pendingSpacing = 30
+        return
       end
 
-      if e.kind == "checkbox" then
-        frame = addonTable.CustomiseDialog.Components.GetCheckbox(parent, e.label, -30, Setter)
-      elseif e.kind == "colorPicker" then
-        frame = addonTable.CustomiseDialog.Components.GetColorPicker(parent, e.label, -30, Setter)
+      if entry.kind == "section" then
+        local header = CreateFrame("Frame", nil, contentParent)
+        header:SetPoint("LEFT", 0, 0)
+        header:SetPoint("RIGHT", -10, 0)
+        header:SetHeight(26)
+        header.text = header:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+        header.text:SetPoint("LEFT", 0, 0)
+        header.text:SetText(entry.label)
+        header.isHeader = true
+        pendingSpacing = #allFrames > 0 and 8 or 0
+        PlaceFrame(header)
+
+        for _, field in ipairs(entry.fields) do
+          RenderEntry(field, true)
+        end
+        pendingSpacing = 8
+        return
       end
+
+      if not entry.getter or not entry.setter then
+        return
+      end
+
+      local setter, getter = CreateBoundSetterGetter(entry)
+      local frame = CreateFrameForKind(entry, inSection, setter, getter)
 
       if frame then
-        frame.kind = e.kind
-        frame.Getter = Getter
-        if #allFrames == 0 then
-          frame:SetPoint("TOP", 0, yOffset)
-        else
-          frame:SetPoint("TOP", allFrames[#allFrames], "BOTTOM", 0, yOffset)
+        frame.kind = frame.kind or entry.kind
+        frame.Getter = getter
+        if inSection then
+          ApplySectionLayout(frame)
         end
-        table.insert(allFrames, frame)
-        yOffset = 0
-      elseif e.kind == "spacer" then
-        yOffset = -30
+        PlaceFrame(frame)
       end
+    end
+
+    for _, entry in ipairs(colorDetails.entries) do
+      RenderEntry(entry, false)
+    end
+
+    if scrollChild then
+      scrollChild:SetHeight(contentHeight + 10)
     end
 
     if not lockedElements[kind] then
       local deleteButton = CreateFrame("Button", nil, parent, "UIPanelDynamicResizeButtonTemplate")
       deleteButton:SetText(DELETE)
       DynamicResizeButton_Resize(deleteButton)
-      if #allFrames > 0 then
+      if #allFrames > 0 and scrollFrame then
+        deleteButton:SetPoint("TOPRIGHT", scrollFrame, "BOTTOMRIGHT", 15, -2)
+      elseif #allFrames > 0 then
         deleteButton:SetPoint("BOTTOMRIGHT", -15, 0)
       else
         deleteButton:SetPoint("TOP", 0, -15)
@@ -230,7 +342,12 @@ local function GetAutomaticColors(rootParent, lockedElements, addAlpha)
         return
       end
       for _, f in ipairs(allFrames) do
-        f:SetValue(f.Getter())
+        if not f.isHeader then
+          if f.getInitData then
+            f:Init(f.getInitData())
+          end
+          f:SetValue(f.Getter())
+        end
       end
     end
     parent:Hide()

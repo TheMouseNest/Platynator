@@ -138,6 +138,7 @@ L["DO_NOTHING"] = "Do nothing"
 L["SPECIAL_BRACKETS"] = "(Special)"
 L["PERCENT_BRACKETS"] = "(%d%%)"
 L["NONE"] = "None"
+L["USE_GLOBAL_TEXTURE"] = "Use global texture"
 L["USE_NAMEPLATES_FOR"] = "Use nameplates for"
 L["CLICKABLE_NAMEPLATES"] = "Clickable nameplates"
 
