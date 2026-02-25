@@ -3,10 +3,6 @@ local addonTable = select(2, ...)
 
 addonTable.Display.ClassMarkerMixin = {}
 
-local borderPool = CreateTexturePool(UIParent, "BACKGROUND", 0, nil, function(_, tex)
-  tex:SetColorTexture(0, 0, 0)
-end)
-
 local classMap = {
   ["DEATHKNIGHT"] = "DeathKnight",
   ["DEMONHUNTER"] = "DemonHunter",
@@ -24,36 +20,21 @@ local classMap = {
 }
 
 function addonTable.Display.ClassMarkerMixin:PostInit()
-  self.border = borderPool:Acquire()
-  self.border:SetParent(self)
-  self.border:ClearAllPoints()
-
-  self.PostApplyAnchor = function()
-    PixelUtil.SetPoint(self.border, "TOPLEFT", self, "TOPLEFT", -1, 1)
-    PixelUtil.SetPoint(self.border, "BOTTOMRIGHT", self, "BOTTOMRIGHT", 1, -1)
-  end
+  self.path = addonTable.Assets.Markers[self.details.asset].file
 end
 
 function addonTable.Display.ClassMarkerMixin:SetUnit(unit)
   self.unit = unit
   if self.unit and (UnitIsPlayer(self.unit) or UnitTreatAsPlayerForDisplay and UnitTreatAsPlayerForDisplay(self.unit)) then
     self.marker:Show()
-    self.border:Show()
     local _, class = UnitClass(self.unit)
-    local atlas = "classicon-" .. class:lower()
-    self.marker:SetAtlas(atlas)
+    self.marker:SetTexture(self.path:format(classMap[class]))
   else
     self.marker:Hide()
-    self.border:Hide()
   end
 end
 
 function addonTable.Display.ClassMarkerMixin:Strip()
   self.PostInit = nil
-  self.PostApplyAnchor = nil
-  if self.border then
-    self.border:Hide()
-    borderPool:Release(self.border)
-    self.border = nil
-  end
+  self.path = nil
 end

@@ -177,7 +177,8 @@ addonTable.Assets.Markers = {
 
   ["normal/blizzard-pvp"] = {file = "Interface/AddOns/Platynator/Assets/Special/Markers/pvp.png", width = 150, height = 150, tag = "pvp"},
 
-  ["normal/class"] = {file = "Interface/AddOns/Platynator/Assets/Special/Markers/classicon-monk.png", width = 200, height = 200, tag = "class"},
+  ["normal/class"] = {preview = "Interface/AddOns/Platynator/Assets/Special/Markers/ClassIcons/Default/Monk.png", file = "Interface/AddOns/Platynator/Assets/Special/Markers/ClassIcons/Default/%s.png", width = 200, height = 200, tag = "class"},
+  ["normal/class-minimalist"] = {preview = "Interface/AddOns/Platynator/Assets/Special/Markers/ClassIcons/Minimalist/Monk.png", file = "Interface/AddOns/Platynator/Assets/Special/Markers/ClassIcons/Minimalist/%s.png", width = 200, height = 200, tag = "class"},
 }
 
 addonTable.Assets.SpecialBars = {
