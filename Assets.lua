@@ -73,6 +73,7 @@ addonTable.Assets.BarBordersSliced = {
   ["Platy: Blizzard Health"] = {file = "Interface/AddOns/Platynator/Assets/%s/BarBorders/blizzard-health-square.png", width = 48, height = 48, has4k = true, margin = 0.4, extra = 0, modifier = 0.3, DPIScale = 1/2},
   ["Platy: Blizzard Cast Bar"] = {file = "Interface/AddOns/Platynator/Assets/%s/BarBorders/blizzard-cast-bar-square.png", width = 48, height = 48, has4k = true, margin = 0.35, extra = 0, modifier = 0.35, DPIScale = 1/2},
   ["Platy: Blizzard Classic"] = {file = "Interface/AddOns/Platynator/Assets/%s/BarBorders/blizzard-classic-square.png", width = 48, height = 48, has4k = true, margin = 0.4, extra = 0, modifier = 0.3, DPIScale = 1/2},
+  ["Platy: Blizzard Metal"] = {file = "Interface/AddOns/Platynator/Assets/Special/BarBorders/blizzard-metal.png", width = 44, height = 44, margin = 0.48, extra = 14, modifier = 0.4},
 }
 
 addonTable.Assets.BarMasks = {
