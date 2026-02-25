@@ -105,7 +105,7 @@ local function GetLabelsValuesBorders()
 
   for _, key in ipairs(assets) do
     if not addonTable.Assets.BarBordersSliced[key] then
-      local file = LSM:Fetch(LSM:Fetch("ninesliceborder", key).nineslice).file
+      local file = LSM:Fetch("nineslice", LSM:Fetch("ninesliceborder", key).nineslice).file
       local text = "|T".. file .. ":" .. (height - 1) .. ":" .. (height - 1) .. "|t [Custom] " .. key
 
       table.insert(labels, text)
