@@ -10,8 +10,10 @@ local specializationToPower = {
   [259] = Enum.PowerType.ComboPoints,
   [260] = Enum.PowerType.ComboPoints,
   [261] = Enum.PowerType.ComboPoints,
+  [1453] = Enum.PowerType.ComboPoints,
   --Druid (feral only)
   [103] = Enum.PowerType.ComboPoints,
+  [1447] = Enum.PowerType.ComboPoints,
   --Death Knight (all specs)
   [250] = Enum.PowerType.Runes,
   [251] = Enum.PowerType.Runes,
@@ -20,10 +22,12 @@ local specializationToPower = {
   [265] = Enum.PowerType.SoulShards,
   [266] = addonTable.Constants.IsRetail and Enum.PowerType.SoulShards or nil,
   [267] = addonTable.Constants.IsMists and Enum.PowerType.BurningEmbers or Enum.PowerType.SoulShards,
+  [1454] = Enum.PowerType.SoulShards,
   --Paladin (all specs)
   [65] = Enum.PowerType.HolyPower,
   [66] = Enum.PowerType.HolyPower,
   [70] = Enum.PowerType.HolyPower,
+  [1451] = Enum.PowerType.HolyPower,
   --Monk (windwalker)
   [269] = Enum.PowerType.Chi,
   --Mage (arcane only)
@@ -46,8 +50,10 @@ local specializationToColor = {
   [259] = CreateColorFromRGBHexString("f71322"),
   [260] = CreateColorFromRGBHexString("f71322"),
   [261] = CreateColorFromRGBHexString("f71322"),
+  [1453] = CreateColorFromRGBHexString("f71322"),
   --Druid (feral only)
   [103] = CreateColorFromRGBHexString("e82020"),
+  [1447] = CreateColorFromRGBHexString("e82020"),
   --Death Knight (all specs)
   [250] = CreateColorFromRGBHexString("fc3c3f"),
   [251] = CreateColorFromRGBHexString("4282d1"),
@@ -56,10 +62,12 @@ local specializationToColor = {
   [265] = CreateColorFromRGBHexString("b61ff2"),
   [266] = CreateColorFromRGBHexString("b61ff2"),
   [267] = CreateColorFromRGBHexString("b61ff2"),
+  [1454] = CreateColorFromRGBHexString("b61ff2"),
   --Paladin (all specs)
   [65] = CreateColorFromRGBHexString("f0c900"),
   [66] = CreateColorFromRGBHexString("f0c900"),
   [70] = CreateColorFromRGBHexString("f0c900"),
+  [1451] = CreateColorFromRGBHexString("f0c900"),
   --Monk (windwalker)
   [269] = CreateColorFromRGBHexString("31f78a"),
   --Mage (arcane only)
@@ -108,8 +116,6 @@ end
 
 function addonTable.Display.PowerBarMixin:ApplyTarget()
   if powerKind and UnitIsUnit("target", self.unit) and UnitCanAttack("player", self.unit) then
-    self:Show()
-
     local maxPower
     local currentPower = 0
     if powerKind == Enum.PowerType.Runes then
@@ -128,6 +134,13 @@ function addonTable.Display.PowerBarMixin:ApplyTarget()
         maxPower = maxPower / powerDivisor
       end
     end
+    if maxPower == 0 then
+      self:Hide()
+      return
+    end
+
+    self:Show()
+
     self.background:SetValue(maxPower)
     self.main:SetValue(currentPower)
     self.main:GetStatusBarTexture():SetVertexColor(powerColor.r, powerColor.g, powerColor.b)

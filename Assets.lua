@@ -71,8 +71,11 @@ addonTable.Assets.BarBordersSliced = {
   ["Platy: GW2"] = {file = "Interface/AddOns/Platynator/Assets/Special/BarBorders/gw2.png", width = 33, height = 33, masked = false, margin = 0.3, extra = 12, modifier = 1},
 
   ["Platy: Blizzard Health"] = {file = "Interface/AddOns/Platynator/Assets/%s/BarBorders/blizzard-health-square.png", width = 48, height = 48, has4k = true, margin = 0.4, extra = 0, modifier = 0.3, DPIScale = 1/2},
+  ["Platy: Blizzard Midnight"] = {file = "Interface/AddOns/Platynator/Assets/Special/BarBorders/blizzard-midnight.png", width = 33, height = 33, margin = 0.4, extra = 12, modifier = 0.35},
+  ["Platy: Blizzard Midnight Selected"] = {file = "Interface/AddOns/Platynator/Assets/Special/BarBorders/blizzard-midnight-selected.png", width = 33, height = 33, margin = 0.4, extra = 12, modifier = 0.35},
   ["Platy: Blizzard Cast Bar"] = {file = "Interface/AddOns/Platynator/Assets/%s/BarBorders/blizzard-cast-bar-square.png", width = 48, height = 48, has4k = true, margin = 0.35, extra = 0, modifier = 0.35, DPIScale = 1/2},
   ["Platy: Blizzard Classic"] = {file = "Interface/AddOns/Platynator/Assets/%s/BarBorders/blizzard-classic-square.png", width = 48, height = 48, has4k = true, margin = 0.4, extra = 0, modifier = 0.3, DPIScale = 1/2},
+  ["Platy: Blizzard Metal"] = {file = "Interface/AddOns/Platynator/Assets/Special/BarBorders/blizzard-metal.png", width = 44, height = 44, margin = 0.48, extra = 14, modifier = 0.4},
 }
 
 addonTable.Assets.BarMasks = {
@@ -177,7 +180,8 @@ addonTable.Assets.Markers = {
 
   ["normal/blizzard-pvp"] = {file = "Interface/AddOns/Platynator/Assets/Special/Markers/pvp.png", width = 150, height = 150, tag = "pvp"},
 
-  ["normal/class"] = {file = "Interface/AddOns/Platynator/Assets/Special/Markers/classicon-monk.png", width = 200, height = 200, tag = "class"},
+  ["normal/class"] = {preview = "Interface/AddOns/Platynator/Assets/Special/Markers/ClassIcons/Default/Monk.png", file = "Interface/AddOns/Platynator/Assets/Special/Markers/ClassIcons/Default/%s.png", width = 200, height = 200, tag = "class", text = "Default"},
+  ["normal/class-minimalist"] = {preview = "Interface/AddOns/Platynator/Assets/Special/Markers/ClassIcons/Minimalist/Monk.png", file = "Interface/AddOns/Platynator/Assets/Special/Markers/ClassIcons/Minimalist/%s.png", width = 200, height = 200, tag = "class", text = "Minimalist"},
 }
 
 addonTable.Assets.SpecialBars = {
