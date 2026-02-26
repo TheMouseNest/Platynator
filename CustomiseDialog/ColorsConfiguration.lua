@@ -666,6 +666,50 @@ addonTable.CustomiseDialog.ColorsConfig = {
       },
     }
   },
+  ["hasDebuff"] = {
+    label = addonTable.Locales.HAS_DEBUFF,
+    default = {
+      kind = "hasDebuff",
+      colors = {
+        hasDebuff = GetColor("FF6600"),
+      },
+      fromYou = false,
+      important = false,
+    },
+    entries = {
+      {
+        label = addonTable.Locales.HAS_DEBUFF,
+        kind = "colorPicker",
+        setter = function(details, value)
+          details.colors.hasDebuff = value
+        end,
+        getter = function(details)
+          return details.colors.hasDebuff
+        end,
+      },
+      { kind = "spacer" },
+      {
+        label = addonTable.Locales.FROM_YOU,
+        kind = "checkbox",
+        setter = function(details, value)
+          details.fromYou = value
+        end,
+        getter = function(details)
+          return details.fromYou
+        end,
+      },
+      {
+        label = addonTable.Locales.IMPORTANT,
+        kind = "checkbox",
+        setter = function(details, value)
+          details.important = value
+        end,
+        getter = function(details)
+          return details.important
+        end,
+      },
+    },
+  },
 }
 
 addonTable.CustomiseDialog.ColorsConfigOrder = {
@@ -681,6 +725,7 @@ addonTable.CustomiseDialog.ColorsConfigOrder = {
   "classColors",
   "difficulty",
   "execute",
+  "hasDebuff",
   "reaction",
   "interruptReady",
   "castTargetsYou",
