@@ -233,15 +233,15 @@ local function SetupBehaviour(parent)
 
   local allFrames = {}
 
-  local applyCvarsCheckbox = addonTable.CustomiseDialog.Components.GetCheckbox(container, addonTable.Locales.SHOW_NAMEPLATES_ONLY_IF_NEEDED, 28, function(value)
+  local showNameplatesWhenNeededCheckbox = addonTable.CustomiseDialog.Components.GetCheckbox(container, addonTable.Locales.SHOW_NAMEPLATES_ONLY_IF_NEEDED, 28, function(value)
     if InCombatLockdown() then
       return
     end
     addonTable.Config.Set(addonTable.Config.Options.SHOW_NAMEPLATES_ONLY_NEEDED, value)
   end)
-  applyCvarsCheckbox.option = addonTable.Config.Options.SHOW_NAMEPLATES_ONLY_NEEDED
-  applyCvarsCheckbox:SetPoint("TOP")
-  table.insert(allFrames, applyCvarsCheckbox)
+  showNameplatesWhenNeededCheckbox.option = addonTable.Config.Options.SHOW_NAMEPLATES_ONLY_NEEDED
+  showNameplatesWhenNeededCheckbox:SetPoint("TOP")
+  table.insert(allFrames, showNameplatesWhenNeededCheckbox)
 
   local applyNameplatesDropdown = addonTable.CustomiseDialog.Components.GetBasicDropdown(container, addonTable.Locales.USE_NAMEPLATES_FOR)
   applyNameplatesDropdown:SetPoint("TOP", allFrames[#allFrames], "BOTTOM", 0, -30)
@@ -549,37 +549,118 @@ local function SetupStyleSelect(parent)
 
   local allFrames = {}
 
-  local friendlyStyleDropdown = addonTable.CustomiseDialog.Components.GetBasicDropdown(container, addonTable.Locales.FRIENDLY, function(value)
-    return addonTable.Config.Get(addonTable.Config.Options.DESIGNS_ASSIGNED)["friend"] == value
-  end, function(value)
-    addonTable.Config.Get(addonTable.Config.Options.DESIGNS_ASSIGNED)["friend"] = value
-    addonTable.CallbackRegistry:TriggerEvent("RefreshStateChange", {[addonTable.Constants.RefreshReason.Design] = true})
-  end)
+  local defaultContainer = CreateFrame("Frame", nil, container)
+  local combatContainer = CreateFrame("Frame", nil, container)
+  local pvpContainer = CreateFrame("Frame", nil, container)
+
+  local function GenerateDropdown(parent, label, key)
+    local dropdown = addonTable.CustomiseDialog.Components.GetBasicDropdown(parent, label, function(value)
+      return addonTable.Config.Get(addonTable.Config.Options.DESIGNS_ASSIGNED)[key] == value
+    end, function(value)
+      addonTable.Config.Get(addonTable.Config.Options.DESIGNS_ASSIGNED)[key] = value
+      addonTable.CallbackRegistry:TriggerEvent("RefreshStateChange", {[addonTable.Constants.RefreshReason.Design] = true})
+    end)
+
+    return dropdown
+  end
+  local function GenerateEnableCheckbox(parent, label, key)
+    local checkbox = addonTable.CustomiseDialog.Components.GetCheckbox(parent, label, 28, function(value)
+      addonTable.Config.Get(addonTable.Config.Options.DESIGNS_ENABLED)[key] = value
+    end)
+    function checkbox:CustomSetValue()
+      checkbox:SetValue(addonTable.Config.Get(addonTable.Config.Options.DESIGNS_ENABLED)[key])
+    end
+    return checkbox
+  end
+
+  local friendlyStyleDropdown = GenerateDropdown(defaultContainer, addonTable.Locales.FRIENDLY, "friend")
   friendlyStyleDropdown:SetPoint("TOP")
   table.insert(allFrames, friendlyStyleDropdown)
 
-  local enemyStyleDropdown = addonTable.CustomiseDialog.Components.GetBasicDropdown(container, addonTable.Locales.ENEMY, function(value)
-    return addonTable.Config.Get(addonTable.Config.Options.DESIGNS_ASSIGNED)["enemy"] == value
-  end, function(value)
-    addonTable.Config.Get(addonTable.Config.Options.DESIGNS_ASSIGNED)["enemy"] = value
-    addonTable.CallbackRegistry:TriggerEvent("RefreshStateChange", {[addonTable.Constants.RefreshReason.Design] = true})
-  end)
+  local enemyStyleDropdown = GenerateDropdown(defaultContainer, addonTable.Locales.ENEMY, "enemy")
   enemyStyleDropdown:SetPoint("TOP", allFrames[#allFrames], "BOTTOM")
   table.insert(allFrames, enemyStyleDropdown)
 
   local simplifiedStyleDropdown
   if C_NamePlateManager and C_NamePlateManager.SetNamePlateSimplified then
-    simplifiedStyleDropdown = addonTable.CustomiseDialog.Components.GetBasicDropdown(container, addonTable.Locales.SIMPLIFIED, function(value)
-      return addonTable.Config.Get(addonTable.Config.Options.DESIGNS_ASSIGNED)["enemySimplified"] == value
-    end, function(value)
-      addonTable.Config.Get(addonTable.Config.Options.DESIGNS_ASSIGNED)["enemySimplified"] = value
-      addonTable.CallbackRegistry:TriggerEvent("RefreshStateChange", {[addonTable.Constants.RefreshReason.Design] = true})
-    end)
+    simplifiedStyleDropdown = GenerateDropdown(defaultContainer, addonTable.Locales.SIMPLIFIED, "enemySimplified")
     simplifiedStyleDropdown:SetPoint("TOP", allFrames[#allFrames], "BOTTOM")
     table.insert(allFrames, simplifiedStyleDropdown)
   end
 
-  container:SetScript("OnShow", function()
+  local combatCheckbox = GenerateEnableCheckbox(combatContainer, addonTable.Locales.ENABLE_OVERRIDE, "combat")
+  combatCheckbox:SetPoint("TOP")
+  table.insert(allFrames, combatCheckbox)
+
+  local friendlyCombatStyleDropdown = GenerateDropdown(combatContainer, addonTable.Locales.FRIENDLY, "friendCombat")
+  friendlyCombatStyleDropdown:SetPoint("TOP", allFrames[#allFrames], "BOTTOM", 0, -30)
+  table.insert(allFrames, friendlyCombatStyleDropdown)
+
+  local enemyCombatStyleDropdown = GenerateDropdown(combatContainer, addonTable.Locales.ENEMY, "enemyCombat")
+  enemyCombatStyleDropdown:SetPoint("TOP", allFrames[#allFrames], "BOTTOM")
+  table.insert(allFrames, enemyCombatStyleDropdown)
+
+  local simplifiedCombatStyleDropdown
+  if C_NamePlateManager and C_NamePlateManager.SetNamePlateSimplified then
+    simplifiedCombatStyleDropdown = GenerateDropdown(combatContainer, addonTable.Locales.SIMPLIFIED, "enemySimplifiedCombat")
+    simplifiedCombatStyleDropdown:SetPoint("TOP", allFrames[#allFrames], "BOTTOM")
+    table.insert(allFrames, simplifiedCombatStyleDropdown)
+  end
+
+  local pvpCheckbox = GenerateEnableCheckbox(pvpContainer, addonTable.Locales.ENABLE_OVERRIDE_INSTANCES, "pvpInstance")
+  pvpCheckbox:SetPoint("TOP")
+  table.insert(allFrames, pvpCheckbox)
+  table.insert(allFrames, pvpCheckbox)
+
+  local pvpWorldCheckbox = GenerateEnableCheckbox(pvpContainer, addonTable.Locales.ENABLE_OVERRIDE_WORLD, "pvpWorld")
+  pvpWorldCheckbox:SetPoint("TOP", allFrames[#allFrames], "BOTTOM")
+  table.insert(allFrames, pvpWorldCheckbox)
+
+  local friendlyPvPPlayerStyleDropdown = GenerateDropdown(pvpContainer, addonTable.Locales.FRIENDLY_PLAYER, "friendPvPPlayer")
+  friendlyPvPPlayerStyleDropdown:SetPoint("TOP", allFrames[#allFrames], "BOTTOM", 0, -30)
+  table.insert(allFrames, friendlyPvPPlayerStyleDropdown)
+
+  local enemyPvPPlayerStyleDropdown = GenerateDropdown(pvpContainer, addonTable.Locales.ENEMY_PLAYER, "enemyPvPPlayer")
+  enemyPvPPlayerStyleDropdown:SetPoint("TOP", allFrames[#allFrames], "BOTTOM")
+  table.insert(allFrames, enemyPvPPlayerStyleDropdown)
+
+  local tabContainers = {
+    {name = addonTable.Locales.DEFAULT, container = defaultContainer},
+    {name = addonTable.Locales.COMBAT, container = combatContainer},
+    {name = addonTable.Locales.PVP, container = pvpContainer},
+  }
+  
+  local Tabs = {}
+  for _, setup in ipairs(tabContainers) do
+    local tabContainer = setup.container
+    tabContainer:SetPoint("TOPLEFT", addonTable.Constants.ButtonFrameOffset, -45)
+    tabContainer:SetPoint("BOTTOMRIGHT")
+
+    local tabButton = addonTable.CustomiseDialog.Components.GetTab(container, setup.name)
+    if lastTab then
+      tabButton:SetPoint("LEFT", lastTab, "RIGHT", 5, 0)
+    else
+      tabButton:SetPoint("TOPLEFT", 0 + addonTable.Constants.ButtonFrameOffset + 5, 0)
+    end
+    lastTab = tabButton
+    tabContainer.button = tabButton
+    tabButton:SetScript("OnClick", function()
+      for _, c in ipairs(tabContainers) do
+        PanelTemplates_DeselectTab(c.container.button)
+        c.container:Hide()
+      end
+      PanelTemplates_SelectTab(tabButton)
+      tabContainer:Show()
+    end)
+    tabContainer:Hide()
+
+    table.insert(Tabs, tabButton)
+  end
+  container.Tabs = Tabs
+  PanelTemplates_SetNumTabs(container, #container.Tabs)
+  tabContainers[1].container.button:Click()
+
+  local function Update()
     local styles = {}
     for key, value in pairs(addonTable.Config.Get(addonTable.Config.Options.DESIGNS)) do
       table.insert(styles, {label = key ~= addonTable.Constants.CustomName and key or addonTable.Locales.CUSTOM, value = key})
@@ -599,11 +680,17 @@ local function SetupStyleSelect(parent)
       table.insert(values, entry.value)
     end
 
-    friendlyStyleDropdown:Init(labels, values)
-    enemyStyleDropdown:Init(labels, values)
-    if simplifiedStyleDropdown then
-      simplifiedStyleDropdown:Init(labels, values)
+    for _, frame in ipairs(allFrames) do
+      if frame.DropDown then
+        frame:Init(labels, values)
+      elseif frame.CustomSetValue then
+        frame:CustomSetValue()
+      end
     end
+    tabContainers[1].container.button:Click()
+  end
+  container:SetScript("OnShow", function()
+    Update()
   end)
 
   return container

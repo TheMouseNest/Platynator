@@ -11,7 +11,13 @@ local settings = {
   LEGACY_DESIGN = {key = "design_all", default = {}},
 
   DESIGNS = {key = "designs", default = {}, refresh = {addonTable.Constants.RefreshReason.Design}},
-  DESIGNS_ASSIGNED = {key = "designs_assigned", default = {["friend"] = "_name-only", ["enemy"] = "_deer", ["enemySimplified"] = "_hare_simplified"}, refresh = {addonTable.Constants.RefreshReason.Design}},
+  DESIGNS_ASSIGNED = {key = "designs_assigned", default = {
+    ["friend"] = "_name-only", ["friendCombat"] = "_deer", ["friendPvPPlayer"] = "_name-only",
+    ["enemy"] = "_deer", ["enemyCombat"] = "_deer", ["enemyPvPPlayer"] = "_deer",
+    ["enemySimplified"] = "_hare_simplified", ["enemySimplifiedCombat"] = "_hare_simplified",
+  }, refresh = {addonTable.Constants.RefreshReason.Design}},
+
+  DESIGNS_ENABLED = {key = "designs_enabled", default = { pvpInstance = false, pvpWorld = false, combat = false }, refresh = {addonTable.Constants.RefreshReason.Design}},
 
   TARGET_SCALE = {key = "target_scale", default = 1.2, refresh = {addonTable.Constants.RefreshReason.TargetBehaviour}},
   CAST_SCALE = {key = "cast_scale", default = 1.1, refresh = {addonTable.Constants.RefreshReason.TargetBehaviour}},

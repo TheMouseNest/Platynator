@@ -69,12 +69,22 @@ function addonTable.Display.Utilities.ConvertColor(color)
   return CreateColor(color.r, color.g, color.b, color.a)
 end
 
-function addonTable.Display.Utilities.IsInRelevantInstance()
+function addonTable.Display.Utilities.IsInRelevantInstance(state)
   if not IsInInstance() then
     return false
   end
-  local _, instanceType = GetInstanceInfo()
-  return instanceType == "raid" or instanceType == "party" or instanceType == "arenas"
+  state = state or {dungeon = true}
+  local _, instanceType, difficultyID = GetInstanceInfo()
+  if state.dungeon and (instanceType == "raid" or instanceType == "party") then
+    return true
+  end
+  if state.pvp and (instanceType == "arenas" or instanceType == "pvp") then
+    return true
+  end
+  if state.delve then
+    return difficultyID == 204
+  end
+  return false
 end
 
 local interruptMap = {
@@ -259,7 +269,7 @@ if addonTable.Constants.IsRetail then
     if questData[unit] then
       return questData[unit]
     end
-    if addonTable.Display.Utilities.IsInRelevantInstance() or C_Secrets.ShouldUnitIdentityBeSecret(unit) then
+    if addonTable.Display.Utilities.IsInRelevantInstance({dungeon = true, delve = true, pvp = true}) or C_Secrets.ShouldUnitIdentityBeSecret(unit) then
       questData[unit] = {}
       return questData[unit]
     end
