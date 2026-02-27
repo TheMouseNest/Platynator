@@ -141,6 +141,16 @@ local kindToEvent = {
     "UNIT_SPELLCAST_CHANNEL_START",
     "UNIT_SPELLCAST_CHANNEL_STOP",
   },
+  interruptNotReady = {
+    "UNIT_SPELLCAST_START",
+    "UNIT_SPELLCAST_STOP",
+    "UNIT_SPELLCAST_FAILED",
+    "UNIT_SPELLCAST_INTERRUPTED",
+    "UNIT_SPELLCAST_INTERRUPTIBLE",
+    "UNIT_SPELLCAST_NOT_INTERRUPTIBLE",
+    "UNIT_SPELLCAST_CHANNEL_START",
+    "UNIT_SPELLCAST_CHANNEL_STOP",
+  },
   uninterruptableCast = {
     "UNIT_SPELLCAST_START",
     "UNIT_SPELLCAST_STOP",
@@ -401,6 +411,30 @@ function addonTable.Display.GetColor(settings, state, unit)
             local cooldownInfo = C_Spell.GetSpellCooldown(spellID)
             if notInterruptible == false and cooldownInfo.startTime == 0 then
               table.insert(colorQueue, {color = s.colors.ready})
+              break
+            end
+          end
+        end
+      end
+    elseif s.kind == "interruptNotReady" then
+      local castInfo = state.castInfo
+      local channelInfo = state.channelInfo
+      local notInterruptible = castInfo[8]
+      if notInterruptible == nil then
+        notInterruptible = channelInfo[7]
+      end
+      state.frequentUpdater.interruptReady = nil
+      if notInterruptible ~= nil then
+        local spellID = GetInterruptSpell()
+        if spellID then
+          state.frequentUpdater.interruptReady = true
+          if C_Spell.GetSpellCooldownDuration then
+            local duration = C_Spell.GetSpellCooldownDuration(spellID)
+            table.insert(colorQueue, {state = {{value = duration:IsZero(), invert = true}, {value = notInterruptible, invert = true}}, color = s.colors.notReady})
+          else
+            local cooldownInfo = C_Spell.GetSpellCooldown(spellID)
+            if notInterruptible == false and cooldownInfo.startTime ~= 0 then
+              table.insert(colorQueue, {color = s.colors.notReady})
               break
             end
           end

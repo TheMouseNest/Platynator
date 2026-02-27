@@ -528,6 +528,27 @@ addonTable.CustomiseDialog.ColorsConfig = {
       },
     },
   },
+  ["interruptNotReady"] = {
+    label = addonTable.Locales.INTERRUPT_NOT_READY,
+    default = {
+      kind = "interruptNotReady",
+      colors = {
+        notReady = GetColor("FFFFFF"),
+      },
+    },
+    entries = {
+      {
+        label = addonTable.Locales.NOT_READY,
+        kind = "colorPicker",
+        setter = function(details, value)
+          details.colors.notReady = value
+        end,
+        getter = function(details)
+          return details.colors.notReady
+        end,
+      },
+    },
+  },
   ["castTargetsYou"] = {
     label = addonTable.Locales.CAST_TARGETS_YOU,
     default = {
@@ -683,6 +704,7 @@ addonTable.CustomiseDialog.ColorsConfigOrder = {
   "execute",
   "reaction",
   "interruptReady",
+  "interruptNotReady",
   "castTargetsYou",
   "importantCast",
   "uninterruptableCast",
