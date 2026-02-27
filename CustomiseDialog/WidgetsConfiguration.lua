@@ -204,7 +204,7 @@ local function GetLabelsValuesHighlightsNotAnimated()
   for _, key in ipairs(slicedAssets) do
     if not seen[key] then
       local file = LSM:Fetch("nineslice", key).file
-      local text = "|T".. file .. ":" .. height .. ":" .. height .. "|t [Custom]" .. key
+      local text = "|T".. file .. ":" .. height .. ":" .. height .. "|t [Custom] " .. key
 
       table.insert(labels, text)
       table.insert(values, {sliced = true, asset = key})
@@ -221,7 +221,7 @@ local function GetLabelsValuesHighlightsNotAnimated()
         width = 180
       end
 
-      local text = "|T".. details.file .. ":" .. height .. ":" .. width .. "|t [Custom]" .. key
+      local text = "|T".. details.file .. ":" .. height .. ":" .. width .. "|t [Custom] " .. key
 
       table.insert(labels, text)
       table.insert(values, {sliced = false, asset = key})
