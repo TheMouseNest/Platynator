@@ -31,7 +31,7 @@ function addonTable.Display.GuildTextMixin:SetUnit(unit)
           self.defaultText = guild
         end
       end
-    elseif not UnitIsBattlePetCompanion(self.unit) and not addonTable.Display.Utilities.IsInRelevantInstance() then
+    elseif not UnitIsBattlePetCompanion(self.unit) and not addonTable.Display.Utilities.IsInRelevantInstance({dungeon = true, delve = true, pvp = true}) then
       if self.details.npcRole then
         local text
         if C_TooltipInfo then

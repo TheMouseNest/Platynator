@@ -18,7 +18,7 @@ end
 function addonTable.Display.EliteMarkerMixin:SetUnit(unit)
   self.unit = unit
   if self.unit then
-    if self.details.openWorldOnly and addonTable.Display.Utilities.IsInRelevantInstance() then
+    if self.details.openWorldOnly and addonTable.Display.Utilities.IsInRelevantInstance({dungeon = true}) then
       self.marker:Hide()
       return
     end

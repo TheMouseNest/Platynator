@@ -11,21 +11,43 @@ end
 addonTable.Display.ManagerMixin = {}
 function addonTable.Display.ManagerMixin:OnLoad()
   self.styleIndex = 0
-  self.friendDisplayPool = CreateFramePool("Frame", UIParent, nil, nil, false, function(frame)
-    Mixin(frame, addonTable.Display.NameplateMixin)
-    frame.kind = "friend"
-    frame:OnLoad()
-  end)
-  self.enemyDisplayPool = CreateFramePool("Frame", UIParent, nil, nil, false, function(frame)
-    Mixin(frame, addonTable.Display.NameplateMixin)
-    frame.kind = "enemy"
-    frame:OnLoad()
-  end)
-  self.enemySimplifiedDisplayPool = CreateFramePool("Frame", UIParent, nil, nil, false, function(frame)
-    Mixin(frame, addonTable.Display.NameplateMixin)
-    frame.kind = "enemySimplified"
-    frame:OnLoad()
-  end)
+  self.pools = {
+    friend = CreateFramePool("Frame", UIParent, nil, nil, false, function(frame)
+      Mixin(frame, addonTable.Display.NameplateMixin)
+      frame.kind = "friend"
+      frame:OnLoad()
+    end),
+    friendCombat = CreateFramePool("Frame", UIParent, nil, nil, false, function(frame)
+      Mixin(frame, addonTable.Display.NameplateMixin)
+      frame.kind = "friendCombat"
+      frame:OnLoad()
+    end),
+    friendPvPPlayer = CreateFramePool("Frame", UIParent, nil, nil, false, function(frame)
+      Mixin(frame, addonTable.Display.NameplateMixin)
+      frame.kind = "friendPvPPlayer"
+      frame:OnLoad()
+    end),
+    enemy = CreateFramePool("Frame", UIParent, nil, nil, false, function(frame)
+      Mixin(frame, addonTable.Display.NameplateMixin)
+      frame.kind = "enemy"
+      frame:OnLoad()
+    end),
+    enemyCombat = CreateFramePool("Frame", UIParent, nil, nil, false, function(frame)
+      Mixin(frame, addonTable.Display.NameplateMixin)
+      frame.kind = "enemyCombat"
+      frame:OnLoad()
+    end),
+    enemyPvPPlayer = CreateFramePool("Frame", UIParent, nil, nil, false, function(frame)
+      Mixin(frame, addonTable.Display.NameplateMixin)
+      frame.kind = "enemyPvPPlayer"
+      frame:OnLoad()
+    end),
+    enemySimplified = CreateFramePool("Frame", UIParent, nil, nil, false, function(frame)
+      Mixin(frame, addonTable.Display.NameplateMixin)
+      frame.kind = "enemySimplified"
+      frame:OnLoad()
+    end),
+  }
   self.nameplateDisplays = {}
 
   self.MouseoverMonitor = nil
@@ -56,9 +78,24 @@ function addonTable.Display.ManagerMixin:OnLoad()
   self:RegisterEvent("UNIT_FACTION")
 
   C_Timer.NewTicker(0.1, function() -- Used for transitioning mobs to attackable
-    for unit, display in pairs(self.nameplateDisplays) do
+    local combat = addonTable.Config.Get(addonTable.Config.Options.DESIGNS_ENABLED).combat
+    local isInCombatWith = addonTable.Display.Utilities.IsInCombatWith
+    local UnitCanAttack = UnitCanAttack
+    for _, unit in ipairs(GetKeysArray(self.nameplateDisplays)) do
       local display = self.nameplateDisplays[unit]
-      if display and ((display.kind == "friend" and UnitCanAttack("player", unit)) or (display.kind == "enemy" and not UnitCanAttack("player", unit))) then
+      if (
+          display.kind == "friend" and UnitCanAttack("player", unit) or
+          display.kind == "enemy" and not UnitCanAttack("player", unit
+        ) or
+        combat and (
+          display.kind == "friend" and isInCombatWith(unit) or
+          display.kind == "friendCombat" and not isInCombatWith(unit) or
+          display.kind == "enemy" and isInCombatWith(unit) or
+          display.kind == "enemyCombat" and not isInCombatWith(unit) or
+          display.kind == "enemySimplified" and isInCombatWith(unit) or
+          display.kind == "enemySimplifiedCombat" and not isInCombatWith(unit)
+        )
+      ) then
         self:Uninstall(unit)
         self:Install(unit, nameplate)
       end
@@ -404,7 +441,7 @@ function addonTable.Display.ManagerMixin:UpdateInstanceShowState()
     return
   end
 
-  local relevantInstance = addonTable.Display.Utilities.IsInRelevantInstance()
+  local relevantInstance = addonTable.Display.Utilities.IsInRelevantInstance({dungeon = true, delve = true})
 
   if state == "name_only" and C_CVar.GetCVarInfo("nameplateShowOnlyNameForFriendlyPlayerUnits") then
     C_CVar.SetCVar("nameplateShowOnlyNameForFriendlyPlayerUnits", relevantInstance and "1" or "0")
@@ -486,20 +523,37 @@ function addonTable.Display.ManagerMixin:Install(unit, nameplate)
   if nameplate and unit and (addonTable.Constants.IsRetail or not UnitIsUnit("player", unit)) then
     local shouldSimplify = false
     local newDisplay
+    local enabled = addonTable.Config.Get(addonTable.Config.Options.DESIGNS_ENABLED)
     if not UnitCanAttack("player", unit) then
-      newDisplay = self.friendDisplayPool:Acquire()
+      if UnitIsPlayer(unit) and (not IsInInstance() and enabled.pvpWorld or enabled.pvpInstance and addonTable.Display.Utilities.IsInRelevantInstance({pvp = true})) then
+        newDisplay = self.pools["friendPvPPlayer"]:Acquire()
+      elseif enabled.combat and addonTable.Display.Utilities.IsInCombatWith(unit) then
+        newDisplay = self.pools["friendCombat"]:Acquire()
+      else
+        newDisplay = self.pools["friend"]:Acquire()
+      end
     else
       local simplifiedSettings = addonTable.Config.Get(addonTable.Config.Options.SIMPLIFIED_NAMEPLATES)
       local classification = UnitClassification(unit)
       shouldSimplify = C_NamePlateManager and C_NamePlateManager.SetNamePlateSimplified and (
-        simplifiedSettings.instancesNormal and classification == "normal" and addonTable.Display.Utilities.IsInRelevantInstance() or
+        simplifiedSettings.instancesNormal and classification == "normal" and addonTable.Display.Utilities.IsInRelevantInstance({dungeon = true}) or
         simplifiedSettings.minor and classification == "minus" or
         simplifiedSettings.minion and UnitIsMinion and UnitIsMinion(unit)
       )
       if shouldSimplify then
-        newDisplay = self.enemySimplifiedDisplayPool:Acquire()
+        if enabled.combat and addonTable.Display.Utilities.IsInCombatWith(unit) then
+          newDisplay = self.pools["enemySimplifiedCombat"]:Acquire()
+        else
+          newDisplay = self.pools["enemySimplified"]:Acquire()
+        end
       else
-        newDisplay = self.enemyDisplayPool:Acquire()
+        if UnitIsPlayer(unit) and (not IsInInstance() and enabled.pvpWorld or enabled.pvpInstance and addonTable.Display.Utilities.IsInRelevantInstance({pvp = true})) then
+          newDisplay = self.pools["enemyPvPPlayer"]:Acquire()
+        elseif enabled.combat and addonTable.Display.Utilities.IsInCombatWith(unit) then
+          newDisplay = self.pools["enemyCombat"]:Acquire()
+        else
+          newDisplay = self.pools["enemy"]:Acquire()
+        end
       end
     end
     if C_NamePlateManager and C_NamePlateManager.SetNamePlateSimplified then
@@ -549,13 +603,7 @@ function addonTable.Display.ManagerMixin:Uninstall(unit)
     if display.stackRegion then
       display.stackRegion:SetParent(display)
     end
-    if display.kind == "friend" then
-      self.friendDisplayPool:Release(display)
-    elseif display.kind == "enemySimplified" then
-      self.enemySimplifiedDisplayPool:Release(display)
-    else
-      self.enemyDisplayPool:Release(display)
-    end
+    self.pools[display.kind]:Release(display)
     self.nameplateDisplays[unit] = nil
     self.unitToNameplate[unit] = nil
   end
@@ -622,7 +670,7 @@ function addonTable.Display.ManagerMixin:UpdateNamePlateSize()
       C_NamePlate.SetNamePlateFriendlySize(1, 1)
     end
     if IsInInstance() then
-      if addonTable.Display.Utilities.IsInRelevantInstance() then
+      if addonTable.Display.Utilities.IsInRelevantInstance({dungeon = true}) then
         if addonTable.Constants.IsClassic then
           C_NamePlate.SetNamePlateFriendlySize(128, 16)
         else
@@ -774,7 +822,7 @@ function addonTable.Display.ManagerMixin:UpdateFriendlyFont()
         break
       end
     end
-    C_CVar.SetCVar("nameplateUseClassColorForFriendlyPlayerUnitNames", addonTable.Display.Utilities.IsInRelevantInstance() and self.friendlyNameOnlyClassColors and "1" or "0")
+    C_CVar.SetCVar("nameplateUseClassColorForFriendlyPlayerUnitNames", addonTable.Display.Utilities.IsInRelevantInstance({dungeon = true, delve = true}) and self.friendlyNameOnlyClassColors and "1" or "0")
     if scale then
       ChangeFont(SystemFont_NamePlate_Outlined, _G[addonTable.CurrentFont])
       ChangeFont(SystemFont_NamePlate, _G[addonTable.CurrentFont])

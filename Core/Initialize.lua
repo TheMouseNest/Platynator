@@ -491,6 +491,14 @@ function addonTable.Core.MigrateSettings()
     simplified["instancesNormal"] = true
   end
 
+  if mapping["enemyCombat"] == nil then
+    mapping["friendCombat"] = "_name-only"
+    mapping["friendPvPPlayer"] = "_name-only"
+    mapping["enemyCombat"] = "_deer"
+    mapping["enemyPvPPlayer"] = "_deer"
+    mapping["enemySimplifiedCombat"] = "_hare_simplified"
+  end
+
   if type(addonTable.Config.Get(addonTable.Config.Options.STACKING_NAMEPLATES)) == "boolean" then
     local state = addonTable.Config.Get(addonTable.Config.Options.STACKING_NAMEPLATES)
     addonTable.Config.Set(addonTable.Config.Options.STACKING_NAMEPLATES, {
@@ -612,6 +620,8 @@ end
 
 function addonTable.Core.GetDesign(kind)
   local name = addonTable.Config.Get(addonTable.Config.Options.DESIGNS_ASSIGNED)[kind]
+    or addonTable.Config.Get(addonTable.Config.Options.DESIGNS_ASSIGNED_COMBAT)[kind]
+    or addonTable.Config.Get(addonTable.Config.Options.DESIGNS_ASSIGNED_PVP)[kind]
   return addonTable.Core.GetDesignByName(name)
 end
 
@@ -637,10 +647,12 @@ function addonTable.Core.Initialize()
       SetStyle()
     end
   end)
-  UpdateRect(addonTable.Core.GetDesign("enemy"))
+  local enabled = addonTable.Config.Get(addonTable.Config.Options.DESIGNS_ENABLED)
+  UpdateRect(addonTable.Core.GetDesign(enabled.combat and "enemyCombat" or "enemy"))
   addonTable.CallbackRegistry:RegisterCallback("RefreshStateChange", function(_, state)
     if state[addonTable.Constants.RefreshReason.Design] then
-      UpdateRect(addonTable.Core.GetDesign("enemy"))
+      enabled = addonTable.Config.Get(addonTable.Config.Options.DESIGNS_ENABLED)
+      UpdateRect(addonTable.Core.GetDesign(enabled.combat and "enemyCombat" or "enemy"))
     end
   end)
 
