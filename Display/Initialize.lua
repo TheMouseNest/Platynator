@@ -47,6 +47,11 @@ function addonTable.Display.ManagerMixin:OnLoad()
       frame.kind = "enemySimplified"
       frame:OnLoad()
     end),
+    enemySimplifiedCombat = CreateFramePool("Frame", UIParent, nil, nil, false, function(frame)
+      Mixin(frame, addonTable.Display.NameplateMixin)
+      frame.kind = "enemySimplifiedCombat"
+      frame:OnLoad()
+    end),
   }
   self.nameplateDisplays = {}
 

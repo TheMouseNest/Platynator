@@ -524,10 +524,13 @@ local function SetStyle(isInit)
 
   local styleName = addonTable.Config.Get(addonTable.Config.Options.STYLE)
   if not isInit then
-    if mapping["friend"] == mapping["enemy"] and mapping["enemySimplified"] ~= styleName then
-      mapping["friend"] = styleName
-      mapping["enemy"] = styleName
-    elseif mapping["friend"] ~= styleName and mapping["enemy"] ~= styleName and mapping["enemySimplified"] ~= styleName then
+    local found = false
+    for _, value in pairs(mapping) do
+      if value == styleName then
+        found = true
+      end
+    end
+    if not found then
       mapping["enemy"] = styleName
     end
   end
