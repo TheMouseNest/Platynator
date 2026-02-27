@@ -632,6 +632,16 @@ addonTable.CustomiseDialog.WidgetsConfig = {
       {
         label = addonTable.Locales.GENERAL,
         entries = {
+           {
+            label = addonTable.Locales.SHOW_PLAYERS_TITLE,
+            kind = "checkbox",
+            setter = function(details, value)
+              details.showPlayersTitle = value
+            end,
+              getter = function(details)
+              return details.showPlayersTitle
+            end,
+          },
           {
             label = addonTable.Locales.SHOW_WHEN_WOW_DOES,
             kind = "checkbox",
