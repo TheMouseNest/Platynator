@@ -187,6 +187,7 @@ local kindToEvent = {
     "UNIT_SPELLCAST_CHANNEL_START",
     "UNIT_SPELLCAST_CHANNEL_STOP",
   },
+  hasDebuff = {"UNIT_AURA"},
 }
 local kindToCallback = {
   quest = {"QuestInfoUpdate"},
@@ -515,6 +516,37 @@ function addonTable.Display.GetColor(settings, state, unit)
             table.insert(colorQueue, {color = s.colors.execute})
           end
         end
+      end
+    elseif s.kind == "hasDebuff" then
+      local hasMatch = false
+      if C_UnitAuras.GetUnitAuras then
+        -- Retail
+        local filter = "HARMFUL"
+        if s.fromYou then
+          filter = filter .. "|PLAYER"
+        end
+        for _, aura in ipairs(C_UnitAuras.GetUnitAuras(unit, filter) or {}) do
+          if not s.important or not C_UnitAuras.IsAuraFilteredOutByInstanceID(unit, aura.auraInstanceID, "HARMFUL|INCLUDE_NAME_PLATE_ONLY") then
+            hasMatch = true
+            break
+          end
+        end
+      else
+        -- Classic
+        local index = 1
+        while true do
+          local aura = C_UnitAuras.GetAuraDataByIndex(unit, index, "HARMFUL")
+          if not aura then break end
+          if not s.fromYou or aura.sourceUnit == "player" then
+            hasMatch = true
+            break
+          end
+          index = index + 1
+        end
+      end
+      if hasMatch then
+        table.insert(colorQueue, {color = s.colors.hasDebuff})
+        break
       end
     end
   end
