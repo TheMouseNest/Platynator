@@ -948,6 +948,28 @@ addonTable.CustomiseDialog.WidgetsConfig = {
               return details.showCountdown
             end,
           },
+          {
+            label = addonTable.Locales.COUNTDOWN_SWIPE_OPACITY,
+            kind = "slider",
+            min = 0, max = 100,
+            valuePattern = "%d%%",
+            setter = function(details, value)
+              details.countdownSwipeOpacity = value / 100
+            end,
+            getter = function(details)
+              return details.countdownSwipeOpacity * 100
+            end,
+          },
+          {
+            label = addonTable.Locales.HIDE_COUNTDOWN_EDGE,
+            kind = "checkbox",
+            setter = function(details, value)
+              details.hideCountdownEdge = value
+            end,
+            getter = function(details)
+              return details.hideCountdownEdge
+            end,
+          },
         },
       },
       {
