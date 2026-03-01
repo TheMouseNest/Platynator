@@ -165,7 +165,7 @@ if UnitCastingDuration then
       self.interruptMarker:SetShown(spellID ~= nil)
       self.interruptPositioner:SetShown(spellID ~= nil)
       if spellID then
-        self:ReverseInterruptMarker(isChanneled)
+        self:ReverseInterruptMarker(self.isChanneled)
         local interruptDuration = C_Spell.GetSpellCooldownDuration(spellID)
         self.interruptPositioner:SetMinMaxValues(0, castDuration:GetTotalDuration())
         self.interruptMarker:SetMinMaxValues(0, castDuration:GetTotalDuration())
