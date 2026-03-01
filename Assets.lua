@@ -71,7 +71,7 @@ addonTable.Assets.BarBordersSliced = {
   ["Platy: GW2"] = {file = "Interface/AddOns/Platynator/Assets/Special/BarBorders/gw2.png", width = 33, height = 33, masked = false, margin = 0.3, extra = 12, modifier = 1},
 
   ["Platy: Blizzard Health"] = {file = "Interface/AddOns/Platynator/Assets/%s/BarBorders/blizzard-health-square.png", width = 48, height = 48, has4k = true, margin = 0.4, extra = 0, modifier = 0.3, DPIScale = 1/2},
-  ["Platy: Blizzard Midnight"] = {file = "Interface/AddOns/Platynator/Assets/Special/BarBorders/blizzard-midnight.png", width = 33, height = 33, margin = 0.4, extra = 12, modifier = 0.35},
+  ["Platy: Blizzard Midnight"] = {file = "Interface/AddOns/Platynator/Assets/Special/BarBorders/blizzard-midnight.png", width = 34, height = 34, margin = 0.35, extra = 12, modifier = 0.40},
   ["Platy: Blizzard Midnight Selected"] = {file = "Interface/AddOns/Platynator/Assets/Special/BarBorders/blizzard-midnight-selected.png", width = 33, height = 33, margin = 0.4, extra = 12, modifier = 0.35},
   ["Platy: Blizzard Cast Bar"] = {file = "Interface/AddOns/Platynator/Assets/%s/BarBorders/blizzard-cast-bar-square.png", width = 48, height = 48, has4k = true, margin = 0.35, extra = 0, modifier = 0.35, DPIScale = 1/2},
   ["Platy: Blizzard Classic"] = {file = "Interface/AddOns/Platynator/Assets/%s/BarBorders/blizzard-classic-square.png", width = 48, height = 48, has4k = true, margin = 0.4, extra = 0, modifier = 0.3, DPIScale = 1/2},
