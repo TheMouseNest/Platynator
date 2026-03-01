@@ -330,19 +330,19 @@ function addonTable.Display.GetColor(settings, state, unit)
         if classification == "elite" then
           local level = UnitEffectiveLevel(unit)
           local playerLevel = PLATYNATOR_LAST_INSTANCE.level
-          if level == playerLevel or addonTable.Constants.IsClassic then
+          if UnitIsLieutenant and UnitIsLieutenant(unit) then
+            table.insert(colorQueue, {color = s.colors.miniboss})
+            break
+          elseif (level > playerLevel and not addonTable.Constants.IsClassic) or level == -1 then
+            table.insert(colorQueue, {color = s.colors.boss})
+            break
+          else
             local class = UnitClassBase(unit)
             if class == "PALADIN" then
               table.insert(colorQueue, {color = s.colors.caster})
             else
               table.insert(colorQueue, {color = s.colors.melee})
             end
-            break
-          elseif level >= playerLevel + 2 or level == -1 then
-            table.insert(colorQueue, {color = s.colors.boss})
-            break
-          elseif level == playerLevel + 1 then
-            table.insert(colorQueue, {color = s.colors.miniboss})
             break
           end
         elseif classification == "normal" or classification == "trivial" then
