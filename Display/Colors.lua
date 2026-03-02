@@ -412,17 +412,24 @@ function addonTable.Display.GetColor(settings, state, unit)
       end
       state.frequentUpdater.interruptReady = nil
       if notInterruptible ~= nil then
-        for _, spellID in ipairs(GetInterruptSpells()) do
-          state.frequentUpdater.interruptReady = true
-          if C_Spell.GetSpellCooldownDuration then
+        state.frequentUpdater.interruptReady = true
+        if C_Spell.GetSpellCooldownDuration then
+          for _, spellID in ipairs(GetInterruptSpells()) do
             local duration = C_Spell.GetSpellCooldownDuration(spellID)
             table.insert(colorQueue, {state = {{value = duration:IsZero()}, {value = notInterruptible, invert = true}}, color = s.colors.ready})
-          else
+          end
+        else
+          local any = false
+          for _, spellID in ipairs(GetInterruptSpells()) do
             local cooldownInfo = C_Spell.GetSpellCooldown(spellID)
             if notInterruptible == false and cooldownInfo.startTime == 0 then
+              any = true
               table.insert(colorQueue, {color = s.colors.ready})
               break
             end
+          end
+          if any then
+            break
           end
         end
       end
