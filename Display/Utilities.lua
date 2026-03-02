@@ -87,21 +87,38 @@ function addonTable.Display.Utilities.IsInRelevantInstance(state)
   return false
 end
 
-local interruptMap = {
-  ["DEATHKNIGHT"] = {47528},
-  ["WARRIOR"] = {6552},
-  ["WARLOCK"] = {19647, 89766, 119910, 1276467, 132409},
-  ["SHAMAN"] = {57994},
-  ["ROGUE"] = {1766},
-  ["PRIEST"] = {15487},
-  ["PALADIN"] = {31935, 96231},
-  ["MONK"] = {116705},
-  ["MAGE"] = {2139},
-  ["HUNTER"] = {187707, 147362},
-  ["EVOKER"] = {351338},
-  ["DRUID"] = {38675, 78675, 106839},
-  ["DEMONHUNTER"] = {183752},
-}
+local interruptMap
+if addonTable.Constants.IsClassic then
+  interruptMap = {
+    ["DEATHKNIGHT"] = {47528},
+    ["WARRIOR"] = {6552},
+    ["WARLOCK"] = {19647, 89766},
+    ["SHAMAN"] = {57994},
+    ["ROGUE"] = {1766},
+    ["PRIEST"] = {15487},
+    ["PALADIN"] = {31935, 96231},
+    ["MONK"] = {116705},
+    ["MAGE"] = {2139},
+    ["HUNTER"] = {187707, 147362},
+    ["DRUID"] = {38675, 78675, 106839},
+  }
+else
+  interruptMap = {
+    ["DEATHKNIGHT"] = {47528},
+    ["WARRIOR"] = {6552},
+    ["WARLOCK"] = {89766, 119910},
+    ["SHAMAN"] = {57994},
+    ["ROGUE"] = {1766},
+    ["PRIEST"] = {15487},
+    ["PALADIN"] = {96231, 31935},
+    ["MONK"] = {116705},
+    ["MAGE"] = {2139},
+    ["HUNTER"] = {147362, 187707},
+    ["EVOKER"] = {351338},
+    ["DRUID"] = {38675, 78675, 106839},
+    ["DEMONHUNTER"] = {183752},
+  }
+end
 
 local executeMap = {
   -- Hunter
@@ -160,7 +177,7 @@ if C_CurveUtil then
   executeCurve:SetType(Enum.LuaCurveType.Step)
 end
 
-local currentInterrupt
+local currentInterrupt = {}
 local currentExecute = 0
 local isSootheAvailable = false
 do
@@ -171,10 +188,18 @@ do
   frame:RegisterEvent("PLAYER_LOGIN")
   frame:RegisterEvent("SPELLS_CHANGED")
   frame:SetScript("OnEvent", function()
-    currentInterrupt = nil
+    currentInterrupt = {}
     for _, s in ipairs(interruptSpells) do
       if C_SpellBook.IsSpellKnownOrInSpellBook(s) or C_SpellBook.IsSpellKnownOrInSpellBook(s, Enum.SpellBookSpellBank.Pet) then
-        currentInterrupt = s
+        table.insert(currentInterrupt, s)
+      end
+    end
+
+    if class == "WARLOCK" then
+      if C_SpellBook.IsSpellKnownOrInSpellBook(132409) then
+        table.insert(currentInterrupt, 132409)
+      elseif C_SpellBook.IsSpellKnownOrInSpellBook(1276467) then
+        table.insert(currentInterrupt, 1276467)
       end
     end
 
@@ -201,8 +226,12 @@ do
   end)
 end
 
-function addonTable.Display.Utilities.GetInterruptSpell()
+function addonTable.Display.Utilities.GetInterruptSpells()
   return currentInterrupt
+end
+
+function addonTable.Display.Utilities.GetInterruptSpellPriority()
+  return currentInterrupt[1]
 end
 
 function addonTable.Display.Utilities.GetExecuteRange()

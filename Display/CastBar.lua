@@ -5,7 +5,7 @@ addonTable.Display.CastBarMixin = {}
 
 local ConvertColor = addonTable.Display.Utilities.ConvertColor
 
-local GetInterruptSpell = addonTable.Display.Utilities.GetInterruptSpell
+local GetInterruptSpell = addonTable.Display.Utilities.GetInterruptSpellPriority
 
 function addonTable.Display.CastBarMixin:PostInit()
   if self.details.background.applyColor then -- Apply tint to colours
