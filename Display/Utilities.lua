@@ -161,6 +161,10 @@ local executeMap = {
   [48806] = 0.2,
 }
 
+if addonTable.Constants.IsRetail then
+  executeMap[2948] = 0.3 -- Mage: Scorch (critical strike)
+end
+
 local sootheSpells = {
   2908,
   374346,
