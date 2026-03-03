@@ -1,13 +1,6 @@
 ---@class addonTablePlatynator
 local addonTable = select(2, ...)
 
-local healthScale = 1
-
-local function GetColor(rgb)
-  local color = CreateColorFromRGBHexString(rgb)
-  return {r = color.r, g = color.g, b = color.b}
-end
-
 --DO NOT rely on this for the layout of the options, they may have
 --been reconfigured to match a new format automatically on login
 

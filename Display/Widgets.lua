@@ -469,8 +469,6 @@ function addonTable.Display.GetAnimatedBorderHighlight(frame, parent)
     frame.Animation:Play()
   end
 
-  frame.currentOffset = 0
-
   function frame:Init(details)
     local highlightDetails = addonTable.Assets.Highlights[details.asset]
     frame.defaultBorderDim = highlightDetails.defaultWidth
@@ -513,10 +511,7 @@ function addonTable.Display.GetAnimatedBorderHighlight(frame, parent)
   end
 
   function frame:ApplyAnchor()
-    local details = frame.details
     ApplyAnchor(frame, frame.details.anchor)
-
-    frame.currentOffset = offset
   end
 
   function frame:ApplySize()

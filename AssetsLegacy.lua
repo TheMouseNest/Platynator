@@ -107,7 +107,7 @@ addonTable.Assets.BarBordersLegacy = {
 }
 
 addonTable.Assets.HighlightsLegacy2 = {
-  ["white"] = {new = "Platy: White", width = 20, height = 20, mode = renderMode.Sliced, tag = "white", margin = 0.4, extra = 0, padding = 0, modifier = 1, minSize = 1, modifier = 1, group = 0, order = 1},
+  ["white"] = {new = "Platy: White", width = 20, height = 20, mode = renderMode.Sliced, tag = "white", margin = 0.4, extra = 0, padding = 0, modifier = 1, minSize = 1, group = 0, order = 1},
 
   ["bold"] = {new = "Platy: 7px", width = 20, height = 20, has4k = true, masked = true, tag = "bold", margin = 0.45, extra = 0, minSize = 50, modifier = 0.35, DPIScale = 1/2, mode = renderMode.Sliced, group = 1, order = 1},
   ["slight"] = {new = "Platy: 4px", width = 20, height = 20, has4k = true, masked = true, tag = "slight", margin = 0.3, extra = 0, minSize = 50, modifier = 0.35, DPIScale = 1/2, mode = renderMode.Sliced, group = 1, order = 2},
@@ -160,7 +160,6 @@ addonTable.Assets.HighlightsLegacy = {
   ["150/outline"] = {width = 1030, height = 218, mode = legacyMode.Percent150, tag = "bold"},
   ["125/outline"] = {width = 1030, height = 186, mode = legacyMode.Percent125, tag = "bold"},
   ["wide/outline"] = {width = 1030, height = 155, mode = legacyMode.Percent100, tag = "bold"},
-  ["wide/outline"] = {width = 1030, height = 155, mode = legacyMode.Percent100, tag = "bold"},
   ["75/outline"] = {width = 1030, height = 125, mode = legacyMode.Percent75, tag = "bold"},
   ["wide/outline-narrow"] = {width = 1030, height = 93, mode = legacyMode.Percent50, tag = "bold"},
 
@@ -191,7 +190,6 @@ addonTable.Assets.HighlightsLegacy = {
   ["200/soft"] = {width = 1023, height = 274, mode = legacyMode.Percent200, tag = "soft"},
   ["175/soft"] = {width = 1023, height = 243, mode = legacyMode.Percent175, tag = "soft"},
   ["150/soft"] = {width = 1023, height = 213, mode = legacyMode.Percent150, tag = "soft"},
-  ["125/soft"] = {width = 1023, height = 181, mode = legacyMode.Percent125, tag = "soft"},
   ["125/soft"] = {width = 1023, height = 149, mode = legacyMode.Percent100, tag = "soft"},
   ["75/soft"] = {width = 1023, height = 118, mode = legacyMode.Percent75, tag = "soft"},
   ["50/soft"] = {width = 1023, height = 88, mode = legacyMode.Percent50, tag = "soft"},

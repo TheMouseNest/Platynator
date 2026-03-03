@@ -1,4 +1,4 @@
----@class addonTableBaganator
+---@class addonTablePlatynator
 local addonTable = select(2, ...)
 local Locales = {
   enUS = {},

@@ -611,7 +611,7 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
 
   local function OffsetWidgets(x, y)
     local offsets = {}
-    for _, index in ipairs(selectionIndexes) do
+    for _ in ipairs(selectionIndexes) do
       table.insert(offsets, {x = x, y = y, xLock = x == 0, yLock = y == 0})
     end
     AlignForRelativePoints(offsets, 0.4)
@@ -641,7 +641,7 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
   keyboardTrap:RegisterEvent("PLAYER_REGEN_ENABLED")
   keyboardTrap:RegisterEvent("PLAYER_REGEN_DISABLED")
   keyboardTrap:SetScript("OnEvent", function(_, event)
-    keyboardTrap:SetShown(event == "PLAYER_REGEN_ENABLED" and selectionIndex ~= 0)
+    keyboardTrap:SetShown(event == "PLAYER_REGEN_ENABLED" and #selectionIndexes > 0)
   end)
 
   local addButton = CreateFrame("DropdownButton", nil, previewInset, "UIPanelDynamicResizeButtonTemplate")
@@ -707,7 +707,7 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
       for index, tex in ipairs(textures[kind]) do
         local buff = CreateFrame("Frame", nil, w.Wrapper, "PlatynatorNameplateBuffButtonTemplate")
         buff.Border = buff:CreateTexture(nil, "OVERLAY")
-        buff.Border:SetAllPoints(true)
+        buff.Border:SetAllPoints()
         buff.Border:SetScale(asset.scaleModifier)
         buff.Border:SetTexture(asset.file)
         buff.Border:SetTextureSliceMargins(asset.margins.left, asset.margins.top, asset.margins.right, asset.margins.bottom)

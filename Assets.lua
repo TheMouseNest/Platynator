@@ -97,7 +97,7 @@ addonTable.Assets.BarMasks = {
 }
 
 addonTable.Assets.Highlights = {
-  ["Platy: White"] = {file = "Interface/AddOns/Platynator/Assets/Special/white.png", width = 10, height = 10, mode = renderMode.Sliced, tag = "white", margin = 0.4, extra = 0, modifier = 1, minSize = 1, modifier = 1},
+  ["Platy: White"] = {file = "Interface/AddOns/Platynator/Assets/Special/white.png", width = 10, height = 10, mode = renderMode.Sliced, tag = "white", margin = 0.4, extra = 0, modifier = 1, minSize = 1},
 
   ["Platy: Blizzard Health Bold"] = {file = "Interface/AddOns/Platynator/Assets/%s/BarBorders/blizzard-health-square.png", width = 48, height = 48, has4k = true, masked = true, tag = "blizzard-health", margin = 0.4, extra = 0, minSize = 100, modifier = 0.3, DPIScale = 1/2, mode = renderMode.Sliced},
   ["Platy: Soft Glow"] = {file = "Interface/AddOns/Platynator/Assets/%s/Highlights/soft-glow-square.png", width = 59, height = 59, has4k = true, masked = true, tag = "soft", margin = 0.4, extra = 11, modifier = 0.3, DPIScale = 1/2, mode = renderMode.Sliced},
@@ -250,6 +250,7 @@ function addonTable.Assets.ApplyScale()
     ResizeSlicedAssets(list, list)
     ResizeSlicedAssets(masks, list)
     for key, entry in pairs(list) do
+      ---@diagnostic disable-next-line param-type-mismatch
       LSM:Register("nineslice", key, {
         file = entry.file,
         previewWidth = entry.width,
@@ -262,6 +263,7 @@ function addonTable.Assets.ApplyScale()
       local maskKey = masks[key] and key or "Platy: Solid"
       local maskData = masks[maskKey]
       local maskMargin = maskData.margin or 0.49
+      ---@diagnostic disable-next-line param-type-mismatch
       LSM:Register("ninesliceborder", key, {
         nineslice = key,
         mask = {
@@ -276,6 +278,7 @@ function addonTable.Assets.ApplyScale()
     for key, entry in pairs(list) do
       if entry.mode == renderMode.Sliced then
         ResizeSlicedAssets({entry}, {entry})
+        ---@diagnostic disable-next-line param-type-mismatch
         LSM:Register("nineslice", key, {
           file = entry.file,
           previewWidth = entry.width,
@@ -289,6 +292,7 @@ function addonTable.Assets.ApplyScale()
         -- Not registered on purpose
       else
         ResizeAssets({entry})
+        ---@diagnostic disable-next-line param-type-mismatch
         LSM:Register("platynator/sizedtexture", key, {
           file = entry.file,
           width = entry.width,
@@ -298,10 +302,6 @@ function addonTable.Assets.ApplyScale()
     end
   end
 
-  local lowerScale = 1
-  if DPIScale == "DPI96" then
-    lowerScale = 2
-  end
   IterateLSMBackground(addonTable.Assets.BarBackgrounds)
   IterateLSMSlicedBorder(addonTable.Assets.BarBordersSliced, addonTable.Assets.BarMasks)
   IterateLSMHighlights(addonTable.Assets.Highlights)

@@ -629,8 +629,9 @@ local function SetupStyleSelect(parent)
     {name = addonTable.Locales.COMBAT, container = combatContainer},
     {name = addonTable.Locales.PVP, container = pvpContainer},
   }
-  
+
   local Tabs = {}
+  local lastTab
   for _, setup in ipairs(tabContainers) do
     local tabContainer = setup.container
     tabContainer:SetPoint("TOPLEFT", addonTable.Constants.ButtonFrameOffset, -45)

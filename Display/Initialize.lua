@@ -102,7 +102,7 @@ function addonTable.Display.ManagerMixin:OnLoad()
         )
       ) then
         self:Uninstall(unit)
-        self:Install(unit, nameplate)
+        self:Install(unit)
       end
       display:UpdateAurasForPandemic()
     end
@@ -891,7 +891,7 @@ function addonTable.Display.ManagerMixin:OnEvent(eventName, ...)
     local display = self.nameplateDisplays[unit]
     if display and ((display.kind == "friend" and UnitCanAttack("player", unit)) or (display.kind == "enemy" and not UnitCanAttack("player", unit))) then
       self:Uninstall(unit)
-      self:Install(unit, nameplate)
+      self:Install(unit)
     end
   elseif eventName == "GLOBAL_MOUSE_UP" then
     self:UpdateForMouseover()
