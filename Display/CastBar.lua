@@ -55,7 +55,7 @@ function addonTable.Display.CastBarMixin:SetUnit(unit)
 end
 
 function addonTable.Display.CastBarMixin:StripInternal()
-  self:RefreshInterruptMarker(false)
+  self:RefreshInterruptMarker()
   if self.timer then
     self.timer:Cancel()
     self.timer = nil
@@ -231,7 +231,7 @@ else
         local info = C_Spell.GetSpellCooldown(spellID)
         local interruptEndTime = info.duration + info.startTime
         if interruptEndTime > 0 then
-          self:RefreshInterruptMarker(self.isChanneled)
+          self:RefreshInterruptMarker()
           self.interruptMarker:Show()
           self.interruptPositioner:SetValue(self.statusBar:GetValue())
           self.interruptMarker:SetValue(interruptEndTime - GetTime())
@@ -266,7 +266,7 @@ else
     local spellID = GetInterruptSpell()
     if spellID and not self.notInterruptible and self.interruptMarker:IsShown() then
       local info = C_Spell.GetSpellCooldown(spellID)
-      endTime = info.duration + info.startTime
+      local endTime = info.duration + info.startTime
       self.interruptMarker:SetShown(endTime > 0)
     end
   end

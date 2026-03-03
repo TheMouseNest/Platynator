@@ -252,7 +252,6 @@ function addonTable.Assets.ApplyScale()
     ResizeSlicedAssets(list, list)
     ResizeSlicedAssets(masks, list)
     for key, entry in pairs(list) do
-      ---@diagnostic disable-next-line param-type-mismatch
       LSM:Register("nineslice", key, {
         file = entry.file,
         previewWidth = entry.width,
@@ -265,7 +264,6 @@ function addonTable.Assets.ApplyScale()
       local maskKey = masks[key] and key or "Platy: Solid"
       local maskData = masks[maskKey]
       local maskMargin = maskData.margin or 0.49
-      ---@diagnostic disable-next-line param-type-mismatch
       LSM:Register("ninesliceborder", key, {
         nineslice = key,
         mask = {
@@ -280,7 +278,6 @@ function addonTable.Assets.ApplyScale()
     for key, entry in pairs(list) do
       if entry.mode == renderMode.Sliced then
         ResizeSlicedAssets({entry}, {entry})
-        ---@diagnostic disable-next-line param-type-mismatch
         LSM:Register("nineslice", key, {
           file = entry.file,
           previewWidth = entry.width,
@@ -294,7 +291,6 @@ function addonTable.Assets.ApplyScale()
         -- Not registered on purpose
       else
         ResizeAssets({entry})
-        ---@diagnostic disable-next-line param-type-mismatch
         LSM:Register("platynator/sizedtexture", key, {
           file = entry.file,
           width = entry.width,

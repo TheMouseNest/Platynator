@@ -24,7 +24,9 @@ local function InitBar(frame, details)
   end
 
   local borderDetails = LSM:Fetch("ninesliceborder", details.border.asset, true) or LSM:Fetch("ninesliceborder", "Platy: 4px")
+  assert(borderDetails)
   local borderSliceDetails = LSM:Fetch("nineslice", borderDetails.nineslice)
+  assert(borderSliceDetails)
 
   frame.lowerScale = 1/borderSliceDetails.scaleModifier
   frame.rawWidth, frame.rawHeight = details.border.width * addonTable.Assets.BarBordersSize.width, details.border.height * addonTable.Assets.BarBordersSize.height
@@ -152,7 +154,9 @@ function addonTable.Display.GetHealthBar(frame, parent)
     InitBar(frame, details)
 
     local borderDetails = LSM:Fetch("ninesliceborder", details.border.asset, true) or LSM:Fetch("ninesliceborder", "Platy: 4px")
+    assert(borderDetails)
     local borderSliceDetails = LSM:Fetch("nineslice", borderDetails.nineslice)
+    assert(borderSliceDetails)
 
     frame.statusBarCutaway:SetFrameLevel(frame:GetFrameLevel() + 1)
     frame.statusBarAbsorb:SetFrameLevel(frame:GetFrameLevel() + 2)
@@ -261,7 +265,9 @@ function addonTable.Display.GetCastBar(frame, parent)
     InitBar(frame, details)
 
     local borderDetails = LSM:Fetch("ninesliceborder", details.border.asset, true) or LSM:Fetch("ninesliceborder", "Platy: 4px")
+    assert(borderDetails)
     local borderSliceDetails = LSM:Fetch("nineslice", borderDetails.nineslice)
+    assert(borderSliceDetails)
 
     frame.statusBar:SetFrameLevel(frame:GetFrameLevel() + 2)
     frame.interruptMarker:SetFrameLevel(frame:GetFrameLevel() + 5)
@@ -303,7 +309,9 @@ function addonTable.Display.GetCastBar(frame, parent)
     SizeBar(frame, details)
 
     local borderDetails = LSM:Fetch("ninesliceborder", details.border.asset, true) or LSM:Fetch("ninesliceborder", "Platy: 4px")
+    assert(borderDetails)
     local borderSliceDetails = LSM:Fetch("nineslice", borderDetails.nineslice)
+    assert(borderSliceDetails)
 
     local lowerScale = 1 / borderSliceDetails.scaleModifier
     frame.interruptMarkerPoint:SetHeight(frame.rawHeight * lowerScale)
@@ -378,6 +386,7 @@ function addonTable.Display.GetHighlight(frame, parent)
 
   function frame:Init(details)
     local highlightDetails = (details.sliced and (LSM:Fetch("nineslice", details.asset, true) or LSM:Fetch("nineslice", "Platy: 7px"))) or (LSM:Fetch("platynator/sizedtexture", details.asset, true) or LSM:Fetch("platynator/sizedtexture", "Platy: Glow"))
+    assert(highlightDetails)
     frame.details = details
 
     frame.highlight:SetTexture(highlightDetails.file)
@@ -421,6 +430,7 @@ function addonTable.Display.GetHighlight(frame, parent)
   function frame:ApplySize()
     local details = frame.details
     local highlightDetails = (details.sliced and (LSM:Fetch("nineslice", details.asset, true) or LSM:Fetch("nineslice", "Platy: 7px"))) or (LSM:Fetch("platynator/sizedtexture", details.asset, true) or LSM:Fetch("platynator/sizedtexture", "Platy: Glow"))
+    assert(highlightDetails)
     if details.sliced then
       local width, height = details.width * addonTable.Assets.BarBordersSize.width, details.height * addonTable.Assets.BarBordersSize.height
       PixelUtil.SetSize(frame, width * details.scale, height * details.scale)

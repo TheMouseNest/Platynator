@@ -487,8 +487,7 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
 
       iteration = iteration + 1
       snapped = false
-      local snapX, snapY, xLock, yLock = 0, 0
-      local endIndex = #selectionIndexes
+      local snapX, snapY, xLock, yLock = 0, 0, nil, nil
       for indexIndex, index in ipairs(selectionIndexes) do
         local w = widgets[index]
         snapX, snapY, xLock, yLock = UpdateWidgetPoints(w, snappingAmount, offsets[indexIndex].x, offsets[indexIndex].y)
@@ -503,7 +502,6 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
           if o.yLock then
             o.y = o.y + snapY
           end
-          endIndex = indexIndex
           snapped = true
           break
         else
@@ -697,6 +695,7 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
       crowdControl = {135860},
     }
     local asset = LSM:Fetch("nineslice", "Platy: 1px")
+    assert(asset)
     for kind, w in pairs(auraContainers) do
       w:SetSize(10, 10)
       w.Wrapper = CreateFrame("Frame", nil, w)

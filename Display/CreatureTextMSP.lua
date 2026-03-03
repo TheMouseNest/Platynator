@@ -15,6 +15,7 @@ frame:SetScript("OnEvent", function()
   if msp and msp_RPAddOn and not TRP3_Platynator then
     table.insert(msp.callback.updated, MSPCallback)
 
+    ---@diagnostic disable-next-line: lowercase-global
     msp_RPNameplatesAddOn = "Platynator"
   else
     addonTable.Display.CreatureTextMSPMixin = nil

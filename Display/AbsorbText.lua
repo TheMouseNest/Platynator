@@ -26,10 +26,6 @@ end
 
 local AbbreviateNumbersAlt = addonTable.Display.Utilities.AbbreviateNumbersAlt
 
-function addonTable.Display.AbsorbTextMixin:GetAbsorbValues()
-  return values
-end
-
 function addonTable.Display.AbsorbTextMixin:UpdateText()
   if UnitIsDeadOrGhost(self.unit) then
     self.text:SetText("0")

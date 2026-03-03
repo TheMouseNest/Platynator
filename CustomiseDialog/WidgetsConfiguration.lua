@@ -179,6 +179,7 @@ local function GetLabelsValuesHighlightsNotAnimated()
       local details = addonTable.Assets.BarBordersSliced[keyDetails.asset]
       if not details or not details.isTransparent then
         local assetDetails = LSM:Fetch("nineslice", keyDetails.asset)
+        assert(assetDetails)
         local width = assetDetails.previewWidth * height/assetDetails.previewHeight
         local text = "|T".. assetDetails.file .. ":" .. height .. ":" .. width .. "|t " .. (keyDetails.asset:gsub("Platy: ", ""))
 
@@ -187,6 +188,7 @@ local function GetLabelsValuesHighlightsNotAnimated()
       end
     else
       local details = LSM:Fetch("platynator/sizedtexture", keyDetails.asset)
+      assert(details)
 
       local width = details.width * height/details.height
       if width > 180 then
@@ -214,6 +216,7 @@ local function GetLabelsValuesHighlightsNotAnimated()
   for _, key in ipairs(regularAssets) do
     if not seen[key] then
       local details = LSM:Fetch("platynator/sizedtexture", key)
+      assert(details)
 
       local width = details.width * height/details.height
       if width > 180 then
@@ -618,7 +621,7 @@ addonTable.CustomiseDialog.WidgetsConfig = {
               end
             end,
             getter = function(details)
-              if value == 0 then
+              if details.significantFigures == 0 then
                 return details.significantFigures
               else
                 return details.significantFigures - 1
