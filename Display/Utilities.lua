@@ -55,14 +55,41 @@ function addonTable.Display.Utilities.GetUnitDifficulty(unit)
   end
 end
 
-function addonTable.Display.Utilities.IsInCombatWith(unit)
-  return InCombatLockdown() and
-    UnitAffectingCombat(unit) and
-    (
-      UnitIsFriend("player", unit) or
-      UnitThreatSituation("player", unit) ~= nil or
-      IsInGroup() and (UnitInParty(unit .. "target") or UnitInRaid(unit .. "target")) and UnitThreatSituation(unit .. "target", unit) ~= nil
-    )
+do
+  local function IsInCombatWith(unit)
+    return UnitAffectingCombat(unit) and
+      (
+        UnitIsFriend("player", unit) and (UnitInParty(unit) == true or UnitInRaid(unit)== true ) or
+        UnitThreatSituation("player", unit) ~= nil or
+        UnitInParty(unit .. "target") == true or UnitInRaid(unit .. "target") == true
+      )
+  end
+
+  local watching = {}
+  C_Timer.NewTicker(0.08, function()
+    local units = GetKeysArray(watching)
+    for _, unit in ipairs(units) do
+      local newState = IsInCombatWith(unit)
+      if newState ~= watching[unit] then
+        watching[unit] = newState
+        addonTable.CallbackRegistry:TriggerEvent("CombatStatusChange", unit)
+      end
+    end
+  end)
+  local frame = CreateFrame("Frame")
+  frame:RegisterEvent("NAME_PLATE_UNIT_REMOVED")
+  frame:SetScript("OnEvent", function(_, _, unit)
+    watching[unit] = nil
+  end)
+
+  function addonTable.Display.Utilities.IsInCombatWith(unit)
+    if watching[unit] ~= nil then
+      return watching[unit]
+    else
+      watching[unit] = IsInCombatWith(unit)
+      return watching[unit]
+    end
+  end
 end
 
 function addonTable.Display.Utilities.ConvertColor(color)

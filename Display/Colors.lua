@@ -199,6 +199,7 @@ local kindToEvent = {
 }
 local kindToCallback = {
   quest = {"QuestInfoUpdate"},
+  threat = {"CombatStatusChange"},
 }
 
 function addonTable.Display.UnregisterForColorEvents(frame)
