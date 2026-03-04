@@ -31,12 +31,17 @@ function addonTable.Display.CastTargetTextMixin:Strip()
 end
 
 function addonTable.Display.CastTargetTextMixin:UpdateTarget()
+  self.target = nil
+  self.targetClass = nil
+
   local _, spellInfo = UnitCastingInfo(self.unit)
   local _, channelInfo = UnitChannelInfo(self.unit)
   if spellInfo or channelInfo then
     if UnitSpellTargetName then
-      self.target = UnitSpellTargetName(self.unit)
-      self.targetClass = UnitSpellTargetClass(self.unit)
+      if UnitShouldDisplaySpellTargetName(self.unit) then
+        self.target = UnitSpellTargetName(self.unit)
+        self.targetClass = UnitSpellTargetClass(self.unit)
+      end
     else
       self.target = UnitName(self.unit .. "target")
       self.targetClass = UnitClassBase(self.unit .. "target")
@@ -60,17 +65,6 @@ function addonTable.Display.CastTargetTextMixin:UpdateText()
 end
 
 function addonTable.Display.CastTargetTextMixin:OnEvent(eventName, ...)
-  local name = UnitCastingInfo(self.unit)
-
-  if type(name) == "nil" then
-    name = UnitChannelInfo(self.unit)
-  end
-
-  if type(name) == "nil" then
-    self.target = nil
-    self.targetClass = nil
-  else
-    self:UpdateTarget()
-  end
+  self:UpdateTarget()
   self:UpdateText()
 end
