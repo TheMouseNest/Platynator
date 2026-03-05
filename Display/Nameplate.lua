@@ -523,13 +523,16 @@ function addonTable.Display.NameplateMixin:UpdateVisual()
   if isTarget then
     alpha = 1
   else
-    alpha = math.max(alpha, addonTable.Config.Get(addonTable.Config.Options.NOT_TARGET_ALPHA))
-    if UnitIsUnit("mouseover", self.unit) then
+    local isMouseover = UnitIsUnit("mouseover", self.unit)
+    if isMouseover then
       alpha = math.max(alpha, addonTable.Config.Get(addonTable.Config.Options.MOUSEOVER_ALPHA))
     end
     if self.casting then
       scale = addonTable.Config.Get(addonTable.Config.Options.CAST_SCALE)
       alpha = math.max(alpha, addonTable.Config.Get(addonTable.Config.Options.CAST_ALPHA))
+    end
+    if not isMouseover and not self.casting then
+      alpha = addonTable.Config.Get(addonTable.Config.Options.NOT_TARGET_ALPHA)
     end
   end
   self:SetScale(self.scale * scale * addonTable.Config.Get(addonTable.Config.Options.GLOBAL_SCALE) * scaleMod)
