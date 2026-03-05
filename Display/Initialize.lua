@@ -486,9 +486,6 @@ function addonTable.Display.ManagerMixin:ListenToBuffs(display, unit)
     if display.DebuffDisplay.details and display.DebuffDisplay.details.filters.important or display.BuffDisplay.details and display.BuffDisplay.details.filters.important then
       UF:RegisterUnitEvent("UNIT_AURA", unit)
 
-      local DebuffListFrame = UF.AurasFrame.DebuffListFrame
-      local BuffListFrame = UF.AurasFrame.BuffListFrame
-
       display.AurasManager:SetGetImportantAuras(function()
         local important = {}
 
