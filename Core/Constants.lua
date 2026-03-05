@@ -32,7 +32,6 @@ addonTable.Constants.Events = {
   "LegacyInterrupter",
   "QuestInfoUpdate",
   "CombatStatusChange",
-  "AttackStatusChange",
 }
 
 addonTable.Constants.RefreshReason = {

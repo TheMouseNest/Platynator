@@ -115,7 +115,7 @@ function addonTable.Display.PowerBarMixin:SetUnit(unit)
 end
 
 function addonTable.Display.PowerBarMixin:ApplyTarget()
-  if powerKind and UnitIsUnit("target", self.unit) and addonTable.Display.Utilities.CanAttackUnit(self.unit) then
+  if powerKind and UnitIsUnit("target", self.unit) and UnitCanAttack("player", self.unit) then
     local maxPower
     local currentPower = 0
     if powerKind == Enum.PowerType.Runes then

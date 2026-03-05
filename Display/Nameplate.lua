@@ -428,7 +428,7 @@ function addonTable.Display.NameplateMixin:SetUnit(unit)
 
     self.AurasManager:SetUnit(self.unit)
 
-    if addonTable.Display.Utilities.CanAttackUnit(self.unit) then
+    if UnitCanAttack("player", self.unit) then
       self:RegisterUnitEvent("UNIT_SPELLCAST_START", self.unit)
       self:RegisterUnitEvent("UNIT_SPELLCAST_CHANNEL_START", self.unit)
       self:RegisterUnitEvent("UNIT_SPELLCAST_STOP", self.unit)
