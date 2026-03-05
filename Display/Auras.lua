@@ -252,9 +252,9 @@ function addonTable.Display.AurasManagerMixin:SetUnit(unit)
   self.unit = unit
   if unit then
     self.isPlayer = UnitIsPlayer(self.unit)
-    self.isFriendly = UnitIsFriend("player", self.unit) and not UnitCanAttack("player", self.unit)
+    self.isFriendly = UnitIsFriend("player", self.unit) and not addonTable.Display.Utilities.CanAttackUnit(self.unit)
 
-    if UnitCanAttack("player", self.unit) or addonTable.Constants.IsRetail then
+    if addonTable.Display.Utilities.CanAttackUnit(self.unit) or addonTable.Constants.IsRetail then
       self:FullRefresh()
     else
       self:Reset()
@@ -337,7 +337,7 @@ function addonTable.Display.AurasManagerMixin:FullRefresh()
 end
 
 function addonTable.Display.AurasManagerMixin:OnEvent(event, _, refreshData)
-  local canAttack = UnitCanAttack("player", self.unit)
+  local canAttack = addonTable.Display.Utilities.CanAttackUnit(self.unit)
   if not canAttack and not addonTable.Constants.IsRetail then
     if next(self.buffs) or next(self.debuffs) or next(self.crowdControl) then
       self.buffs = {}

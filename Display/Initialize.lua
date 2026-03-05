@@ -80,19 +80,10 @@ function addonTable.Display.ManagerMixin:OnLoad()
 
   self:RegisterUnitEvent("UNIT_POWER_UPDATE", "player")
   self:RegisterEvent("RUNE_POWER_UPDATE")
-  self:RegisterEvent("UNIT_FACTION")
 
-  C_Timer.NewTicker(0.1, function() -- Used for transitioning mobs to attackable
-    local UnitCanAttack = UnitCanAttack
+  C_Timer.NewTicker(0.1, function()
     for _, unit in ipairs(GetKeysArray(self.nameplateDisplays)) do
       local display = self.nameplateDisplays[unit]
-      if (
-          display.kind == "friend" and UnitCanAttack("player", unit) or
-          display.kind == "enemy" and not UnitCanAttack("player", unit)
-      ) then
-        self:Uninstall(unit)
-        self:Install(unit)
-      end
       display:UpdateAurasForPandemic()
     end
   end)
@@ -103,6 +94,11 @@ function addonTable.Display.ManagerMixin:OnLoad()
       self:Uninstall(unit)
       self:Install(unit)
     end
+  end)
+
+  addonTable.CallbackRegistry:RegisterCallback("AttackStatusChange", function(_, unit)
+    self:Uninstall(unit)
+    self:Install(unit)
   end)
 
   NamePlateDriverFrame:UnregisterEvent("DISPLAY_SIZE_CHANGED")
@@ -321,7 +317,7 @@ function addonTable.Display.ManagerMixin:OnLoad()
         self:Uninstall(unit)
         local nameplate = C_NamePlate.GetNamePlateForUnit(unit, issecure())
         if nameplate then
-          self:Install(unit, nameplate)
+          self:Install(unit)
         end
       end
     end
@@ -513,7 +509,7 @@ function addonTable.Display.ManagerMixin:UpdateStackingRegion(unit)
   stackRegion:SetSize(newWidth, newHeight)
 end
 
-function addonTable.Display.ManagerMixin:Install(unit, nameplate)
+function addonTable.Display.ManagerMixin:Install(unit)
   if unit == "preview" then
     return
   end
@@ -523,7 +519,7 @@ function addonTable.Display.ManagerMixin:Install(unit, nameplate)
     local shouldSimplify = false
     local newDisplay
     local enabled = addonTable.Config.Get(addonTable.Config.Options.DESIGNS_ENABLED)
-    if not UnitCanAttack("player", unit) then
+    if not addonTable.Display.Utilities.CanAttackUnit(unit) then
       if UnitIsPlayer(unit) and (not IsInInstance() and enabled.pvpWorld or enabled.pvpInstance and addonTable.Display.Utilities.IsInRelevantInstance({pvp = true})) then
         newDisplay = self.pools["friendPvPPlayer"]:Acquire()
       elseif enabled.combat and addonTable.Display.Utilities.IsInCombatWith(unit) then
@@ -879,13 +875,6 @@ function addonTable.Display.ManagerMixin:OnEvent(eventName, ...)
   elseif eventName == "UNIT_POWER_UPDATE" or eventName == "RUNE_POWER_UPDATE" then
     for _, display in pairs(self.nameplateDisplays) do
       display:UpdateForTarget()
-    end
-  elseif eventName == "UNIT_FACTION" then
-    local unit = ...
-    local display = self.nameplateDisplays[unit]
-    if display and ((display.kind == "friend" and UnitCanAttack("player", unit)) or (display.kind == "enemy" and not UnitCanAttack("player", unit))) then
-      self:Uninstall(unit)
-      self:Install(unit)
     end
   elseif eventName == "GLOBAL_MOUSE_UP" then
     self:UpdateForMouseover()

@@ -119,7 +119,7 @@ local stateToCalculator = {
   end,
   threat = function(state, unit)
     state.threat = UnitThreatSituation("player", unit)
-    state.hostile = UnitCanAttack("player", unit) and UnitIsEnemy(unit, "player")
+    state.hostile = UnitIsEnemy(unit, "player")
   end
 }
 
@@ -310,7 +310,7 @@ function addonTable.Display.GetColor(settings, state, unit)
       end
     elseif s.kind == "threat" then
       local threat = state.threat
-      local hostile = state.hostile
+      local hostile = state.hostile and addonTable.Display.Utilities.CanAttackUnit(unit)
       if not state.isPlayer and (inRelevantThreatInstance or not s.instancesOnly) and (threat or (hostile and not s.combatOnly) or IsInCombatWith(unit)) then
         if (isTank and (threat == 0 or threat == nil) and not DoesOtherTankHaveAggro(unit)) or (not isTank and threat == 3) then
           table.insert(colorQueue, {color = s.colors.warning})
@@ -395,7 +395,7 @@ function addonTable.Display.GetColor(settings, state, unit)
         table.insert(colorQueue, {color = s.colors.neutral})
       elseif IsUnfriendly(unit) then
         table.insert(colorQueue, {color = s.colors.unfriendly})
-      elseif UnitIsFriend("player", unit) and not UnitCanAttack("player", unit) then
+      elseif UnitIsFriend("player", unit) and not addonTable.Display.Utilities.CanAttackUnit(unit) then
         table.insert(colorQueue, {color = s.colors.friendly})
       else
         table.insert(colorQueue, {color = s.colors.hostile})

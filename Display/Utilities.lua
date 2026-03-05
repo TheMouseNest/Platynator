@@ -66,28 +66,69 @@ do
   end
 
   local watching = {}
-  C_Timer.NewTicker(0.08, function()
-    local units = GetKeysArray(watching)
-    for _, unit in ipairs(units) do
-      local newState = IsInCombatWith(unit)
-      if newState ~= watching[unit] then
-        watching[unit] = newState
-        addonTable.CallbackRegistry:TriggerEvent("CombatStatusChange", unit)
-      end
-    end
-  end)
   local frame = CreateFrame("Frame")
+
   frame:RegisterEvent("NAME_PLATE_UNIT_REMOVED")
   frame:SetScript("OnEvent", function(_, _, unit)
     watching[unit] = nil
   end)
 
+  local lastIterCounter = 0
+  local counter = 0
+  local units = {}
+  local unitsPerSecond = 1
+  -- Staggered update to smooth out performance
+  frame:SetScript("OnUpdate", function(_, elapsed)
+    if next(watching) == nil then
+      return
+    end
+    if counter == 0 then
+      units = GetKeysArray(watching)
+      unitsPerSecond = math.ceil(0.1 / #units)
+    end
+    counter = counter + unitsPerSecond * elapsed
+    if counter - lastIterCounter >= 1 then
+      for i = math.floor(lastIterCounter + 1), math.floor(counter) do
+        local unit = units[i]
+        if watching[unit] then
+          local combat = IsInCombatWith(unit)
+          local attack = UnitCanAttack("player", unit)
+          if combat ~= watching[unit].combat or attack ~= watching[unit].attack then
+            local oldCombat = watching[unit].combat
+            local oldAttack = watching[unit].attack
+            watching[unit].combat = combat
+            watching[unit].attack = attack
+            if combat ~= oldCombat then
+              addonTable.CallbackRegistry:TriggerEvent("CombatStatusChange", unit)
+            end
+            if attack ~= oldAttack then
+              addonTable.CallbackRegistry:TriggerEvent("AttackStatusChange", unit)
+            end
+          end
+        end
+      end
+      lastIterCounter = counter
+      if counter > #units then
+        counter = 0
+      end
+    end
+  end)
+
   function addonTable.Display.Utilities.IsInCombatWith(unit)
     if watching[unit] ~= nil then
-      return watching[unit]
+      return watching[unit].combat
     else
-      watching[unit] = IsInCombatWith(unit)
-      return watching[unit]
+      watching[unit] = {combat = IsInCombatWith(unit), attack = UnitCanAttack("player", unit)}
+      return watching[unit].combat
+    end
+  end
+
+  function addonTable.Display.Utilities.CanAttackUnit(unit)
+    if watching[unit] ~= nil then
+      return watching[unit].attack
+    else
+      watching[unit] = {combat = IsInCombatWith(unit), attack = UnitCanAttack("player", unit)}
+      return watching[unit].attack
     end
   end
 end
