@@ -79,7 +79,7 @@ function addonTable.Display.HealthTextMixin:UpdateText()
       if self.abbreviateCallback then
         values.percentage = self.abbreviateCallback(value) .. "%"
       else
-        values.percentage = string.format("%d%%", value)
+        values.percentage = Round(value) .. "%"
       end
     end
     if #types == 2 then
