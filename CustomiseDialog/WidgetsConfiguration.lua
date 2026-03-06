@@ -927,9 +927,11 @@ addonTable.CustomiseDialog.WidgetsConfig = {
             kind = "dropdown",
             getInitData = function()
               return {
+                addonTable.Locales.CENTER,
                 addonTable.Locales.LEFT,
                 addonTable.Locales.RIGHT,
               }, {
+                "CENTER",
                 "LEFT",
                 "RIGHT",
               }

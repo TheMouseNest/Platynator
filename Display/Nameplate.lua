@@ -169,7 +169,7 @@ function addonTable.Display.NameplateMixin:OnLoad()
         xOffset = step
       else -- CENTER
         xOffset = step
-        currentX = -#data * step / 2
+        currentX = -(#data - 1) * step / 2
       end
       local anchor = details.anchor[1]
       if type(anchor) ~= "string" then
