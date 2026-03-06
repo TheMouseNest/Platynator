@@ -66,13 +66,13 @@ function addonTable.Display.HealthTextMixin:UpdateText()
       percentage = "",
       absolute = (AbbreviateNumbersAlt or AbbreviateNumbers)(UnitHealth(self.unit)),
     }
-    local types = self.details.displayTypes 
+    local types = self.details.displayTypes
     if UnitHealthPercent then -- Midnight APIs
       local value = UnitHealthPercent(self.unit, true, CurveConstants.ScaleTo100)
       if self.abbreviateData then
         values.percentage = AbbreviateNumbers(value, self.abbreviateData) .. "%"
       else
-        values.percentage = string.format("%d%%", value)
+        values.percentage = C_StringUtil.RoundToNearestString(value) .. "%"
       end
     else
       local value = UnitHealth(self.unit, true)/UnitHealthMax(self.unit)*100
