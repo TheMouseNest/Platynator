@@ -664,6 +664,9 @@ legacy.crowdControlSpells = {
 [12824] = true,
 [12825] = true,
 [12826] = true,
+[28271] = true,
+[28272] = true,
+[61305] = true,
 -- Frost Nova
 [122] = true,
 [865] = true,
