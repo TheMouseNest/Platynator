@@ -83,16 +83,17 @@ instanceTracker:SetScript("OnEvent", function()
       level = UnitEffectiveLevel("player"),
       lastLFGInstanceID = lfgDungeonID,
       inInstance = inRelevantThreatInstance or inRelevantEliteInstance,
+      levelShift = 0,
     }
-    local level = PLATYNATOR_LAST_INSTANCE.level
-    local _, _, _, _, _, _, minLevel, maxLevel, expansion = GetLFGDungeonInfo(lfgDungeonID)
-    local maxExpansion = GetMaximumExpansionLevel()
-    if expansion == maxExpansion - 1 and maxLevel == level then
-      PLATYNATOR_LAST_INSTANCE.levelShift = -1
-    elseif expansion == maxExpansion and level < maxLevel and level > minLevel then
-      PLATYNATOR_LAST_INSTANCE.levelShift = -1
-    else
-      PLATYNATOR_LAST_INSTANCE.levelShift = 0
+    if lfgDungeonID then
+      local level = PLATYNATOR_LAST_INSTANCE.level
+      local _, _, _, _, _, _, minLevel, maxLevel, expansion = GetLFGDungeonInfo(lfgDungeonID)
+      local maxExpansion = GetMaximumExpansionLevel()
+      if expansion == maxExpansion - 1 and maxLevel == level then
+        PLATYNATOR_LAST_INSTANCE.levelShift = -1
+      elseif expansion == maxExpansion and level < maxLevel and level > minLevel then
+        PLATYNATOR_LAST_INSTANCE.levelShift = -1
+      end
     end
   end
 end)
