@@ -84,6 +84,16 @@ instanceTracker:SetScript("OnEvent", function()
       lastLFGInstanceID = lfgDungeonID,
       inInstance = inRelevantThreatInstance or inRelevantEliteInstance,
     }
+    local level = PLATYNATOR_LAST_INSTANCE.level
+    local _, _, _, _, _, _, minLevel, maxLevel, expansion = GetLFGDungeonInfo(lfgDungeonID)
+    local maxExpansion = GetMaximumExpansionLevel()
+    if expansion == maxExpansion - 1 and maxLevel == level then
+      PLATYNATOR_LAST_INSTANCE.levelShift = -1
+    elseif expansion == maxExpansion and level < maxLevel and level > minLevel then
+      PLATYNATOR_LAST_INSTANCE.levelShift = -1
+    else
+      PLATYNATOR_LAST_INSTANCE.levelShift = 0
+    end
   end
 end)
 
@@ -333,10 +343,11 @@ function addonTable.Display.GetColor(settings, state, unit)
           local level = UnitEffectiveLevel(unit)
           local playerLevel = PLATYNATOR_LAST_INSTANCE.level
           local isRetail = addonTable.Constants.IsRetail
-          if isRetail and level == playerLevel + 1 then
+          local levelShift = PLATYNATOR_LAST_INSTANCE.levelShift
+          if isRetail and level == playerLevel + 1 + levelShift then
             table.insert(colorQueue, {color = s.colors.miniboss})
             break
-          elseif isRetail and level == playerLevel + 2 or level == -1 then
+          elseif isRetail and level == playerLevel + 2 + levelShift or level == -1 then
             table.insert(colorQueue, {color = s.colors.boss})
             break
           else
