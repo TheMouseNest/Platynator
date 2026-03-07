@@ -12,13 +12,6 @@ local roleType = {
   Tank = 3,
 }
 
-local legacyDungeonNoLieutenant = {}
-local mythicKeystoneDifficulty = 8
-
-for _, dungeonID in ipairs(addonTable.Constants.LegacyDungeons) do
-  legacyDungeonNoLieutenant[dungeonID] = true
-end
-
 local roleMap = {
   ["DAMAGER"] = roleType.Damage,
   ["TANK"] = roleType.Tank,
@@ -84,13 +77,12 @@ instanceTracker:RegisterEvent("PLAYER_ENTERING_WORLD")
 instanceTracker:SetScript("OnEvent", function()
   inRelevantThreatInstance = addonTable.Display.Utilities.IsInRelevantInstance({dungeon = true, delve = true, pvp = true})
   inRelevantEliteInstance = addonTable.Display.Utilities.IsInRelevantInstance({dungeon = true})
-  local _, _, difficultyID, _, _, _, _, instanceID, _, lfgDungeonID = GetInstanceInfo()
+  local _, _, _, _, _, _, _, _, _, lfgDungeonID = GetInstanceInfo()
   if PLATYNATOR_LAST_INSTANCE == nil or (inRelevantThreatInstance or inRelevantEliteInstance) ~= PLATYNATOR_LAST_INSTANCE.inInstance or PLATYNATOR_LAST_INSTANCE.lastLFGInstanceID ~= lfgDungeonID then
     PLATYNATOR_LAST_INSTANCE = {
       level = UnitEffectiveLevel("player"),
       lastLFGInstanceID = lfgDungeonID,
       inInstance = inRelevantThreatInstance or inRelevantEliteInstance,
-      isLegacy = legacyDungeonNoLieutenant[instanceID] and difficultyID ~= mythicKeystoneDifficulty,
     }
   end
 end)
@@ -340,12 +332,11 @@ function addonTable.Display.GetColor(settings, state, unit)
         if classification == "elite" then
           local level = UnitEffectiveLevel(unit)
           local playerLevel = PLATYNATOR_LAST_INSTANCE.level
-          local isLegacy = PLATYNATOR_LAST_INSTANCE.isLegacy
           local isRetail = addonTable.Constants.IsRetail
-          if isRetail and ((isLegacy and level == playerLevel + 1) or UnitIsLieutenant(unit)) then
+          if isRetail and level == playerLevel + 1 then
             table.insert(colorQueue, {color = s.colors.miniboss})
             break
-          elseif isRetail and ((isLegacy and level == playerLevel + 2) or (not isLegacy and level > playerLevel)) or level == -1 then
+          elseif isRetail and level == playerLevel + 2 or level == -1 then
             table.insert(colorQueue, {color = s.colors.boss})
             break
           else
