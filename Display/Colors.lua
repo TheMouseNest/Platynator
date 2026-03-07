@@ -306,260 +306,287 @@ end
 
 function addonTable.Display.GetColor(settings, state, unit)
   local colorQueue = {}
-  for _, s in ipairs(settings) do
-    if s.kind == "tapped" then
-      if IsTapped(unit) then
-        table.insert(colorQueue, {color = s.colors.tapped})
-        break
-      end
-    elseif s.kind == "target" then
-      if UnitIsUnit("target", unit) then
-        table.insert(colorQueue, {color = s.colors.target})
-        break
-      end
-    elseif s.kind == "softTarget" then
-      if not UnitIsUnit("target", unit) and (UnitIsUnit("softenemy", unit) or UnitIsUnit("softfriend", unit)) then
-        table.insert(colorQueue, {color = s.colors.softTarget})
-        break
-      end
-    elseif s.kind == "focus" then
-      if UnitIsUnit("focus", unit) then
-        table.insert(colorQueue, {color = s.colors.focus})
-        break
-      end
-    elseif s.kind == "threat" then
-      local threat = state.threat
-      local hostile = state.hostile
-      if not state.isPlayer and (inRelevantThreatInstance or not s.instancesOnly) and (threat or (hostile and not s.combatOnly) or IsInCombatWith(unit)) then
-        if (isTank and (threat == 0 or threat == nil) and not DoesOtherTankHaveAggro(unit)) or (not isTank and threat == 3) then
-          table.insert(colorQueue, {color = s.colors.warning})
-          break
-        elseif threat == 1 or threat == 2 then
-          table.insert(colorQueue, {color = s.colors.transition})
-          break
-        elseif s.useSafeColor and ((isTank and threat == 3) or (not isTank and (threat == 0 or threat == nil))) then
-          table.insert(colorQueue, {color = s.colors.safe})
-          break
-        elseif isTank and (threat == 0 or threat == nil) and DoesOtherTankHaveAggro(unit) then
-          table.insert(colorQueue, {color = s.colors.offtank})
-          break
-        end
-      end
-    elseif s.kind == "rarity" then
-      local classification = UnitClassification(unit)
+  local forcedThreatColor = nil
 
-      if classification == "rare" then
-        table.insert(colorQueue, {color = s.colors.rare})
-      elseif classification == "rareelite" then
-        table.insert(colorQueue, {color = s.colors.rareElite})
-      end
-    elseif s.kind == "eliteType" then
-      if (inRelevantEliteInstance or not s.instancesOnly) and not addonTable.Display.Utilities.IsNeutralUnit(unit) then
-        local classification = UnitClassification(unit)
-        if classification == "elite" then
-          local level = UnitEffectiveLevel(unit)
-          local playerLevel = PLATYNATOR_LAST_INSTANCE.level
-          local isRetail = addonTable.Constants.IsRetail
-          if isRetail and level == playerLevel + 1 then
-            table.insert(colorQueue, {color = s.colors.miniboss})
-            break
-          elseif isRetail and level == playerLevel + 2 or level == -1 then
-            table.insert(colorQueue, {color = s.colors.boss})
-            break
-          else
-            local class = UnitClassBase(unit)
-            if class == "PALADIN" then
-              table.insert(colorQueue, {color = s.colors.caster})
-            else
-              table.insert(colorQueue, {color = s.colors.melee})
-            end
-            break
+  -- Override any color choices by threat coloring when in warning or transition range
+  -- This is super hacky and not ideal, adds another level of nesting in an already hot block 
+  if isTank and not state.isPlayer then
+    local threat = state.threat
+    local hostile = state.hostile
+
+    -- Get threat coloring in advance as a bool to skip the full loop
+    for _, s in ipairs(settings) do
+      if s.kind == "threat" then
+        if (threat or (hostile and not s.combatOnly) or IsInCombatWith(unit)) then
+          if threat == 0 or threat == nil then
+            forcedThreatColor = s.colors.warning
+          elseif threat == 1 or threat == 2 then
+            forcedThreatColor = s.colors.transition
           end
-        elseif classification == "normal" or classification == "trivial" then
-          table.insert(colorQueue, {color = s.colors.trivial})
-          break
         end
-      end
-    elseif s.kind == "quest" then
-      if #addonTable.Display.Utilities.GetQuestInfo(unit) > 0 then
-        if IsNeutral(unit) then
-          table.insert(colorQueue, {color = s.colors.neutral})
-          break
-        elseif UnitIsFriend("player", unit) then
-          table.insert(colorQueue, {color = s.colors.friendly})
-          break
-        else
-          table.insert(colorQueue, {color = s.colors.hostile})
-          break
-        end
-      end
-    elseif s.kind == "guild" then
-      if UnitIsPlayer(unit) then
-        local playerGuild, _, _, playerRealm = GetGuildInfo("player")
-        local unitGuild, _, _, unitRealm = GetGuildInfo(unit)
-        if playerGuild ~= nil and playerGuild == unitGuild and playerRealm == unitRealm then
-          table.insert(colorQueue, {color = s.colors.guild})
-          break
-        end
-      end
-    elseif s.kind == "classColors" then
-      if state.isPlayer then
-        local _, class = UnitClass(unit)
-        table.insert(colorQueue, {color = RAID_CLASS_COLORS[class]})
         break
       end
-    elseif s.kind == "reaction" then
-      if IsNeutral(unit) then
-        table.insert(colorQueue, {color = s.colors.neutral})
-      elseif IsUnfriendly(unit) then
-        table.insert(colorQueue, {color = s.colors.unfriendly})
-      elseif UnitIsFriend("player", unit) and not UnitCanAttack("player", unit) then
-        table.insert(colorQueue, {color = s.colors.friendly})
-      else
-        table.insert(colorQueue, {color = s.colors.hostile})
-      end
-      break
-    elseif s.kind == "difficulty" then
-      table.insert(colorQueue, {color = s.colors[addonTable.Display.Utilities.GetUnitDifficulty(unit)]})
-      break
-    elseif s.kind == "interruptReady" then
-      local castInfo = state.castInfo
-      local channelInfo = state.channelInfo
-      local notInterruptible = castInfo[8]
-      if notInterruptible == nil then
-        notInterruptible = channelInfo[7]
-      end
-      state.frequentUpdater.interruptReady = nil
-      if notInterruptible ~= nil then
-        state.frequentUpdater.interruptReady = true
-        if C_Spell.GetSpellCooldownDuration then
-          for _, spellID in ipairs(GetInterruptSpells()) do
-            local duration = C_Spell.GetSpellCooldownDuration(spellID)
-            table.insert(colorQueue, {state = {{value = duration:IsZero()}, {value = notInterruptible, invert = true}}, color = s.colors.ready})
+    end
+  end
+
+  if forcedThreatColor then
+    table.insert(colorQueue, {color = forcedThreatColor})
+  else
+    for _, s in ipairs(settings) do
+      if s.kind == "tapped" then
+        if IsTapped(unit) then
+          table.insert(colorQueue, {color = s.colors.tapped})
+          break
+        end
+      elseif s.kind == "target" then
+        if UnitIsUnit("target", unit) then
+          table.insert(colorQueue, {color = s.colors.target})
+          break
+        end
+      elseif s.kind == "softTarget" then
+        if not UnitIsUnit("target", unit) and (UnitIsUnit("softenemy", unit) or UnitIsUnit("softfriend", unit)) then
+          table.insert(colorQueue, {color = s.colors.softTarget})
+          break
+        end
+      elseif s.kind == "focus" then
+        if UnitIsUnit("focus", unit) then
+          table.insert(colorQueue, {color = s.colors.focus})
+          break
+        end
+      elseif s.kind == "threat" then
+        local threat = state.threat
+        local hostile = state.hostile
+        if not state.isPlayer and (inRelevantThreatInstance or not s.instancesOnly) and (threat or (hostile and not s.combatOnly) or IsInCombatWith(unit)) then
+          if (isTank and (threat == 0 or threat == nil) and not DoesOtherTankHaveAggro(unit)) or (not isTank and threat == 3) then
+            table.insert(colorQueue, {color = s.colors.warning})
+            break
+          elseif threat == 1 or threat == 2 then
+            table.insert(colorQueue, {color = s.colors.transition})
+            break
+          elseif s.useSafeColor and ((isTank and threat == 3) or (not isTank and (threat == 0 or threat == nil))) then
+            table.insert(colorQueue, {color = s.colors.safe})
+            break
+          elseif isTank and (threat == 0 or threat == nil) and DoesOtherTankHaveAggro(unit) then
+            table.insert(colorQueue, {color = s.colors.offtank})
+            break
           end
-        else
-          local any = false
-          for _, spellID in ipairs(GetInterruptSpells()) do
-            local cooldownInfo = C_Spell.GetSpellCooldown(spellID)
-            if notInterruptible == false and cooldownInfo.startTime == 0 then
-              any = true
-              table.insert(colorQueue, {color = s.colors.ready})
+        end
+      elseif s.kind == "rarity" then
+        local classification = UnitClassification(unit)
+
+        if classification == "rare" then
+          table.insert(colorQueue, {color = s.colors.rare})
+        elseif classification == "rareelite" then
+          table.insert(colorQueue, {color = s.colors.rareElite})
+        end
+      elseif s.kind == "eliteType" then
+        if (inRelevantEliteInstance or not s.instancesOnly) and not addonTable.Display.Utilities.IsNeutralUnit(unit) then
+          local classification = UnitClassification(unit)
+          if classification == "elite" then
+            local level = UnitEffectiveLevel(unit)
+            local playerLevel = PLATYNATOR_LAST_INSTANCE.level
+            local isRetail = addonTable.Constants.IsRetail
+            if isRetail and level == playerLevel + 1 then
+              table.insert(colorQueue, {color = s.colors.miniboss})
+              break
+            elseif isRetail and level == playerLevel + 2 or level == -1 then
+              table.insert(colorQueue, {color = s.colors.boss})
+              break
+            else
+              local class = UnitClassBase(unit)
+              if class == "PALADIN" then
+                table.insert(colorQueue, {color = s.colors.caster})
+              else
+                table.insert(colorQueue, {color = s.colors.melee})
+              end
               break
             end
-          end
-          if any then
+          elseif classification == "normal" or classification == "trivial" then
+            table.insert(colorQueue, {color = s.colors.trivial})
             break
           end
         end
-      end
-    elseif s.kind == "interruptNotReady" then
-      local castInfo = state.castInfo
-      local channelInfo = state.channelInfo
-      local notInterruptible = castInfo[8]
-      if notInterruptible == nil then
-        notInterruptible = channelInfo[7]
-      end
-      state.frequentUpdater.interruptReady = nil
-      if notInterruptible ~= nil then
-        local spells = GetInterruptSpells()
-        if #spells > 0 then
+      elseif s.kind == "quest" then
+        if #addonTable.Display.Utilities.GetQuestInfo(unit) > 0 then
+          if IsNeutral(unit) then
+            table.insert(colorQueue, {color = s.colors.neutral})
+            break
+          elseif UnitIsFriend("player", unit) then
+            table.insert(colorQueue, {color = s.colors.friendly})
+            break
+          else
+            table.insert(colorQueue, {color = s.colors.hostile})
+            break
+          end
+        end
+      elseif s.kind == "guild" then
+        if UnitIsPlayer(unit) then
+          local playerGuild, _, _, playerRealm = GetGuildInfo("player")
+          local unitGuild, _, _, unitRealm = GetGuildInfo(unit)
+          if playerGuild ~= nil and playerGuild == unitGuild and playerRealm == unitRealm then
+            table.insert(colorQueue, {color = s.colors.guild})
+            break
+          end
+        end
+      elseif s.kind == "classColors" then
+        if state.isPlayer then
+          local _, class = UnitClass(unit)
+          table.insert(colorQueue, {color = RAID_CLASS_COLORS[class]})
+          break
+        end
+      elseif s.kind == "reaction" then
+        if IsNeutral(unit) then
+          table.insert(colorQueue, {color = s.colors.neutral})
+        elseif IsUnfriendly(unit) then
+          table.insert(colorQueue, {color = s.colors.unfriendly})
+        elseif UnitIsFriend("player", unit) and not UnitCanAttack("player", unit) then
+          table.insert(colorQueue, {color = s.colors.friendly})
+        else
+          table.insert(colorQueue, {color = s.colors.hostile})
+        end
+        break
+      elseif s.kind == "difficulty" then
+        table.insert(colorQueue, {color = s.colors[addonTable.Display.Utilities.GetUnitDifficulty(unit)]})
+        break
+      elseif s.kind == "interruptReady" then
+        local castInfo = state.castInfo
+        local channelInfo = state.channelInfo
+        local notInterruptible = castInfo[8]
+        if notInterruptible == nil then
+          notInterruptible = channelInfo[7]
+        end
+        state.frequentUpdater.interruptReady = nil
+        if notInterruptible ~= nil then
           state.frequentUpdater.interruptReady = true
           if C_Spell.GetSpellCooldownDuration then
-            local conditions = {{value = notInterruptible, invert = true}}
-            for _, spellID in ipairs(spells) do
+            for _, spellID in ipairs(GetInterruptSpells()) do
               local duration = C_Spell.GetSpellCooldownDuration(spellID)
-              table.insert(conditions, {value = duration:IsZero(), invert = true})
+              table.insert(colorQueue, {state = {{value = duration:IsZero()}, {value = notInterruptible, invert = true}}, color = s.colors.ready})
             end
-            table.insert(colorQueue, {state = conditions, color = s.colors.notReady})
-          elseif notInterruptible == false then
+          else
             local any = false
-            for _, spellID in ipairs(spells) do
+            for _, spellID in ipairs(GetInterruptSpells()) do
               local cooldownInfo = C_Spell.GetSpellCooldown(spellID)
-              if cooldownInfo.startTime == 0 then
+              if notInterruptible == false and cooldownInfo.startTime == 0 then
                 any = true
+                table.insert(colorQueue, {color = s.colors.ready})
                 break
               end
             end
-            if not any then
-              table.insert(colorQueue, {color = s.colors.notReady})
+            if any then
               break
             end
           end
         end
-      end
-    elseif s.kind == "castTargetsYou" then
-      local castInfo = state.castInfo
-      local channelInfo = state.channelInfo
-      local name = castInfo[1]
-      if name == nil then
-        name = channelInfo[1]
-      end
-      if name ~= nil then
-        if UnitIsSpellTarget then
-          table.insert(colorQueue, {state = {{value = UnitIsSpellTarget(unit, "player")}}, color = s.colors.targeted})
-        elseif UnitIsUnit(unit .. "target", "player") then
-          table.insert(colorQueue, {color = s.colors.targeted})
-          break
-        end
-      end
-    elseif s.kind == "uninterruptableCast" then
-      local castInfo = state.castInfo
-      local channelInfo = state.channelInfo
-      local uninterruptable = castInfo[8]
-      if uninterruptable == nil then
-        uninterruptable = channelInfo[7]
-      end
-      if uninterruptable ~= nil then
-        table.insert(colorQueue, {state = {{value = uninterruptable}}, color = s.colors.uninterruptable})
-      end
-    elseif s.kind == "importantCast" then
-      if C_Spell.IsSpellImportant then
+      elseif s.kind == "interruptNotReady" then
         local castInfo = state.castInfo
         local channelInfo = state.channelInfo
-        local spellID = castInfo[9]
-        local isChannel = false
-        if spellID == nil then
-          spellID = channelInfo[8]
-          isChannel = true
+        local notInterruptible = castInfo[8]
+        if notInterruptible == nil then
+          notInterruptible = channelInfo[7]
         end
-        if spellID ~= nil then
-          local isImportant = C_Spell.IsSpellImportant(spellID)
-          if isChannel then
-            table.insert(colorQueue, {state = {{value = isImportant}}, color = s.colors.channel})
-          else
-            table.insert(colorQueue, {state = {{value = isImportant}}, color = s.colors.cast})
+        state.frequentUpdater.interruptReady = nil
+        if notInterruptible ~= nil then
+          local spells = GetInterruptSpells()
+          if #spells > 0 then
+            state.frequentUpdater.interruptReady = true
+            if C_Spell.GetSpellCooldownDuration then
+              local conditions = {{value = notInterruptible, invert = true}}
+              for _, spellID in ipairs(spells) do
+                local duration = C_Spell.GetSpellCooldownDuration(spellID)
+                table.insert(conditions, {value = duration:IsZero(), invert = true})
+              end
+              table.insert(colorQueue, {state = conditions, color = s.colors.notReady})
+            elseif notInterruptible == false then
+              local any = false
+              for _, spellID in ipairs(spells) do
+                local cooldownInfo = C_Spell.GetSpellCooldown(spellID)
+                if cooldownInfo.startTime == 0 then
+                  any = true
+                  break
+                end
+              end
+              if not any then
+                table.insert(colorQueue, {color = s.colors.notReady})
+                break
+              end
+            end
           end
         end
-      end
-    elseif s.kind == "cast" then
-      local castInfo = state.castInfo
-      local channelInfo = state.channelInfo
-      local text = castInfo[1]
-      local isChannel = false
-      if text == nil then
-        text = channelInfo[1]
-        isChannel = true
-      end
-      if text ~= nil then
-        table.insert(colorQueue, {color = isChannel and s.colors.channel or s.colors.cast})
-      else
-        table.insert(colorQueue, {color = s.colors.interrupted})
-      end
-      break
-    elseif s.kind == "fixed" then
-      table.insert(colorQueue, {color = s.colors.fixed})
-      break
-    elseif s.kind == "execute" then
-      local executeRange = addonTable.Display.Utilities.GetExecuteRange()
-      if executeRange > 0 then
-        if UnitHealthPercent then
-          local alpha = UnitHealthPercent(unit, true, executeCurve)
-          executeConverter:SetDesaturation(alpha)
-          table.insert(colorQueue, {state = {{value = executeConverter:IsDesaturated()}}, color = s.colors.execute})
+      elseif s.kind == "castTargetsYou" then
+        local castInfo = state.castInfo
+        local channelInfo = state.channelInfo
+        local name = castInfo[1]
+        if name == nil then
+          name = channelInfo[1]
+        end
+        if name ~= nil then
+          if UnitIsSpellTarget then
+            table.insert(colorQueue, {state = {{value = UnitIsSpellTarget(unit, "player")}}, color = s.colors.targeted})
+          elseif UnitIsUnit(unit .. "target", "player") then
+            table.insert(colorQueue, {color = s.colors.targeted})
+            break
+          end
+        end
+      elseif s.kind == "uninterruptableCast" then
+        local castInfo = state.castInfo
+        local channelInfo = state.channelInfo
+        local uninterruptable = castInfo[8]
+        if uninterruptable == nil then
+          uninterruptable = channelInfo[7]
+        end
+        if uninterruptable ~= nil then
+          table.insert(colorQueue, {state = {{value = uninterruptable}}, color = s.colors.uninterruptable})
+        end
+      elseif s.kind == "importantCast" then
+        if C_Spell.IsSpellImportant then
+          local castInfo = state.castInfo
+          local channelInfo = state.channelInfo
+          local spellID = castInfo[9]
+          local isChannel = false
+          if spellID == nil then
+            spellID = channelInfo[8]
+            isChannel = true
+          end
+          if spellID ~= nil then
+            local isImportant = C_Spell.IsSpellImportant(spellID)
+            if isChannel then
+              table.insert(colorQueue, {state = {{value = isImportant}}, color = s.colors.channel})
+            else
+              table.insert(colorQueue, {state = {{value = isImportant}}, color = s.colors.cast})
+            end
+          end
+        end
+      elseif s.kind == "cast" then
+        local castInfo = state.castInfo
+        local channelInfo = state.channelInfo
+        local text = castInfo[1]
+        local isChannel = false
+        if text == nil then
+          text = channelInfo[1]
+          isChannel = true
+        end
+        if text ~= nil then
+          table.insert(colorQueue, {color = isChannel and s.colors.channel or s.colors.cast})
         else
-          local percent = UnitHealth(unit) / UnitHealthMax(unit)
-          if percent <= addonTable.Display.Utilities.GetExecuteRange() then
-            table.insert(colorQueue, {color = s.colors.execute})
+          table.insert(colorQueue, {color = s.colors.interrupted})
+        end
+        break
+      elseif s.kind == "fixed" then
+        table.insert(colorQueue, {color = s.colors.fixed})
+        break
+      elseif s.kind == "execute" then
+        local executeRange = addonTable.Display.Utilities.GetExecuteRange()
+        if executeRange > 0 then
+          if UnitHealthPercent then
+            local alpha = UnitHealthPercent(unit, true, executeCurve)
+            executeConverter:SetDesaturation(alpha)
+            table.insert(colorQueue, {state = {{value = executeConverter:IsDesaturated()}}, color = s.colors.execute})
+          else
+            local percent = UnitHealth(unit) / UnitHealthMax(unit)
+            if percent <= addonTable.Display.Utilities.GetExecuteRange() then
+              table.insert(colorQueue, {color = s.colors.execute})
+            end
           end
         end
       end
