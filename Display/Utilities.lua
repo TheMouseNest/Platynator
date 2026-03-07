@@ -102,7 +102,10 @@ function addonTable.Display.Utilities.IsInRelevantInstance(state)
   end
   state = state or {dungeon = true}
   local _, instanceType, difficultyID = GetInstanceInfo()
-  if state.dungeon and (instanceType == "raid" or instanceType == "party") then
+  if state.dungeon and (instanceType == "party") then
+    return true
+  end
+  if state.raid and (instanceType == "raid") then
     return true
   end
   if state.pvp and (instanceType == "arenas" or instanceType == "pvp") then
@@ -329,7 +332,7 @@ if addonTable.Constants.IsRetail then
     if questData[unit] then
       return questData[unit]
     end
-    if addonTable.Display.Utilities.IsInRelevantInstance({dungeon = true, pvp = true}) or C_Secrets.ShouldUnitIdentityBeSecret(unit) then
+    if addonTable.Display.Utilities.IsInRelevantInstance({dungeon = true, raid = true, pvp = true}) or C_Secrets.ShouldUnitIdentityBeSecret(unit) then
       questData[unit] = {}
       return questData[unit]
     end
