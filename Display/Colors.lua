@@ -78,7 +78,10 @@ instanceTracker:SetScript("OnEvent", function()
   inRelevantThreatInstance = addonTable.Display.Utilities.IsInRelevantInstance({dungeon = true, delve = true, pvp = true})
   inRelevantEliteInstance = addonTable.Display.Utilities.IsInRelevantInstance({dungeon = true})
   local _, _, _, _, _, _, _, _, _, lfgDungeonID = GetInstanceInfo()
-  if PLATYNATOR_LAST_INSTANCE == nil or (inRelevantThreatInstance or inRelevantEliteInstance) ~= PLATYNATOR_LAST_INSTANCE.inInstance or PLATYNATOR_LAST_INSTANCE.lastLFGInstanceID ~= lfgDungeonID then
+  if PLATYNATOR_LAST_INSTANCE == nil
+    or (inRelevantThreatInstance or inRelevantEliteInstance) ~= PLATYNATOR_LAST_INSTANCE.inInstance
+    or PLATYNATOR_LAST_INSTANCE.lastLFGInstanceID ~= lfgDungeonID
+    or PLATYNATOR_LAST_INSTANCE.levelShift == nil or not (inRelevantThreatInstance or inRelevantEliteInstance) then
     PLATYNATOR_LAST_INSTANCE = {
       level = UnitEffectiveLevel("player"),
       lastLFGInstanceID = lfgDungeonID,
