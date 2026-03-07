@@ -94,7 +94,7 @@ instanceTracker:SetScript("OnEvent", function()
       local maxExpansion = GetMaximumExpansionLevel()
       if expansion == maxExpansion - 1 and maxLevel == level then
         PLATYNATOR_LAST_INSTANCE.levelShift = -1
-      elseif expansion == maxExpansion and level < maxLevel and level > minLevel then
+      elseif expansion == maxExpansion and level < maxLevel and level > (minLevel + maxLevel) / 2 then
         PLATYNATOR_LAST_INSTANCE.levelShift = -1
       end
     end
