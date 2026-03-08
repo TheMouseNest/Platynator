@@ -77,39 +77,23 @@ local inRelevantEliteInstance = false
 local instanceTracker = CreateFrame("Frame")
 instanceTracker:RegisterEvent("PLAYER_ENTERING_WORLD")
 instanceTracker:RegisterEvent("PLAYER_LEVEL_UP")
-instanceTracker:RegisterEvent("GROUP_ROSTER_UPDATE")
-local instanceTrackerInitTime = 0
 instanceTracker:SetScript("OnEvent", function(_, event)
-  if event == "PLAYER_ENTERING_WORLD" then
-    instanceTrackerInitTime = GetTimePreciseSec()
-  end
   inRelevantThreatInstance = addonTable.Display.Utilities.IsInRelevantInstance({dungeon = true, raid = true, delve = true, pvp = true})
   inRelevantEliteInstance = addonTable.Display.Utilities.IsInRelevantInstance({dungeon = true, raid = true})
   local _, _, _, _, _, _, _, _, _, lfgDungeonID = GetInstanceInfo()
   if PLATYNATOR_LAST_INSTANCE == nil
     or (inRelevantThreatInstance or inRelevantEliteInstance) ~= PLATYNATOR_LAST_INSTANCE.inInstance
     or PLATYNATOR_LAST_INSTANCE.lastLFGInstanceID ~= lfgDungeonID
-    or not (inRelevantThreatInstance or inRelevantEliteInstance)
-    or GetTimePreciseSec() - instanceTrackerInitTime < 1 and event == "GROUP_ROSTER_UPDATE" then
+    or not (inRelevantThreatInstance or inRelevantEliteInstance) then
     PLATYNATOR_LAST_INSTANCE = {
       lastLFGInstanceID = lfgDungeonID,
       inInstance = inRelevantThreatInstance or inRelevantEliteInstance,
+      instanceLieutenantLevel = nil,
     }
-    local playerLevel = UnitEffectiveLevel("player")
     if lfgDungeonID and addonTable.Display.Utilities.IsInRelevantInstance({dungeon = true}) then
-      local _, _, _, minLevel = GetLFGDungeonInfo(lfgDungeonID)
-      local dungeonLevel = playerLevel
-      for i = 1, 5 do
-        if UnitExists("party" .. i) then
-          local level = UnitLevel("party" .. i)
-          if level > 0 and level < playerLevel then
-            dungeonLevel = math.max(playerLevel - 1, minLevel)
-          end
-        end
-      end
-      PLATYNATOR_LAST_INSTANCE.level = dungeonLevel
+      PLATYNATOR_LAST_INSTANCE.level = GetMaxLevelForExpansionLevel(GetMaximumExpansionLevel())
     else
-      PLATYNATOR_LAST_INSTANCE.level = playerLevel
+      PLATYNATOR_LAST_INSTANCE.level = UnitEffectiveLevel("player")
     end
   end
 end)
@@ -358,12 +342,14 @@ function addonTable.Display.GetColor(settings, state, unit)
         local classification = UnitClassification(unit)
         if classification == "elite" then
           local level = UnitEffectiveLevel(unit)
-          local playerLevel = PLATYNATOR_LAST_INSTANCE.level
+          local dungeonLevel = PLATYNATOR_LAST_INSTANCE.level
           local isRetail = addonTable.Constants.IsRetail
-          if isRetail and level == playerLevel + 1 then
+          local lieutentantLevel = PLATYNATOR_LAST_INSTANCE.instanceLieutenantLevel
+          if isRetail and (level == dungeonLevel + 1 or UnitIsLieutenant(unit)) then
+            PLATYNATOR_LAST_INSTANCE.instanceLieutenantLevel = level
             table.insert(colorQueue, {color = s.colors.miniboss})
             break
-          elseif isRetail and level == playerLevel + 2 or level == -1 then
+          elseif isRetail and (level == dungeonLevel + 2 or lieutentantLevel and level == lieutentantLevel + 1) or level == -1 then
             table.insert(colorQueue, {color = s.colors.boss})
             break
           else
