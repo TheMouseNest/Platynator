@@ -96,12 +96,19 @@ function addonTable.Display.Utilities.ConvertColor(color)
   return CreateColor(color.r, color.g, color.b, color.a)
 end
 
+local rejectedInstanceTypes = {
+  ["none"] = true,
+  ["neighbourhood"] = true,
+  ["interior"] = true,
+}
+
 function addonTable.Display.Utilities.IsInRelevantInstance(state)
-  if not IsInInstance() then
+  local _, baseType = IsInInstance()
+  if rejectedInstanceTypes[baseType] then
     return false
   end
   state = state or {dungeon = true}
-  local _, instanceType, difficultyID = GetInstanceInfo()
+  local _, instanceType, _, label = GetInstanceInfo()
   if state.dungeon and (instanceType == "party") then
     return true
   end
@@ -111,8 +118,8 @@ function addonTable.Display.Utilities.IsInRelevantInstance(state)
   if state.pvp and (instanceType == "arenas" or instanceType == "pvp") then
     return true
   end
-  if state.delve then
-    return difficultyID == 204
+  if state.delve and label == DELVES_LABEL then
+    return true
   end
   return false
 end
