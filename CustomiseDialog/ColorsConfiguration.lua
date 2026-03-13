@@ -371,7 +371,6 @@ addonTable.CustomiseDialog.ColorsConfig = {
           return details.colors.trivial
         end,
       },
-      { kind = "spacer" },
       {
         label = addonTable.Locales.USE_IN_DELVES,
         kind = "checkbox",
