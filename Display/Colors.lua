@@ -116,10 +116,16 @@ local stateToEvent = {
 }
 
 local stateToCalculator = {
-  cast = function(state, unit)
+  cast = function(state, unit, event)
     state.cast = true
-    state.castInfo = {UnitCastingInfo(unit)}
-    state.channelInfo = {UnitChannelInfo(unit)}
+    -- Special case, the cast info _might_ still exist even though the cast is over
+    if event == "UNIT_SPELLCAST_INTERRUPTED" or event == "UNIT_SPELLCAST_CHANNEL_STOP" then
+      state.castInfo = {}
+      state.channelInfo = {}
+    else
+      state.castInfo = {UnitCastingInfo(unit)}
+      state.channelInfo = {UnitChannelInfo(unit)}
+    end
   end,
   threat = function(state, unit)
     state.threat = UnitThreatSituation("player", unit)
@@ -242,7 +248,7 @@ function addonTable.Display.RegisterForColorEvents(frame, settings, defaultColor
         local stateKind = eventToState[e]
         local state = frame.colorState[stateKind]
         if stateKind and state == nil then
-          stateToCalculator[stateKind](frame.colorState, frame.unit)
+          stateToCalculator[stateKind](frame.colorState, frame.unit, "")
         end
         if e:match("^UNIT") then
           frame:RegisterUnitEvent(e, frame.unit)
@@ -265,7 +271,7 @@ function addonTable.Display.RegisterForColorEvents(frame, settings, defaultColor
     if events[eventName] then
       local calculator = eventToCalulator[eventName]
       if calculator then
-        calculator(self.colorState, self.unit)
+        calculator(self.colorState, self.unit, eventName)
       end
       self:SetColor(addonTable.Display.GetColor(settings, self.colorState, self.unit))
       if next(self.colorState.frequentUpdater) then
