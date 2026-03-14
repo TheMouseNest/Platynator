@@ -31,20 +31,20 @@ end
 
 function addonTable.Display.CannotInterruptMarkerMixin:OnEvent(eventName, ...)
   if eventName == "UNIT_SPELLCAST_INTERRUPTED" or eventName == "UNIT_SPELLCAST_CHANNEL_STOP" then
-    self:Hide()
+    self.marker:Hide()
   else
     self:ApplyCasting()
   end
 end
 
 function addonTable.Display.CannotInterruptMarkerMixin:ApplyCasting()
-  local name, _, _, _, _, _, _, notInterruptible, _ = UnitCastingInfo(self.unit)
+  local _, _, _, _, _, _, _, notInterruptible, _ = UnitCastingInfo(self.unit)
 
-  if type(name) == "nil" then
-    name, _, _, _, _, _, notInterruptible, _ = UnitChannelInfo(self.unit)
+  if notInterruptible == nil then
+    _, _, _, _, _, _, notInterruptible, _ = UnitChannelInfo(self.unit)
   end
 
-  if type(name) ~= "nil" then
+  if notInterruptible ~= nil then
     if self.marker.SetAlphaFromBoolean then
       self.marker:Show()
       self.marker:SetAlphaFromBoolean(notInterruptible)
