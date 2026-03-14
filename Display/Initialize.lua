@@ -110,7 +110,7 @@ function addonTable.Display.ManagerMixin:OnLoad()
 
   -- Remove realm name from friendly plates in instances
   if addonTable.Constants.IsRetail then
-    TextureLoadingGroupMixin.RemoveTexture({ textures = NamePlateFriendlyFrameOptions }, "updateNameUsesGetUnitName")
+    addonTable.Utilities.PurgeKey(NamePlateFriendlyFrameOptions, "updateNameUsesGetUnitName")
   end
 
   self:RegisterEvent("VARIABLES_LOADED")

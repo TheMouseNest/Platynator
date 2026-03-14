@@ -13,6 +13,17 @@ function addonTable.Utilities.InitFrameWithMixin(parent, mixin)
   return f
 end
 
+function addonTable.Utilities.PurgeKey(t, k)
+  t[k] = nil
+  local c = 42
+  repeat
+    if t[c] == nil then
+      t[c] = nil
+    end
+    c = c + 1
+  until issecurevariable(t, k)
+end
+
 do
   local callbacksPending = {}
   local frame = CreateFrame("Frame")
