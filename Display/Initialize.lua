@@ -57,8 +57,6 @@ function addonTable.Display.ManagerMixin:OnLoad()
 
   self.MouseoverMonitor = nil
 
-  self.overrideScaleModifier = 1
-
   self:SetScript("OnEvent", self.OnEvent)
 
   self:RegisterEvent("NAME_PLATE_UNIT_ADDED")
@@ -108,6 +106,11 @@ function addonTable.Display.ManagerMixin:OnLoad()
   NamePlateDriverFrame:UnregisterEvent("DISPLAY_SIZE_CHANGED")
   if not addonTable.Constants.IsRetail then
     NamePlateDriverFrame:UnregisterEvent("CVAR_UPDATE")
+  end
+
+  -- Remove realm name from friendly plates in instances
+  if addonTable.Constants.IsRetail then
+    TextureLoadingGroupMixin.RemoveTexture({ textures = NamePlateFriendlyFrameOptions }, "updateNameUsesGetUnitName")
   end
 
   self:RegisterEvent("VARIABLES_LOADED")
