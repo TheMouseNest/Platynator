@@ -219,6 +219,7 @@ if C_CurveUtil then
 end
 
 local currentInterrupt = {}
+local interruptGcdRequired = false
 local currentExecute = 0
 local isSootheAvailable = false
 do
@@ -230,6 +231,7 @@ do
   frame:RegisterEvent("SPELLS_CHANGED")
   frame:SetScript("OnEvent", function()
     currentInterrupt = {}
+    interruptGcdRequired = false
     for _, s in ipairs(interruptSpells) do
       if C_SpellBook.IsSpellKnownOrInSpellBook(s) or C_SpellBook.IsSpellKnownOrInSpellBook(s, Enum.SpellBookSpellBank.Pet) then
         table.insert(currentInterrupt, s)
@@ -240,6 +242,7 @@ do
       if C_SpellBook.IsSpellKnownOrInSpellBook(132409) then
         table.insert(currentInterrupt, 132409)
       elseif C_SpellBook.IsSpellKnownOrInSpellBook(1276467) then
+        interruptGcdRequired = true
         table.insert(currentInterrupt, 1276467)
       end
     end
@@ -268,11 +271,11 @@ do
 end
 
 function addonTable.Display.Utilities.GetInterruptSpells()
-  return currentInterrupt
+  return currentInterrupt, interruptGcdRequired
 end
 
 function addonTable.Display.Utilities.GetInterruptSpellPriority()
-  return currentInterrupt[1]
+  return currentInterrupt[1], interruptGcdRequired
 end
 
 function addonTable.Display.Utilities.GetExecuteRange()
