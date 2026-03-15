@@ -59,8 +59,11 @@ do
 end
 
 local executeCurve = addonTable.Display.Utilities.GetExecuteCurve()
-local gcdCurve = C_CurveUtil.CreateCurve()
-gcdCurve:SetType(Enum.LuaCurveType.Step)
+local gcdCurve
+if C_CurveUtil then
+  gcdCurve = C_CurveUtil.CreateCurve()
+  gcdCurve:SetType(Enum.LuaCurveType.Step)
+end
 local converterFor10 = UIParent:CreateTexture()
 
 local function Convert10ToBoolean(value)
