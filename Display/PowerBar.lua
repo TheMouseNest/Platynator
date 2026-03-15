@@ -126,6 +126,9 @@ function addonTable.Display.PowerBarMixin:ApplyTarget()
           currentPower = currentPower + 1
         end
       end
+    elseif addonTable.Constants.IsClassic and powerKind == Enum.PowerType.ComboPoints then
+      maxPower = UnitPowerMax("player", powerKind)
+      currentPower = GetComboPoints("player", "target")
     else
       maxPower = UnitPowerMax("player", powerKind)
       currentPower = UnitPower("player", powerKind)
