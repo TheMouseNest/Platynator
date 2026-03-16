@@ -374,7 +374,7 @@ function addonTable.Display.GetColor(settings, state, unit)
             end
             break
           end
-        elseif classification == "normal" or classification == "trivial" then
+        elseif classification == "normal" or classification == "trivial" or classification == "minus" then
           table.insert(colorQueue, {color = s.colors.trivial})
           break
         end
