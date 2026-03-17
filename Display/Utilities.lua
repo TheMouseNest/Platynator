@@ -115,7 +115,7 @@ function addonTable.Display.Utilities.IsInRelevantInstance(state)
   if state.raid and (instanceType == "raid") then
     return true
   end
-  if state.pvp and (instanceType == "arenas" or instanceType == "pvp") then
+  if state.pvp and (instanceType == "arena" or instanceType == "pvp") then
     return true
   end
   if state.delve and label == DELVES_LABEL then
