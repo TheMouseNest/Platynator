@@ -433,3 +433,21 @@ else
   end
 
 end
+
+function addonTable.Display.Utilities.TintAutoColors(autoColors, mod)
+  if mod.r ~= 1 or mod.g ~= 1 or mod.b ~= 1 then
+    local modColors = CopyTable(autoColors)
+    for _, s in ipairs(modColors) do
+      for l, c in pairs(s.colors) do
+        s.colors[l] = {r = mod.r * c.r, g = mod.g * c.g, b = mod.b * c.b, a = mod.a}
+      end
+      if s.kind == "classColors" then
+        for class, c in pairs(RAID_CLASS_COLORS) do
+          s.colors[class] = {r = mod.r * c.r, g = mod.g * c.g, b = mod.b * c.b, a = mod.a}
+        end
+      end
+    end
+
+    return modColors
+  end
+end

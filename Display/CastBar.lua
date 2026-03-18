@@ -9,15 +9,7 @@ local GetInterruptSpell = addonTable.Display.Utilities.GetInterruptSpellPriority
 
 function addonTable.Display.CastBarMixin:PostInit()
   if self.details.background.applyColor then -- Apply tint to colours
-    local mod = self.details.background.color
-    if mod.r ~= 1 or mod.g ~= 1 or mod.b ~= 1 then
-      self.modColors = CopyTable(self.details.autoColors)
-      for _, s in ipairs(self.modColors) do
-        for l, c in pairs(s.colors) do
-          s.colors[l] = {r = mod.r * c.r, g = mod.g * c.g, b = mod.b * c.b, a = mod.a}
-        end
-      end
-    end
+    self.modColors = addonTable.Display.Utilities.TintAutoColors(self.details.autoColors, self.details.background.color)
   end
 
   self.showInterruptMarker = self.details.interruptMarker.asset ~= "none"
