@@ -85,8 +85,8 @@ function addonTable.Display.ManagerMixin:OnLoad()
     for _, unit in ipairs(GetKeysArray(self.nameplateDisplays)) do
       local display = self.nameplateDisplays[unit]
       if (
-          display.kind == "friend" and UnitCanAttack("player", unit) or
-          display.kind == "enemy" and not UnitCanAttack("player", unit)
+          display.kind:match("^friend") and UnitCanAttack("player", unit) or
+          display.kind:match("^enemy") and not UnitCanAttack("player", unit)
       ) then
         self:Uninstall(unit)
         self:Install(unit)
