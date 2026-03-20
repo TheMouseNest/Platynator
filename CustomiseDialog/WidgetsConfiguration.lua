@@ -603,29 +603,50 @@ addonTable.CustomiseDialog.WidgetsConfig = {
             end,
           },
           {
-            label = addonTable.Locales.SIGNIFICANT_FIGURES,
+            label = addonTable.Locales.ENABLE_DECIMAL_PLACES,
+            kind = "checkbox",
+            setter = function(details, value)
+              details.useDecimalPlaces = value
+            end,
+            getter = function(details)
+              return details.useDecimalPlaces
+            end,
+          },
+          {
+            label = function(details)
+              if details and details.useDecimalPlaces then
+                return addonTable.Locales.DECIMAL_PLACES
+              end
+              return addonTable.Locales.SIGNIFICANT_FIGURES
+            end,
             kind = "slider",
             min = 0, max = 4,
-            formatter = function(value)
+            formatter = function(value, details)
+              if details and details.useDecimalPlaces then
+                return tostring(value)
+              end
               if value == 0 then
                 return addonTable.Locales.ROUNDED
-              else
-                return tostring(value + 1)
               end
+              return tostring(value + 1)
             end,
             setter = function(details, value)
-              if value == 0 then
-                details.significantFigures = value
+              if details.useDecimalPlaces then
+                details.decimalPlaces = value
+              elseif value == 0 then
+                details.significantFigures = 0
               else
                 details.significantFigures = value + 1
               end
             end,
             getter = function(details)
-              if details.significantFigures == 0 then
-                return details.significantFigures
-              else
-                return details.significantFigures - 1
+              if details.useDecimalPlaces then
+                return details.decimalPlaces or 0
               end
+              if details.significantFigures == 0 or details.significantFigures == nil then
+                return 0
+              end
+              return details.significantFigures - 1
             end,
           },
         }

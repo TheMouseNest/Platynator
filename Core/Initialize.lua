@@ -377,8 +377,16 @@ function addonTable.Core.UpgradeDesign(design)
       text.applyDifficultyColors = nil
       text.colors = nil
     end
-    if text.kind == "health" and text.significantFigures == nil then
-      text.significantFigures = 0
+    if text.kind == "health" then
+      if text.useDecimalPlaces == nil then
+        text.useDecimalPlaces = false
+      end
+      if text.decimalPlaces == nil then
+        text.decimalPlaces = 0
+      end
+      if text.significantFigures == nil then
+        text.significantFigures = 0
+      end
     end
     if text.kind == "guild" and text.npcRole == nil then
       text.playerGuild = true

@@ -803,11 +803,8 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
           local types = w.details.displayTypes
           local values = {
             absolute = AbbreviateNumbers(71255),
-            percentage = "71%"
+            percentage = addonTable.Display.FormatHealthPercentage(71.255, w.details)
           }
-          if w.details.significantFigures > 0 then
-            values.percentage = (w.abbreviateCallback and w.abbreviateCallback(71.255) or w.abbreviateData and AbbreviateNumbers(71.255, w.abbreviateData)) .. "%"
-          end
           if #types == 2 then
             display = string.format("%s (%s)", values[types[1]], values[types[2]])
           elseif #types == 1 then
@@ -1021,7 +1018,10 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
           if e.valuePattern then
             frame = addonTable.CustomiseDialog.Components.GetSlider(parent, e.label, e.min, e.max, function(val) return e.valuePattern:format(val) end, Setter)
           else
-            frame = addonTable.CustomiseDialog.Components.GetSlider(parent, e.label, e.min, e.max, e.formatter, Setter)
+            local label = type(e.label) == "function" and e.label(parent.details or {}) or e.label
+            frame = addonTable.CustomiseDialog.Components.GetSlider(parent, label, e.min, e.max, function(val)
+              return e.formatter(val, parent.details)
+            end, Setter)
           end
         elseif e.kind == "dropdown" then
           frame = addonTable.CustomiseDialog.Components.GetBasicDropdown(parent, e.label, function(value)
@@ -1045,6 +1045,7 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
         if frame then
           frame.kind = e.kind
           frame.getInitData = e.getInitData
+          frame.getLabel = e.label
           frame.Getter = Getter
           if #allFrames == 0 then
             frame:SetPoint("TOP", 0, yOffset)
@@ -1067,6 +1068,13 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
         for _, f in ipairs(allFrames) do
           if f.getInitData then
             f:Init(f.getInitData(details))
+          end
+          if f.Label and f.getLabel then
+            local label = f.getLabel
+            if type(label) == "function" then
+              label = label(details)
+            end
+            f.Label:SetText(label)
           end
           f:SetValue(f.Getter())
         end

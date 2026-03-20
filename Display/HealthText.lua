@@ -4,35 +4,80 @@ local addonTable = select(2, ...)
 addonTable.Display.HealthTextMixin = {}
 
 local significantFiguresCaches = {}
+local significantFiguresCallbacks = {}
 
-function addonTable.Display.HealthTextMixin:PostInit()
-  if self.details.significantFigures > 0 then
-    if addonTable.Constants.IsRetail then
-      if not significantFiguresCaches[self.details.significantFigures] then
-        local breakpoints = {
-          {breakpoint = 100, fractionDivisor = 10^(self.details.significantFigures - 3), significandDivisor = 1/10^(self.details.significantFigures - 3), abbreviation = "", abbreviationIsGlobal = false},
-          {breakpoint = 10, fractionDivisor = 10^(self.details.significantFigures - 2), significandDivisor = 1/10^(self.details.significantFigures - 2), abbreviation = "", abbreviationIsGlobal = false},
-          {breakpoint = 1/1000000000000000, fractionDivisor = 10^(self.details.significantFigures - 1), significandDivisor = 1/10^(self.details.significantFigures - 1), abbreviation = "", abbreviationIsGlobal = false},
-        }
-        significantFiguresCaches[self.details.significantFigures] = {config = CreateAbbreviateConfig(breakpoints)}
-      end
-      self.abbreviateData = significantFiguresCaches[self.details.significantFigures]
-    else
-      local step1 = 10^(self.details.significantFigures - 3)
-      local step2 = 10^(self.details.significantFigures - 2)
-      local step3 = 10^(self.details.significantFigures - 1)
+local function GetDecimalPlaces(details)
+  local decimalPlaces = math.floor(tonumber(details.decimalPlaces) or 0)
+  return math.min(4, math.max(0, decimalPlaces))
+end
 
-      self.abbreviateCallback = function(number)
-        if number >= 100 then
-          return math.floor(number * step1) / step1
-        elseif number >= 10 then
-          return math.floor(number * step2) / step2
-        else
-          return math.floor(number * step3) / step3
-        end
+local function GetSignificantFigures(details)
+  local significantFigures = math.floor(tonumber(details.significantFigures) or 0)
+  if significantFigures < 2 then
+    return 0
+  end
+  return math.min(5, significantFigures)
+end
+
+local function GetSignificantFiguresFormatter(significantFigures)
+  if addonTable.Constants.IsRetail then
+    if not significantFiguresCaches[significantFigures] then
+      local breakpoints = {
+        {breakpoint = 100, fractionDivisor = 10^(significantFigures - 3), significandDivisor = 1/10^(significantFigures - 3), abbreviation = "", abbreviationIsGlobal = false},
+        {breakpoint = 10, fractionDivisor = 10^(significantFigures - 2), significandDivisor = 1/10^(significantFigures - 2), abbreviation = "", abbreviationIsGlobal = false},
+        {breakpoint = 1/1000000000000000, fractionDivisor = 10^(significantFigures - 1), significandDivisor = 1/10^(significantFigures - 1), abbreviation = "", abbreviationIsGlobal = false},
+      }
+      significantFiguresCaches[significantFigures] = {config = CreateAbbreviateConfig(breakpoints)}
+    end
+    return significantFiguresCaches[significantFigures]
+  end
+
+  if not significantFiguresCallbacks[significantFigures] then
+    local step1 = 10^(significantFigures - 3)
+    local step2 = 10^(significantFigures - 2)
+    local step3 = 10^(significantFigures - 1)
+    significantFiguresCallbacks[significantFigures] = function(number)
+      if number >= 100 then
+        return math.floor(number * step1) / step1
+      elseif number >= 10 then
+        return math.floor(number * step2) / step2
       end
+      return math.floor(number * step3) / step3
     end
   end
+
+  return significantFiguresCallbacks[significantFigures]
+end
+
+local function GetRoundedPercentage(value)
+  if C_StringUtil and C_StringUtil.RoundToNearestString then
+    return C_StringUtil.RoundToNearestString(value)
+  end
+  return tostring(Round(value))
+end
+
+function addonTable.Display.FormatHealthPercentage(value, details)
+  if details.useDecimalPlaces then
+    return string.format("%." .. GetDecimalPlaces(details) .. "f%%", value)
+  end
+
+  local significantFigures = GetSignificantFigures(details)
+  if significantFigures > 0 then
+    local formatter = GetSignificantFiguresFormatter(significantFigures)
+    if addonTable.Constants.IsRetail then
+      return AbbreviateNumbers(value, formatter) .. "%"
+    end
+    return tostring(formatter(value)) .. "%"
+  end
+
+  return GetRoundedPercentage(value) .. "%"
+end
+
+function addonTable.Display.HealthTextMixin:PostInit()
+end
+
+function addonTable.Display.HealthTextMixin:GetFormattedPercentage(value)
+  return addonTable.Display.FormatHealthPercentage(value, self.details)
 end
 
 function addonTable.Display.HealthTextMixin:SetUnit(unit)
@@ -47,8 +92,7 @@ end
 
 function addonTable.Display.HealthTextMixin:Strip()
   self:UnregisterAllEvents()
-  self.abbreviateData = nil
-  self.abbreviateCallback = nil
+  self.GetFormattedPercentage = nil
   self.PostInit = nil
 end
 
@@ -69,18 +113,10 @@ function addonTable.Display.HealthTextMixin:UpdateText()
     local types = self.details.displayTypes
     if UnitHealthPercent then -- Midnight APIs
       local value = UnitHealthPercent(self.unit, true, CurveConstants.ScaleTo100)
-      if self.abbreviateData then
-        values.percentage = AbbreviateNumbers(value, self.abbreviateData) .. "%"
-      else
-        values.percentage = C_StringUtil.RoundToNearestString(value) .. "%"
-      end
+      values.percentage = self:GetFormattedPercentage(value)
     else
       local value = UnitHealth(self.unit, true)/UnitHealthMax(self.unit)*100
-      if self.abbreviateCallback then
-        values.percentage = self.abbreviateCallback(value) .. "%"
-      else
-        values.percentage = Round(value) .. "%"
-      end
+      values.percentage = self:GetFormattedPercentage(value)
     end
     if #types == 2 then
       self.text:SetFormattedText("%s (%s)", values[types[1]], values[types[2]])
