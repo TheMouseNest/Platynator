@@ -208,8 +208,10 @@ else
         self.timer = nil
       end
 
-      self.statusBar:SetMinMaxValues(0, (endTime - startTime) / 1000)
-      self.statusBar:SetValue(GetTime() - startTime / 1000)
+      local castEnd = (endTime - startTime) / 1000
+      self.statusBar:SetMinMaxValues(0, castEnd)
+      local castValue = GetTime() - startTime / 1000
+      self.statusBar:SetValue(castValue)
 
       local spellID
       if self.showInterruptMarker and not notInterruptible then
@@ -218,14 +220,14 @@ else
       self.interruptMarker:SetShown(spellID ~= nil)
       self.interruptPositioner:SetShown(spellID ~= nil)
       if spellID then
-        self.interruptPositioner:SetMinMaxValues(self.statusBar:GetMinMaxValues())
-        self.interruptMarker:SetMinMaxValues(self.statusBar:GetMinMaxValues())
+        self.interruptPositioner:SetMinMaxValues(0, castEnd)
+        self.interruptMarker:SetMinMaxValues(0, castEnd)
         local info = C_Spell.GetSpellCooldown(spellID)
         local interruptEndTime = info.duration + info.startTime
         if interruptEndTime > 0 then
           self:RefreshInterruptMarker()
           self.interruptMarker:Show()
-          self.interruptPositioner:SetValue(self.statusBar:GetValue())
+          self.interruptPositioner:SetValue(castValue)
           self.interruptMarker:SetValue(interruptEndTime - GetTime())
           self.timer = C_Timer.NewTicker(0.1, function()
             self:RefreshInterruptMarker()
