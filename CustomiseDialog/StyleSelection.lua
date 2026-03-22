@@ -29,11 +29,9 @@ local contextCriteria = {
 
   {title = addonTable.Locales.LOCATION},
   {key = "loc-world", label = addonTable.Locales.WORLD},
-  {key = "loc-relevant-instance", label = addonTable.Locales.RELEVANT_INSTANCE},
   {key = "loc-dungeon", label = addonTable.Locales.DUNGEON},
   {key = "loc-raid", label = addonTable.Locales.RAID},
-  {key = "loc-arena", label = addonTable.Locales.ARENA},
-  {key = "loc-battleground", label = addonTable.Locales.BATTLEGROUND},
+  {key = "loc-pvp", label = addonTable.Locales.PVP},
   {key = "loc-delve", label = addonTable.Locales.DELVE},
 
   {title = addonTable.Locales.ELITE_TYPE},
