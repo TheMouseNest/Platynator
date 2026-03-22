@@ -22,17 +22,21 @@ function addonTable.Display.EliteMarkerMixin:SetUnit(unit)
       self.marker:Hide()
       return
     end
+    self:RegisterEvent("UNIT_CLASSIFICATION_CHANGED")
+    self:UpdateState()
+  end
+end
 
-    local classification = UnitClassification(self.unit)
-    if classification == "elite" or classification == "worldboss" then
-      self.marker:Show()
-      self.marker:SetTexture(self.eliteTexture)
-    elseif classification == "rareelite" then
-      self.marker:Show()
-      self.marker:SetTexture(self.rareEliteTexture)
-    else
-      self.marker:Hide()
-    end
+function addonTable.Display.EliteMarkerMixin:UpdateState()
+  local classification = UnitClassification(self.unit)
+  if classification == "elite" or classification == "worldboss" then
+    self.marker:Show()
+    self.marker:SetTexture(self.eliteTexture)
+  elseif classification == "rareelite" then
+    self.marker:Show()
+    self.marker:SetTexture(self.rareEliteTexture)
+  else
+    self.marker:Hide()
   end
 end
 
@@ -40,4 +44,5 @@ function addonTable.Display.EliteMarkerMixin:Strip()
   self.eliteTexture = nil
   self.rareEliteTexture = nil
   self.PostInit = nil
+  self:UnregisterAllEvents()
 end

@@ -206,6 +206,15 @@ local kindToEvent = {
     "UNIT_SPELLCAST_CHANNEL_START",
     "UNIT_SPELLCAST_CHANNEL_STOP",
   },
+  eliteType = {
+    "UNIT_CLASSIFICATION_CHANGED",
+  },
+  rarity = {
+    "UNIT_CLASSIFICATION_CHANGED",
+  },
+  delveType = {
+    "UNIT_CLASSIFICATION_CHANGED",
+  },
 }
 local kindToCallback = {
   quest = {"QuestInfoUpdate"},
