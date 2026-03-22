@@ -841,4 +841,5 @@ addonTable.CustomiseDialog.ColorsConfigOrder = {
   "importantCast",
   "uninterruptableCast",
   "cast",
+  "fixed",
 }
