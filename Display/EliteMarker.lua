@@ -24,7 +24,13 @@ function addonTable.Display.EliteMarkerMixin:SetUnit(unit)
     end
     self:RegisterEvent("UNIT_CLASSIFICATION_CHANGED")
     self:UpdateState()
+  else
+    self:Strip()
   end
+end
+
+function addonTable.Display.EliteMarkerMixin:OnEvent()
+  self:UpdateState()
 end
 
 function addonTable.Display.EliteMarkerMixin:UpdateState()
