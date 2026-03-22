@@ -486,9 +486,9 @@ end
 function addonTable.Display.ManagerMixin:ListenToBuffs(display, unit)
   if addonTable.Constants.IsRetail and self.ModifiedUFs[unit] then
     local UF = self.ModifiedUFs[unit]
-    if display.DebuffDisplay.details and display.DebuffDisplay.details.filters.important or display.BuffDisplay.details and display.BuffDisplay.details.filters.important then
-      UF:RegisterUnitEvent("UNIT_AURA", unit)
+    UF:RegisterUnitEvent("UNIT_AURA", unit)
 
+    if display.DebuffDisplay.details and display.DebuffDisplay.details.filters.important or display.BuffDisplay.details and display.BuffDisplay.details.filters.important then
       display.AurasManager:SetGetImportantAuras(function()
         local important = {}
 
@@ -501,8 +501,6 @@ function addonTable.Display.ManagerMixin:ListenToBuffs(display, unit)
 
         return important
       end)
-    else
-      UF:UnregisterEvent("UNIT_AURA")
     end
   end
 end
@@ -516,7 +514,7 @@ function addonTable.Display.ManagerMixin:UpdateStackingRegion(unit)
   stackRegion:SetSize(newWidth, newHeight)
 end
 
-function addonTable.Display.ManagerMixin:Install(unit, nameplate)
+function addonTable.Display.ManagerMixin:Install(unit)
   if unit == "preview" then
     return
   end
