@@ -315,7 +315,7 @@ function addonTable.Display.GetColor(settings, state, unit)
         break
       end
     elseif s.kind == "mouseover" then
-      if UnitIsUnit("mouseover", unit) then
+      if UnitIsUnit("mouseover", unit) and (s.includeTarget or not UnitIsUnit("target", unit)) then
         table.insert(colorQueue, {color = s.colors.mouseover})
         break
       end

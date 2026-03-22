@@ -804,6 +804,17 @@ addonTable.CustomiseDialog.ColorsConfig = {
           return details.colors.mouseover
         end,
       },
+      { kind = "spacer" },
+      {
+        label = addonTable.Locales.INCLUDE_TARGET,
+        kind = "checkbox",
+        setter = function(details, value)
+          details.includeTarget = value
+        end,
+        getter = function(details)
+          return details.includeTarget
+        end,
+      },
     }
   },
 }

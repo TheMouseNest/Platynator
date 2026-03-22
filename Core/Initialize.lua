@@ -177,6 +177,8 @@ function addonTable.Core.UpgradeDesign(design)
         index = index - 1
       elseif ac.kind == "interruptReady" and ac.notReady then
         ac.notReady = nil
+      elseif ac.kind == "mouseover" and ac.includeTarget == nil then
+        ac.includeTarget = true
       end
 
       index = index + 1
