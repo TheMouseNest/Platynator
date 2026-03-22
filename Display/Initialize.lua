@@ -615,6 +615,7 @@ function addonTable.Display.ManagerMixin:UpdateForMouseover()
   for _, display in pairs(self.nameplateDisplays) do
     display:UpdateForMouseover()
   end
+  addonTable.CallbackRegistry:TriggerEvent("MouseoverUpdate")
 
   if UnitExists("mouseover") and not self.MouseoverMonitor then
     self.MouseoverMonitor = C_Timer.NewTicker(0.1, function()
