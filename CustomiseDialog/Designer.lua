@@ -801,15 +801,16 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
         local display
         if w.details.kind == "health" then
           local types = w.details.displayTypes
+          local percentTail = w.details.showPercentSymbol and "%" or ""
           local values = {
             absolute = AbbreviateNumbers(71255),
-            percentage = "71%"
+            percentage = "71" .. percentTail
           }
           if w.details.significantFigures > 0 then
-            values.percentage = (w.abbreviateCallback and w.abbreviateCallback(71.255) or w.abbreviateData and AbbreviateNumbers(71.255, w.abbreviateData)) .. "%"
+            values.percentage = (w.abbreviateCallback and w.abbreviateCallback(71.255) or w.abbreviateData and AbbreviateNumbers(71.255, w.abbreviateData)) .. percentTail
           end
           if #types == 2 then
-            display = string.format("%s (%s)", values[types[1]], values[types[2]])
+            display = string.format(w.details.formatMultiple, values[types[1]], values[types[2]])
           elseif #types == 1 then
             display = string.format("%s", values[types[1]])
           else

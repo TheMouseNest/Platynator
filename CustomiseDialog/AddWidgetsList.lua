@@ -335,6 +335,8 @@ addonTable.CustomiseDialog.DesignWidgets = {
       shorten = "NONE",
       truncate = false,
       significantFigures = 0,
+      showPercentSymbol = true,
+      formatMultiple = "%s (%s)"
     },
   },
   {

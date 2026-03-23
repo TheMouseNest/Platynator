@@ -382,6 +382,10 @@ function addonTable.Core.UpgradeDesign(design)
     if text.kind == "health" and text.significantFigures == nil then
       text.significantFigures = 0
     end
+    if text.kind == "health" and text.showPercentSymbol == nil then
+      text.showPercentSymbol = true
+      text.formatMultiple = "%s (%s)"
+    end
     if text.kind == "guild" and text.npcRole == nil then
       text.playerGuild = true
       text.npcRole = true

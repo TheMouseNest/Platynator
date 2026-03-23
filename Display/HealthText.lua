@@ -33,6 +33,13 @@ function addonTable.Display.HealthTextMixin:PostInit()
       end
     end
   end
+
+  if self.details.showPercentSymbol then
+    self.percentTail = "%"
+  else
+    self.percentTail = ""
+  end
+  self.formatMultiple = self.details.formatMultiple
 end
 
 function addonTable.Display.HealthTextMixin:SetUnit(unit)
@@ -49,6 +56,8 @@ function addonTable.Display.HealthTextMixin:Strip()
   self:UnregisterAllEvents()
   self.abbreviateData = nil
   self.abbreviateCallback = nil
+  self.percentTail = nil
+  self.formatMultiple = nil
   self.PostInit = nil
 end
 
@@ -70,20 +79,20 @@ function addonTable.Display.HealthTextMixin:UpdateText()
     if UnitHealthPercent then -- Midnight APIs
       local value = UnitHealthPercent(self.unit, true, CurveConstants.ScaleTo100)
       if self.abbreviateData then
-        values.percentage = AbbreviateNumbers(value, self.abbreviateData) .. "%"
+        values.percentage = AbbreviateNumbers(value, self.abbreviateData) .. self.percentTail
       else
-        values.percentage = C_StringUtil.RoundToNearestString(value) .. "%"
+        values.percentage = C_StringUtil.RoundToNearestString(value) .. self.percentTail
       end
     else
       local value = UnitHealth(self.unit, true)/UnitHealthMax(self.unit)*100
       if self.abbreviateCallback then
-        values.percentage = self.abbreviateCallback(value) .. "%"
+        values.percentage = self.abbreviateCallback(value) .. self.percentTail
       else
-        values.percentage = Round(value) .. "%"
+        values.percentage = Round(value) .. self.percentTail
       end
     end
     if #types == 2 then
-      self.text:SetFormattedText("%s (%s)", values[types[1]], values[types[2]])
+      self.text:SetFormattedText(self.formatMultiple, values[types[1]], values[types[2]])
     elseif #types == 1 then
       self.text:SetFormattedText("%s", values[types[1]])
     end

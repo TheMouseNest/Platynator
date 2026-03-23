@@ -628,6 +628,40 @@ addonTable.CustomiseDialog.WidgetsConfig = {
               end
             end,
           },
+          {
+            label = addonTable.Locales.SHOW_PERCENT_SYMBOL,
+            kind = "checkbox",
+            setter = function(details, value)
+              details.showPercentSymbol = value
+            end,
+            getter = function(details)
+              return details.showPercentSymbol
+            end,
+          },
+          { kind = "spacer" },
+          {
+            label = addonTable.Locales.MULTIPLE_VALUES_DISPLAY,
+            kind = "dropdown",
+            getInitData = function(_)
+              return {
+                "11 (22)",
+                "11 | 22",
+                "11 - 22",
+                "11 22",
+              }, {
+                  "%s (%s)",
+                  "%s | %s",
+                  "%s - %s",
+                  "%s %s",
+                }
+            end,
+            setter = function(details, value)
+              details.formatMultiple = value
+            end,
+            getter = function(details)
+              return details.formatMultiple
+            end
+          },
         }
       }
     },
