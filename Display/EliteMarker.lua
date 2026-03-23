@@ -25,7 +25,7 @@ function addonTable.Display.EliteMarkerMixin:SetUnit(unit)
     self:RegisterEvent("UNIT_CLASSIFICATION_CHANGED")
     self:UpdateState()
   else
-    self:Strip()
+    self:StripInternal()
   end
 end
 
@@ -46,9 +46,13 @@ function addonTable.Display.EliteMarkerMixin:UpdateState()
   end
 end
 
+function addonTable.Display.EliteMarkerMixin:StripInternal()
+  self:UnregisterAllEvents()
+end
+
 function addonTable.Display.EliteMarkerMixin:Strip()
+  self:StripInternal()
   self.eliteTexture = nil
   self.rareEliteTexture = nil
   self.PostInit = nil
-  self:UnregisterAllEvents()
 end
