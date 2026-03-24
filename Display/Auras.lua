@@ -161,6 +161,9 @@ function addonTable.Display.AurasManagerMixin:PostInit(buffs, debuffs, crowdCont
   self.crowdControlDetails = crowdControl
 
   if crowdControl then
+    if crowdControl.filters.fromYou then
+      self.crowdControlFilter = self.crowdControlFilter .. "|PLAYER"
+    end
     if addonTable.Constants.IsRetail then
       self.crowdControlFilter = self.crowdControlFilter .. "|CROWD_CONTROL"
       if crowdControl.sorting.kind == "blizzard" then
