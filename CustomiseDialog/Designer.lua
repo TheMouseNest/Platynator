@@ -922,6 +922,8 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
       container.auras[1].Cooldown:SetCooldown(GetTime() - 2, 5)
       container.auras[1].Cooldown:Pause()
       container.auras[1].Cooldown:SetHideCountdownNumbers(not details.showCountdown)
+      container.auras[1].Cooldown:SetSwipeColor(1,1,1,details.countdownSwipeOpacity)
+      container.auras[1].Cooldown:SetDrawEdge(not details.hideCountdownEdge)
       container.auras[1].CountFrame.Count:SetText(2);
       container.auras[1].CountFrame.Count:SetFontObject(addonTable.CurrentFont)
       container.auras[1].CountFrame.Count:SetTextScale(11/12 * details.textScale)
