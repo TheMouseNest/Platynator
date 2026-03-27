@@ -12,6 +12,18 @@ end
 
 local pixelStep = 0.5
 
+local function GetSelectorMarker(frame, isHover)
+  local texture = frame:CreateTexture()
+  texture:SetTexture("Interface/AddOns/Platynator/Assets/selection-outline.png")
+  texture:SetVertexColor(78/255, 165/255, 252/255, isHover and 0.45 or 0.8)
+  texture:SetTextureSliceMargins(45, 45, 45, 45)
+  texture:SetTextureSliceMode(Enum.UITextureSliceMode.Tiled)
+  texture:SetScale(0.25)
+  texture:SetAllPoints()
+
+  return frame
+end
+
 local function RoundPixel(pixel)
   return Round(pixel / pixelStep) * pixelStep
 end
@@ -279,6 +291,39 @@ local function GetAutomaticColors(rootParent, lockedElements, addAlpha)
   return container
 end
 
+local function GetAurasTextPositioning(rootParent, iconID)
+  local container = CreateFrame("Frame", nil, rootParent)
+  local preview = CreateFrame("Frame", nil, rootParent)
+
+  preview:SetPoint("TOP")
+
+  preview:SetAllPoints()
+  preview:SetFlattensRenderLayers(true)
+  preview:SetScale(2)
+
+  preview:SetSize(40, 40)
+
+  local icon = preview:CreateTexture(nil, "ARTWORK")
+  icon:SetTexture(iconID)
+  icon:SetPoint("CENTER")
+  local asset = LSM:Fetch("nineslice", "Platy: 1px")
+  assert(asset)
+  preview.Border = preview:CreateTexture(nil, "OVERLAY")
+  preview.Border:SetAllPoints()
+  preview.Border:SetScale(asset.scaleModifier)
+  preview.Border:SetTexture(asset.file)
+  preview.Border:SetTextureSliceMargins(asset.margins.left, asset.margins.top, asset.margins.right, asset.margins.bottom)
+  preview.Border:SetVertexColor(0, 0, 0)
+  preview.Border:SetAllPoints(icon)
+
+  local selectedMarker = GetSelectorMarker(CreateFrame("Frame", nil, container), false)
+  local hoverMarker = GetSelectorMarker(CreateFrame("Frame", nil, container), true)
+
+  local expectedTexts = {"countdown", "stacks"}
+
+  return container
+end
+
 function addonTable.CustomiseDialog.GetMainDesigner(parent)
   local container = CreateFrame("Frame", nil, parent)
 
@@ -337,14 +382,7 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
   preview:SetFlattensRenderLayers(true)
   preview:SetScale(2)
 
-  local contextHoverMarker = CreateFrame("Frame", nil, container)
-  local contextHoverTexture = contextHoverMarker:CreateTexture()
-  contextHoverTexture:SetTexture("Interface/AddOns/Platynator/Assets/selection-outline.png")
-  contextHoverTexture:SetVertexColor(78/255, 165/255, 252/255, 0.8)
-  contextHoverTexture:SetTextureSliceMargins(45, 45, 45, 45)
-  contextHoverTexture:SetTextureSliceMode(Enum.UITextureSliceMode.Tiled)
-  contextHoverTexture:SetScale(0.25)
-  contextHoverTexture:SetAllPoints()
+  local contextHoverMarker = GetSelectorMarker(CreateFrame("Frame", nil, container), false)
 
   local function ToggleSelection(rawFoci)
     local foci = tFilter(rawFoci, function(w) return w:GetParent() == preview end, true)
@@ -576,26 +614,11 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
     Announce()
   end
 
-  local selectorPool = CreateFramePool("Frame", container, nil, nil, false, function(selector)
-    local selectionTexture = selector:CreateTexture()
-    selectionTexture:SetTexture("Interface/AddOns/Platynator/Assets/selection-outline.png")
-    selectionTexture:SetTextureSliceMargins(45, 45, 45, 45)
-    selectionTexture:SetTextureSliceMode(Enum.UITextureSliceMode.Tiled)
-    selectionTexture:SetVertexColor(78/255, 165/255, 252/255, 0.9)
-    selectionTexture:SetScale(0.25)
-    selectionTexture:SetAllPoints()
-  end)
+  local selectorPool = CreateFramePool("Frame", container, nil, nil, false, GetSelectorMarker)
   local keyboardTrap = CreateFrame("Frame", nil, container)
   keyboardTrap:Hide()
 
-  local hoverMarker = CreateFrame("Frame", nil, container)
-  local hoverTexture = hoverMarker:CreateTexture()
-  hoverTexture:SetTexture("Interface/AddOns/Platynator/Assets/selection-outline.png")
-  hoverTexture:SetVertexColor(78/255, 165/255, 252/255, 0.45)
-  hoverTexture:SetTextureSliceMargins(45, 45, 45, 45)
-  hoverTexture:SetTextureSliceMode(Enum.UITextureSliceMode.Tiled)
-  hoverTexture:SetScale(0.25)
-  hoverTexture:SetAllPoints()
+  local hoverMarker = GetSelectorMarker(CreateFrame("Frame", nil, container), true)
 
   local titleText = container:CreateFontString(nil, nil, "GameFontHighlightLarge")
   titleText:SetPoint("TOP", previewInset, "BOTTOM", 0, -15)
@@ -1041,6 +1064,8 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
           frame = addonTable.CustomiseDialog.Components.GetColorPicker(parent, e.label, 28, Setter)
         elseif e.kind == "autoColors" then
           frame = GetAutomaticColors(parent, e.lockedElements, e.addAlpha)
+        elseif e.kind == "auraTextsPositioner" then
+          frame = GetAurasTextPositioning(parent, e.icon)
         end
 
         if frame then

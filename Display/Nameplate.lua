@@ -207,21 +207,29 @@ function addonTable.Display.NameplateMixin:OnLoad()
 
         auraFrame.Icon:SetTexture(aura.icon);
         auraFrame.CountFrame.Count:SetText(aura.applicationsString)
-        auraFrame.CountFrame.Count:SetFontObject(addonTable.CurrentFont)
-        auraFrame.CountFrame.Count:SetTextScale(11/12 * details.textScale)
-        auraFrame.CountFrame.Count:Show();
 
-        auraFrame.Cooldown:SetHideCountdownNumbers(not details.showCountdown)
+        if auraFrame.styleIndex ~= self.styleIndex then
+          auraFrame.styleIndex = self.styleIndex
+          auraFrame.CountFrame.Count:SetFontObject(addonTable.CurrentFont)
+          auraFrame.CountFrame.Count:ClearAllPoints()
+          addonTable.Display.ApplyAnchor(auraFrame.CountFrame.Count, details.texts.stacks.anchor)
+          auraFrame.CountFrame.Count:SetTextScale(details.texts.stacks.scale)
+          auraFrame.CountFrame.Count:SetShown(details.texts.stacks.visible);
 
-        if details.showCountdown then
-          auraFrame.Cooldown.Text:SetFontObject(addonTable.CurrentFont)
-          auraFrame.Cooldown.Text:SetTextScale(14/12 * details.textScale)
+          auraFrame.Cooldown:SetHideCountdownNumbers(not details.texts.countdown.visible)
+
+          if details.texts.countdown.visible then
+            auraFrame.Cooldown.Text:SetFontObject(addonTable.CurrentFont)
+            auraFrame.Cooldown.Text:ClearAllPoints()
+            addonTable.Display.ApplyAnchor(auraFrame.Cooldown.Text, details.texts.countdown.anchor)
+            auraFrame.Cooldown.Text:SetTextScale(details.texts.countdown.scale)
+          end
+
+          PixelUtil.SetSize(auraFrame, 20, 20 * details.height)
+          PixelUtil.SetSize(auraFrame.Border, 20, 20 * details.height)
+          PixelUtil.SetSize(auraFrame.Icon, 20, 20 * details.height)
+          auraFrame.Icon:SetTexCoord(0.05, 0.95, 0.05 + texBase, 0.95 - texBase)
         end
-
-        PixelUtil.SetSize(auraFrame, 20, 20 * details.height)
-        PixelUtil.SetSize(auraFrame.Border, 20, 20 * details.height)
-        PixelUtil.SetSize(auraFrame.Icon, 20, 20 * details.height)
-        auraFrame.Icon:SetTexCoord(0.05, 0.95, 0.05 + texBase, 0.95 - texBase)
 
         if aura.durationSecret then
           auraFrame.Cooldown:SetCooldownFromDurationObject(aura.durationSecret)
