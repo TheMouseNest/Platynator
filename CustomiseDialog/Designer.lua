@@ -321,6 +321,32 @@ local function GetAurasTextPositioning(rootParent, iconID)
 
   local expectedTexts = {"countdown", "stacks"}
 
+  preview.widgets = {}
+
+  for _, key in ipairs(expectedTexts) do
+    local w = CreateFrame("Frame", nil, preview)
+    w:SetSize(20, 20)
+    preview.widgets[key] = w
+    w.text = w:CreateFontString(nil, nil, "GameFontNormal")
+    w:SetScript("OnEnter", function()
+      if w == GetMouseFoci()[1] then
+        hoverMarker:Show()
+        hoverMarker:SetFrameStrata("HIGH")
+        hoverMarker:ClearAllPoints()
+        hoverMarker:SetPoint("TOPLEFT", w, "TOPLEFT", -2, 2)
+        hoverMarker:SetPoint("BOTTOMRIGHT", w, "BOTTOMRIGHT", 2, -2)
+      end
+    end)
+    w:SetScript("OnLeave", function()
+      local foci = GetMouseFoci()
+      if foci[1] and foci[1]:GetParent() == preview then
+        foci[1]:GetScript("OnEnter")()
+      else
+        hoverMarker:Hide()
+      end
+    end)
+  end
+
   return container
 end
 
