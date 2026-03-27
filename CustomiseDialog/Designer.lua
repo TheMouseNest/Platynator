@@ -299,7 +299,7 @@ local function GetAurasTextPositioning(rootParent, iconID)
 
   preview:SetAllPoints()
   preview:SetFlattensRenderLayers(true)
-  preview:SetScale(2)
+  preview:SetScale(3)
 
   preview:SetSize(40, 40)
 
@@ -325,7 +325,7 @@ local function GetAurasTextPositioning(rootParent, iconID)
 
   for _, key in ipairs(expectedTexts) do
     local w = CreateFrame("Frame", nil, preview)
-    w:SetSize(20, 20)
+    w:SetSize(1, 1)
     preview.widgets[key] = w
     w.text = w:CreateFontString(nil, nil, "GameFontNormal")
     w:SetScript("OnEnter", function()
