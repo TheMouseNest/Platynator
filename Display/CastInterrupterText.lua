@@ -106,7 +106,12 @@ function addonTable.Display.CastInterrupterTextMixin:UpdateText()
 end
 
 function addonTable.Display.CastInterrupterTextMixin:OnEvent(eventName, ...)
-  local _, _, _, guid = ...
+  local _, guid
+  if eventName == "UNIT_SPELLCAST_CHANNEL_STOP" then
+    _, _, _, _, guid = ...
+  else
+    _, _, _, guid = ...
+  end
   if (eventName == "UNIT_SPELLCAST_INTERRUPTED" or eventName == "UNIT_SPELLCAST_CHANNEL_STOP" or eventName == "UNIT_SPELLCAST_EMPOWER_STOP") and guid then
     self:UpdateFromGUID(guid)
   else

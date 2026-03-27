@@ -71,7 +71,7 @@ function addonTable.Display.CastBarMixin:Strip()
 end
 
 function addonTable.Display.CastBarMixin:OnEvent(eventName, ...)
-  if eventName == "UNIT_SPELLCAST_INTERRUPTED" or eventName == "UNIT_SPELLCAST_CHANNEL_STOP" and select(4, ...) ~= nil then
+  if eventName == "UNIT_SPELLCAST_INTERRUPTED" or eventName == "UNIT_SPELLCAST_CHANNEL_STOP" and select(4, ...) ~= nil or eventName == "UNIT_SPELLCAST_EMPOWER_STOP" and select(5, ...) ~= nil then
     self.interrupted = true
     self:Show()
     self.statusBar:SetMinMaxValues(0, 1)
@@ -88,10 +88,12 @@ function addonTable.Display.CastBarMixin:OnEvent(eventName, ...)
     end)
     self:SetScript("OnUpdate", nil)
     self.interruptMarker:Hide()
-  elseif eventName == "UNIT_SPELLCAST_DELAYED" or eventName == "UNIT_SPELLCAST_CHANNEL_UPDATE" then
+  elseif eventName == "UNIT_SPELLCAST_DELAYED" or eventName == "UNIT_SPELLCAST_CHANNEL_UPDATE" or eventName == "UNIT_SPELLCAST_EMPOWER_UPDATE" then
     if self:IsShown() then
       self:ApplyCasting()
     end
+  elseif eventName == "UNIT_SPELLCAST_CHANNEL_STOP" or eventName == "UNIT_SPELLCAST_EMPOWER_STOP" or eventName == "UNIT_SPELLCAST_STOP" then
+    self:ClearCast()
   elseif eventName == "SPELL_UPDATE_USABLE" and self.showInterruptMarker then
     self:RefreshInterruptMarker()
   elseif eventName:match("^UNIT_SPELL") then

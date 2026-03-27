@@ -35,7 +35,7 @@ function addonTable.Display.CannotInterruptMarkerMixin:Strip()
 end
 
 function addonTable.Display.CannotInterruptMarkerMixin:OnEvent(eventName, ...)
-  if eventName == "UNIT_SPELLCAST_INTERRUPTED" or eventName == "UNIT_SPELLCAST_CHANNEL_STOP" then
+  if eventName == "UNIT_SPELLCAST_CHANNEL_STOP" or eventName == "UNIT_SPELLCAST_EMPOWER_STOP" or eventName == "UNIT_SPELLCAST_STOP" then
     self.marker:Hide()
   else
     self:ApplyCasting()

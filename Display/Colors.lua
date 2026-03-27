@@ -121,7 +121,7 @@ local stateToCalculator = {
   cast = function(state, unit, event)
     state.cast = true
     -- Special case, the cast info _might_ still exist even though the cast is over
-    if event == "UNIT_SPELLCAST_INTERRUPTED" or event == "UNIT_SPELLCAST_CHANNEL_STOP" then
+    if event == "UNIT_SPELLCAST_INTERRUPTED" or event == "UNIT_SPELLCAST_CHANNEL_STOP" or event == "UNIT_SPELLCAST_EMPOWER_STOP" then
       state.castInfo = {}
       state.channelInfo = {}
     else
