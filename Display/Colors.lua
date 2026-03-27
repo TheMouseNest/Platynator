@@ -109,6 +109,8 @@ local stateToEvent = {
     "UNIT_SPELLCAST_NOT_INTERRUPTIBLE",
     "UNIT_SPELLCAST_CHANNEL_START",
     "UNIT_SPELLCAST_CHANNEL_STOP",
+    "UNIT_SPELLCAST_EMPOWER_START",
+    "UNIT_SPELLCAST_EMPOWER_STOP",
   },
   threat = {
     "UNIT_THREAT_LIST_UPDATE",
@@ -159,6 +161,8 @@ local kindToEvent = {
     "UNIT_SPELLCAST_NOT_INTERRUPTIBLE",
     "UNIT_SPELLCAST_CHANNEL_START",
     "UNIT_SPELLCAST_CHANNEL_STOP",
+    "UNIT_SPELLCAST_EMPOWER_START",
+    "UNIT_SPELLCAST_EMPOWER_STOP",
   },
   interruptNotReady = {
     "UNIT_SPELLCAST_START",
@@ -169,6 +173,8 @@ local kindToEvent = {
     "UNIT_SPELLCAST_NOT_INTERRUPTIBLE",
     "UNIT_SPELLCAST_CHANNEL_START",
     "UNIT_SPELLCAST_CHANNEL_STOP",
+    "UNIT_SPELLCAST_EMPOWER_START",
+    "UNIT_SPELLCAST_EMPOWER_STOP",
   },
   uninterruptableCast = {
     "UNIT_SPELLCAST_START",
@@ -179,6 +185,8 @@ local kindToEvent = {
     "UNIT_SPELLCAST_CHANNEL_STOP",
     "UNIT_SPELLCAST_INTERRUPTIBLE",
     "UNIT_SPELLCAST_NOT_INTERRUPTIBLE",
+    "UNIT_SPELLCAST_EMPOWER_START",
+    "UNIT_SPELLCAST_EMPOWER_STOP",
   },
   castTargetsYou = {
     "UNIT_SPELLCAST_START",
@@ -187,6 +195,8 @@ local kindToEvent = {
     "UNIT_SPELLCAST_INTERRUPTED",
     "UNIT_SPELLCAST_CHANNEL_START",
     "UNIT_SPELLCAST_CHANNEL_STOP",
+    "UNIT_SPELLCAST_EMPOWER_START",
+    "UNIT_SPELLCAST_EMPOWER_STOP",
   },
   cast = {
     "UNIT_SPELLCAST_START",
@@ -197,6 +207,8 @@ local kindToEvent = {
     "UNIT_SPELLCAST_CHANNEL_STOP",
     "UNIT_SPELLCAST_INTERRUPTIBLE",
     "UNIT_SPELLCAST_NOT_INTERRUPTIBLE",
+    "UNIT_SPELLCAST_EMPOWER_START",
+    "UNIT_SPELLCAST_EMPOWER_STOP",
   },
   importantCast = {
     "UNIT_SPELLCAST_START",
@@ -205,6 +217,8 @@ local kindToEvent = {
     "UNIT_SPELLCAST_INTERRUPTED",
     "UNIT_SPELLCAST_CHANNEL_START",
     "UNIT_SPELLCAST_CHANNEL_STOP",
+    "UNIT_SPELLCAST_EMPOWER_START",
+    "UNIT_SPELLCAST_EMPOWER_STOP",
   },
   eliteType = {
     "UNIT_CLASSIFICATION_CHANGED",
@@ -254,10 +268,12 @@ function addonTable.Display.RegisterForColorEvents(frame, settings, defaultColor
         if stateKind and state == nil then
           stateToCalculator[stateKind](frame.colorState, frame.unit, "")
         end
-        if e:match("^UNIT") then
-          frame:RegisterUnitEvent(e, frame.unit)
-        else
-          frame:RegisterEvent(e)
+        if C_EventUtils.IsEventValid(e) then
+          if e:match("^UNIT") then
+            frame:RegisterUnitEvent(e, frame.unit)
+          else
+            frame:RegisterEvent(e)
+          end
         end
       end
     end
@@ -573,13 +589,14 @@ function addonTable.Display.GetColor(settings, state, unit)
       local castInfo = state.castInfo
       local channelInfo = state.channelInfo
       local text = castInfo[1]
-      local isChannel = false
+      local isChannel, isEmpowered = false, false
       if text == nil then
         text = channelInfo[1]
         isChannel = true
+        isEmpowered = channelInfo[10]
       end
       if text ~= nil then
-        table.insert(colorQueue, {color = isChannel and s.colors.channel or s.colors.cast})
+        table.insert(colorQueue, {color = isEmpowered and s.colors.empowered or isChannel and s.colors.channel or s.colors.cast})
       else
         table.insert(colorQueue, {color = s.colors.interrupted})
       end

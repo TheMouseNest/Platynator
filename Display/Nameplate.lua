@@ -430,9 +430,13 @@ function addonTable.Display.NameplateMixin:SetUnit(unit)
 
     if UnitCanAttack("player", self.unit) then
       self:RegisterUnitEvent("UNIT_SPELLCAST_START", self.unit)
-      self:RegisterUnitEvent("UNIT_SPELLCAST_CHANNEL_START", self.unit)
       self:RegisterUnitEvent("UNIT_SPELLCAST_STOP", self.unit)
+      self:RegisterUnitEvent("UNIT_SPELLCAST_CHANNEL_START", self.unit)
       self:RegisterUnitEvent("UNIT_SPELLCAST_CHANNEL_STOP", self.unit)
+      if addonTable.Constants.IsRetail then
+        self:RegisterUnitEvent("UNIT_SPELLCAST_EMPOWER_START", self.unit)
+        self:RegisterUnitEvent("UNIT_SPELLCAST_EMPOWER_STOP", self.unit)
+      end
     end
 
     addonTable.CallbackRegistry:RegisterCallback("TextOverrideUpdated", function(_, unit)

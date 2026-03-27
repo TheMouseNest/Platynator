@@ -14,6 +14,12 @@ function addonTable.Display.CastTargetTextMixin:SetUnit(unit)
     self:RegisterUnitEvent("UNIT_SPELLCAST_CHANNEL_STOP", self.unit)
     self:RegisterUnitEvent("UNIT_SPELLCAST_CHANNEL_UPDATE", self.unit)
 
+    if addonTable.Constants.IsRetail then
+      self:RegisterUnitEvent("UNIT_SPELLCAST_EMPOWER_START", self.unit)
+      self:RegisterUnitEvent("UNIT_SPELLCAST_EMPOWER_STOP", self.unit)
+      self:RegisterUnitEvent("UNIT_SPELLCAST_EMPOWER_UPDATE", self.unit)
+    end
+
     self:RegisterUnitEvent("UNIT_SPELLCAST_INTERRUPTED", self.unit)
     self:RegisterUnitEvent("UNIT_SPELLCAST_FAILED", self.unit)
 

@@ -160,24 +160,33 @@ function addonTable.Core.UpgradeDesign(design)
       local ac = autoColors[index]
       if ac.kind == "eliteType" and ac.colors.trivial == nil then
         ac.colors.trivial = GetColor("b28e55")
-      elseif ac.kind == "threat" and ac.useSafeColor == nil then
+      end
+      if ac.kind == "threat" and ac.useSafeColor == nil then
         ac.useSafeColor = true
-      elseif ac.kind == "quest" and ac.colors.hostile == nil then
+      end
+      if ac.kind == "quest" and ac.colors.hostile == nil then
         ac.colors.hostile = ac.colors.quest
         ac.colors.neutral = ac.colors.quest
         ac.colors.friendly = ac.colors.quest
         ac.colors.quest = nil
-      elseif ac.kind == "classColors" and ac.colors == nil then
+      end
+      if ac.kind == "classColors" and ac.colors == nil then
         ac.colors = {}
-      elseif ac.kind == "cast" and ac.colors.uninterruptable then
+      end
+      if ac.kind == "cast" and ac.colors.uninterruptable then
         local new = CopyTable(addonTable.CustomiseDialog.ColorsConfig["uninterruptableCast"].default)
         new.colors.uninterruptable = ac.colors.uninterruptable
         table.insert(autoColors, index, new)
         ac.colors.uninterruptable = nil
         index = index - 1
-      elseif ac.kind == "interruptReady" and ac.notReady then
+      end
+      if ac.kind == "cast" and ac.colors.empowered == nil then
+        ac.colors.empowered = GetColor("05c666")
+      end
+      if ac.kind == "interruptReady" and ac.notReady then
         ac.notReady = nil
-      elseif ac.kind == "mouseover" and ac.includeTarget == nil then
+      end
+      if ac.kind == "mouseover" and ac.includeTarget == nil then
         ac.includeTarget = true
       end
 

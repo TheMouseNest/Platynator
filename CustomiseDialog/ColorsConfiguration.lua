@@ -732,6 +732,16 @@ addonTable.CustomiseDialog.ColorsConfig = {
         end,
       },
       {
+        label = addonTable.Locales.EMPOWERED,
+        kind = "colorPicker",
+        setter = function(details, value)
+          details.colors.empowered = value
+        end,
+        getter = function(details)
+          return details.colors.empowered
+        end,
+      },
+      {
         label = addonTable.Locales.INTERRUPTED_CAST,
         kind = "colorPicker",
         setter = function(details, value)
