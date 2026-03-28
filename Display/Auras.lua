@@ -23,13 +23,10 @@ function addonTable.Display.AurasManagerMixin:PostInit(buffs, debuffs, crowdCont
 
   self:Reset()
 
-  self.buffFilter = "HELPFUL"
+  self.buffFilter = "HELPFUL|INCLUDE_NAME_PLATE_ONLY"
   self.buffsDetails = buffs
   if buffs then
     if addonTable.Constants.IsRetail then
-      if buffs.filters.important then
-        self.buffFilter = self.buffFilter .. "|INCLUDE_NAME_PLATE_ONLY"
-      end
       if buffs.sorting.kind == "blizzard" then
         self.buffSort = Enum.UnitAuraSortRule.Default
       else
@@ -70,7 +67,7 @@ function addonTable.Display.AurasManagerMixin:PostInit(buffs, debuffs, crowdCont
     end
   end
 
-  self.debuffFilter = "HARMFUL"
+  self.debuffFilter = "HARMFUL|INCLUDE_NAME_PLATE_ONLY"
   self.debuffsDetails = debuffs
   if debuffs then
     if debuffs.filters.fromYou then
