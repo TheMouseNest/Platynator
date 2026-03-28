@@ -522,23 +522,24 @@ function addonTable.Display.NameplateMixin:UpdateVisual()
   end
 
   local scale = 1
-  local alpha = 0
+  local alpha = addonTable.Config.Get(addonTable.Config.Options.NOT_TARGET_ALPHA)
+
   local isTarget = UnitIsUnit("target", self.unit) or UnitIsUnit("softenemy", self.unit) or UnitIsUnit("softfriend", self.unit)
+  local isMouseover = UnitIsUnit("mouseover", self.unit)
+  local isCasting = self.casting
+
+  if isCasting then
+    scale = addonTable.Config.Get(addonTable.Config.Options.CAST_SCALE)
+    alpha = math.max(0, addonTable.Config.Get(addonTable.Config.Options.CAST_ALPHA))
+  end
+  if isMouseover then
+    scale = addonTable.Config.Get(addonTable.Config.Options.MOUSEOVER_SCALE)
+    alpha = math.max(0, addonTable.Config.Get(addonTable.Config.Options.MOUSEOVER_ALPHA))
+  end
   if isTarget then
     alpha = 1
-  else
-    local isMouseover = UnitIsUnit("mouseover", self.unit)
-    if isMouseover then
-      alpha = math.max(alpha, addonTable.Config.Get(addonTable.Config.Options.MOUSEOVER_ALPHA))
-    end
-    if self.casting then
-      scale = addonTable.Config.Get(addonTable.Config.Options.CAST_SCALE)
-      alpha = math.max(alpha, addonTable.Config.Get(addonTable.Config.Options.CAST_ALPHA))
-    end
-    if not isMouseover and not self.casting then
-      alpha = addonTable.Config.Get(addonTable.Config.Options.NOT_TARGET_ALPHA)
-    end
   end
+
   self:SetScale(self.scale * scale * addonTable.Config.Get(addonTable.Config.Options.GLOBAL_SCALE) * scaleMod)
   self:SetAlpha(alpha)
 end
