@@ -107,7 +107,7 @@ end
 
 function addonTable.Display.CastInterrupterTextMixin:OnEvent(eventName, ...)
   local _, guid
-  if eventName == "UNIT_SPELLCAST_CHANNEL_STOP" then
+  if eventName == "UNIT_SPELLCAST_EMPOWER_STOP" then
     _, _, _, _, guid = ...
   else
     _, _, _, guid = ...
