@@ -186,6 +186,12 @@ addonTable.Assets.Markers = {
 
   ["normal/class"] = {preview = "Interface/AddOns/Platynator/Assets/Special/Markers/ClassIcons/Default/Monk.png", file = "Interface/AddOns/Platynator/Assets/Special/Markers/ClassIcons/Default/%s.png", width = 200, height = 200, tag = "class", text = "Default"},
   ["normal/class-minimalist"] = {preview = "Interface/AddOns/Platynator/Assets/Special/Markers/ClassIcons/Minimalist/Monk.png", file = "Interface/AddOns/Platynator/Assets/Special/Markers/ClassIcons/Minimalist/%s.png", width = 200, height = 200, tag = "class", text = "Minimalist"},
+
+  ["faction-legacy"] = {preview = "Interface/AddOns/Platynator/Assets/Special/Markers/faction-legacy-horde.png", alliance = "Interface/AddOns/Platynator/Assets/Special/Markers/faction-legacy-alliance.png", horde = "Interface/AddOns/Platynator/Assets/Special/Markers/faction-legacy-horde.png", width = 200, height = 200, tag = "faction", text = "Legacy"},
+  ["faction-assault"] = {preview = "Interface/AddOns/Platynator/Assets/Special/Markers/faction-assault-horde.png", alliance = "Interface/AddOns/Platynator/Assets/Special/Markers/faction-assault-alliance.png", horde = "Interface/AddOns/Platynator/Assets/Special/Markers/faction-assault-horde.png", width = 200, height = 200, tag = "faction", text = "Assault"},
+  ["faction-icon"] = {preview = "Interface/AddOns/Platynator/Assets/%s/Markers/faction-icon-horde.png", alliance = "Interface/AddOns/Platynator/Assets/%s/Markers/faction-icon-alliance.png", horde = "Interface/AddOns/Platynator/Assets/%s/Markers/faction-icon-horde.png", width = 200, height = 200, tag = "faction", text = "Icon", has4k = true},
+  ["faction-shield"] = {preview = "Interface/AddOns/Platynator/Assets/%s/Markers/faction-shield-horde.png", alliance = "Interface/AddOns/Platynator/Assets/%s/Markers/faction-shield-alliance.png", horde = "Interface/AddOns/Platynator/Assets/%s/Markers/faction-shield-horde.png", width = 200, height = 200, tag = "faction", text = "Shield", has4k = true},
+  ["faction-grey"] = {preview = "Interface/AddOns/Platynator/Assets/%s/Markers/faction-grey-horde.png", alliance = "Interface/AddOns/Platynator/Assets/%s/Markers/faction-grey-alliance.png", horde = "Interface/AddOns/Platynator/Assets/%s/Markers/faction-grey-horde.png", width = 200, height = 200, tag = "faction", text = "Grey", has4k = true},
 }
 
 addonTable.Assets.SpecialBars = {
@@ -237,12 +243,21 @@ function addonTable.Assets.ApplyScale()
     end
   end
 
+  local keys = {
+    "file",
+    "mask",
+    "alliance",
+    "horde",
+    "preview",
+  }
+
   local function ResizeAssets(list)
     for _, entry in pairs(list) do
       if entry.has4k then
-        entry.file = entry.file:format(DPIScale)
-        if type(entry.mask) == "string" then
-          entry.mask = entry.mask:format(DPIScale)
+        for _, k in ipairs(keys) do
+          if type(entry[k]) == "string" then
+            entry[k] = entry[k]:format(DPIScale)
+          end
         end
       end
       entry.width = entry.width / 8

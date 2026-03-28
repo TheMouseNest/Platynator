@@ -536,13 +536,25 @@ addonTable.CustomiseDialog.DesignWidgets = {
     },
   },
   {
-    name = addonTable.Locales.PVP,
+    name = addonTable.Locales.PVP_FLAG_CARRIER,
     kind = "markers",
     default = {
       kind = "pvp",
       scale = 1,
       layer = 3,
       asset = "normal/blizzard-pvp",
+      color = GetColor("ffffff"),
+      anchor = {"TOPLEFT", -140, 50},
+    },
+  },
+  {
+    name = addonTable.Locales.PLAYER_FACTION,
+    kind = "markers",
+    default = {
+      kind = "faction",
+      scale = 1,
+      layer = 3,
+      asset = "faction-icon",
       color = GetColor("ffffff"),
       anchor = {"TOPLEFT", -140, 50},
     },
