@@ -835,15 +835,18 @@ function addonTable.CustomiseDialog.GetStyleDropdown(parent)
           menu:Close()
           addonTable.Dialogs.ShowConfirm(addonTable.Locales.CONFIRM_DELETE_STYLE_X:format(entry.label), YES, NO, function()
             addonTable.Config.Get(addonTable.Config.Options.DESIGNS)[entry.value] = nil
+            ---@type table
             local assigned = addonTable.Config.Get(addonTable.Config.Options.DESIGNS_ASSIGNED)
-            if assigned["friend"] == entry.value then
-              assigned["friend"] = addonTable.Constants.CustomName
-            end
-            if assigned["enemy"] == entry.value then
-              assigned["enemy"] = addonTable.Constants.CustomName
-            end
-            if assigned["enemySimplified"] == entry.value then
-              assigned["enemySimplified"] = "_hare_simplified"
+            local keys = GetKeysArray(assigned)
+            for _, k in ipairs(keys) do
+              local value = assigned[k]
+              if value == entry.value then
+                if k:match("^enemySimplified") then
+                  assigned[k] = "_hare_simplified"
+                else
+                  assigned[k] = addonTable.Constants.CustomName
+                end
+              end
             end
             if addonTable.Config.Get(addonTable.Config.Options.STYLE) == entry.value then
               addonTable.Config.Set(addonTable.Config.Options.STYLE, addonTable.Constants.CustomName) 
