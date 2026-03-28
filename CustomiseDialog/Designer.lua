@@ -28,6 +28,65 @@ local function RoundPixel(pixel)
   return Round(pixel / pixelStep) * pixelStep
 end
 
+local function UpdateWidgetPoints(preview, w, snapping, offsetX, offsetY)
+  snapping = snapping or 2
+  offsetX = offsetX or 0
+  offsetY = offsetY or 0
+  local left, bottom, width, height = w:GetRect()
+  local widgetRect = {left = left + offsetX, bottom = bottom + offsetY, width = width, height = height}
+  left, bottom, width, height = preview:GetRect()
+  local previewRect = {left = left, bottom = bottom, width = width, height = height}
+  local widgetCenter = {x = widgetRect.left + widgetRect.width / 2, y = widgetRect.bottom + widgetRect.height / 2}
+  local previewCenter = {x = previewRect.left + previewRect.width / 2, y = previewRect.bottom + previewRect.height / 2}
+
+  local point, x, y = "", 0, 0
+
+  local snapX, snapY, xLock, yLock = 0, 0, false, false
+  if math.abs(widgetCenter.y - previewCenter.y) < snapping then
+    snapY = previewCenter.y - widgetCenter.y
+    point = point
+    yLock = true
+  elseif widgetCenter.y < previewCenter.y then
+    point = "TOP" .. point
+    y = widgetRect.bottom + widgetRect.height - previewCenter.y
+  else
+    point = "BOTTOM" .. point
+    y = widgetRect.bottom - previewCenter.y
+  end
+
+  if math.abs(widgetCenter.x - previewCenter.x) < snapping then
+    snapX = previewCenter.x - widgetCenter.x
+    xLock = true
+    point = point
+  elseif widgetCenter.x < previewCenter.x then
+    point = point .. "LEFT"
+    x = widgetRect.left - previewCenter.x
+  else
+    point = point .. "RIGHT"
+    x = widgetRect.left + widgetRect.width - previewCenter.x
+  end
+
+  if point == "" then
+    w.details.anchor = {}
+  elseif x == 0 and y == 0 then
+    w.details.anchor = {point}
+  else
+    w.details.anchor = {point, RoundPixel(x), RoundPixel(y)}
+  end
+
+  if x ~= 0 then
+    snapX = RoundPixel(x) - x
+  end
+  if y ~= 0 then
+    snapY = RoundPixel(y) - y
+  end
+
+  -- snapX, snapY used to offset other widgets to keep them all consistent to each other
+  -- xLock, yLock used to prevent a widget shifting because its been centered on an axis
+  -- (this prevents infinite loops from the shifts bouncing around)
+  return snapX, snapY, xLock, yLock
+end
+
 local function GetAutomaticColors(rootParent, lockedElements, addAlpha)
   local selectedValue = ""
   local UpdateSelected
@@ -303,48 +362,115 @@ local function GetAurasTextPositioning(rootParent, iconID)
 
   preview:SetSize(40, 40)
 
-  local icon = preview:CreateTexture(nil, "ARTWORK")
-  icon:SetTexture(iconID)
-  icon:SetPoint("CENTER")
+  local wrapper = CreateFrame("Frame", nil, preview)
+  wrapper:SetSize(20, 20)
+  wrapper.Icon = wrapper:CreateTexture(nil, "ARTWORK")
+  wrapper.Icon:SetTexture(iconID)
+  wrapper.Icon:SetPoint("CENTER")
+  wrapper.Icon:SetAllPoints()
   local asset = LSM:Fetch("nineslice", "Platy: 1px")
   assert(asset)
-  preview.Border = preview:CreateTexture(nil, "OVERLAY")
-  preview.Border:SetAllPoints()
-  preview.Border:SetScale(asset.scaleModifier)
-  preview.Border:SetTexture(asset.file)
-  preview.Border:SetTextureSliceMargins(asset.margins.left, asset.margins.top, asset.margins.right, asset.margins.bottom)
-  preview.Border:SetVertexColor(0, 0, 0)
-  preview.Border:SetAllPoints(icon)
+  wrapper.Border = wrapper:CreateTexture(nil, "OVERLAY")
+  wrapper.Border:SetAllPoints()
+  wrapper.Border:SetScale(asset.scaleModifier)
+  wrapper.Border:SetTexture(asset.file)
+  wrapper.Border:SetTextureSliceMargins(asset.margins.left, asset.margins.top, asset.margins.right, asset.margins.bottom)
+  wrapper.Border:SetVertexColor(0, 0, 0)
+  wrapper.Border:SetAllPoints()
 
   local selectedMarker = GetSelectorMarker(CreateFrame("Frame", nil, container), false)
   local hoverMarker = GetSelectorMarker(CreateFrame("Frame", nil, container), true)
+  local selection = nil
+
+  local function UpdateSelection()
+    if selection then
+      selectedMarker:Show()
+      selectedMarker:SetFrameStrata("HIGH")
+      selectedMarker:ClearAllPoints()
+      selectedMarker:SetPoint("TOPLEFT", selection, "TOPLEFT", -2, 2)
+      selectedMarker:SetPoint("BOTTOMRIGHT", selection, "BOTTOMRIGHT", 2, -2)
+    else
+      selectedMarker:Hide()
+    end
+  end
+
+  local function ToggleSelection(w)
+    if selection == w then
+      selection = nil
+    else
+      selection = w
+    end
+    UpdateSelection()
+  end
+  local function ForceSelection(w)
+    selection = w
+    UpdateSelection()
+  end
 
   local expectedTexts = {"countdown", "stacks"}
 
   preview.widgets = {}
 
   for _, key in ipairs(expectedTexts) do
-    local w = CreateFrame("Frame", nil, preview)
+    local w = CreateFrame("Frame", nil, wrapper)
     w:SetSize(1, 1)
     preview.widgets[key] = w
     w.text = w:CreateFontString(nil, nil, "GameFontNormal")
+    w:SetMovable(true)
+    w:EnableMouse(true)
+    w:RegisterForDrag("LeftButton")
     w:SetScript("OnEnter", function()
-      if w == GetMouseFoci()[1] then
-        hoverMarker:Show()
-        hoverMarker:SetFrameStrata("HIGH")
-        hoverMarker:ClearAllPoints()
-        hoverMarker:SetPoint("TOPLEFT", w, "TOPLEFT", -2, 2)
-        hoverMarker:SetPoint("BOTTOMRIGHT", w, "BOTTOMRIGHT", 2, -2)
-      end
+      hoverMarker:Show()
+      hoverMarker:SetFrameStrata("HIGH")
+      hoverMarker:ClearAllPoints()
+      hoverMarker:SetPoint("TOPLEFT", w, "TOPLEFT", -2, 2)
+      hoverMarker:SetPoint("BOTTOMRIGHT", w, "BOTTOMRIGHT", 2, -2)
     end)
     w:SetScript("OnLeave", function()
-      local foci = GetMouseFoci()
-      if foci[1] and foci[1]:GetParent() == preview then
-        foci[1]:GetScript("OnEnter")()
-      else
-        hoverMarker:Hide()
-      end
+      hoverMarker:Hide()
     end)
+    w:SetScript("OnDragStart", function()
+      w:StartMoving()
+      ForceSelection(w)
+    end)
+    w:SetScript("OnDragStop", function()
+      UpdateWidgetPoints(preview, w, 1)
+      ForceSelection(w)
+      Announce()
+    end)
+    w:SetScript("OnMouseUp", function()
+      ToggleSelection(w)
+    end)
+  end
+
+  preview.widgets.countdown.text:SetText(3)
+  preview.widgets.stacks.text:SetText(2)
+
+  function container:SetValue(details)
+    container.details = details.texts
+
+    for key, textDetails in pairs(details.texts) do
+      local text = preview.widgets[key].text
+      text:SetFontObject(addonTable.CurrentFont)
+      text:SetTextScale(textDetails.scale)
+      text:SetPoint(textDetails.anchor[1] or "CENTER")
+      text:SetTextColor(text.color.r, text.color.g, text.color.b)
+      if textDetails.visible then
+        preview.widgets[key]:SetAlpha(1)
+      else
+        preview.widgets[key]:SetAlpha(0.5)
+      end
+      preview.widgets[key]:SetSize(text:GetSize())
+      preview.widgets[key].details = textDetails
+
+      addonTable.Display.ApplyAnchor(preview.widgets[key], textDetails.anchor)
+    end
+
+    wrapper:SetHeight(20 * details.height)
+    wrapper.Icon:SetHeight(20 * details.height)
+    wrapper.Border:SetHeight(20 * details.height)
+    local texBase = 0.95 * (1 - details.height) / 2
+    wrapper.Icon:SetTexCoord(0.05, 0.95, 0.05 + texBase, 0.95 - texBase)
   end
 
   return container
@@ -374,7 +500,6 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
   table.insert(allFrames, designScale)
 
   local UpdateSelection
-  local UpdateWidgetPoints
   local widgets
   local selectionIndexes = {}
   local fociOnDown = {}
@@ -479,65 +604,6 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
     end
   end
 
-  UpdateWidgetPoints = function(w, snapping, offsetX, offsetY)
-    snapping = snapping or 2
-    offsetX = offsetX or 0
-    offsetY = offsetY or 0
-    local left, bottom, width, height = w:GetRect()
-    local widgetRect = {left = left + offsetX, bottom = bottom + offsetY, width = width, height = height}
-    left, bottom, width, height = preview:GetRect()
-    local previewRect = {left = left, bottom = bottom, width = width, height = height}
-    local widgetCenter = {x = widgetRect.left + widgetRect.width / 2, y = widgetRect.bottom + widgetRect.height / 2}
-    local previewCenter = {x = previewRect.left + previewRect.width / 2, y = previewRect.bottom + previewRect.height / 2}
-
-    local point, x, y = "", 0, 0
-
-    local snapX, snapY, xLock, yLock = 0, 0, false, false
-    if math.abs(widgetCenter.y - previewCenter.y) < snapping then
-      snapY = previewCenter.y - widgetCenter.y
-      point = point
-      yLock = true
-    elseif widgetCenter.y < previewCenter.y then
-      point = "TOP" .. point
-      y = widgetRect.bottom + widgetRect.height - previewCenter.y
-    else
-      point = "BOTTOM" .. point
-      y = widgetRect.bottom - previewCenter.y
-    end
-
-    if math.abs(widgetCenter.x - previewCenter.x) < snapping then
-      snapX = previewCenter.x - widgetCenter.x
-      xLock = true
-      point = point
-    elseif widgetCenter.x < previewCenter.x then
-      point = point .. "LEFT"
-      x = widgetRect.left - previewCenter.x
-    else
-      point = point .. "RIGHT"
-      x = widgetRect.left + widgetRect.width - previewCenter.x
-    end
-
-    if point == "" then
-      w.details.anchor = {}
-    elseif x == 0 and y == 0 then
-      w.details.anchor = {point}
-    else
-      w.details.anchor = {point, RoundPixel(x), RoundPixel(y)}
-    end
-
-    if x ~= 0 then
-      snapX = RoundPixel(x) - x
-    end
-    if y ~= 0 then
-      snapY = RoundPixel(y) - y
-    end
-
-    -- snapX, snapY used to offset other widgets to keep them all consistent to each other
-    -- xLock, yLock used to prevent a widget shifting because its been centered on an axis
-    -- (this prevents infinite loops from the shifts bouncing around)
-    return snapX, snapY, xLock, yLock
-  end
-
   local function AlignForRelativePoints(offsets, snappingAmount)
     snappingAmount = snappingAmount or 3
     local snapped = true
@@ -554,7 +620,7 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
       local snapX, snapY, xLock, yLock = 0, 0, nil, nil
       for indexIndex, index in ipairs(selectionIndexes) do
         local w = widgets[index]
-        snapX, snapY, xLock, yLock = UpdateWidgetPoints(w, snappingAmount, offsets[indexIndex].x, offsets[indexIndex].y)
+        snapX, snapY, xLock, yLock = UpdateWidgetPoints(preview, w, snappingAmount, offsets[indexIndex].x, offsets[indexIndex].y)
         local o = offsets[indexIndex]
         if math.abs(snapX) >= pixelStep/2 and not o.xLock or math.abs(snapY) >= pixelStep/2 and not o.yLock then
           -- See UpdateWidgetPoints for usage of xLock/yLock
@@ -1059,7 +1125,7 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
             Announce()
           end
         end
-        local function Getter(value)
+        local function Getter()
           if not parent.details then
             return
           end

@@ -1031,7 +1031,7 @@ addonTable.CustomiseDialog.WidgetsConfig = {
             icon = 135959,
             setter = function() end,
             getter = function(details)
-              return details.texts
+              return details
             end,
           },
         }
@@ -1088,7 +1088,7 @@ addonTable.CustomiseDialog.WidgetsConfig = {
             icon = 132117,
             setter = function() end,
             getter = function(details)
-              return details.texts
+              return details
             end,
           },
         }
@@ -1140,7 +1140,7 @@ addonTable.CustomiseDialog.WidgetsConfig = {
             icon = 135860,
             setter = function() end,
             getter = function(details)
-              return details.texts
+              return details
             end,
           },
         }
