@@ -119,58 +119,6 @@ function addonTable.Display.ManagerMixin:OnLoad()
 
   self.ModifiedUFs = {}
   self.HookedUFs = {}
-  self.unitToNameplate = {}
-  -- Apply Platynator settings to aura layout
-  local function RelayoutAuras(list, filter)
-    if list:IsForbidden() then
-      return
-    end
-    local parent = list:GetParent()
-    local details = parent.details
-    if not details then
-      return
-    end
-    local dir = -1
-    if details.direction == "RIGHT" then
-      dir = 1
-    end
-    local padding = 2
-    local children = list:GetLayoutChildren()
-    if #children == 0 then
-      return
-    end
-    list:ClearAllPoints()
-    local anchor = details.direction == "LEFT" and "RIGHT" or "LEFT"
-    local showCountdown = details.showCountdown
-    list:SetPoint(anchor)
-    local texBase = (1 - details.height) / 2
-    for index, child in ipairs(children) do
-      child:ClearAllPoints()
-      if not filter or filter(child.unitToken, child.auraInstanceID) then
-        child:SetScale(0.8)
-        child:SetSize(25, 25 * details.height)
-        child.Icon:SetTexCoord(0, 1, texBase, 1 - texBase)
-        child:SetPoint(anchor, parent, anchor, (index - 1) * (child:GetWidth() + padding) * dir, 0)
-        child.Cooldown:SetCountdownFont("PlatynatorNameplateCooldownFont")
-        child.Cooldown:SetHideCountdownNumbers(not showCountdown)
-        if showCountdown then
-          if not child.Cooldown.Text then
-            child.Cooldown.Text = child.Cooldown:GetRegions()
-          end
-          child.Cooldown.Text:SetFontObject(addonTable.CurrentFont)
-          child.Cooldown.Text:SetTextScale(14/12 * details.textScale)
-        end
-        child.CountFrame.Count:SetFontObject(addonTable.CurrentFont)
-        child.CountFrame.Count:SetTextScale(11/12 * details.textScale)
-      else
-        child:Hide()
-      end
-    end
-  end
-  self.RelayoutAuras = RelayoutAuras
-  self.DebuffFilter = function(unitToken, auraInstanceID)
-    return not C_UnitAuras.IsAuraFilteredOutByInstanceID(unitToken, auraInstanceID, "HARMFUL|PLAYER")
-  end
 
   local reparentedKeys = {
     "HealthBarsContainer",
@@ -260,12 +208,6 @@ function addonTable.Display.ManagerMixin:OnLoad()
       self:SetScript("OnUpdate", function()
         local design = addonTable.Core.GetDesign("enemy")
         addonTable.CurrentFont = addonTable.Core.GetFontByDesign(design)
-        PlatynatorNameplateCooldownFont:SetFont(design.font.asset, 13, design.font.outline and "OUTLINE" or "")
-        if design.font.shadow then
-          PlatynatorNameplateCooldownFont:SetShadowOffset(1, -1)
-        else
-          PlatynatorNameplateCooldownFont:SetShadowOffset(0, 0)
-        end
         self.styleIndex = self.styleIndex + 1
         self:SetScript("OnUpdate", nil)
         for unit, display in pairs(self.nameplateDisplays) do
@@ -566,7 +508,6 @@ function addonTable.Display.ManagerMixin:Install(unit)
       C_NamePlateManager.SetNamePlateSimplified(unit, shouldSimplify)
     end
     self.nameplateDisplays[unit] = newDisplay
-    self.unitToNameplate[unit] = nameplate
     local UF = self.ModifiedUFs[unit]
     if nameplate.SetStackingBoundsFrame then
       newDisplay:SetParent(nameplate)
@@ -611,7 +552,6 @@ function addonTable.Display.ManagerMixin:Uninstall(unit)
     end
     self.pools[display.kind]:Release(display)
     self.nameplateDisplays[unit] = nil
-    self.unitToNameplate[unit] = nil
   end
 end
 
@@ -923,9 +863,6 @@ function addonTable.Display.ManagerMixin:OnEvent(eventName, ...)
     local design = addonTable.Core.GetDesign("enemy")
 
     addonTable.CurrentFont = addonTable.Core.GetFontByDesign(design)
-    CreateFont("PlatynatorNameplateCooldownFont")
-    local file, size, flags = _G[addonTable.CurrentFont]:GetFont()
-    PlatynatorNameplateCooldownFont:SetFont(file, 14, flags)
     self:UpdateFriendlyFont()
   elseif eventName == "VARIABLES_LOADED" then
     if addonTable.Constants.IsRetail then
