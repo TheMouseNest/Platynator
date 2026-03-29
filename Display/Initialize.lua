@@ -79,6 +79,8 @@ function addonTable.Display.ManagerMixin:OnLoad()
   self:RegisterUnitEvent("UNIT_POWER_UPDATE", "player")
   self:RegisterEvent("RUNE_POWER_UPDATE")
   self:RegisterEvent("UNIT_FACTION")
+  self:RegisterEvent("PLAYER_REGEN_DISABLED")
+  self:RegisterEvent("PLAYER_REGEN_ENABLED")
 
   C_Timer.NewTicker(0.1, function() -- Used for transitioning mobs to attackable
     local UnitCanAttack = UnitCanAttack
@@ -355,9 +357,16 @@ function addonTable.Display.ManagerMixin:OnLoad()
   end)
 end
 
-function addonTable.Display.ManagerMixin:UpdateStacking()
+function addonTable.Display.ManagerMixin:CombatChangesCheck()
   if InCombatLockdown() then
-    self:RegisterEvent("PLAYER_REGEN_ENABLED")
+    self.combatChangesPending = true
+    return true
+  end
+  return false
+end
+
+function addonTable.Display.ManagerMixin:UpdateStacking()
+  if self:CombatChangesCheck() then
     return
   end
   if addonTable.Constants.IsRetail then
@@ -381,8 +390,7 @@ function addonTable.Display.ManagerMixin:UpdateStacking()
 end
 
 function addonTable.Display.ManagerMixin:UpdateTargetScale()
-  if InCombatLockdown() then
-    self:RegisterEvent("PLAYER_REGEN_ENABLED")
+  if self:CombatChangesCheck() then
     return
   end
 
@@ -412,8 +420,7 @@ local function GetCVarsForNameplates()
 end
 
 function addonTable.Display.ManagerMixin:UpdateShowState()
-  if InCombatLockdown() then
-    self:RegisterEvent("PLAYER_REGEN_ENABLED")
+  if self:CombatChangesCheck() then
     return
   end
 
@@ -441,8 +448,7 @@ end
 function addonTable.Display.ManagerMixin:UpdateInstanceShowState()
   local state = addonTable.Config.Get(addonTable.Config.Options.SHOW_FRIENDLY_IN_INSTANCES)
 
-  if InCombatLockdown() then
-    self:RegisterEvent("PLAYER_REGEN_ENABLED")
+  if self:CombatChangesCheck() then
     return
   end
 
@@ -646,8 +652,7 @@ function addonTable.Display.ManagerMixin:UpdateForFocus()
 end
 
 function addonTable.Display.ManagerMixin:UpdateNamePlateSize()
-  if InCombatLockdown() then
-    self:RegisterEvent("PLAYER_REGEN_ENABLED")
+  if self:CombatChangesCheck() then
     return
   end
 
@@ -687,8 +692,7 @@ function addonTable.Display.ManagerMixin:UpdateNamePlateSize()
 end
 
 function addonTable.Display.ManagerMixin:UpdateClickable()
-  if InCombatLockdown() then
-    self:RegisterEvent("PLAYER_REGEN_ENABLED")
+  if self:CombatChangesCheck() then
     return
   end
 
@@ -714,8 +718,7 @@ function addonTable.Display.ManagerMixin:UpdateClickable()
 end
 
 function addonTable.Display.ManagerMixin:UpdateSimplifiedScale()
-  if InCombatLockdown() then
-    self:RegisterEvent("PLAYER_REGEN_ENABLED")
+  if self:CombatChangesCheck() then
     return
   end
 
@@ -732,11 +735,9 @@ end
 
 function addonTable.Display.ManagerMixin:UpdateObscuredAlpha()
   if InCombatLockdown() then
-    self:RegisterEvent("PLAYER_REGEN_ENABLED")
     return
   end
-
-  C_CVar.SetCVar("nameplateOccludedAlphaMult", addonTable.Config.Get(addonTable.Config.Options.OBSCURED_ALPHA))
+  C_CVar.SetCVar("nameplateOccludedAlphaMult", UnitAffectingCombat("player") and addonTable.Config.Get(addonTable.Config.Options.OBSCURED_COMBAT_ALPHA) or addonTable.Config.Get(addonTable.Config.Options.OBSCURED_ALPHA))
 end
 
 local systemFontSizes = {}
@@ -802,8 +803,7 @@ function addonTable.Display.ManagerMixin:UpdateFriendlyFont()
     return
   end
 
-  if InCombatLockdown() then
-    self:RegisterEvent("PLAYER_REGEN_ENABLED")
+  if self:CombatChangesCheck() then
     return
   end
 
@@ -892,15 +892,19 @@ function addonTable.Display.ManagerMixin:OnEvent(eventName, ...)
   elseif eventName == "GLOBAL_MOUSE_UP" then
     self:UpdateForMouseover()
     self:UnregisterEvent("GLOBAL_MOUSE_UP")
-  elseif eventName == "PLAYER_REGEN_ENABLED" then
-    self:UnregisterEvent("PLAYER_REGEN_ENABLED")
-    self:UpdateStacking()
-    self:UpdateShowState()
-    self:UpdateNamePlateSize()
-    self:UpdateTargetScale()
-    self:UpdateSimplifiedScale()
+  elseif eventName == "PLAYER_REGEN_DISABLED" then
     self:UpdateObscuredAlpha()
-    self:UpdateClickable()
+  elseif eventName == "PLAYER_REGEN_ENABLED" then
+    if self.combatChangesPending then
+      self.combatChangesPending = false
+      self:UpdateStacking()
+      self:UpdateShowState()
+      self:UpdateNamePlateSize()
+      self:UpdateTargetScale()
+      self:UpdateSimplifiedScale()
+      self:UpdateClickable()
+    end
+    self:UpdateObscuredAlpha()
   elseif eventName == "UI_SCALE_CHANGED" then
     for unit, display in pairs(self.nameplateDisplays) do
       display.offsetScale = addonTable.Core.GetDesignScale(display.kind) * UIParent:GetEffectiveScale() * addonTable.Config.Get(addonTable.Config.Options.GLOBAL_SCALE)
