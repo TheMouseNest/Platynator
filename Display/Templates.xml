@@ -1,5 +1,5 @@
 <Ui>
-  <Frame name="PlatynatorNameplateBuffButtonTemplate" virtual="true" hidden="true" propagateMouseInput="Clicks">
+  <Frame name="PlatynatorNameplateBuffButtonTemplate" virtual="true" hidden="true" propagateMouseInput="Clicks" flattenRenderLayers="true">
     <Size x="20" y="20"/>
     <Layers>
       <Layer level="ARTWORK">
@@ -18,7 +18,7 @@
           <Anchor point="CENTER" x="0" y="0"/>
         </Anchors>
       </Cooldown>
-      <Frame parentKey="CountFrame" setAllPoints="true">
+      <Frame parentKey="CountFrame" setAllPoints="true" frameLevel="500">
         <Layers>
           <Layer level="ARTWORK">
             <FontString parentKey="Count" inherits="NumberFontNormalSmall" justifyH="RIGHT">
