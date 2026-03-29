@@ -6,6 +6,14 @@ local LSM = LibStub("LibSharedMedia-3.0")
 local pandemicCurve
 local pandemicPercentage = 0.3
 local dispelCurve
+local dispelColorMap = {
+  ["Magic"] = CreateColorFromHexString("ff007ffb"),
+  ["Curse"] = CreateColorFromHexString("ffb534ed"),
+  ["Disease"] = CreateColorFromHexString("fffc982f"),
+  ["Poison"] = CreateColorFromHexString("ffe5fb00"),
+  [""] = CreateColorFromHexString("ffff0000"),
+  ["Bleed"] = CreateColorFromHexString("fffc0318"),
+}
 if C_CurveUtil then
   pandemicCurve = C_CurveUtil.CreateCurve()
   pandemicCurve:SetType(Enum.LuaCurveType.Step)
@@ -15,8 +23,14 @@ if C_CurveUtil then
   dispelCurve = C_CurveUtil.CreateColorCurve()
   dispelCurve:SetType(Enum.LuaCurveType.Step)
   dispelCurve:AddPoint(0, CreateColor(0, 0, 0, 0))
-  dispelCurve:AddPoint(9, CreateColor(0, 0, 0, 1))
+  dispelCurve:AddPoint(1, dispelColorMap["Magic"])
+  dispelCurve:AddPoint(2, dispelColorMap["Curse"])
+  dispelCurve:AddPoint(3, dispelColorMap["Disease"])
+  dispelCurve:AddPoint(4, dispelColorMap["Poison"])
+  dispelCurve:AddPoint(5, CreateColor(0, 0, 0, 0))
+  dispelCurve:AddPoint(9, dispelColorMap[""])
   dispelCurve:AddPoint(10, CreateColor(0, 0, 0, 0))
+  dispelCurve:AddPoint(11, dispelColorMap["Bleed"])
 end
 
 addonTable.Display.NameplateMixin = {}
@@ -105,6 +119,7 @@ function addonTable.Display.NameplateMixin:OnLoad()
       dispelTexture:SetTexture(dispelAsset.file)
       dispelTexture:SetTextureSliceMargins(dispelAsset.margins.left, dispelAsset.margins.top, dispelAsset.margins.right, dispelAsset.margins.bottom)
       dispelTexture:SetVertexColor(1, 0, 0)
+      frame.Dispel.Border = dispelTexture
     end
     frame:SetScript("OnEnter", function()
       GameTooltip_SetDefaultAnchor(GameTooltip, frame)
@@ -176,8 +191,6 @@ function addonTable.Display.NameplateMixin:OnLoad()
         anchor = "CENTER"
       end
 
-      local sootheAvailable = addonTable.Display.Utilities.GetSootheAvailable()
-
       frame.items = {}
       local texBase = 0.95 * (1 - details.height) / 2
       for _, auraInstanceID in ipairs(data) do
@@ -202,8 +215,6 @@ function addonTable.Display.NameplateMixin:OnLoad()
           auraFrame.Pandemic.Left:SetWidth(pandemicDim)
           auraFrame.Pandemic.Right:SetWidth(pandemicDim)
         end
-
-        auraFrame.Dispel:SetShown(sootheAvailable and details.showDispel.enrage)
 
         auraFrame.Icon:SetTexture(aura.icon);
         auraFrame.CountFrame.Count:SetText(aura.applicationsString)
@@ -234,6 +245,8 @@ function addonTable.Display.NameplateMixin:OnLoad()
           PixelUtil.SetSize(auraFrame.Border, 20, 20 * details.height)
           PixelUtil.SetSize(auraFrame.Icon, 20, 20 * details.height)
           auraFrame.Icon:SetTexCoord(0.05, 0.95, 0.05 + texBase, 0.95 - texBase)
+
+          auraFrame.Dispel:SetShown(details.showType)
         end
 
         if aura.durationSecret then
@@ -241,16 +254,23 @@ function addonTable.Display.NameplateMixin:OnLoad()
           if details.showPandemic then
             auraFrame.Pandemic:SetAlpha(C_CurveUtil.EvaluateColorValueFromBoolean(auraFrame.durationSecret:IsZero(), 0, auraFrame.durationSecret:EvaluateRemainingPercent(pandemicCurve)))
           end
-          if sootheAvailable and details.showDispel.enrage then
-            auraFrame.Dispel:SetAlpha(C_UnitAuras.GetAuraDispelTypeColor(self.unit, aura.auraInstanceID, dispelCurve).a)
+          if details.showType then
+            local color = C_UnitAuras.GetAuraDispelTypeColor(self.unit, aura.auraInstanceID, dispelCurve)
+            auraFrame.Dispel.Border:SetVertexColor(color:GetRGBA())
           end
         elseif auraFrame.expirationTime then
           CooldownFrame_Set(auraFrame.Cooldown, aura.expirationTime - aura.duration, aura.duration, aura.duration > 0, true);
           if details.showPandemic then
             auraFrame.Pandemic:SetAlpha(aura.duration > 0 and aura.expirationTime - GetTime() <= aura.duration * pandemicPercentage and 1 or 0)
           end
-          if details.showDispel.enrage then
-            auraFrame.Dispel:SetAlpha(aura.dispelName == "" and 1 or 0)
+          if details.showType then
+            local color = dispelColorMap[aura.dispelName]
+            if color then
+              auraFrame.Dispel:SetAlpha(1)
+              auraFrame.Dispel.Border:SetVertexColor(color.r, color.g, color.b)
+            else
+              auraFrame.Dispel:SetAlpha(0)
+            end
           end
         else
           auraFrame.Cooldown:Clear()

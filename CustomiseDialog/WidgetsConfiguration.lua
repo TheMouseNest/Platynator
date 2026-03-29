@@ -965,6 +965,17 @@ addonTable.CustomiseDialog.WidgetsConfig = {
               return details.direction
             end
           },
+          { kind = "spacer" },
+          {
+            label = addonTable.Locales.SHOW_TYPE_BORDER,
+            kind = "checkbox",
+            setter = function(details, value)
+              details.showType = value
+            end,
+            getter = function(details)
+              return details.showType
+            end,
+          },
         },
       },
       {
@@ -1064,21 +1075,6 @@ addonTable.CustomiseDialog.WidgetsConfig = {
       }
     },
     ["buffs"] = {
-      {
-        label = addonTable.Locales.GENERAL,
-        entries = {
-          {
-            label = addonTable.Locales.SHOW_ENRAGE_DISPEL,
-            kind = "checkbox",
-            setter = function(details, value)
-              details.showDispel.enrage = value
-            end,
-            getter = function(details)
-              return details.showDispel.enrage
-            end,
-          },
-        },
-      },
       {
         label = addonTable.Locales.TEXTS,
         entries = {

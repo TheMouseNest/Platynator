@@ -235,6 +235,7 @@ addonTable.CustomiseDialog.DesignWidgets = {
         important = true,
         fromYou = true,
       },
+      showType = false,
       texts = {
         countdown = {
           anchor = {},
@@ -269,7 +270,7 @@ addonTable.CustomiseDialog.DesignWidgets = {
         dispelable = false,
         important = true,
       },
-      showDispel = {enrage = true},
+      showType = true,
       texts = {
         countdown = {
           anchor = {},
@@ -296,6 +297,7 @@ addonTable.CustomiseDialog.DesignWidgets = {
       scale = 1,
       height = 1,
       direction = "RIGHT",
+      showType = false,
       sorting = {
         kind = "duration",
         reversed = false,
