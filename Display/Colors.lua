@@ -593,7 +593,7 @@ function addonTable.Display.GetColor(settings, state, unit)
       if text == nil then
         text = channelInfo[1]
         isChannel = true
-        isEmpowered = channelInfo[10]
+        isEmpowered = channelInfo[9]
       end
       if text ~= nil then
         table.insert(colorQueue, {color = isEmpowered and s.colors.empowered or isChannel and s.colors.channel or s.colors.cast})
