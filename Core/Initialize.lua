@@ -152,6 +152,23 @@ function addonTable.Core.UpgradeDesign(design)
     if aura.kind == "debuffs" and aura.showPandemic == nil then
       aura.showPandemic = true
     end
+    if not aura.texts then
+      aura.texts = {
+        countdown = {
+          anchor = {},
+          scale = Round(14/12 * aura.textScale * 100) / 100,
+          color = GetColor("FFFFFF"),
+          visible = aura.showCountdown,
+        },
+        stacks = {
+          anchor = {"TOPRIGHT", 12, -1},
+          scale = Round(11/12 * aura.textScale * 100) / 100,
+          color = GetColor("FFFFFF"),
+          visible = true,
+        }
+      }
+      aura.textScale = nil
+    end
   end
 
   local function UpdateAutoColors(autoColors)

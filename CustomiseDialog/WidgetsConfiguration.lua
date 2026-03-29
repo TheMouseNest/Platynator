@@ -931,18 +931,6 @@ addonTable.CustomiseDialog.WidgetsConfig = {
               return details.scale * 100
             end,
           },
-          {
-            label = addonTable.Locales.TEXT_SCALE,
-            kind = "slider",
-            min = 1, max = 300,
-            valuePattern = "%d%%",
-            setter = function(details, value)
-              details.textScale = value / 100
-            end,
-            getter = function(details)
-              return details.textScale * 100
-            end,
-          },
           { kind = "spacer" },
           {
             label = addonTable.Locales.HEIGHT,
@@ -977,17 +965,11 @@ addonTable.CustomiseDialog.WidgetsConfig = {
               return details.direction
             end
           },
-          {
-            label = addonTable.Locales.SHOW_COUNTDOWN,
-            kind = "checkbox",
-            setter = function(details, value)
-              details.showCountdown = value
-            end,
-            getter = function(details)
-              return details.showCountdown
-            end,
-          },
         },
+      },
+      {
+        label = addonTable.Locales.TEXTS,
+        entries = {}
       },
       {
         label = addonTable.Locales.SORTING,
@@ -1041,6 +1023,20 @@ addonTable.CustomiseDialog.WidgetsConfig = {
         },
       },
       {
+        label = addonTable.Locales.TEXTS,
+        entries = {
+          {
+            label = "",
+            kind = "auraTextsPositioner",
+            icon = 135959,
+            setter = function() end,
+            getter = function(details)
+              return details
+            end,
+          },
+        }
+      },
+      {
         label = addonTable.Locales.FILTERS,
         entries = {
           {
@@ -1084,6 +1080,20 @@ addonTable.CustomiseDialog.WidgetsConfig = {
         },
       },
       {
+        label = addonTable.Locales.TEXTS,
+        entries = {
+          {
+            label = "",
+            kind = "auraTextsPositioner",
+            icon = 132117,
+            setter = function() end,
+            getter = function(details)
+              return details
+            end,
+          },
+        }
+      },
+      {
         label = addonTable.Locales.FILTERS,
         entries = {
           {
@@ -1121,6 +1131,20 @@ addonTable.CustomiseDialog.WidgetsConfig = {
       }
     },
     ["crowdControl"] = {
+      {
+        label = addonTable.Locales.TEXTS,
+        entries = {
+          {
+            label = "",
+            kind = "auraTextsPositioner",
+            icon = 135860,
+            setter = function() end,
+            getter = function(details)
+              return details
+            end,
+          },
+        }
+      },
       {
         label = addonTable.Locales.FILTERS,
         entries = {
@@ -1356,4 +1380,39 @@ addonTable.CustomiseDialog.WidgetsConfig = {
       }
     }
   }
+}
+
+addonTable.CustomiseDialog.AurasConfig = {
+  {
+    label = addonTable.Locales.VISIBLE,
+    kind = "checkbox",
+    setter = function(details, value)
+      details.visible = value
+    end,
+    getter = function(details)
+      return details.visible
+    end,
+  },
+  {
+    label = addonTable.Locales.SCALE,
+    kind = "slider",
+    min = 1, max = 300,
+    valuePattern = "%d%%",
+    setter = function(details, value)
+      details.scale = value / 100
+    end,
+    getter = function(details)
+      return details.scale * 100
+    end,
+  },
+  {
+    label = addonTable.Locales.COLOR,
+    kind = "colorPicker",
+    setter = function(details, value)
+      details.color = value
+    end,
+    getter = function(details)
+      return details.color
+    end,
+  },
 }

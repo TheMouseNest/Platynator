@@ -10,10 +10,83 @@ local function Announce()
   addonTable.CallbackRegistry:TriggerEvent("RefreshStateChange", {[addonTable.Constants.RefreshReason.Design] = true})
 end
 
+local GenerateOptions
+
 local pixelStep = 0.5
+
+local function GetSelectorMarker(frame, isHover)
+  local texture = frame:CreateTexture()
+  texture:SetTexture("Interface/AddOns/Platynator/Assets/selection-outline.png")
+  texture:SetVertexColor(78/255, 165/255, 252/255, isHover and 0.45 or 0.8)
+  texture:SetTextureSliceMargins(45, 45, 45, 45)
+  texture:SetTextureSliceMode(Enum.UITextureSliceMode.Tiled)
+  texture:SetScale(0.25)
+  texture:SetAllPoints()
+
+  return frame
+end
 
 local function RoundPixel(pixel)
   return Round(pixel / pixelStep) * pixelStep
+end
+
+local function UpdateWidgetPoints(preview, w, snapping, offsetX, offsetY)
+  snapping = snapping or 2
+  offsetX = offsetX or 0
+  offsetY = offsetY or 0
+  local left, bottom, width, height = w:GetRect()
+  local widgetRect = {left = left + offsetX, bottom = bottom + offsetY, width = width, height = height}
+  left, bottom, width, height = preview:GetRect()
+  local previewRect = {left = left, bottom = bottom, width = width, height = height}
+  local widgetCenter = {x = widgetRect.left + widgetRect.width / 2, y = widgetRect.bottom + widgetRect.height / 2}
+  local previewCenter = {x = previewRect.left + previewRect.width / 2, y = previewRect.bottom + previewRect.height / 2}
+
+  local point, x, y = "", 0, 0
+
+  local snapX, snapY, xLock, yLock = 0, 0, false, false
+  if math.abs(widgetCenter.y - previewCenter.y) < snapping then
+    snapY = previewCenter.y - widgetCenter.y
+    point = point
+    yLock = true
+  elseif widgetCenter.y < previewCenter.y then
+    point = "TOP" .. point
+    y = widgetRect.bottom + widgetRect.height - previewCenter.y
+  else
+    point = "BOTTOM" .. point
+    y = widgetRect.bottom - previewCenter.y
+  end
+
+  if math.abs(widgetCenter.x - previewCenter.x) < snapping then
+    snapX = previewCenter.x - widgetCenter.x
+    xLock = true
+    point = point
+  elseif widgetCenter.x < previewCenter.x then
+    point = point .. "LEFT"
+    x = widgetRect.left - previewCenter.x
+  else
+    point = point .. "RIGHT"
+    x = widgetRect.left + widgetRect.width - previewCenter.x
+  end
+
+  if point == "" then
+    w.details.anchor = {}
+  elseif x == 0 and y == 0 then
+    w.details.anchor = {point}
+  else
+    w.details.anchor = {point, RoundPixel(x), RoundPixel(y)}
+  end
+
+  if x ~= 0 then
+    snapX = RoundPixel(x) - x
+  end
+  if y ~= 0 then
+    snapY = RoundPixel(y) - y
+  end
+
+  -- snapX, snapY used to offset other widgets to keep them all consistent to each other
+  -- xLock, yLock used to prevent a widget shifting because its been centered on an axis
+  -- (this prevents infinite loops from the shifts bouncing around)
+  return snapX, snapY, xLock, yLock
 end
 
 local function GetAutomaticColors(rootParent, lockedElements, addAlpha)
@@ -156,50 +229,11 @@ local function GetAutomaticColors(rootParent, lockedElements, addAlpha)
 
   local configsByKind = {}
   for kind, colorDetails in pairs(addonTable.CustomiseDialog.ColorsConfig) do
-    local allFrames = {}
     local yOffset = 0
     local parent = CreateFrame("Frame", nil, optionsContainer)
     parent:SetAllPoints()
 
-    for _, e in ipairs(colorDetails.entries) do
-      local frame
-      local function Setter(value)
-        if not parent.details then
-          return
-        end
-        local oldValue = e.getter(parent.details)
-        e.setter(parent.details, value)
-        if oldValue ~= e.getter(parent.details) then
-          Announce()
-        end
-      end
-      local function Getter(value)
-        if not parent.details then
-          return
-        end
-        return e.getter(parent.details)
-      end
-
-      if e.kind == "checkbox" then
-        frame = addonTable.CustomiseDialog.Components.GetCheckbox(parent, e.label, -30, Setter)
-      elseif e.kind == "colorPicker" then
-        frame = addonTable.CustomiseDialog.Components.GetColorPicker(parent, e.label, -30, Setter)
-      end
-
-      if frame then
-        frame.kind = e.kind
-        frame.Getter = Getter
-        if #allFrames == 0 then
-          frame:SetPoint("TOP", 0, yOffset)
-        else
-          frame:SetPoint("TOP", allFrames[#allFrames], "BOTTOM", 0, yOffset)
-        end
-        table.insert(allFrames, frame)
-        yOffset = 0
-      elseif e.kind == "spacer" then
-        yOffset = -30
-      end
-    end
+    local allFrames = GenerateOptions(parent, yOffset, -40, colorDetails.entries)
 
     if not lockedElements[kind] then
       local deleteButton = CreateFrame("Button", nil, parent, "UIPanelDynamicResizeButtonTemplate")
@@ -279,6 +313,287 @@ local function GetAutomaticColors(rootParent, lockedElements, addAlpha)
   return container
 end
 
+local function GetAurasTextPositioning(rootParent, iconID)
+  local container = CreateFrame("Frame", nil, rootParent)
+  container:SetPoint("LEFT")
+  container:SetPoint("RIGHT")
+  container:SetHeight(300)
+  local previewInset = CreateFrame("Frame", nil, container, "InsetFrameTemplate")
+  previewInset:SetSize(160, 120)
+  previewInset:SetPoint("TOP")
+
+  local preview = CreateFrame("Frame", nil, previewInset)
+
+  preview:SetPoint("TOP")
+
+  preview:SetAllPoints()
+  preview:SetFlattensRenderLayers(true)
+  preview:SetScale(3)
+
+  preview:SetSize(40, 40)
+
+  local wrapper = CreateFrame("Frame", nil, preview)
+  wrapper:SetSize(20, 20)
+  wrapper:SetPoint("CENTER")
+  wrapper.Icon = wrapper:CreateTexture(nil, "ARTWORK")
+  wrapper.Icon:SetTexture(iconID)
+  wrapper.Icon:SetPoint("CENTER")
+  wrapper.Icon:SetAllPoints()
+  local asset = LSM:Fetch("nineslice", "Platy: 1px")
+  assert(asset)
+  wrapper.Border = wrapper:CreateTexture(nil, "OVERLAY")
+  wrapper.Border:SetAllPoints()
+  wrapper.Border:SetScale(asset.scaleModifier)
+  wrapper.Border:SetTexture(asset.file)
+  wrapper.Border:SetTextureSliceMargins(asset.margins.left, asset.margins.top, asset.margins.right, asset.margins.bottom)
+  wrapper.Border:SetVertexColor(0, 0, 0)
+  wrapper.Border:SetAllPoints()
+
+  local widgetOptionsContainer = CreateFrame("Frame", nil, container)
+  widgetOptionsContainer:SetPoint("TOP", preview, "BOTTOM", 0, -30)
+  widgetOptionsContainer:SetPoint("LEFT")
+  widgetOptionsContainer:SetPoint("RIGHT")
+  widgetOptionsContainer:SetHeight(10)
+  local allFrames = GenerateOptions(widgetOptionsContainer, 0, 0, addonTable.CustomiseDialog.AurasConfig)
+
+  local titleText = container:CreateFontString(nil, nil, "GameFontHighlightLarge")
+  titleText:SetPoint("TOP", previewInset, "BOTTOM", 0, -10)
+  titleText:SetJustifyH("RIGHT")
+  titleText:SetPoint("RIGHT", -40, 0)
+  titleText:SetShadowOffset(1, -1)
+
+  local titleMap = {
+    countdown = addonTable.Locales.COUNTDOWN,
+    stacks = addonTable.Locales.STACKS,
+  }
+
+  local selectedMarker = GetSelectorMarker(CreateFrame("Frame", nil, container), false)
+  local hoverMarker = GetSelectorMarker(CreateFrame("Frame", nil, container), true)
+  local selection = nil
+
+  local keyboardTrap = CreateFrame("Frame", nil, container)
+  keyboardTrap:Hide()
+
+  local function OffsetWidgets(x, y)
+    UpdateWidgetPoints(preview, selection, 0.4, x, y)
+    Announce()
+  end
+
+  keyboardTrap:SetScript("OnKeyDown", function(_, key)
+    keyboardTrap:SetPropagateKeyboardInput(false)
+    local amount = pixelStep
+    if IsShiftKeyDown() then
+      amount = amount * 4
+    end
+    if key == "LEFT" then
+      OffsetWidgets(-amount, 0)
+    elseif key == "RIGHT" then
+      OffsetWidgets(amount, 0)
+    elseif key == "UP" then
+      OffsetWidgets(0, amount)
+    elseif key == "DOWN" then
+      OffsetWidgets(0, -amount)
+    elseif key == "DELETE" then
+      selection.details.visible = false
+      Announce()
+    else
+      keyboardTrap:SetPropagateKeyboardInput(true)
+    end
+  end)
+  keyboardTrap:RegisterEvent("PLAYER_REGEN_ENABLED")
+  keyboardTrap:RegisterEvent("PLAYER_REGEN_DISABLED")
+  keyboardTrap:SetScript("OnEvent", function(_, event)
+    keyboardTrap:SetShown(event == "PLAYER_REGEN_ENABLED" and selection)
+  end)
+
+  local function UpdateSelection()
+    if selection then
+      selectedMarker:Show()
+      selectedMarker:SetFrameStrata("HIGH")
+      selectedMarker:ClearAllPoints()
+      selectedMarker:SetPoint("TOPLEFT", selection, "TOPLEFT", -2, 2)
+      selectedMarker:SetPoint("BOTTOMRIGHT", selection, "BOTTOMRIGHT", 2, -2)
+
+      widgetOptionsContainer:Show()
+      widgetOptionsContainer.details = selection.details
+      for _, f in ipairs(allFrames) do
+        if f.getInitData then
+          f:Init(f.getInitData(selection.details))
+        end
+        f:SetValue(f.Getter())
+      end
+
+      titleText:Show()
+      titleText:SetText(titleMap[selection.kind])
+      keyboardTrap:SetShown(not InCombatLockdown())
+    else
+      titleText:Hide()
+      widgetOptionsContainer:Hide()
+      selectedMarker:Hide()
+      keyboardTrap:Hide()
+    end
+  end
+
+  local function ToggleSelection(w)
+    if selection == w then
+      selection = nil
+    else
+      selection = w
+    end
+    UpdateSelection()
+  end
+  local function ForceSelection(w)
+    selection = w
+    UpdateSelection()
+  end
+
+  local expectedTexts = {"countdown", "stacks"}
+
+  preview.widgets = {}
+
+  for _, key in ipairs(expectedTexts) do
+    local w = CreateFrame("Frame", nil, wrapper)
+    w:SetSize(1, 1)
+    preview.widgets[key] = w
+    w.text = w:CreateFontString(nil, nil, "GameFontNormal")
+    w.kind = key
+    w:SetMovable(true)
+    w:EnableMouse(true)
+    w:RegisterForDrag("LeftButton")
+    w:SetScript("OnEnter", function()
+      hoverMarker:Show()
+      hoverMarker:SetFrameStrata("HIGH")
+      hoverMarker:ClearAllPoints()
+      hoverMarker:SetPoint("TOPLEFT", w, "TOPLEFT", -2, 2)
+      hoverMarker:SetPoint("BOTTOMRIGHT", w, "BOTTOMRIGHT", 2, -2)
+    end)
+    w:SetScript("OnLeave", function()
+      hoverMarker:Hide()
+    end)
+    w:SetScript("OnDragStart", function()
+      w:StartMoving()
+      ForceSelection(w)
+    end)
+    w:SetScript("OnDragStop", function()
+      w:StopMovingOrSizing()
+      UpdateWidgetPoints(preview, w, 1)
+      ForceSelection(w)
+      Announce()
+    end)
+    w:SetScript("OnMouseUp", function()
+      ToggleSelection(w)
+    end)
+  end
+
+  preview.widgets.countdown.text:SetText(3)
+  preview.widgets.stacks.text:SetText(2)
+
+  function container:SetValue(details)
+    container.details = details.texts
+
+    for key, textDetails in pairs(details.texts) do
+      local text = preview.widgets[key].text
+      text:ClearAllPoints()
+      text:SetFontObject(addonTable.CurrentFont)
+      text:SetTextScale(textDetails.scale)
+      text:SetPoint(textDetails.anchor[1] or "CENTER")
+      text:SetTextColor(textDetails.color.r, textDetails.color.g, textDetails.color.b)
+      if textDetails.visible then
+        preview.widgets[key]:SetAlpha(1)
+      else
+        preview.widgets[key]:SetAlpha(0.5)
+      end
+      preview.widgets[key]:SetSize(text:GetSize())
+      preview.widgets[key].details = textDetails
+
+      addonTable.Display.ApplyAnchor(preview.widgets[key], textDetails.anchor)
+    end
+
+    wrapper:SetHeight(20 * details.height)
+    wrapper.Icon:SetHeight(20 * details.height)
+    wrapper.Border:SetHeight(20 * details.height)
+    local texBase = 0.95 * (1 - details.height) / 2
+    wrapper.Icon:SetTexCoord(0.05, 0.95, 0.05 + texBase, 0.95 - texBase)
+
+    UpdateSelection()
+  end
+
+  return container
+end
+
+GenerateOptions = function(parent, yOffset, xOffset, entries)
+  local allFrames = {}
+
+  for _, e in ipairs(entries) do
+    local frame
+    local function Setter(value)
+      if not parent.details then
+        return
+      end
+      local oldValue = e.getter(parent.details)
+      e.setter(parent.details, value)
+      if type(oldValue) == "table" then
+        if not tCompare(oldValue, e.getter(parent.details)) then
+          Announce()
+        end
+      elseif oldValue ~= e.getter(parent.details) then
+        Announce()
+      end
+    end
+    local function Getter()
+      if not parent.details then
+        return
+      end
+      return e.getter(parent.details)
+    end
+    if e.hide then
+      frame = nil
+    elseif e.kind == "slider" then
+      if e.valuePattern then
+        frame = addonTable.CustomiseDialog.Components.GetSlider(parent, e.label, e.min, e.max, function(val) return e.valuePattern:format(val) end, Setter)
+      else
+        frame = addonTable.CustomiseDialog.Components.GetSlider(parent, e.label, e.min, e.max, e.formatter, Setter)
+      end
+    elseif e.kind == "dropdown" then
+      frame = addonTable.CustomiseDialog.Components.GetBasicDropdown(parent, e.label, function(value)
+        if not parent.details then
+          return false
+        end
+        if type(value) == "table" then
+          return tCompare(value, e.getter(parent.details))
+        else
+          return value == e.getter(parent.details)
+        end
+      end, Setter)
+    elseif e.kind == "checkbox" then
+      frame = addonTable.CustomiseDialog.Components.GetCheckbox(parent, e.label, 28 + xOffset, Setter)
+    elseif e.kind == "colorPicker" then
+      frame = addonTable.CustomiseDialog.Components.GetColorPicker(parent, e.label, 28 + xOffset, Setter)
+    elseif e.kind == "autoColors" then
+      frame = GetAutomaticColors(parent, e.lockedElements, e.addAlpha)
+    elseif e.kind == "auraTextsPositioner" then
+      frame = GetAurasTextPositioning(parent, e.icon)
+    end
+
+    if frame then
+      frame.kind = e.kind
+      frame.getInitData = e.getInitData
+      frame.Getter = Getter
+      if #allFrames == 0 then
+        frame:SetPoint("TOP", 0, yOffset)
+      else
+        frame:SetPoint("TOP", allFrames[#allFrames], "BOTTOM", 0, yOffset)
+      end
+      table.insert(allFrames, frame)
+      yOffset = 0
+    elseif e.kind == "spacer" then
+      yOffset = -30
+    end
+  end
+
+  return allFrames
+end
+
 function addonTable.CustomiseDialog.GetMainDesigner(parent)
   local container = CreateFrame("Frame", nil, parent)
 
@@ -303,7 +618,6 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
   table.insert(allFrames, designScale)
 
   local UpdateSelection
-  local UpdateWidgetPoints
   local widgets
   local selectionIndexes = {}
   local fociOnDown = {}
@@ -337,14 +651,7 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
   preview:SetFlattensRenderLayers(true)
   preview:SetScale(2)
 
-  local contextHoverMarker = CreateFrame("Frame", nil, container)
-  local contextHoverTexture = contextHoverMarker:CreateTexture()
-  contextHoverTexture:SetTexture("Interface/AddOns/Platynator/Assets/selection-outline.png")
-  contextHoverTexture:SetVertexColor(78/255, 165/255, 252/255, 0.8)
-  contextHoverTexture:SetTextureSliceMargins(45, 45, 45, 45)
-  contextHoverTexture:SetTextureSliceMode(Enum.UITextureSliceMode.Tiled)
-  contextHoverTexture:SetScale(0.25)
-  contextHoverTexture:SetAllPoints()
+  local contextHoverMarker = GetSelectorMarker(CreateFrame("Frame", nil, container), false)
 
   local function ToggleSelection(rawFoci)
     local foci = tFilter(rawFoci, function(w) return w:GetParent() == preview end, true)
@@ -415,65 +722,6 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
     end
   end
 
-  UpdateWidgetPoints = function(w, snapping, offsetX, offsetY)
-    snapping = snapping or 2
-    offsetX = offsetX or 0
-    offsetY = offsetY or 0
-    local left, bottom, width, height = w:GetRect()
-    local widgetRect = {left = left + offsetX, bottom = bottom + offsetY, width = width, height = height}
-    left, bottom, width, height = preview:GetRect()
-    local previewRect = {left = left, bottom = bottom, width = width, height = height}
-    local widgetCenter = {x = widgetRect.left + widgetRect.width / 2, y = widgetRect.bottom + widgetRect.height / 2}
-    local previewCenter = {x = previewRect.left + previewRect.width / 2, y = previewRect.bottom + previewRect.height / 2}
-
-    local point, x, y = "", 0, 0
-
-    local snapX, snapY, xLock, yLock = 0, 0, false, false
-    if math.abs(widgetCenter.y - previewCenter.y) < snapping then
-      snapY = previewCenter.y - widgetCenter.y
-      point = point
-      yLock = true
-    elseif widgetCenter.y < previewCenter.y then
-      point = "TOP" .. point
-      y = widgetRect.bottom + widgetRect.height - previewCenter.y
-    else
-      point = "BOTTOM" .. point
-      y = widgetRect.bottom - previewCenter.y
-    end
-
-    if math.abs(widgetCenter.x - previewCenter.x) < snapping then
-      snapX = previewCenter.x - widgetCenter.x
-      xLock = true
-      point = point
-    elseif widgetCenter.x < previewCenter.x then
-      point = point .. "LEFT"
-      x = widgetRect.left - previewCenter.x
-    else
-      point = point .. "RIGHT"
-      x = widgetRect.left + widgetRect.width - previewCenter.x
-    end
-
-    if point == "" then
-      w.details.anchor = {}
-    elseif x == 0 and y == 0 then
-      w.details.anchor = {point}
-    else
-      w.details.anchor = {point, RoundPixel(x), RoundPixel(y)}
-    end
-
-    if x ~= 0 then
-      snapX = RoundPixel(x) - x
-    end
-    if y ~= 0 then
-      snapY = RoundPixel(y) - y
-    end
-
-    -- snapX, snapY used to offset other widgets to keep them all consistent to each other
-    -- xLock, yLock used to prevent a widget shifting because its been centered on an axis
-    -- (this prevents infinite loops from the shifts bouncing around)
-    return snapX, snapY, xLock, yLock
-  end
-
   local function AlignForRelativePoints(offsets, snappingAmount)
     snappingAmount = snappingAmount or 3
     local snapped = true
@@ -490,7 +738,7 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
       local snapX, snapY, xLock, yLock = 0, 0, nil, nil
       for indexIndex, index in ipairs(selectionIndexes) do
         local w = widgets[index]
-        snapX, snapY, xLock, yLock = UpdateWidgetPoints(w, snappingAmount, offsets[indexIndex].x, offsets[indexIndex].y)
+        snapX, snapY, xLock, yLock = UpdateWidgetPoints(preview, w, snappingAmount, offsets[indexIndex].x, offsets[indexIndex].y)
         local o = offsets[indexIndex]
         if math.abs(snapX) >= pixelStep/2 and not o.xLock or math.abs(snapY) >= pixelStep/2 and not o.yLock then
           -- See UpdateWidgetPoints for usage of xLock/yLock
@@ -576,26 +824,11 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
     Announce()
   end
 
-  local selectorPool = CreateFramePool("Frame", container, nil, nil, false, function(selector)
-    local selectionTexture = selector:CreateTexture()
-    selectionTexture:SetTexture("Interface/AddOns/Platynator/Assets/selection-outline.png")
-    selectionTexture:SetTextureSliceMargins(45, 45, 45, 45)
-    selectionTexture:SetTextureSliceMode(Enum.UITextureSliceMode.Tiled)
-    selectionTexture:SetVertexColor(78/255, 165/255, 252/255, 0.9)
-    selectionTexture:SetScale(0.25)
-    selectionTexture:SetAllPoints()
-  end)
+  local selectorPool = CreateFramePool("Frame", container, nil, nil, false, GetSelectorMarker)
   local keyboardTrap = CreateFrame("Frame", nil, container)
   keyboardTrap:Hide()
 
-  local hoverMarker = CreateFrame("Frame", nil, container)
-  local hoverTexture = hoverMarker:CreateTexture()
-  hoverTexture:SetTexture("Interface/AddOns/Platynator/Assets/selection-outline.png")
-  hoverTexture:SetVertexColor(78/255, 165/255, 252/255, 0.45)
-  hoverTexture:SetTextureSliceMargins(45, 45, 45, 45)
-  hoverTexture:SetTextureSliceMode(Enum.UITextureSliceMode.Tiled)
-  hoverTexture:SetScale(0.25)
-  hoverTexture:SetAllPoints()
+  local hoverMarker = GetSelectorMarker(CreateFrame("Frame", nil, container), true)
 
   local titleText = container:CreateFontString(nil, nil, "GameFontHighlightLarge")
   titleText:SetPoint("TOP", previewInset, "BOTTOM", 0, -15)
@@ -918,14 +1151,18 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
       end
       local cdText = container.auras[1].Cooldown:GetRegions()
       cdText:SetFontObject(addonTable.CurrentFont)
-      cdText:SetTextScale(14/12 * details.textScale)
+      cdText:SetTextScale(details.texts.countdown.scale)
+      cdText:SetTextColor(details.texts.countdown.color.r, details.texts.countdown.color.g, details.texts.countdown.color.b)
       container.auras[1].Cooldown:SetCooldown(GetTime() - 2, 5)
       container.auras[1].Cooldown:Pause()
-      container.auras[1].Cooldown:SetHideCountdownNumbers(not details.showCountdown)
-      container.auras[1].CountFrame.Count:SetText(2);
+      container.auras[1].Cooldown:SetHideCountdownNumbers(not details.texts.countdown.visible)
+      addonTable.Display.ApplyAnchor(cdText, details.texts.countdown.anchor)
+      container.auras[1].CountFrame.Count:SetText(2)
       container.auras[1].CountFrame.Count:SetFontObject(addonTable.CurrentFont)
-      container.auras[1].CountFrame.Count:SetTextScale(11/12 * details.textScale)
-      container.auras[1].CountFrame.Count:Show();
+      container.auras[1].CountFrame.Count:SetTextScale(details.texts.stacks.scale)
+      container.auras[1].CountFrame.Count:SetShown(details.texts.stacks.visible)
+      addonTable.Display.ApplyAnchor(container.auras[1].CountFrame.Count, details.texts.stacks.anchor)
+      container.auras[1].CountFrame.Count:SetTextColor(details.texts.stacks.color.r, details.texts.stacks.color.g, details.texts.stacks.color.b)
       container:SetSize(22 * container.count * details.scale, 20 * details.height * details.scale)
       container.Wrapper:SetHeight(20 * details.height)
       container:SetSize(20 * details.scale, 20 * details.height * details.scale)
@@ -992,75 +1229,10 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
         tab.kindSpecificSettings[kind] = parent
       end
 
-      local allFrames = {}
+      local allFrames = GenerateOptions(parent, yOffset, 0, entries)
 
-      for _, e in ipairs(entries) do
-        local frame
-        local function Setter(value)
-          if not parent.details then
-            return
-          end
-          local oldValue = e.getter(parent.details)
-          e.setter(parent.details, value)
-          if type(oldValue) == "table" then
-            if not tCompare(oldValue, e.getter(parent.details)) then
-              Announce()
-            end
-          elseif oldValue ~= e.getter(parent.details) then
-            Announce()
-          end
-        end
-        local function Getter(value)
-          if not parent.details then
-            return
-          end
-          return e.getter(parent.details)
-        end
-        if e.hide then
-          frame = nil
-        elseif e.kind == "slider" then
-          if e.valuePattern then
-            frame = addonTable.CustomiseDialog.Components.GetSlider(parent, e.label, e.min, e.max, function(val) return e.valuePattern:format(val) end, Setter)
-          else
-            frame = addonTable.CustomiseDialog.Components.GetSlider(parent, e.label, e.min, e.max, e.formatter, Setter)
-          end
-        elseif e.kind == "dropdown" then
-          frame = addonTable.CustomiseDialog.Components.GetBasicDropdown(parent, e.label, function(value)
-            if not parent.details then
-              return false
-            end
-            if type(value) == "table" then
-              return tCompare(value, e.getter(parent.details))
-            else
-              return value == e.getter(parent.details)
-            end
-          end, Setter)
-        elseif e.kind == "checkbox" then
-          frame = addonTable.CustomiseDialog.Components.GetCheckbox(parent, e.label, 28, Setter)
-        elseif e.kind == "colorPicker" then
-          frame = addonTable.CustomiseDialog.Components.GetColorPicker(parent, e.label, 28, Setter)
-        elseif e.kind == "autoColors" then
-          frame = GetAutomaticColors(parent, e.lockedElements, e.addAlpha)
-        end
-
-        if frame then
-          frame.kind = e.kind
-          frame.getInitData = e.getInitData
-          frame.Getter = Getter
-          if #allFrames == 0 then
-            frame:SetPoint("TOP", 0, yOffset)
-          else
-            frame:SetPoint("TOP", allFrames[#allFrames], "BOTTOM", 0, yOffset)
-          end
-          table.insert(allFrames, frame)
-          yOffset = 0
-        elseif e.kind == "spacer" then
-          yOffset = -30
-        end
-
-        if parent == tab then
-          tab.lastOption = allFrames[#allFrames]
-        end
+      if parent == tab then
+        tab.lastOption = allFrames[#allFrames]
       end
 
       function parent:UpdateOptions(details)
