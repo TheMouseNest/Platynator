@@ -139,6 +139,9 @@ function addonTable.Core.UpgradeDesign(design)
     if aura.showDispel then
       aura.showDispel = nil
     end
+    if aura.showSwipe == nil then
+      aura.showSwipe = true
+    end
     if aura.kind == "crowdControl" and not aura.filters then
       aura.filters = {
         fromYou = false,

@@ -241,6 +241,9 @@ function addonTable.Display.NameplateMixin:OnLoad()
             auraFrame.Cooldown.Text:SetTextColor(c2.r, c2.g, c2.b)
           end
 
+          auraFrame.Cooldown:SetDrawEdge(details.showSwipe)
+          auraFrame.Cooldown:SetDrawSwipe(details.showSwipe)
+
           PixelUtil.SetSize(auraFrame, 20, 20 * details.height)
           PixelUtil.SetSize(auraFrame.Border, 20, 20 * details.height)
           PixelUtil.SetSize(auraFrame.Icon, 20, 20 * details.height)

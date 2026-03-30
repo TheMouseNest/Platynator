@@ -976,6 +976,16 @@ addonTable.CustomiseDialog.WidgetsConfig = {
               return details.showType
             end,
           },
+          {
+            label = addonTable.Locales.SHOW_ROTATING_SWIPE,
+            kind = "checkbox",
+            setter = function(details, value)
+              details.showSwipe = value
+            end,
+            getter = function(details)
+              return details.showSwipe
+            end,
+          },
         },
       },
       {
