@@ -10,7 +10,7 @@ addonTable.Constants = {
   IsEra = WOW_PROJECT_ID == WOW_PROJECT_CLASSIC,
   IsClassic = WOW_PROJECT_ID ~= WOW_PROJECT_MAINLINE,
 
-  IsMidnight = select(4, GetBuildInfo()) >= 120001,
+  IsMidnightNext = select(4, GetBuildInfo()) >= 120005,
 
   DeathKnightMaxRunes = 6,
 

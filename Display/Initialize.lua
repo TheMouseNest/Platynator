@@ -139,25 +139,29 @@ function addonTable.Display.ManagerMixin:OnLoad()
     local nameplate = C_NamePlate.GetNamePlateForUnit(unit, issecure())
     if nameplate and unit and (addonTable.Constants.IsRetail or not UnitIsUnit("player", unit)) then
       if addonTable.Constants.IsRetail then
-        nameplate.UnitFrame:SetAlpha(0)
-        nameplate.UnitFrame.AurasFrame.DebuffListFrame:SetParent(addonTable.hiddenFrame)
-        nameplate.UnitFrame.AurasFrame.BuffListFrame:SetParent(addonTable.hiddenFrame)
-        nameplate.UnitFrame.AurasFrame.CrowdControlListFrame:SetParent(addonTable.hiddenFrame)
-        nameplate.UnitFrame.AurasFrame.LossOfControlFrame:SetParent(addonTable.hiddenFrame)
-        for _, key in ipairs(reparentedKeys) do
-          nameplate.UnitFrame[key]:SetParent(addonTable.hiddenFrame)
+        if not addonTable.Constants.IsMidnightNext then
+          nameplate.UnitFrame:SetAlpha(0)
+          nameplate.UnitFrame.AurasFrame.DebuffListFrame:SetParent(addonTable.hiddenFrame)
+          nameplate.UnitFrame.AurasFrame.BuffListFrame:SetParent(addonTable.hiddenFrame)
+          nameplate.UnitFrame.AurasFrame.CrowdControlListFrame:SetParent(addonTable.hiddenFrame)
+          nameplate.UnitFrame.AurasFrame.LossOfControlFrame:SetParent(addonTable.hiddenFrame)
+          for _, key in ipairs(reparentedKeys) do
+            nameplate.UnitFrame[key]:SetParent(addonTable.hiddenFrame)
+          end
         end
         if not self.HookedUFs[nameplate.UnitFrame] then
           self.HookedUFs[nameplate.UnitFrame] = true
-          local locked = false
-          hooksecurefunc(nameplate.UnitFrame, "SetAlpha", function(UF)
-            if locked or UF:IsForbidden() then
-              return
-            end
-            locked = true
-            UF:SetAlpha(0)
-            locked = false
-          end)
+          if not addonTable.Constants.IsMidnightNext then
+            local locked = false
+            hooksecurefunc(nameplate.UnitFrame, "SetAlpha", function(UF)
+              if locked or UF:IsForbidden() then
+                return
+              end
+              locked = true
+              UF:SetAlpha(0)
+              locked = false
+            end)
+          end
           hooksecurefunc(nameplate.UnitFrame.AurasFrame, "RefreshAuras", function(af, data)
             if not af:IsForbidden() then
               local display = self.nameplateDisplays[af:GetParent().unit]
@@ -166,6 +170,9 @@ function addonTable.Display.ManagerMixin:OnLoad()
               end
             end
           end)
+        end
+        if addonTable.Constants.IsMidnightNext then
+          nameplate.UnitFrame:SetParent(addonTable.hiddenFrame)
         end
       else
         nameplate.UnitFrame:SetParent(addonTable.hiddenFrame)
@@ -185,7 +192,7 @@ function addonTable.Display.ManagerMixin:OnLoad()
     if self.ModifiedUFs[unit] then
       local UF = self.ModifiedUFs[unit]
       -- Restore original anchors and parents to various things we changed
-      if addonTable.Constants.IsRetail then
+      if addonTable.Constants.IsRetail and not addonTable.Constants.IsMidnightNext then
         for _, key in ipairs(reparentedKeys) do
           UF[key]:SetParent(UF)
         end
