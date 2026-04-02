@@ -21,6 +21,7 @@ local settings = {
 
   TARGET_SCALE = {key = "target_scale", default = 1.2, refresh = {addonTable.Constants.RefreshReason.TargetBehaviour}},
   CAST_SCALE = {key = "cast_scale", default = 1.1, refresh = {addonTable.Constants.RefreshReason.TargetBehaviour}},
+  MOUSEOVER_SCALE = {key = "mouseover_scale", default = 1, refresh = {addonTable.Constants.RefreshReason.TargetBehaviour}},
   CAST_ALPHA = {key = "cast_alpha", default = 1, refresh = {addonTable.Constants.RefreshReason.TargetBehaviour}},
   NOT_TARGET_ALPHA = {key = "not_target_alpha", default = 1, refresh = {addonTable.Constants.RefreshReason.TargetBehaviour}},
   MOUSEOVER_ALPHA = {key = "mouseover_alpha", default = 1, refresh = {addonTable.Constants.RefreshReason.TargetBehaviour}},
