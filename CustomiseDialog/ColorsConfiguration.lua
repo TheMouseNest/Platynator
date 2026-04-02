@@ -708,6 +708,7 @@ addonTable.CustomiseDialog.ColorsConfig = {
         cast = GetColor("FC8C00"),
         channel = GetColor("3EC637"),
         interrupted = GetColor("FC36E0"),
+        empowered = GetColor("05c666"),
       },
     },
     entries = {
