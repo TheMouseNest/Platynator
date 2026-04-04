@@ -104,6 +104,7 @@ addonTable.Assets.Highlights = {
   ["Platy: Blizzard Health Bold"] = {file = "Interface/AddOns/Platynator/Assets/%s/BarBorders/blizzard-health-square.png", width = 48, height = 48, has4k = true, masked = true, tag = "blizzard-health", margin = 0.4, extra = 0, minSize = 100, modifier = 0.3, DPIScale = 1/2, mode = renderMode.Sliced},
   ["Platy: Soft Glow"] = {file = "Interface/AddOns/Platynator/Assets/%s/Highlights/soft-glow-square.png", width = 59, height = 59, has4k = true, masked = true, tag = "soft", margin = 0.4, extra = 11, modifier = 0.3, DPIScale = 1/2, mode = renderMode.Sliced},
   ["Platy: Feathered"] = {file = "Interface/AddOns/Platynator/Assets/%s/Highlights/feathered-square.png", width = 60, height = 60, has4k = true, masked = true, tag = "soft", margin = 0.48, extra = 0, modifier = 0.25, DPIScale = 1/2, mode = renderMode.Sliced},
+  ["Platy: Feathered Holed"] = {file = "Interface/AddOns/Platynator/Assets/%s/Highlights/feathered-holed-square.png", width = 60, height = 60, has4k = true, masked = true, tag = "soft", margin = 0.48, extra = 0, modifier = 0.25, DPIScale = 1/2, mode = renderMode.Sliced},
 
   ["Platy: Glow"] = {file = "Interface/AddOns/Platynator/Assets/%s/Highlights/glow-100.png", width = 1563, height = 680, has4k = true, mode = renderMode.Stretch, tag = "glow"},
 
