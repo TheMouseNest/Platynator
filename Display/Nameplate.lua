@@ -193,7 +193,11 @@ function addonTable.Display.NameplateMixin:OnLoad()
 
       frame.items = {}
       local texBase = 0.95 * (1 - details.height) / 2
-      for _, auraInstanceID in ipairs(data) do
+      for index, auraInstanceID in ipairs(data) do
+        if index > details.limit then
+          break
+        end
+
         local aura = self.AurasManager:GetByInstanceID(auraInstanceID)
         local auraFrame = self.AurasPool:Acquire()
         table.insert(frame.items, auraFrame)

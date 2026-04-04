@@ -289,6 +289,8 @@ L["CLASS"] = "Class"
 L["VISIBLE"] = "Visible"
 L["COUNTDOWN"] = "Countdown"
 L["STACKS"] = "Stacks"
+L["LIMIT_TO"] = "Limit to"
+L["X_AURAS"] = "%d auras"
 
 L["WHAT_TO_EXPORT"] = "What to export?"
 L["STYLE"] = "Style"
