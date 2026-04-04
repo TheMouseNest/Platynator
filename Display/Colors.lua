@@ -330,7 +330,7 @@ function addonTable.Display.GetColor(settings, state, unit)
         break
       end
     elseif s.kind == "softTarget" then
-      if not UnitIsUnit("target", unit) and (UnitIsUnit("softenemy", unit) or UnitIsUnit("softfriend", unit)) then
+      if (UnitIsUnit("target", unit) and IsTargetLoose()) or not UnitIsUnit("target", unit) and (UnitIsUnit("softenemy", unit) or UnitIsUnit("softfriend", unit)) then
         table.insert(colorQueue, {color = s.colors.softTarget})
         break
       end
