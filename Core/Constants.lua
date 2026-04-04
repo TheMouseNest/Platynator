@@ -33,6 +33,8 @@ addonTable.Constants.Events = {
   "QuestInfoUpdate",
   "CombatStatusChange",
   "MouseoverUpdate",
+
+  "RoleChange",
 }
 
 addonTable.Constants.RefreshReason = {

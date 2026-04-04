@@ -451,3 +451,67 @@ function addonTable.Display.Utilities.TintAutoColors(autoColors, mod)
     return modColors
   end
 end
+
+do
+  local roleType = {
+    Damage = 1,
+    Healer = 2,
+    Tank = 3,
+  }
+
+  local roleMap = {
+    ["DAMAGER"] = roleType.Damage,
+    ["TANK"] = roleType.Tank,
+    ["HEALER"] = roleType.Healer,
+  }
+
+  local role = roleType.Damage
+  local isTank = false
+  local _, playerClass = UnitClass("player")
+
+  local function GetPlayerRole()
+    if addonTable.Constants.IsEra or addonTable.Constants.IsBC or addonTable.Constants.IsWrath then
+      -- we're in classic
+      local form = GetShapeshiftForm()
+      if (playerClass == "WARRIOR" and form == 2) or (playerClass == "DRUID" and form == 1) then
+        return roleType.Tank
+      elseif playerClass == "PALADIN" and C_UnitAuras.GetUnitAuraBySpellID("player", 25780) ~= nil then
+        return roleType.Tank
+      end
+    else
+      local specIndex = C_SpecializationInfo.GetSpecialization()
+      local _, _, _, _, role = C_SpecializationInfo.GetSpecializationInfo(specIndex)
+
+      return roleMap[role]
+    end
+    return roleType.Damage
+  end
+
+  do
+    local specializationMonitor = CreateFrame("Frame")
+    specializationMonitor:RegisterEvent("PLAYER_LOGIN")
+
+    if addonTable.Constants.IsEra or addonTable.Constants.IsBC or addonTable.Constants.IsWrath then
+      if playerClass == "WARRIOR" or playerClass == "DRUID" then
+        specializationMonitor:RegisterEvent("UPDATE_SHAPESHIFT_FORM")
+      elseif playerClass == "PALADIN" then
+        specializationMonitor:RegisterUnitEvent("UNIT_AURA", "player")
+      end
+    elseif C_EventUtils.IsEventValid("PLAYER_SPECIALIZATION_CHANGED") then
+      specializationMonitor:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
+    end
+
+    specializationMonitor:SetScript("OnEvent", function()
+      local newRole = GetPlayerRole()
+      if newRole ~= role then
+        role = newRole
+        isTank = role == roleType.Tank
+        addonTable.CallbackRegistry:TriggerEvent("RoleChange")
+      end
+    end)
+  end
+
+  function addonTable.Display.Utilities.IsTankRole()
+    return isTank
+  end
+end
