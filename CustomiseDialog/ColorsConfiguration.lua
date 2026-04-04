@@ -175,6 +175,16 @@ addonTable.CustomiseDialog.ColorsConfig = {
         end,
       },
       {
+        label = addonTable.Locales.ONLY_APPLY_WHEN_TANK,
+        kind = "checkbox",
+        setter = function(details, value)
+          details.tanksOnly = value
+        end,
+        getter = function(details)
+          return details.tanksOnly
+        end,
+      },
+      {
         label = addonTable.Locales.USE_SAFE_COLOR,
         kind = "checkbox",
         setter = function(details, value)

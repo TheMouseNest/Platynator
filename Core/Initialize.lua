@@ -210,6 +210,9 @@ function addonTable.Core.UpgradeDesign(design)
       if ac.kind == "mouseover" and ac.includeTarget == nil then
         ac.includeTarget = true
       end
+      if ac.kind == "threat" and ac.tanksOnly == nil then
+        ac.tanksOnly = false
+      end
 
       index = index + 1
     end

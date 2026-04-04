@@ -240,7 +240,7 @@ local function GetAutomaticColors(rootParent, lockedElements, addAlpha)
       deleteButton:SetText(DELETE)
       DynamicResizeButton_Resize(deleteButton)
       if #allFrames > 0 then
-        deleteButton:SetPoint("BOTTOMRIGHT", -15, 0)
+        deleteButton:SetPoint("BOTTOMRIGHT", -15, -20)
       else
         deleteButton:SetPoint("TOP", 0, -15)
       end
