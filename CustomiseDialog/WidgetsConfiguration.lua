@@ -965,6 +965,18 @@ addonTable.CustomiseDialog.WidgetsConfig = {
               return details.direction
             end
           },
+          {
+            label = addonTable.Locales.LIMIT_TO,
+            kind = "slider",
+            min = 1, max = 30,
+            valuePattern = addonTable.Locales.X_AURAS,
+            setter = function(details, value)
+              details.limit = value
+            end,
+            getter = function(details)
+              return details.limit
+            end,
+          },
           { kind = "spacer" },
           {
             label = addonTable.Locales.SHOW_TYPE_BORDER,

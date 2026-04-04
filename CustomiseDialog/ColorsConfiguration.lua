@@ -111,6 +111,8 @@ addonTable.CustomiseDialog.ColorsConfig = {
       },
       instancesOnly = false,
       combatOnly = true,
+      tanksOnly = false,
+      useSafeColor = false,
     },
     entries = {
       {
