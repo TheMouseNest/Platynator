@@ -279,6 +279,7 @@ function addonTable.Core.UpgradeDesign(design)
       reaction.colors.tapped = nil
 
       threat.combatOnly = not bar.aggroColoursOnHostiles
+      threat.useSafeColor = true
       bar.aggroColoursOnHostiles = nil
 
       bar.autoColors = {
