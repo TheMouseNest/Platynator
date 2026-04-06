@@ -713,7 +713,7 @@ local editorPools = {
 }
 
 local poolType = {}
-local layerStep = 500
+local layerStep = addonTable.Constants.LayerFrameLevelStep
 
 function addonTable.Display.GetWidgets(design, parent, isEditor)
   local widgets = {}

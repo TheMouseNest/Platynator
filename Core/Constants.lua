@@ -20,6 +20,8 @@ addonTable.Constants = {
 
   DefaultFont = "Roboto Condensed Bold",
   FontFamilies = {"roman", "korean", "simplifiedchinese", "traditionalchinese", "russian"},
+
+  LayerFrameLevelStep = 500,
 }
 addonTable.Constants.Events = {
   "SettingChanged",

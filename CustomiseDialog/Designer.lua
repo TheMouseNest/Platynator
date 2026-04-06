@@ -1154,11 +1154,11 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
       local container = auraContainers[details.kind]
       container:Show()
       if details.kind == "debuffs" then
-        container:SetFrameLevel(801)
+        container:SetFrameLevel(addonTable.Constants.LayerFrameLevelStep * details.layer + 450)
       elseif details.kind == "buffs" then
-        container:SetFrameLevel(802)
+        container:SetFrameLevel(addonTable.Constants.LayerFrameLevelStep * details.layer + 450 + 10)
       else
-        container:SetFrameLevel(803)
+        container:SetFrameLevel(addonTable.Constants.LayerFrameLevelStep * details.layer + 450 + 20)
       end
       local cdText = container.auras[1].Cooldown:GetRegions()
       cdText:SetFontObject(addonTable.CurrentFont)

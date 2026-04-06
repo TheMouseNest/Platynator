@@ -176,6 +176,9 @@ function addonTable.Core.UpgradeDesign(design)
     if not aura.limit then
       aura.limit = 30
     end
+    if not aura.layer then
+      aura.layer = 1
+    end
   end
 
   local function UpdateAutoColors(autoColors)

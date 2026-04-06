@@ -931,6 +931,18 @@ addonTable.CustomiseDialog.WidgetsConfig = {
               return details.scale * 100
             end,
           },
+          {
+            label = addonTable.Locales.LAYER,
+            kind = "slider",
+            min = 0, max = 6,
+            valuePattern = "%d",
+            setter = function(details, value)
+              details.layer = value
+            end,
+            getter = function(details)
+              return details.layer
+            end,
+          },
           { kind = "spacer" },
           {
             label = addonTable.Locales.HEIGHT,
@@ -977,7 +989,6 @@ addonTable.CustomiseDialog.WidgetsConfig = {
               return details.limit
             end,
           },
-          { kind = "spacer" },
           {
             label = addonTable.Locales.SHOW_TYPE_BORDER,
             kind = "checkbox",
