@@ -306,7 +306,7 @@ function addonTable.Display.GetColor(settings, state, unit)
         elseif s.useSafeColor and ((isTank and threat == 3) or (not isTank and (threat == 0 or threat == nil))) then
           table.insert(colorQueue, {color = s.colors.safe})
           break
-        elseif isTank and (threat == 0 or threat == nil) and DoesOtherTankHaveAggro(unit) then
+        elseif s.useSafeColor and isTank and (threat == 0 or threat == nil) and DoesOtherTankHaveAggro(unit) then
           table.insert(colorQueue, {color = s.colors.offtank})
           break
         end
