@@ -185,7 +185,7 @@ function addonTable.Display.PowerBarMixin:SetValue(currentPower, maxPower)
       end
     end
 
-    local offset = PixelUtil.ConvertPixelsToUIForRegion(-(self.asset.width - self.asset.inset) * self.details.scale * maxPower/2, self)
+    local offset = PixelUtil.ConvertPixelsToUIForRegion((-(self.asset.width - self.asset.inset) * maxPower/2 - self.asset.inset / 2) * self.details.scale, self)
     local step = PixelUtil.ConvertPixelsToUIForRegion((self.asset.width - self.asset.inset) * self.details.scale, self)
     for i = 1, maxPower do
       local t = self.powerTextures[i]
