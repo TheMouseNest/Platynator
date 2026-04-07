@@ -788,7 +788,7 @@ addonTable.CustomiseDialog.ColorsConfig = {
     }
   },
   ["execute"] = {
-    label = addonTable.Locales.EXECUTE,
+    label = addonTable.Locales.EXECUTE_CLASSIC,
     default = {
       kind = "execute",
       colors = {
