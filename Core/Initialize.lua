@@ -179,6 +179,9 @@ function addonTable.Core.UpgradeDesign(design)
     if not aura.layer then
       aura.layer = 1
     end
+    if aura.kind == "buffs" and aura.showStealable == nil then
+      aura.showStealable = false
+    end
   end
 
   local function UpdateAutoColors(autoColors)

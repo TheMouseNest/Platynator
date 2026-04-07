@@ -1109,6 +1109,21 @@ addonTable.CustomiseDialog.WidgetsConfig = {
     },
     ["buffs"] = {
       {
+        label = addonTable.Locales.GENERAL,
+        entries = {
+          {
+            label = addonTable.Locales.SHOW_PURGEABLE,
+            kind = "checkbox",
+            setter = function(details, value)
+              details.showStealable = value
+            end,
+            getter = function(details)
+              return details.showStealable
+            end,
+          },
+        },
+      },
+      {
         label = addonTable.Locales.TEXTS,
         entries = {
           {
