@@ -43,7 +43,7 @@ end
 
 function addonTable.Display.PvPMarkerMixin:Update()
   if not self.showClassification then
-    self.marker:Hide()
+    self:Hide()
     return
   end
 
@@ -51,9 +51,9 @@ function addonTable.Display.PvPMarkerMixin:Update()
   local atlas = PVP_CLASSIFICATION_ATLAS_ELEMENTS[pvpClassification]
 
   if atlas then
-    self.marker:Show()
+    self:Show()
     self.marker:SetAtlas(atlas)
   else
-    self.marker:Hide()
+    self:Hide()
   end
 end

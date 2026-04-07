@@ -19,7 +19,7 @@ function addonTable.Display.EliteMarkerMixin:SetUnit(unit)
   self.unit = unit
   if self.unit then
     if self.details.openWorldOnly and addonTable.Display.Utilities.IsInRelevantInstance({dungeon = true, raid = true}) then
-      self.marker:Hide()
+      self:Hide()
       return
     end
     self:RegisterEvent("UNIT_CLASSIFICATION_CHANGED")
@@ -36,13 +36,13 @@ end
 function addonTable.Display.EliteMarkerMixin:UpdateState()
   local classification = UnitClassification(self.unit)
   if classification == "elite" or classification == "worldboss" then
-    self.marker:Show()
+    self:Show()
     self.marker:SetTexture(self.eliteTexture)
   elseif classification == "rareelite" then
-    self.marker:Show()
+    self:Show()
     self.marker:SetTexture(self.rareEliteTexture)
   else
-    self.marker:Hide()
+    self:Hide()
   end
 end
 

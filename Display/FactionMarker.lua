@@ -16,7 +16,7 @@ function addonTable.Display.FactionMarkerMixin:SetUnit(unit)
       self:RegisterEvent("UNIT_FACTION")
       self:UpdateState()
     else
-      self.marker:Hide()
+      self:Hide()
     end
   else
     self:StripInternal()
@@ -30,13 +30,13 @@ end
 function addonTable.Display.FactionMarkerMixin:UpdateState()
   local faction = UnitFactionGroup(self.unit)
   if faction == "Alliance" then
-    self.marker:Show()
+    self:Show()
     self.marker:SetTexture(self.allianceTexture)
   elseif faction == "Horde" then
-    self.marker:Show()
+    self:Show()
     self.marker:SetTexture(self.hordeTexture)
   else
-    self.marker:Hide()
+    self:Hide()
   end
 end
 

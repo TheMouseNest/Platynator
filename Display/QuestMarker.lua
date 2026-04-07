@@ -18,7 +18,7 @@ function addonTable.Display.QuestMarkerMixin:Strip()
 end
 
 function addonTable.Display.QuestMarkerMixin:UpdateMarker()
-  self.marker:SetShown(#addonTable.Display.Utilities.GetQuestInfo(self.unit) > 0)
+  self:SetShown(#addonTable.Display.Utilities.GetQuestInfo(self.unit) > 0)
 end
 
 function addonTable.Display.QuestMarkerMixin:OnEvent(eventName, ...)

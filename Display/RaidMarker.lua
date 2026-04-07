@@ -25,9 +25,9 @@ end
 function addonTable.Display.RaidMarkerMixin:UpdateMarker()
   local index = GetRaidTargetIndex(self.unit)
   if type(index) ~= "nil" then
-    self.marker:Show()
+    self:Show()
     SetRaidTargetIconTexture(self.marker, index)
   else
-    self.marker:Hide()
+    self:Hide()
   end
 end

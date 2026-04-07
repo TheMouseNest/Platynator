@@ -26,11 +26,11 @@ end
 function addonTable.Display.ClassMarkerMixin:SetUnit(unit)
   self.unit = unit
   if self.unit and (UnitIsPlayer(self.unit) or UnitTreatAsPlayerForDisplay and UnitTreatAsPlayerForDisplay(self.unit)) then
-    self.marker:Show()
+    self:Show()
     local _, class = UnitClass(self.unit)
     self.marker:SetTexture(self.path:format(classMap[class]))
   else
-    self.marker:Hide()
+    self:Hide()
   end
 end
 
