@@ -267,3 +267,15 @@ addonTable.Assets.HighlightsLegacy = {
   ["100/classic-level"] = {width = 178, height = 125, mode = legacyMode.Percent100, tag = "blizzard-classic-level"},
 }
 ResizeAssets(addonTable.Assets.HighlightsLegacy)
+
+addonTable.Assets.PowerBarsLegacyMap = {
+  ["transparent"] = "Platy: Gradient Circle",
+  ["normal/gradient-faded"] = "Platy: Gradient Circle",
+  ["normal/gradient-full"] = "Platy: Gradient Circle",
+  ["normal/gradient-square-faded"] = "Platy: Gradient Square",
+  ["normal/gradient-square-full"] = "Platy: Gradient Square",
+  ["normal/soft-faded"] = "Platy: Soft Circle",
+  ["normal/soft-full"] = "Platy: Soft Circle",
+  ["normal/soft-square-faded"] = "Platy: Soft Square",
+  ["normal/soft-square-full"] = "Platy: Soft Square",
+}

@@ -329,33 +329,12 @@ end
 function addonTable.Display.GetPower(frame, parent)
   frame = frame or CreateFrame("Frame", nil, parent or UIParent)
 
-  frame.background = CreateFrame("StatusBar", nil, frame)
-  frame.background:SetAllPoints()
-  if addonTable.Constants.IsRetail then
-    frame.background:SetFillStyle(Enum.StatusBarFillStyle.Center)
-  else
-    frame.background:SetFillStyle("CENTER")
-  end
-  frame.background:SetMinMaxValues(0, 7)
-
-  frame.main = CreateFrame("StatusBar", nil, frame)
-  frame.main:SetMinMaxValues(0, 7)
-
-  frame:SetScript("OnSizeChanged", function()
-    PixelUtil.SetSize(frame.main, frame:GetSize())
-  end)
-
   function frame:Init(details)
     if frame.Strip then
       frame:Strip()
     end
 
     frame.details = details
-
-    local blankDetails = addonTable.Assets.PowerBars[details.blank]
-    self.background:SetStatusBarTexture(blankDetails.file)
-    self.main:SetStatusBarTexture(addonTable.Assets.PowerBars[details.filled].file)
-    self.main:SetPoint("LEFT", frame.background:GetStatusBarTexture())
 
     Mixin(frame, addonTable.Display.PowerBarMixin)
 
@@ -371,10 +350,9 @@ function addonTable.Display.GetPower(frame, parent)
   end
 
   function frame:ApplySize()
-    local details = frame.details
-    local blankDetails = addonTable.Assets.PowerBars[frame.details.blank]
-    PixelUtil.SetSize(frame, blankDetails.width * details.scale, blankDetails.height * details.scale)
-    PixelUtil.SetSize(self.main, self.background:GetSize())
+    if frame.PostApplySize then
+      frame:PostApplySize()
+    end
   end
 end
 

@@ -1100,9 +1100,10 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
         end
 
       elseif w.kind == "specialBars" and w.details.kind == "power" then
-        w.main:GetStatusBarTexture():SetVertexColor(234/255, 61/255, 247/255)
-        w.main:SetValue(4)
-        w.background:SetValue(6)
+        w:SetValue(4, 6)
+        for _, t in ipairs(w.powerTextures) do
+          t:SetVertexColor(234/255, 61/255, 247/255)
+        end
       elseif w.kind == "markers" then
         local asset = addonTable.Assets.Markers[w.details.asset]
         if asset.preview then

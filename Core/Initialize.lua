@@ -490,6 +490,11 @@ function addonTable.Core.UpgradeDesign(design)
     if bar.layer == nil then
       bar.layer = 3
     end
+    if bar.kind == "power" and bar.filled then
+      bar.asset = addonTable.Assets.PowerBarsLegacyMap[bar.filled]
+      bar.filled = nil
+      bar.blank = nil
+    end
   end
 
   if design.font.shadow == nil or design.font.flags ~= nil then

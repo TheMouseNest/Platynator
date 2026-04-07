@@ -79,7 +79,7 @@ local specializationToColor = {
   [1473] = CreateColorFromRGBHexString("37e5fc"),
 }
 
-local powerKind, powerColor, powerDivisor
+local powerKind, powerColor, powerDivisor, specID
 
 local specializationMonitor = CreateFrame("Frame")
 specializationMonitor:RegisterEvent("PLAYER_LOGIN")
@@ -88,7 +88,7 @@ if C_EventUtils.IsEventValid("PLAYER_SPECIALIZATION_CHANGED") then
 end
 specializationMonitor:RegisterEvent("UPDATE_SHAPESHIFT_FORM")
 specializationMonitor:SetScript("OnEvent", function()
-  local specID
+  specID = nil
   if UnitClassBase("player") == "DRUID" then
     if GetShapeshiftFormID() == 1 then
       specID = classToSpec["DRUID"]
@@ -107,7 +107,26 @@ end)
 
 addonTable.Display.PowerBarMixin = {}
 
+function addonTable.Display.PowerBarMixin:PostInit()
+  function self:PostApplySize()
+    self.lastMaxPower = 0
+    self.lastSpecID = nil
+    PixelUtil.SetSize(self, (self.asset.width - self.asset.inset) * self.lastMaxPower, self.asset.height)
+  end
+  if not self.powerTextures then
+    self.powerTextures = {}
+  end
+
+  self.asset = addonTable.Assets.PowerBars[self.details.asset]
+  self.lastMaxPower = 0
+  self.lastSpecID = nil
+  for _, t in ipairs(self.powerTextures) do
+    t:SetTexture(self.asset.file)
+  end
+end
+
 function addonTable.Display.PowerBarMixin:Strip()
+  self.asset = nil
 end
 
 function addonTable.Display.PowerBarMixin:SetUnit(unit)
@@ -143,11 +162,47 @@ function addonTable.Display.PowerBarMixin:ApplyTarget()
     end
 
     self:Show()
-
-    self.background:SetValue(maxPower)
-    self.main:SetValue(currentPower)
-    self.main:GetStatusBarTexture():SetVertexColor(powerColor.r, powerColor.g, powerColor.b)
+    self:SetValue(currentPower, maxPower)
   else
     self:Hide()
+  end
+end
+
+function addonTable.Display.PowerBarMixin:SetValue(currentPower, maxPower)
+  if self.lastMaxPower ~= maxPower or self.lastSpecID ~= specID then
+    local width = PixelUtil.ConvertPixelsToUIForRegion(self.asset.width * self.details.scale, self)
+    local height = PixelUtil.ConvertPixelsToUIForRegion(self.asset.height * self.details.scale, self)
+    while #self.powerTextures < maxPower do
+      local t = self:CreateTexture(nil, "ARTWORK")
+      t:SetTexture(self.asset.file)
+
+      table.insert(self.powerTextures, t)
+    end
+
+    if #self.powerTextures > maxPower then
+      for i = maxPower + 1, #self.powerTextures do
+        self.powerTextures[i]:Hide()
+      end
+    end
+
+    local offset = PixelUtil.ConvertPixelsToUIForRegion(-(self.asset.width - self.asset.inset) * self.details.scale * maxPower/2, self)
+    local step = PixelUtil.ConvertPixelsToUIForRegion((self.asset.width - self.asset.inset) * self.details.scale, self)
+    for i = 1, maxPower do
+      local t = self.powerTextures[i]
+      t:SetVertexColor(powerColor.r, powerColor.g, powerColor.b)
+      t:SetPoint("LEFT", self, "CENTER", offset, 0)
+      t:SetSize(width, height)
+      t:Show()
+      offset = offset + step
+    end
+
+    self.lastMaxPower = maxPower
+    self.lastSpecID = specID
+
+    PixelUtil.SetSize(self, (self.asset.width - self.asset.inset) * self.details.scale * maxPower, (self.asset.height - self.asset.inset) * self.details.scale)
+  end
+
+  for i = 1, maxPower do
+    self.powerTextures[i]:SetSpriteSheetCell(i <= currentPower and 1 or 2, 1, 2)
   end
 end
