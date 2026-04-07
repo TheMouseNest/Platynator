@@ -162,13 +162,13 @@ function addonTable.Display.PowerBarMixin:ApplyTarget()
     end
 
     self:Show()
-    self:SetValue(currentPower, maxPower)
+    self:SetValue(currentPower, maxPower, powerColor)
   else
     self:Hide()
   end
 end
 
-function addonTable.Display.PowerBarMixin:SetValue(currentPower, maxPower)
+function addonTable.Display.PowerBarMixin:SetValue(currentPower, maxPower, color)
   if self.lastMaxPower ~= maxPower or self.lastSpecID ~= specID then
     local width = PixelUtil.ConvertPixelsToUIForRegion(self.asset.width * self.details.scale, self)
     local height = PixelUtil.ConvertPixelsToUIForRegion(self.asset.height * self.details.scale, self)
@@ -189,7 +189,7 @@ function addonTable.Display.PowerBarMixin:SetValue(currentPower, maxPower)
     local step = PixelUtil.ConvertPixelsToUIForRegion((self.asset.width - self.asset.inset) * self.details.scale, self)
     for i = 1, maxPower do
       local t = self.powerTextures[i]
-      t:SetVertexColor(powerColor.r, powerColor.g, powerColor.b)
+      t:SetVertexColor(color.r, color.g, color.b)
       t:SetPoint("LEFT", self, "CENTER", offset, 0)
       t:SetSize(width, height)
       t:Show()
@@ -202,7 +202,19 @@ function addonTable.Display.PowerBarMixin:SetValue(currentPower, maxPower)
     PixelUtil.SetSize(self, (self.asset.width - self.asset.inset) * self.details.scale * maxPower, (self.asset.height - self.asset.inset) * self.details.scale)
   end
 
-  for i = 1, maxPower do
-    self.powerTextures[i]:SetSpriteSheetCell(i <= currentPower and 1 or 2, 1, 2)
+  if maxPower > 0 then
+    if self.powerTextures[1].SetSpriteSheetCell then
+      for i = 1, maxPower do
+        self.powerTextures[i]:SetSpriteSheetCell(i <= currentPower and 1 or 2, 1, 2)
+      end
+    else
+      for i = 1, maxPower do
+        if i <= currentPower then
+          self.powerTextures[i]:SetTexCoord(0, 0.5, 0, 1)
+        else
+          self.powerTextures[i]:SetTexCoord(0.5, 1, 0, 1)
+        end
+      end
+    end
   end
 end
