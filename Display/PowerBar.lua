@@ -112,6 +112,9 @@ function addonTable.Display.PowerBarMixin:PostInit()
     self.lastMaxPower = 0
     self.lastSpecID = nil
     PixelUtil.SetSize(self, (self.asset.width - self.asset.inset) * self.lastMaxPower, self.asset.height)
+    if self.unit then
+      self:ApplyTarget()
+    end
   end
   if not self.powerTextures then
     self.powerTextures = {}
@@ -190,6 +193,7 @@ function addonTable.Display.PowerBarMixin:SetValue(currentPower, maxPower, color
     for i = 1, maxPower do
       local t = self.powerTextures[i]
       t:SetVertexColor(color.r, color.g, color.b)
+      t:ClearAllPoints()
       t:SetPoint("LEFT", self, "CENTER", offset, 0)
       t:SetSize(width, height)
       t:Show()
