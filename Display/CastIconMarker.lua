@@ -72,7 +72,7 @@ function addonTable.Display.CastIconMarkerMixin:OnEvent(eventName, ...)
     if self.background then
       self.background:Show()
     end
-    self.timer = C_Timer.NewTimer(0.8, function()
+    self.timer = C_Timer.NewTimer(addonTable.Constants.CastInterruptedDelay, function()
       if self.interrupted then
         self.interrupted = nil
         self:Hide()

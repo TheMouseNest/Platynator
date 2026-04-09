@@ -44,7 +44,7 @@ function addonTable.Display.CastTextMixin:OnEvent(eventName, ...)
     if self.timer then
       self.timer:Cancel()
     end
-    self.timer = C_Timer.NewTimer(0.8, function()
+    self.timer = C_Timer.NewTimer(addonTable.Constants.CastInterruptedDelay, function()
       if self.interrupted then
         self.interrupted = nil
         self.timer = nil

@@ -22,6 +22,8 @@ addonTable.Constants = {
   FontFamilies = {"roman", "korean", "simplifiedchinese", "traditionalchinese", "russian"},
 
   LayerFrameLevelStep = 500,
+
+  CastInterruptedDelay = 0.3,
 }
 addonTable.Constants.Events = {
   "SettingChanged",
