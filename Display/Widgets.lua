@@ -354,20 +354,17 @@ function addonTable.Display.GetPower(frame, parent)
   end
 
   function frame:ApplySize()
-    local maxPower= self.lastMaxPower
-    local specID = self.lastSpecID
-    self.lastMaxPower = 0
-    self.lastSpecID = nil
-    PixelUtil.SetSize(self, (self.asset.width - self.asset.inset) * self.lastMaxPower, self.asset.height)
-    if maxPower and specID then
-      self:SetValue(self.lastCurrentPower, maxPower, self.lastColor, specID)
+    self.lastMaxPower = nil
+    PixelUtil.SetSize(self, (self.asset.width - self.asset.inset) * (self.points and #self.points or 0), self.asset.height)
+    if self.points then
+      self:SetValue(self.points)
     end
   end
 
-  function frame:SetValue(currentPower, maxPower, color, specID)
-    self.lastCurrentPower = currentPower
-    self.lastColor = color
-    if self.lastMaxPower ~= maxPower or self.lastSpecID ~= specID then
+  function frame:SetValue(points)
+    local maxPower = #points
+    self.points = points
+    if self.lastMaxPower ~= maxPower then
       local width = PixelUtil.ConvertPixelsToUIForRegion(self.asset.width * self.details.scale, self)
       local height = PixelUtil.ConvertPixelsToUIForRegion(self.asset.height * self.details.scale, self)
       while #self.powerTextures < maxPower do
@@ -387,7 +384,6 @@ function addonTable.Display.GetPower(frame, parent)
       local step = PixelUtil.ConvertPixelsToUIForRegion((self.asset.width - self.asset.inset) * self.details.scale, self)
       for i = 1, maxPower do
         local t = self.powerTextures[i]
-        t:SetVertexColor(color.r, color.g, color.b)
         t:ClearAllPoints()
         t:SetPoint("LEFT", self, "CENTER", offset, 0)
         t:SetSize(width, height)
@@ -396,23 +392,26 @@ function addonTable.Display.GetPower(frame, parent)
       end
 
       self.lastMaxPower = maxPower
-      self.lastSpecID = specID
 
       PixelUtil.SetSize(self, (self.asset.width - self.asset.inset) * self.details.scale * maxPower, (self.asset.height - self.asset.inset) * self.details.scale)
     end
 
     if maxPower > 0 then
       if self.powerTextures[1].SetSpriteSheetCell then
-        for i = 1, maxPower do
-          self.powerTextures[i]:SetSpriteSheetCell(i <= currentPower and 1 or 2, 1, 2)
+        for i, point in ipairs(points) do
+          local t = self.powerTextures[i]
+          t:SetSpriteSheetCell(point.set and 1 or 2, 1, 2)
+          t:SetVertexColor(point.color.r, point.color.g, point.color.b)
         end
       else
-        for i = 1, maxPower do
-          if i <= currentPower then
-            self.powerTextures[i]:SetTexCoord(0, 0.5, 0, 1)
+        for i, point in ipairs(points) do
+          local t = self.powerTextures[i]
+          if point.set then
+            t:SetTexCoord(0, 0.5, 0, 1)
           else
-            self.powerTextures[i]:SetTexCoord(0.5, 1, 0, 1)
+            t:SetTexCoord(0.5, 1, 0, 1)
           end
+          t:SetVertexColor(point.color.r, point.color.g, point.color.b)
         end
       end
     end

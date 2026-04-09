@@ -1100,7 +1100,12 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
         end
 
       elseif w.kind == "specialBars" and w.details.kind == "power" then
-        w:SetValue(4, 6, CreateColor(234/255, 61/255, 247/255))
+        local points = {}
+        local color = CreateColor(234/255, 61/255, 247/255)
+        for i = 1, 6 do
+          table.insert(points, {set = i <= 4, color = color})
+        end
+        w:SetValue(points)
       elseif w.kind == "markers" then
         local asset = addonTable.Assets.Markers[w.details.asset]
         if asset.preview then

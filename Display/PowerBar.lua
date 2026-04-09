@@ -79,7 +79,7 @@ local specializationToColor = {
   [1473] = CreateColorFromRGBHexString("37e5fc"),
 }
 
-local powerKind, powerColor, powerDivisor, specID
+local powerKind, powerColor, powerDivisor, chargedColor
 
 local specializationMonitor = CreateFrame("Frame")
 specializationMonitor:RegisterEvent("PLAYER_LOGIN")
@@ -88,7 +88,7 @@ if C_EventUtils.IsEventValid("PLAYER_SPECIALIZATION_CHANGED") then
 end
 specializationMonitor:RegisterEvent("UPDATE_SHAPESHIFT_FORM")
 specializationMonitor:SetScript("OnEvent", function()
-  specID = nil
+  local specID
   if UnitClassBase("player") == "DRUID" then
     if GetShapeshiftFormID() == 1 then
       specID = classToSpec["DRUID"]
@@ -103,6 +103,7 @@ specializationMonitor:SetScript("OnEvent", function()
   powerKind = specializationToPower[specID]
   powerColor = specializationToColor[specID]
   powerDivisor = specializationToDivisor[specID]
+  chargedColor = CreateColorFromRGBHexString("00aaff")
 end)
 
 addonTable.Display.PowerBarMixin = {}
@@ -144,7 +145,20 @@ function addonTable.Display.PowerBarMixin:ApplyTarget()
     end
 
     self:Show()
-    self:SetValue(currentPower, maxPower, powerColor, specID)
+
+    local points = {}
+    for i = 1, maxPower do
+      table.insert(points, {set = i <= currentPower, color = powerColor})
+    end
+
+    local charged = GetUnitChargedPowerPoints("player")
+    if charged then
+      for _, i in ipairs(charged) do
+        points[i].color = chargedColor
+      end
+    end
+
+    self:SetValue(points)
   else
     self:Hide()
   end
