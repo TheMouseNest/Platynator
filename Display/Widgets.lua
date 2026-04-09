@@ -329,6 +329,8 @@ end
 function addonTable.Display.GetPower(frame, parent)
   frame = frame or CreateFrame("Frame", nil, parent or UIParent)
 
+  frame.powerTextures = {}
+
   function frame:Init(details)
     if frame.Strip then
       frame:Strip()
@@ -340,8 +342,10 @@ function addonTable.Display.GetPower(frame, parent)
 
     frame:SetScript("OnEvent", frame.OnEvent)
 
-    if frame.PostInit then
-      frame:PostInit()
+    self.asset = addonTable.Assets.PowerBars[self.details.asset]
+
+    for _, t in ipairs(self.powerTextures) do
+      t:SetTexture(self.asset.file)
     end
   end
 
@@ -350,8 +354,67 @@ function addonTable.Display.GetPower(frame, parent)
   end
 
   function frame:ApplySize()
-    if frame.PostApplySize then
-      frame:PostApplySize()
+    local maxPower= self.lastMaxPower
+    local specID = self.lastSpecID
+    self.lastMaxPower = 0
+    self.lastSpecID = nil
+    PixelUtil.SetSize(self, (self.asset.width - self.asset.inset) * self.lastMaxPower, self.asset.height)
+    if maxPower and specID then
+      self:SetValue(self.lastCurrentPower, maxPower, self.lastColor, specID)
+    end
+  end
+
+  function frame:SetValue(currentPower, maxPower, color, specID)
+    self.lastCurrentPower = currentPower
+    self.lastColor = color
+    if self.lastMaxPower ~= maxPower or self.lastSpecID ~= specID then
+      local width = PixelUtil.ConvertPixelsToUIForRegion(self.asset.width * self.details.scale, self)
+      local height = PixelUtil.ConvertPixelsToUIForRegion(self.asset.height * self.details.scale, self)
+      while #self.powerTextures < maxPower do
+        local t = self:CreateTexture(nil, "ARTWORK")
+        t:SetTexture(self.asset.file)
+
+        table.insert(self.powerTextures, t)
+      end
+
+      if #self.powerTextures > maxPower then
+        for i = maxPower + 1, #self.powerTextures do
+          self.powerTextures[i]:Hide()
+        end
+      end
+
+      local offset = PixelUtil.ConvertPixelsToUIForRegion((-(self.asset.width - self.asset.inset) * maxPower/2 - self.asset.inset / 2) * self.details.scale, self)
+      local step = PixelUtil.ConvertPixelsToUIForRegion((self.asset.width - self.asset.inset) * self.details.scale, self)
+      for i = 1, maxPower do
+        local t = self.powerTextures[i]
+        t:SetVertexColor(color.r, color.g, color.b)
+        t:ClearAllPoints()
+        t:SetPoint("LEFT", self, "CENTER", offset, 0)
+        t:SetSize(width, height)
+        t:Show()
+        offset = offset + step
+      end
+
+      self.lastMaxPower = maxPower
+      self.lastSpecID = specID
+
+      PixelUtil.SetSize(self, (self.asset.width - self.asset.inset) * self.details.scale * maxPower, (self.asset.height - self.asset.inset) * self.details.scale)
+    end
+
+    if maxPower > 0 then
+      if self.powerTextures[1].SetSpriteSheetCell then
+        for i = 1, maxPower do
+          self.powerTextures[i]:SetSpriteSheetCell(i <= currentPower and 1 or 2, 1, 2)
+        end
+      else
+        for i = 1, maxPower do
+          if i <= currentPower then
+            self.powerTextures[i]:SetTexCoord(0, 0.5, 0, 1)
+          else
+            self.powerTextures[i]:SetTexCoord(0.5, 1, 0, 1)
+          end
+        end
+      end
     end
   end
 end
