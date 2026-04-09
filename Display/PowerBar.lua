@@ -79,6 +79,8 @@ local specializationToColor = {
   [1473] = CreateColorFromRGBHexString("37e5fc"),
 }
 
+local chargeColor = CreateColorFromRGBHexString("00aaff")
+
 local powerKind, powerColor, powerDivisor, specID
 
 local specializationMonitor = CreateFrame("Frame")
@@ -207,6 +209,12 @@ function addonTable.Display.PowerBarMixin:SetValue(currentPower, maxPower, color
   end
 
   if maxPower > 0 then
+    local chargedPoints = GetUnitChargedPowerPoints and GetUnitChargedPowerPoints("player") or nil
+    for i = 1, maxPower do
+      local c = (chargedPoints and tContains(chargedPoints, i)) and chargeColor or color
+      self.powerTextures[i]:SetVertexColor(c.r, c.g, c.b)
+    end
+
     if self.powerTextures[1].SetSpriteSheetCell then
       for i = 1, maxPower do
         self.powerTextures[i]:SetSpriteSheetCell(i <= currentPower and 1 or 2, 1, 2)

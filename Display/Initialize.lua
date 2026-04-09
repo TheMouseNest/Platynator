@@ -78,6 +78,9 @@ function addonTable.Display.ManagerMixin:OnLoad()
 
   self:RegisterUnitEvent("UNIT_POWER_UPDATE", "player")
   self:RegisterEvent("RUNE_POWER_UPDATE")
+  if addonTable.Constants.IsRetail and C_EventUtils.IsEventValid("UNIT_POWER_POINT_CHARGE") then
+    self:RegisterUnitEvent("UNIT_POWER_POINT_CHARGE", "player")
+  end
   self:RegisterEvent("UNIT_FACTION")
   self:RegisterEvent("PLAYER_REGEN_DISABLED")
   self:RegisterEvent("PLAYER_REGEN_ENABLED")
@@ -825,7 +828,7 @@ function addonTable.Display.ManagerMixin:OnEvent(eventName, ...)
     else
       self.lastInteract = nil
     end
-  elseif eventName == "UNIT_POWER_UPDATE" or eventName == "RUNE_POWER_UPDATE" then
+  elseif eventName == "UNIT_POWER_UPDATE" or eventName == "RUNE_POWER_UPDATE" or eventName == "UNIT_POWER_POINT_CHARGE" then
     for _, display in pairs(self.nameplateDisplays) do
       display:UpdateForTarget()
     end
