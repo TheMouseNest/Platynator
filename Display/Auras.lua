@@ -441,7 +441,7 @@ else
     local changes = {}
     for _, aura in ipairs(addedAuras) do
       local keep = false
-      if not self.isPlayer and self.buffsDetails and aura.isHelpful and
+      if (not self.isPlayer or aura.isStealable) and self.buffsDetails and aura.isHelpful and
         not legacy.blacklistedBuffs[aura.spellId] and ((not self.buffsDetails.dispelable and not self.buffsDetails.important) or aura.dispelName ~= nil) then
         keep = true
         table.insert(self.buffs, aura.auraInstanceID)
