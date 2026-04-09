@@ -96,6 +96,7 @@ local kindToEvent = {
   reaction = {"UNIT_FACTION"},
   tapped = {"UNIT_HEALTH"},
   target = {"PLAYER_TARGET_CHANGED"},
+  notTarget = {"PLAYER_TARGET_CHANGED"},
   softTarget = {"PLAYER_TARGET_CHANGED", "PLAYER_SOFT_ENEMY_CHANGED", "PLAYER_SOFT_FRIEND_CHANGED"},
   focus = {"PLAYER_FOCUS_CHANGED"},
   threat = {"UNIT_THREAT_LIST_UPDATE"},
@@ -275,6 +276,11 @@ function addonTable.Display.GetColor(settings, state, unit)
     elseif s.kind == "target" then
       if UnitIsUnit("target", unit) then
         table.insert(colorQueue, {color = s.colors.target})
+        break
+      end
+    elseif s.kind == "notTarget" then
+      if not UnitIsUnit("target", unit) then
+        table.insert(colorQueue, {color = s.colors.notTarget})
         break
       end
     elseif s.kind == "softTarget" then

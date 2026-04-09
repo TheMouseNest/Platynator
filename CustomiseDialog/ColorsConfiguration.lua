@@ -57,6 +57,27 @@ addonTable.CustomiseDialog.ColorsConfig = {
       },
     },
   },
+  ["notTarget"] = {
+    label = addonTable.Locales.NOT_TARGET,
+    default = {
+      kind = "notTarget",
+      colors = {
+        notTarget = GetColor("34edd1"),
+      },
+    },
+    entries = {
+      {
+        label = addonTable.Locales.NOT_TARGET,
+        kind = "colorPicker",
+        setter = function(details, value)
+          details.colors.notTarget = value
+        end,
+        getter = function(details)
+          return details.colors.notTarget
+        end,
+      },
+    },
+  },
   ["softTarget"] = {
     label = addonTable.Locales.SOFT_TARGET,
     default = {
@@ -845,6 +866,7 @@ addonTable.CustomiseDialog.ColorsConfig = {
 addonTable.CustomiseDialog.ColorsConfigOrder = {
   "tapped",
   "target",
+  "notTarget",
   "softTarget",
   "focus",
   "mouseover",
