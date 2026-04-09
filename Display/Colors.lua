@@ -303,7 +303,7 @@ function addonTable.Display.GetColor(settings, state, unit)
       local hostile = state.hostile
       local isTank = IsTankRole()
       if not state.isPlayer and (inRelevantThreatInstance or not s.instancesOnly) and (threat or (hostile and not s.combatOnly) or IsInCombatWith(unit)) and (not s.tanksOnly or isTank) then
-        if (isTank and (threat == 0 or threat == nil) and not DoesOtherTankHaveAggro(unit)) or (not isTank and threat == 3) then
+        if (isTank and (threat == 0 or threat == nil) and (not s.useOffTankColor or not DoesOtherTankHaveAggro(unit))) or (not isTank and threat == 3) then
           table.insert(colorQueue, {color = s.colors.warning})
           break
         elseif threat == 1 or threat == 2 then
@@ -312,7 +312,7 @@ function addonTable.Display.GetColor(settings, state, unit)
         elseif s.useSafeColor and ((isTank and threat == 3) or (not isTank and (threat == 0 or threat == nil))) then
           table.insert(colorQueue, {color = s.colors.safe})
           break
-        elseif s.useSafeColor and isTank and (threat == 0 or threat == nil) and DoesOtherTankHaveAggro(unit) then
+        elseif s.useOffTankColor and isTank and (threat == 0 or threat == nil) and DoesOtherTankHaveAggro(unit) then
           table.insert(colorQueue, {color = s.colors.offtank})
           break
         end

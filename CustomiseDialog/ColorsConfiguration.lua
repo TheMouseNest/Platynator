@@ -134,26 +134,29 @@ addonTable.CustomiseDialog.ColorsConfig = {
       combatOnly = true,
       tanksOnly = false,
       useSafeColor = false,
+      useOffTankColor = false,
     },
     entries = {
       {
         label = addonTable.Locales.SAFE,
-        kind = "colorPicker",
+        kind = "colorPickerWithCheckbox",
         setter = function(details, value)
-          details.colors.safe = value
+          details.colors.safe = value.color
+          details.useSafeColor = value.enabled
         end,
         getter = function(details)
-          return details.colors.safe
+          return {color = details.colors.safe, enabled = details.useSafeColor}
         end,
       },
       {
         label = addonTable.Locales.OFFTANK,
-        kind = "colorPicker",
+        kind = "colorPickerWithCheckbox",
         setter = function(details, value)
-          details.colors.offtank = value
+          details.colors.offtank = value.color
+          details.useOffTankColor = value.enabled
         end,
         getter = function(details)
-          return details.colors.offtank
+          return {color = details.colors.offtank, enabled = details.useOffTankColor}
         end,
       },
       {
@@ -205,16 +208,6 @@ addonTable.CustomiseDialog.ColorsConfig = {
         end,
         getter = function(details)
           return details.tanksOnly
-        end,
-      },
-      {
-        label = addonTable.Locales.USE_SAFE_COLOR,
-        kind = "checkbox",
-        setter = function(details, value)
-          details.useSafeColor = value
-        end,
-        getter = function(details)
-          return details.useSafeColor
         end,
       },
     },

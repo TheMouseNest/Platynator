@@ -222,6 +222,9 @@ function addonTable.Core.UpgradeDesign(design)
       if ac.kind == "threat" and ac.tanksOnly == nil then
         ac.tanksOnly = false
       end
+      if ac.kind == "threat" and ac.useOffTankColor == nil then
+        ac.useOffTankColor = true
+      end
 
       index = index + 1
     end

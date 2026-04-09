@@ -230,6 +230,10 @@ function addonTable.CustomiseDialog.Components.GetColorPicker(parent, label, off
     swatch:SetColor(CreateColor(color.r, color.g, color.b))
   end
 
+  function holder:GetValue()
+    return CopyTable(swatch.pendingColor or swatch.currentColor)
+  end
+
   holder:SetScript("OnEnter", function()
     swatch:GetScript("OnEnter")(swatch)
   end)
@@ -243,4 +247,30 @@ function addonTable.CustomiseDialog.Components.GetColorPicker(parent, label, off
   end)
 
   return holder
+end
+
+function addonTable.CustomiseDialog.Components.GetColorPickerWithCheckbox(parent, label, offset, callback)
+  local wrapper = CreateFrame("Frame", nil, parent)
+  wrapper:SetHeight(40)
+  wrapper:SetPoint("LEFT")
+  wrapper:SetPoint("RIGHT")
+  local colorPicker, checkBox
+
+  local function internalCallback()
+    callback({color = colorPicker:GetValue(), enabled = checkBox:GetChecked()})
+  end
+
+  colorPicker = addonTable.CustomiseDialog.Components.GetColorPicker(wrapper, label, offset, internalCallback)
+  checkBox = CreateFrame("CheckButton", nil, wrapper, "SettingsCheckboxTemplate")
+
+  checkBox:SetPoint("LEFT", wrapper, "CENTER", 30 - offset, 0)
+  checkBox:SetScript("OnClick", internalCallback)
+  checkBox:SetFrameLevel(colorPicker:GetFrameLevel() + 5)
+
+  function wrapper:SetValue(value)
+    colorPicker:SetValue(value.color)
+    checkBox:SetChecked(value.enabled)
+  end
+
+  return wrapper
 end

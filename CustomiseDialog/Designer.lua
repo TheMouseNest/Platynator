@@ -569,6 +569,8 @@ GenerateOptions = function(parent, yOffset, xOffset, entries)
       frame = addonTable.CustomiseDialog.Components.GetCheckbox(parent, e.label, 28 + xOffset, Setter)
     elseif e.kind == "colorPicker" then
       frame = addonTable.CustomiseDialog.Components.GetColorPicker(parent, e.label, 28 + xOffset, Setter)
+    elseif e.kind == "colorPickerWithCheckbox" then
+      frame = addonTable.CustomiseDialog.Components.GetColorPickerWithCheckbox(parent, e.label, 28 + xOffset, Setter)
     elseif e.kind == "autoColors" then
       frame = GetAutomaticColors(parent, e.lockedElements, e.addAlpha)
     elseif e.kind == "auraTextsPositioner" then
