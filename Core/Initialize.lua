@@ -194,6 +194,9 @@ function addonTable.Core.UpgradeDesign(design)
       if ac.kind == "threat" and ac.useSafeColor == nil then
         ac.useSafeColor = true
       end
+      if ac.kind == "threat" and ac.useOfftankColor == nil then
+        ac.useOfftankColor = false
+      end
       if ac.kind == "quest" and ac.colors.hostile == nil then
         ac.colors.hostile = ac.colors.quest
         ac.colors.neutral = ac.colors.quest

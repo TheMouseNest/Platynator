@@ -113,6 +113,7 @@ addonTable.CustomiseDialog.ColorsConfig = {
       combatOnly = true,
       tanksOnly = false,
       useSafeColor = false,
+      useOfftankColor = false,
     },
     entries = {
       {
@@ -194,6 +195,16 @@ addonTable.CustomiseDialog.ColorsConfig = {
         end,
         getter = function(details)
           return details.useSafeColor
+        end,
+      },
+      {
+        label = addonTable.Locales.USE_OFFTANK_COLOR,
+        kind = "checkbox",
+        setter = function(details, value)
+          details.useOfftankColor = value
+        end,
+        getter = function(details)
+          return details.useOfftankColor
         end,
       },
     },
