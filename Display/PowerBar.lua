@@ -151,10 +151,12 @@ function addonTable.Display.PowerBarMixin:ApplyTarget()
       table.insert(points, {set = i <= currentPower, color = powerColor})
     end
 
-    local charged = GetUnitChargedPowerPoints("player")
-    if charged then
-      for _, i in ipairs(charged) do
-        points[i].color = chargedColor
+    if addonTable.Constants.IsRetail then
+      local charged = GetUnitChargedPowerPoints("player")
+      if charged then
+        for _, i in ipairs(charged) do
+          points[i].color = chargedColor
+        end
       end
     end
 
