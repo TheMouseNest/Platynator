@@ -12,6 +12,7 @@ local cvars = {
   ["nameplateMinAlpha"] = "0.6",
   ["nameplateMinAlphaDistance"] = "-100000",
   ["nameplateMaxDistance"] = "60",
+  ["nameplatePlayerMaxDistance"] = "60",
   ["nameplateMaxScale"] = "1",
   ["nameplateMinScale"] = "1",
   ["nameplateMotionSpeed"] = "0.025",
