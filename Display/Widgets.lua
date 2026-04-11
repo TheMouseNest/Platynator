@@ -12,11 +12,27 @@ function addonTable.Display.ApplyAnchor(frame, anchor)
   elseif #anchor == 2 then
     PixelUtil.SetPoint(frame, "CENTER", frame:GetParent(), "CENTER", anchor[1], anchor[2])
   elseif #anchor == 1 then
-    frame:SetPoint("TOP", frame:GetParent(), "CENTER")
+    frame:SetPoint(anchor[1], frame:GetParent(), "CENTER")
+  end
+end
+
+function addonTable.Display.ApplyPinnedAnchor(frame, origin, anchor, shouldNotOffset)
+  frame:ClearAllPoints()
+  local framePoint, originPoint = anchor[1], anchor[2]
+  if not origin:IsShown() and (anchor[1] ~= "CENTER" or anchor[2] ~= "CENTER") then
+    framePoint = anchor[1]
+    originPoint = anchor[1]
+  end
+  frame:ClearAllPoints()
+  if shouldNotOffset and not origin:IsShown() then
+    frame:SetPoint(framePoint, origin, originPoint)
+  else
+    PixelUtil.SetPoint(frame, framePoint, origin, originPoint, anchor[3] or 0, anchor[4] or 0)
   end
 end
 
 local ApplyAnchor = addonTable.Display.ApplyAnchor
+local ApplyPinnedAnchor = addonTable.Display.ApplyPinnedAnchor
 
 local function InitBar(frame, details)
   if frame.Strip then
@@ -654,6 +670,11 @@ function addonTable.Display.GetText(frame, parent)
 
   frame:SetAllPoints(frame.text)
 
+  hooksecurefunc(frame.Wrapper, "SetPoint", function(_, p1)
+    frame.text:ClearAllPoints()
+    frame.text:SetPoint(p1, frame.Wrapper)
+  end)
+
   function frame:Init(details)
     if frame.Strip then
       frame:Strip()
@@ -664,7 +685,6 @@ function addonTable.Display.GetText(frame, parent)
     frame.text:SetFontObject(addonTable.CurrentFont)
     frame.text:SetParent(frame)
     frame.text:ClearAllPoints()
-    frame.text:SetPoint(details.anchor[1] or "CENTER", frame.Wrapper)
     frame.text:SetTextColor(details.color.r, details.color.g, details.color.b)
     frame.text:SetWordWrap(not details.truncate)
     frame.text:SetNonSpaceWrap(false)
@@ -736,7 +756,7 @@ local livePools = {
   healthBars = CreateFramePool("Frame", UIParent, nil, nil, false, addonTable.Display.GetHealthBar),
   castBars = CreateFramePool("Frame", UIParent, nil, nil, false, addonTable.Display.GetCastBar),
   texts = CreateFramePool("Frame", UIParent, nil, nil, false, addonTable.Display.GetText),
-  powers = CreateFramePool("Frame", UIParent, nil, nil, false, addonTable.Display.GetPower),
+  powerSpecialBars = CreateFramePool("Frame", UIParent, nil, nil, false, addonTable.Display.GetPower),
   highlights = CreateFramePool("Frame", UIParent, nil, nil, false, addonTable.Display.GetHighlight),
   animatedBorderHighlights = CreateFramePool("Frame", UIParent, nil, nil, false, addonTable.Display.GetAnimatedBorderHighlight),
   markers = CreateFramePool("Frame", UIParent, nil, nil, false, addonTable.Display.GetMarker),
@@ -746,7 +766,7 @@ local editorPools = {
   healthBars = CreateFramePool("Frame", UIParent, "PlatynatorPropagateMouseTemplate", nil, false, addonTable.Display.GetHealthBar),
   castBars = CreateFramePool("Frame", UIParent, "PlatynatorPropagateMouseTemplate", nil, false, addonTable.Display.GetCastBar),
   texts = CreateFramePool("Frame", UIParent, "PlatynatorPropagateMouseTemplate", nil, false, addonTable.Display.GetText),
-  powers = CreateFramePool("Frame", UIParent, "PlatynatorPropagateMouseTemplate", nil, false, addonTable.Display.GetPower),
+  powerSpecialBars = CreateFramePool("Frame", UIParent, "PlatynatorPropagateMouseTemplate", nil, false, addonTable.Display.GetPower),
   highlights = CreateFramePool("Frame", UIParent, "PlatynatorPropagateMouseTemplate", nil, false, addonTable.Display.GetHighlight),
   animatedBorderHighlights = CreateFramePool("Frame", UIParent, "PlatynatorPropagateMouseTemplate", nil, false, addonTable.Display.GetAnimatedBorderHighlight),
   markers = CreateFramePool("Frame", UIParent, "PlatynatorPropagateMouseTemplate", nil, false, addonTable.Display.GetMarker),
@@ -760,84 +780,60 @@ function addonTable.Display.GetWidgets(design, parent, isEditor)
 
   local pools = isEditor and editorPools or livePools
 
-  for index, barDetails in ipairs(design.bars) do
-    local w = pools[barDetails.kind .. "Bars"]:Acquire()
-    poolType[w] = barDetails.kind .. "Bars"
-    w:SetParent(parent)
-    w:Show()
-    w:SetFrameStrata("MEDIUM")
-    w:SetFrameLevel(layerStep * barDetails.layer + index * 10)
-    w:Init(barDetails)
-    w.kind = "bars"
-    w.kindIndex = index
-    table.insert(widgets, w)
-  end
+  for _, kindDetails in ipairs(addonTable.Constants.WidgetsInitializationOrder) do
+    local key, capitalized = kindDetails[1], kindDetails[2]
+    for index, details in ipairs(design[key]) do
+      local w
+      if pools[details.kind .. capitalized] then
+        w = pools[details.kind .. capitalized]:Acquire()
+        poolType[w] = details.kind .. capitalized
+      else
+        w = pools[key]:Acquire()
+        poolType[w] = key
+      end
 
-  for index, textDetails in ipairs(design.texts) do
-    local w = pools.texts:Acquire()
-    poolType[w] = "texts"
-    w:SetParent(parent)
-    w.Wrapper:SetParent(parent)
-    w:Show()
-    w.Wrapper:SetFrameStrata("MEDIUM")
-    w:SetFrameStrata("MEDIUM")
-    w.Wrapper:SetFrameLevel(layerStep * textDetails.layer + index * 10)
-    w:SetFrameLevel(layerStep * textDetails.layer + index * 10)
-    w:Init(textDetails)
-    w.kind = "texts"
-    w.kindIndex = index
-    table.insert(widgets, w)
-  end
-
-  for index, highlightDetails in ipairs(design.highlights) do
-    local w
-    if pools[highlightDetails.kind .. "Highlights"] then
-      w = pools[highlightDetails.kind .. "Highlights"]:Acquire()
-      poolType[w] = highlightDetails.kind .. "Highlights"
-    else
-      w = pools.highlights:Acquire()
-      poolType[w] = "highlights"
+      w:SetParent(parent)
+      w:Show()
+      w:SetFrameStrata("MEDIUM")
+      w:SetFrameLevel(layerStep * details.layer + index * 10)
+      if w.Wrapper then
+        w.Wrapper:SetParent(parent)
+        w.Wrapper:SetFrameStrata("MEDIUM")
+        w.Wrapper:SetFrameLevel(layerStep * details.layer + index * 10)
+      end
+      w:Init(details)
+      w.kind = key
+      w.kindIndex = index
+      w.attachments = nil
+      table.insert(widgets, w)
     end
-    w:SetParent(parent)
-    w:Show()
-    w:SetFrameStrata("MEDIUM")
-    w:SetFrameLevel(layerStep * highlightDetails.layer + index * 10)
-    w:Init(highlightDetails)
-    w.kind = "highlights"
-    w.kindIndex = index
-    table.insert(widgets, w)
   end
 
-  for index, specialDetails in ipairs(design.specialBars) do
-    assert(specialDetails.kind == "power")
-    local w = pools.powers:Acquire()
-    poolType[w] = "powers"
-    w:SetParent(parent)
-    w:Show()
-    w:SetFrameStrata("MEDIUM")
-    w:SetFrameLevel(layerStep * specialDetails.layer + index * 10)
-    w:Init(specialDetails)
-    w.kind = "specialBars"
-    w.kindIndex = index
-    table.insert(widgets, w)
-  end
-
-  for index, markerDetails in ipairs(design.markers) do
-    local w = pools.markers:Acquire()
-    poolType[w] = "markers"
-    w:SetParent(parent)
-    w:Show()
-    w:SetFrameStrata("MEDIUM")
-    w:SetFrameLevel(layerStep * markerDetails.layer + index * 10)
-    w:Init(markerDetails)
-    w.kind = "markers"
-    w.kindIndex = index
-    table.insert(widgets, w)
-  end
-
-  for _, w in ipairs(widgets) do
+  for index, w in ipairs(widgets) do
     w:ApplyAnchor()
     w:ApplySize()
+    w.superIndex = index
+
+    if w.details.pinned then
+      local origin = widgets[w.details.pinned.index]
+      function w:ApplyPinning()
+        ApplyPinnedAnchor(w.Wrapper or w, origin, w.details.pinned.anchor, origin.kind ~= "bars")
+      end
+      if not origin.attachments then
+        origin.attachments = {w}
+        local function Callback()
+          for _, a in ipairs(origin.attachments) do
+            a:ApplyPinning()
+          end
+        end
+        origin:SetScript("OnShow", Callback)
+        origin:SetScript("OnHide", Callback)
+      else
+        table.insert(origin.attachments, w)
+      end
+
+      w:ApplyPinning()
+    end
   end
 
   return widgets
@@ -847,6 +843,9 @@ function addonTable.Display.ReleaseWidgets(widgets, isEditor)
   local pools = isEditor and editorPools or livePools
 
   for _, w in ipairs(widgets) do
+    w:SetScript("OnShow", nil)
+    w:SetScript("OnHide", nil)
+    w.ApplyPinning = nil
     w:Strip()
     pools[poolType[w]]:Release(w)
     poolType[w] = nil

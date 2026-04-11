@@ -30,6 +30,10 @@ local function RoundPixel(pixel)
   return Round(pixel / pixelStep) * pixelStep
 end
 
+local function RoundHundreths(value)
+  return Round(value * 100) / 100
+end
+
 local function UpdateWidgetPoints(preview, w, snapping, offsetX, offsetY)
   snapping = snapping or 2
   offsetX = offsetX or 0
@@ -624,6 +628,8 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
   local selectionIndexes = {}
   local fociOnDown = {}
   local autoSelectedDetails
+  local isPinning = false
+  local SetPinning
 
   local titleMap = {}
 
@@ -645,6 +651,10 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
   previewInset:SetPoint("RIGHT", -20, 0)
   previewInset:SetHeight(220)
 
+  previewInset:SetScript("OnMouseDown", function()
+    SetPinning(false)
+  end)
+
   local preview = CreateFrame("Frame", nil, previewInset)
 
   preview:SetPoint("TOP")
@@ -655,10 +665,84 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
 
   local contextHoverMarker = GetSelectorMarker(CreateFrame("Frame", nil, container), false)
 
+  local function PinSelectionTo(superIndex, indexes, offsets)
+    indexes = indexes or selectionIndexes
+    local origin = widgets[superIndex]
+    local selectionIndex = tIndexOf(indexes, superIndex)
+    if selectionIndex ~= nil then
+      table.remove(indexes, selectionIndex)
+      widgets[superIndex].details.pinned = nil
+      SetPinning(false)
+      Announce()
+      return
+    end
+
+    local left, bottom, width, height = origin:GetRect()
+    local originCenter = {x = left + width/2, y = bottom + height/2}
+    for offsetIndex, index in ipairs(indexes) do
+      local w = widgets[index]
+      local wLeft, wBottom, wWidth, wHeight = w:GetRect()
+      if offsets then
+        local o = offsets[offsetIndex]
+        wLeft = wLeft + o.x
+        wBottom = wBottom + o.y
+      end
+      local center = {x = wLeft + wWidth/2, y = wBottom + wHeight/2}
+      if wLeft + wWidth <= left and wBottom + wHeight > bottom and wBottom < bottom + height then
+        w.details.pinned = {
+          index = superIndex,
+          anchor = {"RIGHT", "LEFT", wLeft + wWidth - left, center.y - originCenter.y}
+        }
+      elseif wLeft >= left + width and wBottom + wHeight > bottom and wBottom < bottom + height  then
+        w.details.pinned = {
+          index = superIndex,
+          anchor = {"LEFT", "RIGHT", RoundHundreths(wLeft - left - width), RoundHundreths(center.y - originCenter.y)}
+        }
+      elseif wBottom + wHeight <= bottom and wLeft + wWidth > left and wLeft < left + width then
+        w.details.pinned = {
+          index = superIndex,
+          anchor = {"TOP", "BOTTOM", RoundHundreths(center.x - originCenter.x), RoundHundreths(wBottom + wHeight - bottom)}
+        }
+      elseif wBottom >= bottom + height and wLeft + wWidth > left and wLeft < left + width then
+        w.details.pinned = {
+          index = superIndex,
+          anchor = {"BOTTOM", "TOP", RoundHundreths(center.x - originCenter.x), RoundHundreths(wBottom - bottom - height)}
+        }
+      else -- overlaps
+        w.details.pinned = {
+          index = superIndex,
+          anchor = {"CENTER", "CENTER", RoundHundreths(center.x - originCenter.x), RoundHundreths(center.y - originCenter.y)}
+        }
+      end
+
+      -- Prevent cyclical anchoring
+      local testIndex = superIndex
+      while testIndex do
+        local w2 = widgets[testIndex]
+        if w2.details.pinned then
+          local pinned = w2.details.pinned
+          if pinned.index == index then
+            w2.details.pinned = nil
+            break
+          end
+          testIndex = pinned.index
+        else
+          testIndex = nil
+        end
+      end
+    end
+
+    SetPinning(false)
+
+    Announce()
+  end
+
   local function ToggleSelection(rawFoci)
     local foci = tFilter(rawFoci, function(w) return w:GetParent() == preview end, true)
     local ApplyIndex
-    if IsShiftKeyDown() then
+    if isPinning then
+      ApplyIndex = PinSelectionTo
+    elseif IsShiftKeyDown() then
       ApplyIndex = function(index)
         local selectionIndex = tIndexOf(selectionIndexes, index)
         if selectionIndex ~= nil then
@@ -771,6 +855,12 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
         end
       end
     end
+
+    for offsetIndex, index in ipairs(selectionIndexes) do
+      if widgets[index].ApplyPinning then
+        PinSelectionTo(widgets[index].details.pinned.index, {index}, {offsets[offsetIndex]})
+      end
+    end
   end
 
   local movingMonitor = CreateFrame("Frame")
@@ -813,16 +903,55 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
     end)
   end
 
+  local function CalculateSuperIndex(kind, kindIndex)
+    local design = addonTable.CustomiseDialog.GetCurrentDesign()
+
+    local index = 0
+
+    for _, kindDetails in ipairs(addonTable.Constants.WidgetsInitializationOrder) do
+      if kind == kindDetails[1] then
+        return index + kindIndex
+      else
+        index = index + #design[kindDetails[1]]
+      end
+    end
+
+    return index
+  end
+
   local function DeleteCurrentWidget()
     table.sort(selectionIndexes, function(a, b) return a > b end)
     for _, index in ipairs(selectionIndexes) do
-      local kind = widgets[index].kind
-      local details = widgets[index].details
+      local w = widgets[index]
       local design = addonTable.CustomiseDialog.GetCurrentDesign()
-      local index = tIndexOf(design[kind], details)
-      table.remove(design[kind], index)
+      table.remove(design[w.kind], tIndexOf(design[w.kind], w.details))
+
+      for _, w2 in ipairs(widgets) do
+        if w2.details.pinned then
+          if w2.details.pinned.index == w.superIndex then
+            w2.details.pinned = nil
+          elseif w2.details.pinned.index > w.superIndex then
+            w2.details.pinned.index = w2.details.pinned.index - 1
+          end
+        end
+      end
     end
     selectionIndexes = {}
+    Announce()
+  end
+
+  local function InsertWidget(kind, default)
+    local design = addonTable.CustomiseDialog.GetCurrentDesign()
+    table.insert(design[kind], CopyTable(default))
+    autoSelectedDetails = design[kind][#design[kind]]
+
+    local superIndex = CalculateSuperIndex(kind, #design[kind])
+    for _, w in ipairs(widgets) do
+      if w.details.pinned and w.details.pinned.index >= superIndex then
+        w.details.pinned.index = w.details.pinned.index + 1
+      end
+    end
+
     Announce()
   end
 
@@ -898,9 +1027,7 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
         end
         if not skip then
           rootDescription:CreateButton(details.name, function()
-            table.insert(design[details.kind], CopyTable(details.default))
-            autoSelectedDetails = design[details.kind][#design[details.kind]]
-            Announce()
+            InsertWidget(details.kind, details.default)
           end)
         else
           rootDescription:CreateTitle(GRAY_FONT_COLOR:WrapTextInColorCode(details.name))
@@ -917,6 +1044,26 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
   deleteButton:SetScript("OnClick", function()
     DeleteCurrentWidget()
   end)
+
+  local pinButton = CreateFrame("Button", nil, previewInset, "UIPanelDynamicResizeButtonTemplate")
+  pinButton:SetText(addonTable.Locales.SELECT_TARGET)
+  DynamicResizeButton_Resize(pinButton)
+  pinButton:SetText(addonTable.Locales.PIN_WIDGET)
+  DynamicResizeButton_Resize(pinButton)
+  pinButton:SetPoint("TOP", 0, addButton:GetHeight() + 2)
+  pinButton:SetScript("OnClick", function()
+    SetPinning(true)
+  end)
+
+  SetPinning = function(state)
+    pinButton:SetEnabled(not state)
+    isPinning = state
+    if state then
+      pinButton:SetText(addonTable.Locales.SELECT_TARGET)
+    else
+      pinButton:SetText(addonTable.Locales.PIN_WIDGET)
+    end
+  end
 
   local auraContainers = {
     buffs = CreateFrame("Frame", nil, preview, "PlatynatorPropagateMouseTemplate"),
@@ -1414,6 +1561,7 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
       selectorPool:ReleaseAll()
       titleText:SetText("")
       suggestionToClick:Show()
+      pinButton:Hide()
       return
     end
     suggestionToClick:Hide()
@@ -1455,6 +1603,7 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
     end
 
     keyboardTrap:SetShown(not InCombatLockdown())
+    pinButton:Show()
   end
 
   container:SetScript("OnShow", function()

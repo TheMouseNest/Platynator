@@ -24,6 +24,14 @@ addonTable.Constants = {
   LayerFrameLevelStep = 500,
 
   CastInterruptedDelay = 0.3,
+
+  WidgetsInitializationOrder = {
+    {"bars", "Bars"},
+    {"texts", "Texts"},
+    {"highlights", "Highlights"},
+    {"specialBars", "SpecialBars"},
+    {"markers", "Markers"},
+  }
 }
 addonTable.Constants.Events = {
   "SettingChanged",
