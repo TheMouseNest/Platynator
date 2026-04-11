@@ -521,6 +521,195 @@ local function GetAurasTextPositioning(rootParent, iconID)
   return container
 end
 
+-- [ADDED] GetGuildNameFilter
+-- Builds the UI control for the "Guild name" filter option that appears under
+-- the VALUES section of the Guild text widget in the Customise dialog.
+--
+-- Layout (all inside a single holder frame):
+--
+--   [collapsed, 40 px tall]
+--   ┌─────────────────────────────────────┐
+--   │  Guild name          [✓] checkbox   │
+--   └─────────────────────────────────────┘
+--
+--   [expanded, 120 px tall — shown when checkbox is checked]
+--   ┌─────────────────────────────────────┐
+--   │  Guild name          [✓] checkbox   │
+--   ├─────────────────────────────────────┤
+--   │  [Equal to ▾] dropdown              │  ← operator picker
+--   ├─────────────────────────────────────┤
+--   │  [________________] edit box        │  ← guild name to match
+--   └─────────────────────────────────────┘
+--
+-- The value stored in details.guildNameFilter is a plain table:
+--   { enabled = bool, operator = string, value = string }
+--
+-- Whenever any control changes, the callback (Setter in GenerateOptions) is
+-- called with a copy of the current table, which persists it to the design.
+--
+-- @param parent    Frame   The section container provided by GenerateOptions
+-- @param callback  func    Called with the updated filter table on every change
+-- @return          Frame   The holder frame (implements :SetValue(table|nil))
+local function GetGuildNameFilter(parent, callback)
+  local COLLAPSED_HEIGHT = 40   -- height when checkbox is unchecked
+  local EXPANDED_HEIGHT   = 120 -- height when checkbox is checked (40 + 40 + 40)
+
+  -- Outer holder — stacks with other entries via GenerateOptions point logic.
+  local holder = CreateFrame("Frame", nil, parent)
+  holder:SetPoint("LEFT", parent, "LEFT", 30, 0)
+  holder:SetPoint("RIGHT", parent, "RIGHT", -15, 0)
+  holder:SetHeight(COLLAPSED_HEIGHT)
+
+  -- ── Row 1: label + checkbox ──────────────────────────────────────────────
+  -- Mirrors the layout produced by Components.GetCheckbox so it visually
+  -- aligns with the Player guild / NPC role checkboxes above it.
+  local label = holder:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+  label:SetPoint("LEFT", holder, "LEFT", 0, 10)
+  label:SetPoint("RIGHT", holder, "CENTER", -50, 10)
+  label:SetJustifyH("RIGHT")
+  label:SetText(addonTable.Locales.GUILD_NAME_FILTER)
+
+  local checkBox = CreateFrame("CheckButton", nil, holder, "SettingsCheckboxTemplate")
+  checkBox:SetPoint("LEFT", holder, "CENTER", -43, 10)
+
+  -- ── Sub-frame: operator dropdown + value editbox ─────────────────────────
+  -- Anchored just below row 1. Hidden by default; shown when checkbox is
+  -- checked and the holder expands to EXPANDED_HEIGHT.
+  local subFrame = CreateFrame("Frame", nil, holder)
+  subFrame:SetPoint("TOPLEFT", holder, "TOPLEFT", 0, -COLLAPSED_HEIGHT)
+  subFrame:SetPoint("RIGHT", holder, "RIGHT", 0, 0)
+  subFrame:SetHeight(80)
+  subFrame:Hide()
+
+  -- Row 2: operator dropdown (uses the same WowStyle1 template as the rest
+  -- of the addon's dropdowns).
+  local opDropdown = CreateFrame("DropdownButton", nil, subFrame, "WowStyle1DropdownTemplate")
+  opDropdown:SetWidth(160)
+  opDropdown:SetPoint("LEFT", subFrame, "LEFT", 30, -10)
+
+  -- All supported operators. The "value" field is the key stored in
+  -- details.guildNameFilter.operator and evaluated by MatchesGuildFilter()
+  -- in GuildText.lua.
+  local operators = {
+    { label = addonTable.Locales.FILTER_OP_EQUAL_TO,     value = "equalTo"    },
+    { label = addonTable.Locales.FILTER_OP_BEGINS_WITH,  value = "beginsWith" },
+    { label = addonTable.Locales.FILTER_OP_ENDS_WITH,    value = "endsWith"   },
+    { label = addonTable.Locales.FILTER_OP_CONTAINS,     value = "contains"   },
+    { label = addonTable.Locales.FILTER_OP_NOT_EQUAL_TO, value = "notEqualTo" },
+  }
+
+  -- currentData is a live copy of details.guildNameFilter. All controls read
+  -- and mutate this table; FireCallback() then hands it to the Setter so the
+  -- design is updated and nameplates refresh.
+  local currentData = nil
+
+  local function FireCallback()
+    if currentData then
+      callback(currentData)
+    end
+  end
+
+  -- Build the operator radio menu. CreateRadio needs:
+  --   isSelected(value) → bool   used to tick the active option on open
+  --   onSelected(value)          called when the user picks an option
+  opDropdown:SetupMenu(function(_, rootDescription)
+    for _, op in ipairs(operators) do
+      rootDescription:CreateRadio(
+        op.label,
+        function(val) return currentData and currentData.operator == val end,
+        function(val)
+          if currentData then
+            currentData.operator = val
+            FireCallback()
+          end
+        end,
+        op.value
+      )
+    end
+  end)
+
+  -- Row 3: guild name EditBox, inset-framed to match WoW's input style.
+  local editBoxContainer = CreateFrame("Frame", nil, subFrame, "InsetFrameTemplate")
+  editBoxContainer:SetPoint("LEFT", subFrame, "LEFT", 30, 0)
+  editBoxContainer:SetPoint("RIGHT", subFrame, "RIGHT", -15, 0)
+  editBoxContainer:SetPoint("TOP", opDropdown, "BOTTOM", 0, -4)
+  editBoxContainer:SetHeight(28)
+
+  local editBox = CreateFrame("EditBox", nil, editBoxContainer)
+  editBox:SetFontObject(GameFontHighlight)
+  editBox:SetPoint("LEFT",   editBoxContainer, "LEFT",   6,  0)
+  editBox:SetPoint("RIGHT",  editBoxContainer, "RIGHT",  -6, 0)
+  editBox:SetPoint("TOP",    editBoxContainer, "TOP",    0,  -2)
+  editBox:SetPoint("BOTTOM", editBoxContainer, "BOTTOM", 0,   2)
+  editBox:SetAutoFocus(false)
+  editBox:SetMaxLetters(64)
+
+  -- Save on Enter or on focus loss; revert on Escape.
+  editBox:SetScript("OnEnterPressed", function(self)
+    self:ClearFocus()
+    if currentData then
+      currentData.value = self:GetText()
+      FireCallback()
+    end
+  end)
+  editBox:SetScript("OnEscapePressed", function(self)
+    self:ClearFocus()
+    -- Revert the displayed text to whatever was last saved.
+    if currentData then self:SetText(currentData.value or "") end
+  end)
+  editBox:SetScript("OnEditFocusLost", function(self)
+    -- Catches clicks away from the box (tab, clicking elsewhere, etc.).
+    if currentData then
+      currentData.value = self:GetText()
+      FireCallback()
+    end
+  end)
+
+  -- ── Expand / collapse helper ─────────────────────────────────────────────
+  -- Changing holder:SetHeight() causes downstream frames (anchored to this
+  -- frame's BOTTOM) to reflow automatically — no scroll box rebuild needed.
+  local function SetExpanded(expanded)
+    if expanded then
+      holder:SetHeight(EXPANDED_HEIGHT)
+      subFrame:Show()
+    else
+      holder:SetHeight(COLLAPSED_HEIGHT)
+      subFrame:Hide()
+    end
+  end
+
+  -- ── Checkbox click ───────────────────────────────────────────────────────
+  checkBox:SetScript("OnClick", function(self)
+    local enabled = self:GetChecked()
+    -- Initialise currentData on first use so the other fields have defaults.
+    if not currentData then
+      currentData = { enabled = false, operator = "equalTo", value = "" }
+    end
+    currentData.enabled = enabled
+    SetExpanded(enabled)
+    FireCallback()
+  end)
+
+  -- ── SetValue (called by UpdateOptions when the panel is shown / refreshed) ─
+  -- Receives details.guildNameFilter (table or nil).
+  function holder:SetValue(value)
+    -- Work with a local copy so we don't mutate the design table directly.
+    currentData = value and CopyTable(value) or nil
+    local enabled = currentData and currentData.enabled or false
+    checkBox:SetChecked(enabled)
+    SetExpanded(enabled)
+    if currentData then
+      -- Regenerate the dropdown so the correct operator is highlighted.
+      opDropdown:GenerateMenu()
+      editBox:SetText(currentData.value or "")
+    else
+      editBox:SetText("")
+    end
+  end
+
+  return holder
+end
+
 GenerateOptions = function(parent, yOffset, xOffset, entries)
   local allFrames = {}
 
@@ -575,6 +764,9 @@ GenerateOptions = function(parent, yOffset, xOffset, entries)
       frame = GetAutomaticColors(parent, e.lockedElements, e.addAlpha)
     elseif e.kind == "auraTextsPositioner" then
       frame = GetAurasTextPositioning(parent, e.icon)
+    -- [ADDED] Guild name filter — custom expanding control (see GetGuildNameFilter above)
+    elseif e.kind == "guildNameFilter" then
+      frame = GetGuildNameFilter(parent, Setter)
     end
 
     if frame then

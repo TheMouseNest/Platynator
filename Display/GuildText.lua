@@ -18,6 +18,41 @@ if not C_TooltipInfo then
   tooltip = CreateFrame("GameTooltip", "PlatynatorUnitGuildTooltip", nil, "GameTooltipTemplate")
 end
 
+-- [ADDED] Guild Name Filter
+-- Evaluates whether a guild name satisfies the user-configured filter condition.
+-- Called before displaying the guild name on a nameplate; if the filter is active
+-- and the guild does not match, the text is suppressed (defaultText stays "").
+--
+-- @param guild   string  The guild name retrieved via GetGuildInfo()
+-- @param filter  table|nil  details.guildNameFilter:
+--                  { enabled = bool, operator = string, value = string }
+--                  operator values: "equalTo" | "beginsWith" | "endsWith"
+--                                   "contains" | "notEqualTo"
+-- @return bool   true = show the guild name, false = suppress it
+local function MatchesGuildFilter(guild, filter)
+  -- If no filter is configured, or the checkbox is unchecked, always show.
+  if not filter or not filter.enabled then return true end
+
+  local text = filter.value or ""
+  -- An empty filter value is treated as "no restriction" — always show.
+  if text == "" then return true end
+
+  -- If we somehow have no guild string at this point, suppress to be safe.
+  if not guild or guild == "" then return false end
+
+  local op = filter.operator or "equalTo"
+
+  if     op == "equalTo"    then return guild == text
+  elseif op == "beginsWith" then return guild:sub(1, #text) == text
+  elseif op == "endsWith"   then return #text == 0 or guild:sub(-#text) == text
+  elseif op == "contains"   then return guild:find(text, 1, true) ~= nil
+  elseif op == "notEqualTo" then return guild ~= text
+  end
+
+  -- Unknown operator — default to showing.
+  return true
+end
+
 addonTable.Display.GuildTextMixin = {}
 
 function addonTable.Display.GuildTextMixin:SetUnit(unit)
@@ -27,7 +62,11 @@ function addonTable.Display.GuildTextMixin:SetUnit(unit)
     if UnitIsPlayer(self.unit) then
       if self.details.playerGuild then
         local guild = GetGuildInfo(self.unit)
-        if guild then
+        -- [ADDED] Only set the guild name as the display text if it passes the
+        -- user's guild name filter (details.guildNameFilter). When no filter is
+        -- set (or the checkbox is unchecked), MatchesGuildFilter returns true and
+        -- behaviour is identical to the original code.
+        if guild and MatchesGuildFilter(guild, self.details.guildNameFilter) then
           self.defaultText = guild
         end
       end

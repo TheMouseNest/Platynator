@@ -806,6 +806,30 @@ addonTable.CustomiseDialog.WidgetsConfig = {
               return details.npcRole
             end,
           },
+
+          -- [ADDED] Guild Name Filter entry
+          -- Renders a custom "guildNameFilter" control (see Designer.lua:
+          -- GetGuildNameFilter). When the user checks the checkbox, two extra
+          -- controls expand below it:
+          --   1. A dropdown to pick the comparison operator
+          --      ("Equal to", "Begins with", "Ends with", "Contains", "Not equal to")
+          --   2. An EditBox where the user types the guild name to match against.
+          --
+          -- The saved value is a table stored in details.guildNameFilter:
+          --   { enabled = bool, operator = string, value = string }
+          --
+          -- When enabled = false (or the field is nil), GuildText.lua ignores
+          -- the filter entirely — fully backwards-compatible with existing designs.
+          {
+            label = addonTable.Locales.GUILD_NAME_FILTER,
+            kind = "guildNameFilter",
+            setter = function(details, value)
+              details.guildNameFilter = value
+            end,
+            getter = function(details)
+              return details.guildNameFilter
+            end,
+          },
         }
       }
     },

@@ -280,6 +280,17 @@ L["MULTIPLE_VALUES_DISPLAY"] = "Multiple values display"
 L["INCLUDE_ELITE_RARES"] = "Include elite rares"
 L["PLAYER_GUILD"] = "Player guild"
 L["NPC_ROLE"] = "NPC role"
+
+-- [ADDED] Guild Name Filter — locale strings for the new guild name filter
+-- feature on the Guild text widget (Values section).
+-- All other languages fall back to these enUS strings automatically via the
+-- locale merge in Core/Locales.lua.
+L["GUILD_NAME_FILTER"]      = "Guild name"       -- checkbox label under Values
+L["FILTER_OP_EQUAL_TO"]     = "Equal to"         -- operator dropdown options
+L["FILTER_OP_BEGINS_WITH"]  = "Begins with"
+L["FILTER_OP_ENDS_WITH"]    = "Ends with"
+L["FILTER_OP_CONTAINS"]     = "Contains"
+L["FILTER_OP_NOT_EQUAL_TO"] = "Not equal to"
 L["INCLUDE_TARGET"] = "Include target"
 L["ANIMATE"] = "Animate"
 L["ENABLE_IF_LINES_FALLING_OFF_FONT"] = "Enable if lines falling off font"
