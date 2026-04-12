@@ -1116,7 +1116,7 @@ addonTable.CustomiseDialog.WidgetsConfig = {
         label = addonTable.Locales.GENERAL,
         entries = {
           {
-            label = addonTable.Locales.SHOW_PURGEABLE,
+            label = addonTable.Locales.SHOW_PURGEABLE_BORDER,
             kind = "checkbox",
             setter = function(details, value)
               details.showStealable = value
