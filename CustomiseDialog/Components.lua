@@ -160,14 +160,16 @@ end
 
 function addonTable.CustomiseDialog.Components.GetColorSwatch(parent, callback)
   local colorSwatch
+  local hasAlpha = false
   local colorPickerFrameMonitor = CreateFrame("Frame", nil, parent)
   colorPickerFrameMonitor.OnUpdate = function()
     if not ColorPickerFrame:IsVisible() then
       colorPickerFrameMonitor:SetScript("OnUpdate", nil)
     end
     if colorPickerFrameMonitor.changed then
-      callback({r = colorSwatch.pendingColor.r, g = colorSwatch.pendingColor.g, b = colorSwatch.pendingColor.b, a = colorSwatch.pendingColor.a})
-      colorSwatch.currentColor = colorSwatch.pendingColor
+      local c = {r = colorSwatch.pendingColor.r, g = colorSwatch.pendingColor.g, b = colorSwatch.pendingColor.b, a = hasAlpha and colorSwatch.pendingColor.a or nil}
+      callback(c)
+      colorSwatch.currentColor = CopyTable(c)
       colorSwatch.pendingColor = nil
     end
     colorPickerFrameMonitor.changed = false
@@ -177,10 +179,11 @@ function addonTable.CustomiseDialog.Components.GetColorSwatch(parent, callback)
   colorSwatch = CreateFrame("Button", nil, parent, "ColorSwatchTemplate")
   colorSwatch:RegisterForClicks("LeftButtonUp", "RightButtonUp")
   colorSwatch:SetScript("OnClick", function(_, button)
+    hasAlpha = colorSwatch.currentColor.a ~= nil
     if button == "LeftButton" then
       local info = {}
       info.r, info.g, info.b, info.opacity = colorSwatch.currentColor.r, colorSwatch.currentColor.g, colorSwatch.currentColor.b, colorSwatch.currentColor.a
-      info.hasOpacity = info.opacity ~= nil
+      info.hasOpacity = hasAlpha
       cancelColor = colorSwatch.currentColor
       info.swatchFunc = function()
         colorPickerFrameMonitor.changed = true
@@ -192,17 +195,17 @@ function addonTable.CustomiseDialog.Components.GetColorSwatch(parent, callback)
       info.cancelFunc = function()
         colorSwatch.pendingColor = cancelColor
         colorSwatch:SetColorRGB(cancelColor.r, cancelColor.g, cancelColor.b)
-        callback({r = colorSwatch.pendingColor.r, g = colorSwatch.pendingColor.g, b = colorSwatch.pendingColor.b, a = colorSwatch.pendingColor.a})
+        callback({r = colorSwatch.pendingColor.r, g = colorSwatch.pendingColor.g, b = colorSwatch.pendingColor.b, a = hasAlpha and colorSwatch.pendingColor.a or nil})
         colorSwatch.currentColor = cancelColor
         colorSwatch.pendingColor = nil
       end
       colorPickerFrameMonitor:SetScript("OnUpdate", colorPickerFrameMonitor.OnUpdate)
       ColorPickerFrame:SetupColorPickerAndShow(info);
     else
-      colorSwatch.pendingColor = CreateColor(1, 1, 1, colorSwatch.currentColor.a ~= nil and 1 or nil)
-      colorSwatch.currentColor = colorSwatch.pendingColor
+      colorSwatch.pendingColor = CreateColor(1, 1, 1, 1)
+      colorSwatch.currentColor = {r = colorSwatch.pendingColor.r, g = colorSwatch.pendingColor.g, b = colorSwatch.pendingColor.b, a = hasAlpha and colorSwatch.pendingColor.a or nil}
       colorSwatch:SetColorRGB(1, 1, 1)
-      callback({r = colorSwatch.pendingColor.r, g = colorSwatch.pendingColor.g, b = colorSwatch.pendingColor.b, a = colorSwatch.pendingColor.a})
+      callback({r = colorSwatch.pendingColor.r, g = colorSwatch.pendingColor.g, b = colorSwatch.pendingColor.b, a = hasAlpha and colorSwatch.pendingColor.a or nil})
       -- Update tooltip to hide text about resetting the color
       colorSwatch:GetScript("OnLeave")(colorSwatch)
       colorSwatch:GetScript("OnEnter")(colorSwatch)
