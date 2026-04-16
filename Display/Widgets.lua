@@ -703,6 +703,8 @@ function addonTable.Display.GetText(frame, parent)
       Mixin(frame, addonTable.Display.CastTimeLeftTextMixin)
     elseif details.kind == "quest" then
       Mixin(frame, addonTable.Display.QuestTextMixin)
+    elseif details.kind == "mythicPlusPercent" then
+      Mixin(frame, addonTable.Display.MythicPlusPercentTextMixin)
     else
       assert(false)
     end

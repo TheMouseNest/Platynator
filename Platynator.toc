@@ -57,6 +57,7 @@ Display/CastInterrupterText.lua
 Display/LevelText.lua
 Display/UnitTargetText.lua
 Display/QuestText.lua
+Display/MythicPlusPercentText.lua
 Display/AutomaticHighlight.lua
 Display/TargetHighlight.lua
 Display/SoftTargetHighlight.lua

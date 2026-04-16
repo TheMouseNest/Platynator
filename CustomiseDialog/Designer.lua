@@ -1096,6 +1096,8 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
           display = "60"
         elseif w.details.kind == "quest" then
           display = "3/7"
+        elseif w.details.kind == "mythicPlusPercent" then
+          display = "2.25%"
         end
         if display then
           w.text:SetText(display)

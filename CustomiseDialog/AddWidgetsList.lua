@@ -517,6 +517,21 @@ addonTable.CustomiseDialog.DesignWidgets = {
     },
   },
   {
+    name = addonTable.Locales.MYTHIC_PLUS_PERCENT_12005,
+    kind = "texts",
+    default = {
+      kind = "mythicPlusPercent",
+      scale = 1,
+      layer = 2,
+      anchor = {"TOPLEFT", -140, 50},
+      color = GetColor("FFFFFF"),
+      maxWidth = 0,
+      align = "CENTER",
+      shorten = "NONE",
+      truncate = false,
+    },
+  },
+  {
     name = addonTable.Locales.ICONS,
     special = "header",
   },
