@@ -1,10 +1,10 @@
 ---@class addonTablePlatynator
 local addonTable = select(2, ...)
 
-addonTable.Display.MythicPlusPercentTextMixin = {}
+addonTable.Display.MythicPlusForcesTextMixin = {}
 
 if C_ScenarioInfo.GetUnitCriteriaProgressValues then
-  function addonTable.Display.MythicPlusPercentTextMixin:SetUnit(unit)
+  function addonTable.Display.MythicPlusForcesTextMixin:SetUnit(unit)
     self.unit = unit
     if C_PartyInfo.IsChallengeModeActive() and self.unit and not (UnitIsPlayer(unit) or UnitTreatAsPlayerForDisplay and UnitTreatAsPlayerForDisplay(unit)) and UnitCanAttack("player", unit) then
       local _, _, percent = C_ScenarioInfo.GetUnitCriteriaProgressValues(unit)
@@ -19,11 +19,11 @@ if C_ScenarioInfo.GetUnitCriteriaProgressValues then
     end
   end
 else
-  function addonTable.Display.MythicPlusPercentTextMixin:SetUnit(unit)
+  function addonTable.Display.MythicPlusForcesTextMixin:SetUnit(unit)
     self.unit = unit
     self:Hide()
   end
 end
 
-function addonTable.Display.MythicPlusPercentTextMixin:Strip()
+function addonTable.Display.MythicPlusForcesTextMixin:Strip()
 end

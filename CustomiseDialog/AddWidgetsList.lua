@@ -517,10 +517,10 @@ addonTable.CustomiseDialog.DesignWidgets = {
     },
   },
   {
-    name = addonTable.Locales.MYTHIC_PLUS_PERCENT_12005,
+    name = addonTable.Locales.MYTHIC_PLUS_FORCES_VALUE_12005,
     kind = "texts",
     default = {
-      kind = "mythicPlusPercent",
+      kind = "mythicPlusForces",
       scale = 1,
       layer = 2,
       anchor = {"TOPLEFT", -140, 50},
