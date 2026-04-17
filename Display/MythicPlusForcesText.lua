@@ -16,6 +16,7 @@ if C_ScenarioInfo.GetUnitCriteriaProgressValues then
   function addonTable.Display.MythicPlusForcesTextMixin:SetUnit(unit)
     self.unit = unit
     if C_PartyInfo.IsChallengeModeActive() and self.unit and not (UnitIsPlayer(unit) or UnitTreatAsPlayerForDisplay and UnitTreatAsPlayerForDisplay(unit)) and UnitCanAttack("player", unit) then
+      self:Show()
       self:UpdateText()
     else
       self:Hide()
