@@ -1097,7 +1097,19 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
         elseif w.details.kind == "quest" then
           display = "3/7"
         elseif w.details.kind == "mythicPlusForces" then
-          display = "2.25%"
+          local types = w.details.displayTypes
+          local percentTail = w.details.showPercentSymbol and "%" or ""
+          local values = {
+            absolute = 16,
+            percentage = "2.74" .. percentTail
+          }
+          if #types == 2 then
+            display = string.format(w.details.formatMultiple, values[types[1]], values[types[2]])
+          elseif #types == 1 then
+            display = string.format("%s", values[types[1]])
+          else
+            display = addonTable.Locales.NO_VALUE_UPPER
+          end
         end
         if display then
           w.text:SetText(display)

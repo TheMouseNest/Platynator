@@ -238,6 +238,30 @@ local function GetLabelsValuesHighlightsNotAnimated()
   return labels, values
 end
 
+local multipleValuesDisplay = {
+  label = addonTable.Locales.MULTIPLE_VALUES_DISPLAY,
+  kind = "dropdown",
+  getInitData = function(_)
+    return {
+      "11 (22)",
+      "11 | 22",
+      "11 - 22",
+      "11 22",
+    }, {
+        "%s (%s)",
+        "%s | %s",
+        "%s - %s",
+        "%s %s",
+      }
+  end,
+  setter = function(details, value)
+    details.formatMultiple = value
+  end,
+  getter = function(details)
+    return details.formatMultiple
+  end
+}
+
 addonTable.CustomiseDialog.WidgetsConfig = {
   ["bars"] = {
     ["*"] = {
@@ -643,29 +667,7 @@ addonTable.CustomiseDialog.WidgetsConfig = {
             end,
           },
           { kind = "spacer" },
-          {
-            label = addonTable.Locales.MULTIPLE_VALUES_DISPLAY,
-            kind = "dropdown",
-            getInitData = function(_)
-              return {
-                "11 (22)",
-                "11 | 22",
-                "11 - 22",
-                "11 22",
-              }, {
-                  "%s (%s)",
-                  "%s | %s",
-                  "%s - %s",
-                  "%s %s",
-                }
-            end,
-            setter = function(details, value)
-              details.formatMultiple = value
-            end,
-            getter = function(details)
-              return details.formatMultiple
-            end
-          },
+          multipleValuesDisplay,
         }
       }
     },
@@ -809,6 +811,60 @@ addonTable.CustomiseDialog.WidgetsConfig = {
         }
       }
     },
+    ["mythicPlusForces"] = {
+      {
+        label = addonTable.Locales.VALUES,
+        entries = {
+          {
+            label = addonTable.Locales.ABSOLUTE,
+            kind = "checkbox",
+            setter = function(details, value)
+              if value and tIndexOf(details.displayTypes, "absolute") == nil then
+                table.insert(details.displayTypes, 1, "absolute")
+              elseif not value then
+                local index = tIndexOf(details.displayTypes, "absolute")
+                if index then
+                  table.remove(details.displayTypes, index)
+                end
+              end
+            end,
+            getter = function(details)
+              return tIndexOf(details.displayTypes, "absolute") ~= nil
+            end,
+          },
+          { kind = "spacer" },
+          {
+            label = addonTable.Locales.PERCENTAGE,
+            kind = "checkbox",
+            setter = function(details, value)
+              if value and tIndexOf(details.displayTypes, "percentage") == nil then
+                table.insert(details.displayTypes, 1, "percentage")
+              elseif not value then
+                local index = tIndexOf(details.displayTypes, "percentage")
+                if index then
+                  table.remove(details.displayTypes, index)
+                end
+              end
+            end,
+            getter = function(details)
+              return tIndexOf(details.displayTypes, "percentage") ~= nil
+            end,
+          },
+          {
+            label = addonTable.Locales.SHOW_PERCENT_SYMBOL,
+            kind = "checkbox",
+            setter = function(details, value)
+              details.showPercentSymbol = value
+            end,
+            getter = function(details)
+              return details.showPercentSymbol
+            end,
+          },
+          { kind = "spacer" },
+          multipleValuesDisplay,
+        }
+      }
+    }
   },
   ["markers"] = {
     ["*"] = {

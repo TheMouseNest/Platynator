@@ -524,11 +524,14 @@ addonTable.CustomiseDialog.DesignWidgets = {
       scale = 1,
       layer = 2,
       anchor = {"TOPLEFT", -140, 50},
+      displayTypes = {"percentage"}, -- or "absolute", or both
       color = GetColor("FFFFFF"),
       maxWidth = 0,
       align = "CENTER",
       shorten = "NONE",
       truncate = false,
+      showPercentSymbol = true,
+      formatMultiple = "%s (%s)"
     },
   },
   {

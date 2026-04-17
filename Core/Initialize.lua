@@ -439,6 +439,11 @@ function addonTable.Core.UpgradeDesign(design)
       text.playerGuild = true
       text.npcRole = true
     end
+    if text.kind == "mythicPlusForces" and not text.displayTypes then
+      text.displayTypes = {"percentage"}
+      text.showPercentSymbol = true
+      text.formatMultiple = "%s (%s)"
+    end
     if text.autoColors then
       UpdateAutoColors(text.autoColors)
       RemoveAutoColorsAlpha(text.autoColors)
