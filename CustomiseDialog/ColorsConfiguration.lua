@@ -319,6 +319,16 @@ addonTable.CustomiseDialog.ColorsConfig = {
           return details.instancesOnly
         end,
       },
+      {
+        label = addonTable.Locales.USE_CASTER_COLOR_ON_NON_ELITES,
+        kind = "checkbox",
+        setter = function(details, value)
+          details.applyCasterAlways = value
+        end,
+        getter = function(details)
+          return details.applyCasterAlways
+        end,
+      },
     },
   },
   ["delveType"] = {

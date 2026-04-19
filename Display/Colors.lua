@@ -342,7 +342,7 @@ function addonTable.Display.GetColor(settings, state, unit)
             break
           else
             local class = UnitClassBase(unit)
-            if class == "PALADIN" then
+            if class == "PALADIN" or class == "MAGE" or class == "PRIEST" then
               table.insert(colorQueue, {color = s.colors.caster})
             else
               table.insert(colorQueue, {color = s.colors.melee})
@@ -350,7 +350,16 @@ function addonTable.Display.GetColor(settings, state, unit)
             break
           end
         elseif classification == "normal" or classification == "trivial" or classification == "minus" then
-          table.insert(colorQueue, {color = s.colors.trivial})
+          if s.applyCasterAlways then
+            local class = UnitClassBase(unit)
+            if class == "PALADIN" or class == "MAGE" or class == "PRIEST" then
+              table.insert(colorQueue, {color = s.colors.caster})
+            else
+              table.insert(colorQueue, {color = s.colors.trivial})
+            end
+          else
+            table.insert(colorQueue, {color = s.colors.trivial})
+          end
           break
         end
       end
@@ -377,7 +386,7 @@ function addonTable.Display.GetColor(settings, state, unit)
           break
         elseif classification == "normal" then
           local class = UnitClassBase(unit)
-          if class == "PALADIN" then
+          if class == "PALADIN" or class == "MAGE" or class == "PRIEST" then
             table.insert(colorQueue, {color = s.colors.caster})
           else
             table.insert(colorQueue, {color = s.colors.melee})

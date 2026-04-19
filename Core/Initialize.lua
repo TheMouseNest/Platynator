@@ -191,6 +191,9 @@ function addonTable.Core.UpgradeDesign(design)
       if ac.kind == "eliteType" and ac.colors.trivial == nil then
         ac.colors.trivial = GetColor("b28e55")
       end
+      if ac.kind == "eliteType" and ac.applyCasterAlways == nil then
+        ac.applyCasterAlways = false
+      end
       if ac.kind == "threat" and ac.useSafeColor == nil then
         ac.useSafeColor = true
       end
