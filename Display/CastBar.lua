@@ -3,8 +3,6 @@ local addonTable = select(2, ...)
 
 addonTable.Display.CastBarMixin = {}
 
-local ConvertColor = addonTable.Display.Utilities.ConvertColor
-
 local GetInterruptSpell = addonTable.Display.Utilities.GetInterruptSpellPriority
 
 function addonTable.Display.CastBarMixin:PostInit()
@@ -19,31 +17,22 @@ function addonTable.Display.CastBarMixin:SetUnit(unit)
   self.unit = unit
   if self.unit then
     self.interrupted = nil
-    self:RegisterUnitEvent("UNIT_SPELLCAST_START", self.unit)
-    self:RegisterUnitEvent("UNIT_SPELLCAST_STOP", self.unit)
-    self:RegisterUnitEvent("UNIT_SPELLCAST_DELAYED", self.unit)
 
-    self:RegisterUnitEvent("UNIT_SPELLCAST_CHANNEL_START", self.unit)
-    self:RegisterUnitEvent("UNIT_SPELLCAST_CHANNEL_STOP", self.unit)
-    self:RegisterUnitEvent("UNIT_SPELLCAST_CHANNEL_UPDATE", self.unit)
-
-    if addonTable.Constants.IsRetail then
-      self:RegisterUnitEvent("UNIT_SPELLCAST_EMPOWER_START", self.unit)
-      self:RegisterUnitEvent("UNIT_SPELLCAST_EMPOWER_STOP", self.unit)
-      self:RegisterUnitEvent("UNIT_SPELLCAST_EMPOWER_UPDATE", self.unit)
-    end
-
-    self:RegisterUnitEvent("UNIT_SPELLCAST_INTERRUPTED", self.unit)
-    self:RegisterUnitEvent("UNIT_SPELLCAST_FAILED", self.unit)
-
-    self:RegisterUnitEvent("UNIT_SPELLCAST_INTERRUPTIBLE", self.unit)
-    self:RegisterUnitEvent("UNIT_SPELLCAST_NOT_INTERRUPTIBLE", self.unit)
+    addonTable.Display.Cache:RegisterCallback(self.unit, "cast", function(state)
+      if state.interrupterGUID then
+        self:ApplyInterrupt()
+      elseif state.cast[1] == nil and state.channel[1] == nil then
+        self:ClearCast()
+      else
+        self:ApplyCasting(state)
+      end
+    end)
 
     if self.showInterruptMarker then
       self:RegisterEvent("SPELL_UPDATE_USABLE")
     end
 
-    self:ApplyCasting()
+    self:ApplyCasting(addonTable.Display.Cache:Get(self.unit, "cast"))
 
     addonTable.Display.RegisterForColorEvents(self, self.details.autoColors)
     self:SetColor(addonTable.Display.GetColor(self.details.autoColors, self.colorState, self.unit))
@@ -70,34 +59,28 @@ function addonTable.Display.CastBarMixin:Strip()
   self.modColors = nil
 end
 
+function addonTable.Display.CastBarMixin:ApplyInterrupt()
+  self.interrupted = true
+  self:Show()
+  self.statusBar:SetMinMaxValues(0, 1)
+  self.statusBar:SetValue(1)
+  if self.timer then
+    self.timer:Cancel()
+    self.timer = nil
+  end
+  self.timer = C_Timer.NewTimer(addonTable.Constants.CastInterruptedDelay, function()
+    if self.interrupted then
+      self.interrupted = nil
+      self:Hide()
+    end
+  end)
+  self:SetScript("OnUpdate", nil)
+  self.interruptMarker:Hide()
+end
+
 function addonTable.Display.CastBarMixin:OnEvent(eventName, ...)
-  if eventName == "UNIT_SPELLCAST_INTERRUPTED" or eventName == "UNIT_SPELLCAST_CHANNEL_STOP" and select(4, ...) ~= nil or eventName == "UNIT_SPELLCAST_EMPOWER_STOP" and select(5, ...) ~= nil then
-    self.interrupted = true
-    self:Show()
-    self.statusBar:SetMinMaxValues(0, 1)
-    self.statusBar:SetValue(1)
-    if self.timer then
-      self.timer:Cancel()
-      self.timer = nil
-    end
-    self.timer = C_Timer.NewTimer(addonTable.Constants.CastInterruptedDelay, function()
-      if self.interrupted then
-        self.interrupted = nil
-        self:Hide()
-      end
-    end)
-    self:SetScript("OnUpdate", nil)
-    self.interruptMarker:Hide()
-  elseif eventName == "UNIT_SPELLCAST_DELAYED" or eventName == "UNIT_SPELLCAST_CHANNEL_UPDATE" or eventName == "UNIT_SPELLCAST_EMPOWER_UPDATE" then
-    if self:IsShown() then
-      self:ApplyCasting()
-    end
-  elseif eventName == "UNIT_SPELLCAST_CHANNEL_STOP" or eventName == "UNIT_SPELLCAST_EMPOWER_STOP" or eventName == "UNIT_SPELLCAST_STOP" then
-    self:ClearCast()
-  elseif eventName == "SPELL_UPDATE_USABLE" and self.showInterruptMarker then
+  if eventName == "SPELL_UPDATE_USABLE" and self.showInterruptMarker then
     self:RefreshInterruptMarker()
-  elseif eventName:match("^UNIT_SPELL") then
-    self:ApplyCasting()
   end
 
   if self:IsShown() then
@@ -133,27 +116,23 @@ function addonTable.Display.CastBarMixin:ClearCast()
 end
 
 if UnitCastingDuration then
-  function addonTable.Display.CastBarMixin:ApplyCasting()
-    self.isChanneled = false
-    local isEmpowered = false
-    local castDuration = UnitCastingDuration(self.unit)
-    if not castDuration then
+  function addonTable.Display.CastBarMixin:ApplyCasting(state)
+    self.isChanneled = state.channel[1] ~= nil
+    local isEmpowered = state.channel[9] == true
+    local castDuration
+    if self.isEmpowered then
       castDuration = UnitEmpoweredChannelDuration(self.unit, true)
-      self.isChanneled = true
-      if castDuration then
-        isEmpowered = true
-      end
-    end
-    if not castDuration then
+    elseif self.isChanneled then
       castDuration = UnitChannelDuration(self.unit)
-      self.isChanneled = true
+    else
+      castDuration = UnitCastingDuration(self.unit)
     end
     if castDuration ~= nil then
-      local notInterruptible, _
+      local notInterruptible
       if self.isChanneled then
-        _, _, _, _, _, _, notInterruptible, _ = UnitChannelInfo(self.unit)
+        notInterruptible = state.channel[7]
       else
-        _, _, _, _, _, _, _, notInterruptible, _ = UnitCastingInfo(self.unit)
+        notInterruptible = state.cast[8]
       end
 
       self.interrupted = nil
@@ -204,13 +183,14 @@ if UnitCastingDuration then
     end
   end
 else
-  function addonTable.Display.CastBarMixin:ApplyCasting()
-    local name, text, texture, startTime, endTime, _, _, notInterruptible, spellID = UnitCastingInfo(self.unit)
-    self.isChanneled = false
+  function addonTable.Display.CastBarMixin:ApplyCasting(state)
+    local name, startTime, endTime, notInterruptible, _
+    self.isChanneled = state.channel[1] ~= nil
 
-    if name == nil then
-      name, text, texture, startTime, endTime, _, notInterruptible, spellID = UnitChannelInfo(self.unit)
-      self.isChanneled = true
+    if not self.isChanneled then
+      name, _, _, startTime, endTime, _, _, notInterruptible = unpack(state.cast)
+    else
+      name, _, _, startTime, endTime, _, notInterruptible, _ = unpack(state.channel)
     end
 
     if name ~= nil then

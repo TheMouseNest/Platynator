@@ -38,6 +38,7 @@ Display/Templates.xml
 
 Display/Initialize.lua
 Display/Utilities.lua
+Display/Cache.lua
 Display/CVars.lua
 Display/Colors.lua
 Display/Nameplate.lua

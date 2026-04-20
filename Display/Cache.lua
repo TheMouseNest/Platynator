@@ -27,7 +27,8 @@ local getter = {
     end
   end,
   ["threat"] = function(oldState, unit)
-    return UnitThreatSituation("player", unit), true
+    local newThreat = UnitThreatSituation("player", unit)
+    return newThreat, newThreat ~= oldState
   end,
 }
 
@@ -130,11 +131,11 @@ function addonTable.Display.CacheMixin:OnEvent(eventName, unit, ...)
   end
   local kind = eventToKind[eventName]
   if self.monitoring[unit][kind] then
-    local update = false
-    self.state[unit][kind], update = getter[kind](self.state[unit][kind], unit, eventName, ...)
+    local data, update = getter[kind](self.state[unit][kind], unit, eventName, ...)
+    self.state[unit][kind] = data
     if update then
       for _, callback in ipairs(self.registeredCallbacks[unit][kind]) do
-        callback()
+        callback(data)
       end
     end
   end

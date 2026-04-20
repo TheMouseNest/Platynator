@@ -2,6 +2,10 @@
 local addonTable = select(2, ...)
 
 function addonTable.Display.Initialize()
+  local cache = CreateFrame("Frame")
+  Mixin(cache, addonTable.Display.CacheMixin)
+  cache:OnLoad()
+  addonTable.Display.Cache = cache
 
   local manager = CreateFrame("Frame")
   Mixin(manager, addonTable.Display.ManagerMixin)

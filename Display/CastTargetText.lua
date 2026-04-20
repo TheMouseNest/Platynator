@@ -6,24 +6,11 @@ addonTable.Display.CastTargetTextMixin = {}
 function addonTable.Display.CastTargetTextMixin:SetUnit(unit)
   self.unit = unit
   if self.unit then
-    self:RegisterUnitEvent("UNIT_SPELLCAST_START", self.unit)
-    self:RegisterUnitEvent("UNIT_SPELLCAST_STOP", self.unit)
-    self:RegisterUnitEvent("UNIT_SPELLCAST_DELAYED", self.unit)
+    addonTable.Display.Cache:RegisterCallback(self.unit, "cast", function(state)
+      self:UpdateTarget(state)
+    end)
 
-    self:RegisterUnitEvent("UNIT_SPELLCAST_CHANNEL_START", self.unit)
-    self:RegisterUnitEvent("UNIT_SPELLCAST_CHANNEL_STOP", self.unit)
-    self:RegisterUnitEvent("UNIT_SPELLCAST_CHANNEL_UPDATE", self.unit)
-
-    if addonTable.Constants.IsRetail then
-      self:RegisterUnitEvent("UNIT_SPELLCAST_EMPOWER_START", self.unit)
-      self:RegisterUnitEvent("UNIT_SPELLCAST_EMPOWER_STOP", self.unit)
-      self:RegisterUnitEvent("UNIT_SPELLCAST_EMPOWER_UPDATE", self.unit)
-    end
-
-    self:RegisterUnitEvent("UNIT_SPELLCAST_INTERRUPTED", self.unit)
-    self:RegisterUnitEvent("UNIT_SPELLCAST_FAILED", self.unit)
-
-    self:UpdateTarget()
+    self:UpdateTarget(addonTable.Display.Cache:Get(self.unit, "cast"))
     self:UpdateText()
   else
     self:Strip()
@@ -36,13 +23,11 @@ function addonTable.Display.CastTargetTextMixin:Strip()
   self:UnregisterAllEvents()
 end
 
-function addonTable.Display.CastTargetTextMixin:UpdateTarget()
+function addonTable.Display.CastTargetTextMixin:UpdateTarget(state)
   self.target = nil
   self.targetClass = nil
 
-  local _, spellInfo = UnitCastingInfo(self.unit)
-  local _, channelInfo = UnitChannelInfo(self.unit)
-  if spellInfo or channelInfo then
+  if state.cast[1] or state.channel[1] then
     if UnitSpellTargetName then
       if UnitShouldDisplaySpellTargetName(self.unit) then
         self.target = UnitSpellTargetName(self.unit)
@@ -68,9 +53,4 @@ function addonTable.Display.CastTargetTextMixin:UpdateText()
   else
     self.text:SetText("")
   end
-end
-
-function addonTable.Display.CastTargetTextMixin:OnEvent(eventName, ...)
-  self:UpdateTarget()
-  self:UpdateText()
 end

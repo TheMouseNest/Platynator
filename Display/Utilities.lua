@@ -489,7 +489,6 @@ do
 
   do
     local specializationMonitor = CreateFrame("Frame")
-    specializationMonitor:RegisterEvent("PLAYER_LOGIN")
 
     if addonTable.Constants.IsEra or addonTable.Constants.IsBC or addonTable.Constants.IsWrath then
       if playerClass == "WARRIOR" or playerClass == "DRUID" then
@@ -500,6 +499,7 @@ do
     elseif C_EventUtils.IsEventValid("PLAYER_SPECIALIZATION_CHANGED") then
       specializationMonitor:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
     end
+    specializationMonitor:RegisterEvent("PLAYER_ENTERING_WORLD")
 
     specializationMonitor:SetScript("OnEvent", function()
       local newRole = GetPlayerRole()

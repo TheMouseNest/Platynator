@@ -7,21 +7,18 @@ function addonTable.Display.CastTextMixin:SetUnit(unit)
   self.unit = unit
   if self.unit then
     self.interrupted = nil
-    self:RegisterUnitEvent("UNIT_SPELLCAST_START", self.unit)
-    self:RegisterUnitEvent("UNIT_SPELLCAST_STOP", self.unit)
 
-    self:RegisterUnitEvent("UNIT_SPELLCAST_CHANNEL_START", self.unit)
-    self:RegisterUnitEvent("UNIT_SPELLCAST_CHANNEL_STOP", self.unit)
+    addonTable.Display.Cache:RegisterCallback(self.unit, "cast", function(state)
+      if state.interrupterGUID then
+        self:ApplyInterrupt()
+      elseif state.cast[1] == nil and state.channel[1] == nil then
+        self:ClearCast()
+      else
+        self:ApplyCasting(state)
+      end
+    end)
 
-    if addonTable.Constants.IsRetail then
-      self:RegisterUnitEvent("UNIT_SPELLCAST_EMPOWER_START", self.unit)
-      self:RegisterUnitEvent("UNIT_SPELLCAST_EMPOWER_STOP", self.unit)
-    end
-
-    self:RegisterUnitEvent("UNIT_SPELLCAST_INTERRUPTED", self.unit)
-    self:RegisterUnitEvent("UNIT_SPELLCAST_FAILED", self.unit)
-
-    self:ApplyCasting()
+    self:ApplyCasting(addonTable.Display.Cache:Get(self.unit, "cast"))
   else
     self:Strip()
   end
@@ -36,26 +33,20 @@ function addonTable.Display.CastTextMixin:Strip()
   self:UnregisterAllEvents()
 end
 
-function addonTable.Display.CastTextMixin:OnEvent(eventName, ...)
-  if eventName == "UNIT_SPELLCAST_INTERRUPTED" or eventName == "UNIT_SPELLCAST_CHANNEL_STOP" and select(4, ...) ~= nil or eventName == "UNIT_SPELLCAST_EMPOWER_STOP" and select(5, ...) ~= nil then
-    self.interrupted = true
-    self:Show()
-    self.text:SetText(addonTable.Locales.INTERRUPTED)
-    if self.timer then
-      self.timer:Cancel()
-    end
-    self.timer = C_Timer.NewTimer(addonTable.Constants.CastInterruptedDelay, function()
-      if self.interrupted then
-        self.interrupted = nil
-        self.timer = nil
-        self:Hide()
-      end
-    end)
-  elseif eventName == "UNIT_SPELLCAST_CHANNEL_STOP" or eventName == "UNIT_SPELLCAST_EMPOWER_STOP" or eventName == "UNIT_SPELLCAST_STOP" then
-    self:ClearCast()
-  else
-    self:ApplyCasting()
+function addonTable.Display.CastTextMixin:ApplyInterrupt()
+  self.interrupted = true
+  self:Show()
+  self.text:SetText(addonTable.Locales.INTERRUPTED)
+  if self.timer then
+    self.timer:Cancel()
   end
+  self.timer = C_Timer.NewTimer(addonTable.Constants.CastInterruptedDelay, function()
+    if self.interrupted then
+      self.interrupted = nil
+      self.timer = nil
+      self:Hide()
+    end
+  end)
 end
 
 function addonTable.Display.CastTextMixin:ClearCast()
@@ -64,13 +55,13 @@ function addonTable.Display.CastTextMixin:ClearCast()
   end
 end
 
-function addonTable.Display.CastTextMixin:ApplyCasting()
-  local name, text = UnitCastingInfo(self.unit)
-  if type(name) == "nil" then
-    name, text = UnitChannelInfo(self.unit)
+function addonTable.Display.CastTextMixin:ApplyCasting(state)
+  local text = state.cast[2]
+  if not text then
+    text = state.channel[2]
   end
 
-  if type(name) ~= "nil" then
+  if text then
     self.interrupted = nil
     self:Show()
     self.text:SetText(text)

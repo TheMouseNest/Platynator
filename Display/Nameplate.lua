@@ -329,8 +329,6 @@ function addonTable.Display.NameplateMixin:OnLoad()
   self.AurasManager:SetBuffsCallback(GetCallback(self.BuffDisplay.Wrapped))
   self.AurasManager:SetCrowdControlCallback(GetCallback(self.CrowdControlDisplay.Wrapped))
 
-  self:SetScript("OnEvent", self.OnEvent)
-
   self:SetSize(10, 10)
 
   self.casting = false
@@ -459,12 +457,16 @@ function addonTable.Display.NameplateMixin:Install(nameplate)
 end
 
 function addonTable.Display.NameplateMixin:SetUnit(unit)
+  if self.unit then
+    addonTable.Display.Cache:RemoveUnit(self.unit)
+  end
+
   self.SoftTargetIcon:Hide()
 
   self.interactUnit = unit
   if unit and (not UnitNameplateShowsWidgetsOnly or not UnitNameplateShowsWidgetsOnly(unit)) and not UnitIsGameObject(unit) then
     self.unit = unit
-    self:Show()
+    addonTable.Display.Cache:AddUnit(unit)
 
     for _, w in ipairs(self.widgets) do
       w:Show()
@@ -489,16 +491,13 @@ function addonTable.Display.NameplateMixin:SetUnit(unit)
 
     self.AurasManager:SetUnit(self.unit)
 
-    if UnitCanAttack("player", self.unit) then
-      self:RegisterUnitEvent("UNIT_SPELLCAST_START", self.unit)
-      self:RegisterUnitEvent("UNIT_SPELLCAST_STOP", self.unit)
-      self:RegisterUnitEvent("UNIT_SPELLCAST_CHANNEL_START", self.unit)
-      self:RegisterUnitEvent("UNIT_SPELLCAST_CHANNEL_STOP", self.unit)
-      if addonTable.Constants.IsRetail then
-        self:RegisterUnitEvent("UNIT_SPELLCAST_EMPOWER_START", self.unit)
-        self:RegisterUnitEvent("UNIT_SPELLCAST_EMPOWER_STOP", self.unit)
+    addonTable.Display.Cache:RegisterCallback(self.unit, "cast", function(state)
+      local old = self.casting
+      self:UpdateCastingState(state)
+      if old ~= self.casting then
+        self:UpdateVisual()
       end
-    end
+    end)
 
     addonTable.CallbackRegistry:RegisterCallback("TextOverrideUpdated", function(_, unit)
       if unit ~= self.unit then
@@ -532,10 +531,9 @@ function addonTable.Display.NameplateMixin:SetUnit(unit)
   self:UpdateVisual()
 end
 
-function addonTable.Display.NameplateMixin:UpdateCastingState()
-  local _, cast = UnitCastingInfo(self.unit)
-  local _, channel = UnitChannelInfo(self.unit)
-  self.casting = cast ~= nil or channel ~= nil
+function addonTable.Display.NameplateMixin:UpdateCastingState(state)
+  state = state or addonTable.Display.Cache:Get(self.unit, "cast")
+  self.casting = state.cast[1] ~= nil or state.channel[1] ~= nil
 end
 
 function addonTable.Display.NameplateMixin:UpdateForTarget()
@@ -617,11 +615,6 @@ function addonTable.Display.NameplateMixin:UpdateSoftInteract()
     hasCursorTexture = SetUnitCursorTexture(self.SoftTargetIcon, self.interactUnit)
   end
   self.SoftTargetIcon:SetShown(hasCursorTexture)
-end
-
-function addonTable.Display.NameplateMixin:OnEvent(eventName)
-  self:UpdateCastingState()
-  self:UpdateVisual()
 end
 
 function addonTable.Display.NameplateMixin:UpdateAurasForPandemic()

@@ -1,49 +1,28 @@
 ---@class addonTablePlatynator
 local addonTable = select(2, ...)
 
--- For clients other than Midnight
-local frame = CreateFrame("Frame")
-local interrupterEnabled = false
-frame:SetScript("OnEvent", function()
-  local timestamp, subevent, _, playerGUID, _, _, _, destGUID = CombatLogGetCurrentEventInfo()
-  if subevent == "SPELL_INTERRUPT" then
-    addonTable.CallbackRegistry:TriggerEvent("LegacyInterrupter", playerGUID, destGUID)
-  end
-end)
-
-local function EnableInterrupter()
-  if interrupterEnabled then
-    return
-  end
-  interrupterEnabled = true
-  frame:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
-end
-
 addonTable.Display.CastInterrupterTextMixin = {}
 
 function addonTable.Display.CastInterrupterTextMixin:SetUnit(unit)
   self.unit = unit
   if self.unit then
-    self:RegisterUnitEvent("UNIT_SPELLCAST_START", self.unit)
-    self:RegisterUnitEvent("UNIT_SPELLCAST_INTERRUPTED", self.unit)
-
-    self:RegisterUnitEvent("UNIT_SPELLCAST_CHANNEL_START", self.unit)
-    self:RegisterUnitEvent("UNIT_SPELLCAST_CHANNEL_STOP", self.unit)
-
-    if addonTable.Constants.IsRetail then
-      self:RegisterUnitEvent("UNIT_SPELLCAST_EMPOWER_START", self.unit)
-      self:RegisterUnitEvent("UNIT_SPELLCAST_EMPOWER_STOP", self.unit)
-    end
-
-    if not C_Secrets then
-      EnableInterrupter()
-      addonTable.CallbackRegistry:RegisterCallback("LegacyInterrupter", function(_, playerGUID, destGUID)
-        if UnitGUID(self.unit) == destGUID then
-          self:UpdateFromGUID(playerGUID)
+    addonTable.Display.Cache:RegisterCallback(self.unit, "cast", function(state)
+      if state.interrupterGUID then
+        self:UpdateFromGUID(state.interrupterGUID)
+      else
+        if self.timer then
+          self.timer:Cancel()
+          self.timer = nil
+          self:Hide()
         end
-      end, self)
-    end
+      end
+    end)
     self:Hide()
+
+    local state = addonTable.Display.Cache:Get(self.unit, "cast")
+    if state.interrupterGUID then
+      self:UpdateFromGUID(state.interrupterGUID)
+    end
   else
     self:Strip()
   end
@@ -57,9 +36,6 @@ function addonTable.Display.CastInterrupterTextMixin:Strip()
   self.interrupter = nil
   self.interrupterClass = nil
   self:UnregisterAllEvents()
-  if not C_Secrets then
-    addonTable.CallbackRegistry:UnregisterCallback("LegacyInterrupter", self)
-  end
 end
 
 function addonTable.Display.CastInterrupterTextMixin:UpdateFromGUID(guid)
@@ -102,23 +78,5 @@ function addonTable.Display.CastInterrupterTextMixin:UpdateText()
     end
   else
     self.text:SetText("")
-  end
-end
-
-function addonTable.Display.CastInterrupterTextMixin:OnEvent(eventName, ...)
-  local _, guid
-  if eventName == "UNIT_SPELLCAST_EMPOWER_STOP" then
-    _, _, _, _, guid = ...
-  else
-    _, _, _, guid = ...
-  end
-  if (eventName == "UNIT_SPELLCAST_INTERRUPTED" or eventName == "UNIT_SPELLCAST_CHANNEL_STOP" or eventName == "UNIT_SPELLCAST_EMPOWER_STOP") and guid then
-    self:UpdateFromGUID(guid)
-  else
-    if self.timer then
-      self.timer:Cancel()
-      self.timer = nil
-      self:Hide()
-    end
   end
 end

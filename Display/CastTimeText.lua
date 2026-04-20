@@ -6,22 +6,15 @@ addonTable.Display.CastTimeLeftTextMixin = {}
 function addonTable.Display.CastTimeLeftTextMixin:SetUnit(unit)
   self.unit = unit
   if self.unit then
-    self.interrupted = nil
-    self:RegisterUnitEvent("UNIT_SPELLCAST_START", self.unit)
-    self:RegisterUnitEvent("UNIT_SPELLCAST_STOP", self.unit)
+    addonTable.Display.Cache:RegisterCallback(self.unit, "cast", function(state)
+      if state.cast[1] == nil and state.channel[1] == nil then
+        self:Hide()
+      else
+        self:ApplyCasting(state)
+      end
+    end)
 
-    self:RegisterUnitEvent("UNIT_SPELLCAST_CHANNEL_START", self.unit)
-    self:RegisterUnitEvent("UNIT_SPELLCAST_CHANNEL_STOP", self.unit)
-
-    if addonTable.Constants.IsRetail then
-      self:RegisterUnitEvent("UNIT_SPELLCAST_EMPOWER_START", self.unit)
-      self:RegisterUnitEvent("UNIT_SPELLCAST_EMPOWER_STOP", self.unit)
-    end
-
-    self:RegisterUnitEvent("UNIT_SPELLCAST_INTERRUPTED", self.unit)
-    self:RegisterUnitEvent("UNIT_SPELLCAST_FAILED", self.unit)
-
-    self:ApplyCasting()
+    self:ApplyCasting(addonTable.Display.Cache:Get(self.unit, "cast"))
   else
     self:Strip()
   end
@@ -37,15 +30,11 @@ function addonTable.Display.CastTimeLeftTextMixin:Strip()
   self:UnregisterAllEvents()
 end
 
-function addonTable.Display.CastTimeLeftTextMixin:OnEvent(eventName, ...)
-  self:ApplyCasting()
-end
-
-function addonTable.Display.CastTimeLeftTextMixin:ApplyCasting()
-  local name, _, _, _, endTime = UnitCastingInfo(self.unit)
+function addonTable.Display.CastTimeLeftTextMixin:ApplyCasting(state)
+  local endTime = state.cast[5]
   local isChanneled = false
-  if type(name) == "nil" then
-    name, _, _, _, endTime = UnitChannelInfo(self.unit)
+  if not endTime then
+    endTime = state.channel[5]
     isChanneled = true
   end
 
@@ -53,7 +42,7 @@ function addonTable.Display.CastTimeLeftTextMixin:ApplyCasting()
     self.timer:Cancel()
   end
 
-  if type(name) ~= "nil" then
+  if endTime then
     self:Show()
     if UnitChannelDuration then
       if isChanneled then
