@@ -18,7 +18,7 @@ end
 
 function addonTable.Display.AurasManagerMixin:PostInit(buffs, debuffs, crowdControl)
   self.processingAuras = (buffs or debuffs or crowdControl) and (
-    not addonTable.Constants.IsRetail or not (debuffs and debuffs.filters.important or buffs and buffs.filters.important)
+    not addonTable.Constants.IsRetail or debuffs and not debuffs.filters.important or buffs and not buffs.filters.important
   )
 
   self:Reset()
@@ -336,7 +336,7 @@ function addonTable.Display.AurasManagerMixin:FullRefresh()
   self:SortAurasAndReport(changes)
 end
 
-function addonTable.Display.AurasManagerMixin:OnEvent(event, _, refreshData)
+function addonTable.Display.AurasManagerMixin:OnEvent(_, _, refreshData)
   local canAttack = UnitCanAttack("player", self.unit)
   if not canAttack and not addonTable.Constants.IsRetail then
     if next(self.buffs) or next(self.debuffs) or next(self.crowdControl) then
