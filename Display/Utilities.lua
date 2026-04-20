@@ -515,3 +515,94 @@ do
     return isTank
   end
 end
+
+do
+  local inRelevantInstance = false
+
+  -- Checking for party members below the player's level which indicates the mobs will be shifted down one
+  -- Except when the dungeon is already at its minimum level, in which case the level won't shift.
+  local instanceTracker = CreateFrame("Frame")
+  instanceTracker:RegisterEvent("PLAYER_ENTERING_WORLD")
+  instanceTracker:RegisterEvent("PLAYER_LEVEL_UP")
+  instanceTracker:RegisterEvent("ZONE_CHANGED_NEW_AREA")
+  instanceTracker:RegisterEvent("INSTANCE_GROUP_SIZE_CHANGED")
+  instanceTracker:SetScript("OnEvent", function(_, event)
+    inRelevantInstance = addonTable.Display.Utilities.IsInRelevantInstance({dungeon = true, raid = true, delve = true, pvp = true})
+    local _, _, _, _, _, _, _, _, _, lfgDungeonID = GetInstanceInfo()
+    if PLATYNATOR_LAST_INSTANCE == nil
+      or (inRelevantInstance or inRelevantInstance) ~= PLATYNATOR_LAST_INSTANCE.inInstance
+      or PLATYNATOR_LAST_INSTANCE.lastLFGInstanceID ~= lfgDungeonID
+      or not inRelevantInstance then
+      PLATYNATOR_LAST_INSTANCE = {
+        lastLFGInstanceID = lfgDungeonID,
+        inInstance = inRelevantInstance,
+        instanceLieutenantLevel = nil,
+      }
+      if lfgDungeonID and addonTable.Display.Utilities.IsInRelevantInstance({dungeon = true}) then
+        PLATYNATOR_LAST_INSTANCE.level = GetMaxLevelForExpansionLevel(GetMaximumExpansionLevel())
+      else
+        PLATYNATOR_LAST_INSTANCE.level = UnitEffectiveLevel("player")
+      end
+    end
+  end)
+
+  function addonTable.Display.Utilities.GetEliteType(unit, casterOverride)
+    local classification = UnitClassification(unit)
+    if classification == "elite" then
+      local level = UnitEffectiveLevel(unit)
+      local dungeonLevel = PLATYNATOR_LAST_INSTANCE.level
+      local isRetail = addonTable.Constants.IsRetail
+      local lieutentantLevel = PLATYNATOR_LAST_INSTANCE.instanceLieutenantLevel
+      if isRetail and (level == dungeonLevel + 1 or UnitIsLieutenant(unit)) then
+        PLATYNATOR_LAST_INSTANCE.instanceLieutenantLevel = level
+        return "miniboss"
+      elseif isRetail and (level == dungeonLevel + 2 or lieutentantLevel and level == lieutentantLevel + 1) or level == -1 then
+        return "boss"
+      else
+        local class = UnitClassBase(unit)
+        if class == "PALADIN" or class == "MAGE" or class == "PRIEST" then
+          return "caster"
+        else
+          return "melee"
+        end
+      end
+    elseif classification == "normal" or classification == "trivial" or classification == "minus" then
+      if casterOverride then
+        local class = UnitClassBase(unit)
+        if class == "PALADIN" or class == "MAGE" or class == "PRIEST" then
+          return "caster"
+        end
+      end
+      return "trivial"
+    end
+  end
+
+  function addonTable.Display.Utilities.GetDelveType(unit)
+    local classification = UnitClassification(unit)
+    if classification == "elite" then
+      local level = UnitEffectiveLevel(unit)
+      local dungeonLevel = PLATYNATOR_LAST_INSTANCE.level
+      local isRetail = addonTable.Constants.IsRetail
+      local lieutentantLevel = PLATYNATOR_LAST_INSTANCE.instanceLieutenantLevel
+      if isRetail and UnitIsLieutenant(unit) then
+        PLATYNATOR_LAST_INSTANCE.instanceLieutenantLevel = level
+        return "elite"
+      elseif isRetail and (level == dungeonLevel + 2 or lieutentantLevel and level == lieutentantLevel + 1) or level == -1 then
+        return "boss"
+      else
+        return "elite"
+      end
+    elseif classification == "rareelite" then
+      return "rare"
+    elseif classification == "normal" then
+      local class = UnitClassBase(unit)
+      if class == "PALADIN" or class == "MAGE" or class == "PRIEST" then
+        return "caster"
+      else
+        return "melee"
+      end
+    elseif classification == "trivial" or classification == "minus" then
+      return "trivial"
+    end
+  end
+end

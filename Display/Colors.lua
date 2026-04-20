@@ -15,6 +15,8 @@ local function DoesOtherTankHaveAggro(unit)
 end
 
 local IsTankRole = addonTable.Display.Utilities.IsTankRole
+local GetEliteType = addonTable.Display.Utilities.GetEliteType
+local GetDelveType = addonTable.Display.Utilities.GetDelveType
 
 local inRelevantThreatInstance, inRelevantEliteInstance, inRelevantDelveInstance = false, false, false
 
@@ -29,22 +31,6 @@ instanceTracker:SetScript("OnEvent", function(_, event)
   inRelevantThreatInstance = addonTable.Display.Utilities.IsInRelevantInstance({dungeon = true, raid = true, delve = true, pvp = true})
   inRelevantEliteInstance = addonTable.Display.Utilities.IsInRelevantInstance({dungeon = true, raid = true})
   inRelevantDelveInstance = addonTable.Display.Utilities.IsInRelevantInstance({delve = true})
-  local _, _, _, _, _, _, _, _, _, lfgDungeonID = GetInstanceInfo()
-  if PLATYNATOR_LAST_INSTANCE == nil
-    or (inRelevantThreatInstance or inRelevantEliteInstance) ~= PLATYNATOR_LAST_INSTANCE.inInstance
-    or PLATYNATOR_LAST_INSTANCE.lastLFGInstanceID ~= lfgDungeonID
-    or not (inRelevantThreatInstance or inRelevantEliteInstance) then
-    PLATYNATOR_LAST_INSTANCE = {
-      lastLFGInstanceID = lfgDungeonID,
-      inInstance = inRelevantThreatInstance or inRelevantEliteInstance,
-      instanceLieutenantLevel = nil,
-    }
-    if lfgDungeonID and addonTable.Display.Utilities.IsInRelevantInstance({dungeon = true}) then
-      PLATYNATOR_LAST_INSTANCE.level = GetMaxLevelForExpansionLevel(GetMaximumExpansionLevel())
-    else
-      PLATYNATOR_LAST_INSTANCE.level = UnitEffectiveLevel("player")
-    end
-  end
 end)
 
 local kindToEvent = {
@@ -225,73 +211,17 @@ function addonTable.Display.GetColor(settings, state, unit)
       end
     elseif s.kind == "eliteType" then
       if (inRelevantEliteInstance or not s.instancesOnly) and not addonTable.Display.Utilities.IsNeutralUnit(unit) then
-        local classification = UnitClassification(unit)
-        if classification == "elite" then
-          local level = UnitEffectiveLevel(unit)
-          local dungeonLevel = PLATYNATOR_LAST_INSTANCE.level
-          local isRetail = addonTable.Constants.IsRetail
-          local lieutentantLevel = PLATYNATOR_LAST_INSTANCE.instanceLieutenantLevel
-          if isRetail and (level == dungeonLevel + 1 or UnitIsLieutenant(unit)) then
-            PLATYNATOR_LAST_INSTANCE.instanceLieutenantLevel = level
-            table.insert(colorQueue, {color = s.colors.miniboss})
-            break
-          elseif isRetail and (level == dungeonLevel + 2 or lieutentantLevel and level == lieutentantLevel + 1) or level == -1 then
-            table.insert(colorQueue, {color = s.colors.boss})
-            break
-          else
-            local class = UnitClassBase(unit)
-            if class == "PALADIN" or class == "MAGE" or class == "PRIEST" then
-              table.insert(colorQueue, {color = s.colors.caster})
-            else
-              table.insert(colorQueue, {color = s.colors.melee})
-            end
-            break
-          end
-        elseif classification == "normal" or classification == "trivial" or classification == "minus" then
-          if s.applyCasterAlways then
-            local class = UnitClassBase(unit)
-            if class == "PALADIN" or class == "MAGE" or class == "PRIEST" then
-              table.insert(colorQueue, {color = s.colors.caster})
-            else
-              table.insert(colorQueue, {color = s.colors.trivial})
-            end
-          else
-            table.insert(colorQueue, {color = s.colors.trivial})
-          end
+        local t = GetEliteType(unit, s.applyCasterAlways)
+        if t then
+          table.insert(colorQueue, {color = s.colors[t]})
           break
         end
       end
     elseif s.kind == "delveType" then
       if (inRelevantDelveInstance and s.delves or not inRelevantThreatInstance and s.outsideInstances) and not addonTable.Display.Utilities.IsNeutralUnit(unit) then
-        local classification = UnitClassification(unit)
-        if classification == "elite" then
-          local level = UnitEffectiveLevel(unit)
-          local dungeonLevel = PLATYNATOR_LAST_INSTANCE.level
-          local isRetail = addonTable.Constants.IsRetail
-          local lieutentantLevel = PLATYNATOR_LAST_INSTANCE.instanceLieutenantLevel
-          if isRetail and UnitIsLieutenant(unit) then
-            PLATYNATOR_LAST_INSTANCE.instanceLieutenantLevel = level
-            table.insert(colorQueue, {color = s.colors.elite})
-            break
-          elseif isRetail and (level == dungeonLevel + 2 or lieutentantLevel and level == lieutentantLevel + 1) or level == -1 then
-            table.insert(colorQueue, {color = s.colors.boss})
-            break
-          else
-            table.insert(colorQueue, {color = s.colors.elite})
-          end
-        elseif classification == "rareelite" then
-          table.insert(colorQueue, {color = s.colors.rare})
-          break
-        elseif classification == "normal" then
-          local class = UnitClassBase(unit)
-          if class == "PALADIN" or class == "MAGE" or class == "PRIEST" then
-            table.insert(colorQueue, {color = s.colors.caster})
-          else
-            table.insert(colorQueue, {color = s.colors.melee})
-          end
-          break
-        elseif classification == "trivial" or classification == "minus" then
-          table.insert(colorQueue, {color = s.colors.trivial})
+        local t = GetDelveType(unit)
+        if t then
+          table.insert(colorQueue, {color = s.colors[t]})
           break
         end
       end
@@ -485,6 +415,18 @@ function addonTable.Display.GetColor(settings, state, unit)
             table.insert(colorQueue, {color = s.colors.execute})
           end
         end
+      end
+    elseif s.kind == "energy" then
+      local _, kind = UnitPowerType(unit)
+      if kind == "MANA" then
+        table.insert(colorQueue, {color = s.colors.mana})
+        break
+      elseif kind == "RAGE" then
+        table.insert(colorQueue, {color = s.colors.rage})
+        break
+      elseif kind == "ENERGY" then
+        table.insert(colorQueue, {color = s.colors.energy})
+        break
       end
     end
   end
