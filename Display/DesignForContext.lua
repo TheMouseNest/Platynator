@@ -41,17 +41,10 @@ local function IsFriendly(unit)
   return UnitIsFriend("player", unit)
 end
 
-local function IsInstanceType(t)
-  local _, instanceType = GetInstanceInfo()
-  return instanceType == t
-end
-
-local function IsDifficulty(d)
-  local _, _, difficultyID = GetInstanceInfo()
-  return difficultyID == d
-end
-
 local IsInCombat = addonTable.Display.Utilities.IsInCombatWith
+local IsInRelevantInstance = addonTable.Display.Utilities.IsInRelevantInstance
+local GetEliteType = addonTable.Display.Utilities.GetEliteType
+local GetDelveType = addonTable.Display.Utilities.GetDelveType
 
 local assignmentsPossibilities = {
   ["can-attack"] = { frequent = true, check = function(unit) return UnitCanAttack("player", unit) end },
@@ -75,24 +68,24 @@ local assignmentsPossibilities = {
   ["class-minor"] = { classification = true, check = function(unit) return UnitClassification(unit) == "minor" end },
   ["class-trivial"] = { classification = true, check = function(unit) return UnitClassification(unit) == "trivial" end },
 
-  ["loc-world"] = { check = function() return not IsInInstance() end },
-  ["loc-dungeon"] = { check = function() return IsInstanceType("party") end },
-  ["loc-raid"] = { check = function() return IsInstanceType("raid") end },
-  ["loc-pvp"] = { check = function() return addonTable.Display.Utilities.IsInRelevantInstance({pvp = true}) end },
-  ["loc-delve"] = { check = function() return addonTable.Display.Utilities.IsInRelevantInstance({delve = true}) end },
+  ["loc-world"] = { check = function() return not IsInRelevantInstance({dungeon = true, raid = true, pvp = true, delve = true}) end },
+  ["loc-dungeon"] = { check = function() return IsInRelevantInstance({dungeon = true}) end },
+  ["loc-raid"] = { check = function() return IsInRelevantInstance({raid = true}) end },
+  ["loc-pvp"] = { check = function() return IsInRelevantInstance({pvp = true}) end },
+  ["loc-delve"] = { check = function() return IsInRelevantInstance({delve = true}) end },
 
-  ["elite-boss"] = { classification = true, check = function(unit) return addonTable.Display.Utilities.GetEliteType(unit) == "boss" end },
-  ["elite-miniboss"] = { classification = true, check = function(unit) return addonTable.Display.Utilities.GetEliteType(unit) == "miniboss" end },
-  ["elite-caster"] = { classification = true, check = function(unit) return addonTable.Display.Utilities.GetEliteType(unit) == "caster" end },
-  ["elite-melee"] = { classification = true, check = function(unit) return addonTable.Display.Utilities.GetEliteType(unit) == "melee" end },
-  ["elite-trivial"] = { classification = true, check = function(unit) return addonTable.Display.Utilities.GetEliteType(unit) == "trivial" end },
+  ["elite-boss"] = { classification = true, check = function(unit) return GetEliteType(unit) == "boss" end },
+  ["elite-miniboss"] = { classification = true, check = function(unit) return GetEliteType(unit) == "miniboss" end },
+  ["elite-caster"] = { classification = true, check = function(unit) return GetEliteType(unit) == "caster" end },
+  ["elite-melee"] = { classification = true, check = function(unit) return GetEliteType(unit) == "melee" end },
+  ["elite-trivial"] = { classification = true, check = function(unit) return GetEliteType(unit) == "trivial" end },
 
-  ["delve-boss"] = { classification = true, check = function(unit) return addonTable.Display.Utilities.GetDelveType(unit) == "boss" end },
-  ["delve-elite"] = { classification = true, check = function(unit) return addonTable.Display.Utilities.GetDelveType(unit) == "elite" end },
-  ["delve-rare"] = { classification = true, check = function(unit) return addonTable.Display.Utilities.GetDelveType(unit) == "rare" end },
-  ["delve-caster"] = { classification = true, check = function(unit) return addonTable.Display.Utilities.GetDelveType(unit) == "caster" end },
-  ["delve-melee"] = { classification = true, check = function(unit) return addonTable.Display.Utilities.GetDelveType(unit) == "melee" end },
-  ["delve-trivial"] = { classification = true, check = function(unit) return addonTable.Display.Utilities.GetDelveType(unit) == "trivial" end },
+  ["delve-boss"] = { classification = true, check = function(unit) return GetDelveType(unit) == "boss" end },
+  ["delve-elite"] = { classification = true, check = function(unit) return GetDelveType(unit) == "elite" end },
+  ["delve-rare"] = { classification = true, check = function(unit) return GetDelveType(unit) == "rare" end },
+  ["delve-caster"] = { classification = true, check = function(unit) return GetDelveType(unit) == "caster" end },
+  ["delve-melee"] = { classification = true, check = function(unit) return GetDelveType(unit) == "melee" end },
+  ["delve-trivial"] = { classification = true, check = function(unit) return GetDelveType(unit) == "trivial" end },
 }
 
 addonTable.Display.DesignForContextMixin = {}
@@ -121,9 +114,9 @@ function addonTable.Display.DesignForContextMixin:GetAssignedDesign(unit)
     end
 
     if hit then
-      return settings.style, settings.simplified or false, index
+      return settings.style, settings.scaleMultiplier, settings.simplified or false, index
     end
   end
 
-  return "_deer", false, 0
+  return "_deer", 1, false, 0
 end

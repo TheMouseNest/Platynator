@@ -108,7 +108,7 @@ function addonTable.Display.Utilities.IsInRelevantInstance(state)
     return false
   end
   state = state or {dungeon = true}
-  local _, instanceType, _, label = GetInstanceInfo()
+  local _, instanceType, difficultyID = GetInstanceInfo()
   if state.dungeon and (instanceType == "party") then
     return true
   end
@@ -118,7 +118,7 @@ function addonTable.Display.Utilities.IsInRelevantInstance(state)
   if state.pvp and (instanceType == "arena" or instanceType == "pvp") then
     return true
   end
-  if state.delve and label == DELVES_LABEL then
+  if state.delve and difficultyID == 208 then
     return true
   end
   return false
