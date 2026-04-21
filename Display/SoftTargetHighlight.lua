@@ -12,5 +12,5 @@ function addonTable.Display.SoftTargetHighlightMixin:Strip()
 end
 
 function addonTable.Display.SoftTargetHighlightMixin:ApplyTarget()
-  self:SetShown(not UnitIsUnit("target", self.unit) and (UnitIsUnit("softenemy", self.unit) or UnitIsUnit("softfriend", self.unit)))
+  self:SetShown((UnitIsUnit("target", self.unit) and IsTargetLoose()) or not UnitIsUnit("target", self.unit) and (UnitIsUnit("softenemy", self.unit) or UnitIsUnit("softfriend", self.unit)))
 end
