@@ -105,6 +105,8 @@ addonTable.Assets.Highlights = {
   ["Platy: Soft Glow"] = {file = "Interface/AddOns/Platynator/Assets/%s/Highlights/soft-glow-square.png", width = 59, height = 59, has4k = true, masked = true, tag = "soft", margin = 0.4, extra = 11, modifier = 0.3, DPIScale = 1/2, mode = renderMode.Sliced},
   ["Platy: Feathered"] = {file = "Interface/AddOns/Platynator/Assets/%s/Highlights/feathered-square.png", width = 60, height = 60, has4k = true, masked = true, tag = "soft", margin = 0.48, extra = 0, modifier = 0.25, DPIScale = 1/2, mode = renderMode.Sliced},
   ["Platy: Feathered Holed"] = {file = "Interface/AddOns/Platynator/Assets/%s/Highlights/feathered-holed-square.png", width = 60, height = 60, has4k = true, masked = true, tag = "soft", margin = 0.48, extra = 0, modifier = 0.25, DPIScale = 1/2, mode = renderMode.Sliced},
+  ["Platy: Blizzard Midnight Important Cast"] = {file = "Interface/AddOns/Platynator/Assets/Special/BarBorders/blizzard-midnight-important-cast.png", width = 79, height = 16, marginX = 0.42, marginY = 0.5, extra = 0, modifier = 1, mode = renderMode.Sliced},
+  ["Platy: Blizzard Midnight Targeted By Enemy"] = {file = "Interface/AddOns/Platynator/Assets/Special/BarBorders/blizzard-midnight-targetedbyenemy.png", width = 24, height = 24, margin = 0.42, extra = 0, modifier = 1, mode = renderMode.Sliced},
 
   ["Platy: Glow"] = {file = "Interface/AddOns/Platynator/Assets/%s/Highlights/glow-100.png", width = 1563, height = 680, has4k = true, mode = renderMode.Stretch, tag = "glow"},
 
@@ -279,12 +281,14 @@ function addonTable.Assets.ApplyScale()
     ResizeSlicedAssets(list, list)
     ResizeSlicedAssets(masks, list)
     for key, entry in pairs(list) do
+      local marginX = entry.margin or entry.marginX
+      local marginY = entry.margin or entry.marginY
       LSM:Register("nineslice", key, {
         file = entry.file,
         previewWidth = entry.width,
         previewHeight = entry.height,
         padding = {left = entry.extra / 2, right = entry.extra / 2, top = entry.extra / 2, bottom = entry.extra / 2},
-        margins = {left = entry.width * entry.margin, right = entry.width * entry.margin, top = entry.height * entry.margin, bottom = entry.height * entry.margin},
+        margins = {left = entry.width * marginX, right = entry.width * marginX, top = entry.height * marginY, bottom = entry.height * marginY},
         scaleModifier = entry.modifier,
         mode = Enum.UITextureSliceMode.Stretched,
       })
@@ -305,11 +309,13 @@ function addonTable.Assets.ApplyScale()
     for key, entry in pairs(list) do
       if entry.mode == renderMode.Sliced then
         ResizeSlicedAssets({entry}, {entry})
+        local marginX = entry.margin or entry.marginX
+        local marginY = entry.margin or entry.marginY
         LSM:Register("nineslice", key, {
           file = entry.file,
           previewWidth = entry.width,
           previewHeight = entry.height,
-          margins = {left = entry.width * entry.margin, right = entry.width * entry.margin, top = entry.height * entry.margin, bottom = entry.height * entry.margin},
+          margins = {left = entry.width * marginX, right = entry.width * marginX, top = entry.height * marginY, bottom = entry.height * marginY},
           padding = {left = 0, right = 0, top = 0, bottom = 0},
           scaleModifier = entry.modifier,
           mode = Enum.UITextureSliceMode.Stretched,
