@@ -96,8 +96,11 @@ function addonTable.Display.CacheMixin:OnLoad()
   addonTable.CallbackRegistry:RegisterCallback("LegacyInterrupter", function(_, playerGUID, destGUID)
     for unit, details in pairs(self.monitoring) do
       if details.cast and UnitGUID(unit) == destGUID then
-        self.state[unit]["cast"] = {cast = {}, channel = {}, interrupterGUID = playerGUID}
-        addonTable.CallbackRegistry:TriggerEvent("DataUpdate", unit, "cast")
+        local data = {cast = {}, channel = {}, interrupterGUID = playerGUID}
+        self.state[unit]["cast"] = data
+        for _, callback in ipairs(self.registeredCallbacks[unit]["cast"]) do
+          callback(data)
+        end
       end
     end
   end)
