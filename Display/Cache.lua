@@ -21,6 +21,10 @@ local getter = {
       local _, _, interrupterGUID = ...
       return {cast = {}, channel = {}, interrupterGUID = interrupterGUID}, true
     end
+    if eventName == "UNIT_SPELLCAST_EMPOWER_STOP" then
+      local _, _, _, interrupterGUID = ...
+      return {cast = {}, channel = {}, interrupterGUID = interrupterGUID}, true
+    end
     if eventName == "UNIT_SPELLCAST_DELAYED" and next(oldState.cast) == nil or eventName == "UNIT_SPELLCAST_CHANNEL_UPDATE" and next(oldState.channel) == nil then
       return {cast = {}, channel = {}}, false
     end
@@ -44,14 +48,18 @@ local eventsFromKind = {
     "UNIT_SPELLCAST_CHANNEL_STOP",
     "UNIT_SPELLCAST_DELAYED",
     "UNIT_SPELLCAST_CHANNEL_UPDATE",
-    "UNIT_SPELLCAST_EMPOWER_START",
-    "UNIT_SPELLCAST_EMPOWER_STOP",
-    "UNIT_SPELLCAST_EMPOWER_UPDATE",
   },
   ["threat"] = {
     "UNIT_THREAT_LIST_UPDATE",
   }
 }
+if addonTable.Constants.IsRetail then
+  tAppendAll(eventsFromKind["cast"], {
+    "UNIT_SPELLCAST_EMPOWER_START",
+    "UNIT_SPELLCAST_EMPOWER_STOP",
+    "UNIT_SPELLCAST_EMPOWER_UPDATE",
+  })
+end
 local eventToKind = {}
 for kind, events in pairs(eventsFromKind) do
   for _, e in ipairs(events) do
