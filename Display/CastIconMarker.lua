@@ -35,7 +35,11 @@ function addonTable.Display.CastIconMarkerMixin:SetUnit(unit)
     end)
 
     local state = addonTable.Display.Cache:Get(self.unit, "cast")
-    self:ApplyCasting(state.cast[3] or state.channel[3])
+    if state.cast[3] or state.channel[3] then
+      self:ApplyCasting(state.cast[3] or state.channel[3])
+    else
+      self:ClearCast()
+    end
   else
     self:StripInternal()
   end
