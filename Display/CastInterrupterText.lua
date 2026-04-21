@@ -9,7 +9,7 @@ function addonTable.Display.CastInterrupterTextMixin:SetUnit(unit)
     addonTable.Display.Cache:RegisterCallback(self.unit, "cast", function(state)
       if state.interrupterGUID then
         self:UpdateFromGUID(state.interrupterGUID)
-      else
+      elseif state.cast[1] or state.channel[1] then
         if self.timer then
           self.timer:Cancel()
           self.timer = nil
@@ -35,7 +35,6 @@ function addonTable.Display.CastInterrupterTextMixin:Strip()
   end
   self.interrupter = nil
   self.interrupterClass = nil
-  self:UnregisterAllEvents()
 end
 
 function addonTable.Display.CastInterrupterTextMixin:UpdateFromGUID(guid)

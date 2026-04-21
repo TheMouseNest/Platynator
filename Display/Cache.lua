@@ -16,15 +16,15 @@ end
 addonTable.Display.CacheMixin = {}
 
 local getter = {
-  ["cast"] = function(oldState, unit, eventName, castID, interrupterGUID)
-    if eventName == "UNIT_SPELLCAST_INTERRUPTED" or eventName == "UNIT_SPELLCAST_CHANNEL_STOP" and interrupterGUID ~= nil then
+  ["cast"] = function(oldState, unit, eventName, ...)
+    if eventName == "UNIT_SPELLCAST_INTERRUPTED" or eventName == "UNIT_SPELLCAST_CHANNEL_STOP" then
+      local _, _, interrupterGUID = ...
       return {cast = {}, channel = {}, interrupterGUID = interrupterGUID}, true
-    else
-      if eventName == "UNIT_SPELLCAST_DELAYED" and next(oldState.cast) == nil or eventName == "UNIT_SPELLCAST_CHANNEL_UPDATE" and next(oldState.channel) == nil then
-        return {cast = {}, channel = {}}
-      end
-      return {cast = {UnitCastingInfo(unit)}, channel = {UnitChannelInfo(unit)}}, addonTable.Constants.IsClassic or castID ~= nil
     end
+    if eventName == "UNIT_SPELLCAST_DELAYED" and next(oldState.cast) == nil or eventName == "UNIT_SPELLCAST_CHANNEL_UPDATE" and next(oldState.channel) == nil then
+      return {cast = {}, channel = {}}, false
+    end
+    return {cast = {UnitCastingInfo(unit)}, channel = {UnitChannelInfo(unit)}}, true
   end,
   ["threat"] = function(oldState, unit)
     local newThreat = UnitThreatSituation("player", unit)

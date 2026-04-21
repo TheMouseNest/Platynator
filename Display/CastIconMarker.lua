@@ -27,14 +27,15 @@ function addonTable.Display.CastIconMarkerMixin:SetUnit(unit)
     addonTable.Display.Cache:RegisterCallback(self.unit, "cast", function(state)
       if state.interrupterGUID then
         self:ApplyInterrupt()
-      elseif state.cast[1] or state.channel[1] then
-        self:ApplyCasting(state)
+      elseif state.cast[3] or state.channel[3] then
+        self:ApplyCasting(state.cast[3] or state.channel[3])
       else
         self:ClearCast()
       end
     end)
 
-    self:ApplyCasting(addonTable.Display.Cache:Get(self.unit, "cast"))
+    local state = addonTable.Display.Cache:Get(self.unit, "cast")
+    self:ApplyCasting(state.cast[3] or state.channel[3])
   else
     self:StripInternal()
   end
@@ -88,25 +89,16 @@ function addonTable.Display.CastIconMarkerMixin:ClearCast()
   end
 end
 
-function addonTable.Display.CastIconMarkerMixin:ApplyCasting(state)
-  local texture = state.cast[3]
-  if texture then
-    texture = state.channel[3]
+function addonTable.Display.CastIconMarkerMixin:ApplyCasting(texture)
+  if self.timer then
+    self.timer:Cancel()
+    self.interrupted = nil
+    self.timer = nil
   end
 
-  if texture then
-    if self.timer then
-      self.timer:Cancel()
-      self.interrupted = nil
-      self.timer = nil
-    end
-
-    self.marker:SetTexture(texture)
-    self:Show()
-    if self.background then
-      self.background:Show()
-    end
-  else
-    self:ClearCast()
+  self.marker:SetTexture(texture)
+  self:Show()
+  if self.background then
+    self.background:Show()
   end
 end

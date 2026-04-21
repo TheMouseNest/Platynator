@@ -8,6 +8,7 @@ function addonTable.Display.CastTargetTextMixin:SetUnit(unit)
   if self.unit then
     addonTable.Display.Cache:RegisterCallback(self.unit, "cast", function(state)
       self:UpdateTarget(state)
+      self:UpdateText()
     end)
 
     self:UpdateTarget(addonTable.Display.Cache:Get(self.unit, "cast"))
@@ -20,7 +21,6 @@ end
 function addonTable.Display.CastTargetTextMixin:Strip()
   self.target = nil
   self.targetClass = nil
-  self:UnregisterAllEvents()
 end
 
 function addonTable.Display.CastTargetTextMixin:UpdateTarget(state)
