@@ -12,6 +12,7 @@ function addonTable.Display.CastIconMarkerMixin:PostInit()
     self.background = borderPool:Acquire()
     self.background:SetParent(self)
     self.background:ClearAllPoints()
+    self.background:Show()
     self.marker:SetTexCoord(0.1, 0.9, 0.1, 0.9)
 
     self.PostApplyAnchor = function()
@@ -69,16 +70,10 @@ end
 function addonTable.Display.CastIconMarkerMixin:ApplyInterrupt()
   self.interrupted = true
   self:Show()
-  if self.background then
-    self.background:Show()
-  end
   self.timer = C_Timer.NewTimer(addonTable.Constants.CastInterruptedDelay, function()
     if self.interrupted then
       self.interrupted = nil
       self:Hide()
-      if self.background then
-        self.background:Hide()
-      end
     end
     self.timer = nil
   end)
@@ -87,9 +82,6 @@ end
 function addonTable.Display.CastIconMarkerMixin:ClearCast()
   if not self.interrupted then
     self:Hide()
-    if self.background then
-      self.background:Hide()
-    end
   end
 end
 
@@ -102,7 +94,4 @@ function addonTable.Display.CastIconMarkerMixin:ApplyCasting(texture)
 
   self.marker:SetTexture(texture)
   self:Show()
-  if self.background then
-    self.background:Show()
-  end
 end
