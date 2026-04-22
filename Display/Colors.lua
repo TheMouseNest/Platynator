@@ -278,7 +278,7 @@ function addonTable.Display.GetColor(settings, state, unit)
       end
       state.frequentUpdater.interruptReady = nil
       if notInterruptible ~= nil then
-        local interruptSpells, useGCD = GetInterruptSpells()
+        local interruptSpells = GetInterruptSpells()
         state.frequentUpdater.interruptReady = true
         if C_Spell.GetSpellCooldownDuration then
           for _, spellID in ipairs(interruptSpells) do
@@ -310,7 +310,7 @@ function addonTable.Display.GetColor(settings, state, unit)
       end
       state.frequentUpdater.interruptReady = nil
       if notInterruptible ~= nil then
-        local spells, useGCD = GetInterruptSpells()
+        local spells = GetInterruptSpells()
         if #spells > 0 then
           state.frequentUpdater.interruptReady = true
           if C_Spell.GetSpellCooldownDuration then
