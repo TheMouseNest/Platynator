@@ -145,7 +145,7 @@ function addonTable.Display.CacheMixin:OnEvent(eventName, unit, ...)
     local data, update = getter[kind](self.state[unit][kind], unit, eventName, ...)
     self.state[unit][kind] = data
     if update then
-      for _, callback in ipairs(self.registeredCallbacks[unit][kind]) do
+      for index, callback in ipairs(self.registeredCallbacks[unit][kind]) do
         callback(data)
       end
     end

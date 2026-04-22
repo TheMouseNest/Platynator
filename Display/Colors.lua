@@ -62,6 +62,7 @@ local kindToCache = {
   uninterruptableCast = {"cast"},
   castTargetsYou = {"cast"},
   importantCast = {"cast"},
+  cast = {"cast"},
   threat = {"threat"},
 }
 
@@ -116,6 +117,7 @@ function addonTable.Display.RegisterForColorEvents(frame, settings, defaultColor
     if cc then
       for _, c in ipairs(cc) do
         if not frame.colorState.caches[c] then
+          frame.colorState.caches[c] = true
           addonTable.Display.Cache:RegisterCallback(frame.unit, c, function()
             frame:ColorEventHandler("FORCED")
           end)
@@ -125,7 +127,6 @@ function addonTable.Display.RegisterForColorEvents(frame, settings, defaultColor
   end
 
   function frame:ColorEventHandler(eventName)
-    local start = debugprofilestop()
     if events[eventName] then
       self:SetColor(addonTable.Display.GetColor(settings, self.colorState, self.unit))
       if next(self.colorState.frequentUpdater) then
