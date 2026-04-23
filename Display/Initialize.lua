@@ -90,21 +90,12 @@ function addonTable.Display.ManagerMixin:OnLoad()
   self:RegisterEvent("PLAYER_REGEN_ENABLED")
 
   C_Timer.NewTicker(0.1, function() -- Used for transitioning mobs to attackable
-    local UnitCanAttack = UnitCanAttack
-    for _, unit in ipairs(GetKeysArray(self.nameplateDisplays)) do
-      local display = self.nameplateDisplays[unit]
-      if (
-          display.kind:match("^friend") and UnitCanAttack("player", unit) or
-          display.kind:match("^enemy") and not UnitCanAttack("player", unit)
-      ) then
-        self:Uninstall(unit)
-        self:Install(unit)
-      end
+    for _, display in pairs(self.nameplateDisplays) do
       display:UpdateAurasForPandemic()
     end
   end)
 
-  addonTable.CallbackRegistry:RegisterCallback("CombatStatusChange", function(_, unit)
+  addonTable.CallbackRegistry:RegisterCallback("UnitDesignChange", function(_, unit)
     local display = self.nameplateDisplays[unit]
     if display then
       self:Uninstall(unit)
