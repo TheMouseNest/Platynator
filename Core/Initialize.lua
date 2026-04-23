@@ -689,15 +689,8 @@ function addonTable.Core.GetDesignByName(name)
   end
 end
 
-function addonTable.Core.GetDesign(kind)
-  local name = addonTable.Config.Get(addonTable.Config.Options.DESIGNS_ASSIGNED)[kind]
-    or addonTable.Config.Get(addonTable.Config.Options.DESIGNS_ASSIGNED_COMBAT)[kind]
-    or addonTable.Config.Get(addonTable.Config.Options.DESIGNS_ASSIGNED_PVP)[kind]
-  return addonTable.Core.GetDesignByName(name)
-end
-
-function addonTable.Core.GetDesignScale(kind)
-  if kind:find("Simplified") then
+function addonTable.Core.GetDesignScale(isSimplified)
+  if isSimplified then
     return addonTable.Config.Get(addonTable.Config.Options.SIMPLIFIED_SCALE)
   else
     return 1
@@ -718,12 +711,10 @@ function addonTable.Core.Initialize()
       SetStyle()
     end
   end)
-  local enabled = addonTable.Config.Get(addonTable.Config.Options.DESIGNS_ENABLED)
-  UpdateRect(addonTable.Core.GetDesign(enabled.combat and "enemyCombat" or "enemy"))
+  UpdateRect(addonTable.Core.GetDesignByName(addonTable.Display.DesignForContextMixin:GetDefaultEnemyNPCDesign()))
   addonTable.CallbackRegistry:RegisterCallback("RefreshStateChange", function(_, state)
     if state[addonTable.Constants.RefreshReason.Design] then
-      enabled = addonTable.Config.Get(addonTable.Config.Options.DESIGNS_ENABLED)
-      UpdateRect(addonTable.Core.GetDesign(enabled.combat and "enemyCombat" or "enemy"))
+      UpdateRect(addonTable.Core.GetDesignByName(addonTable.Display.DesignForContextMixin:GetDefaultEnemyNPCDesign()))
     end
   end)
 

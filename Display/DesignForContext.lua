@@ -41,7 +41,7 @@ local function GetAlignment(unit)
   if addonTable.Display.Utilities.IsNeutralUnit then
     return "neutral"
   elseif UnitIsFriend("player", unit) then
-    return "friendly"
+    return "friend"
   else
     return "enemy"
   end
@@ -54,9 +54,9 @@ local assignmentsPossibilities = {
   ["in-combat"] = { frequent = true, updates = "inCombat", check = function(state) return state.inCombat end },
   ["out-combat"] = { frequent = true, updates = "inCombat", check = function(state) return not state.inCombat end },
 
-  ["friendly"] = { updates = "alignment", check = function(state) return state.alignment == "friendly" end},
-  ["hostile"] = { updates = "alignment", check = function(state) return state.alignment == "friendly" end},
-  ["neutral"] = { updates = "alignment", check = function(state) return state.alignment == "friendly" end},
+  ["friend"] = { updates = "alignment", check = function(state) return state.alignment == "friendly" end},
+  ["hostile"] = { updates = "alignment", check = function(state) return state.alignment == "friend" end},
+  ["neutral"] = { updates = "alignment", check = function(state) return state.alignment == "friend" end},
 
   ["player"] = { check = function(state) return state.isPlayer end },
   ["npc"] = { check = function(state) return state.isNPC end },
@@ -122,7 +122,7 @@ local function GenerateState(unit)
     eliteType = GetEliteType(unit),
     delveType = GetDelveType(unit),
 
-    updatesInUse = {},
+    updates = {},
   }
 end
 
@@ -189,13 +189,53 @@ function addonTable.Display.DesignForContextMixin:OnEvent(event, unit)
 end
 
 function addonTable.Display.DesignForContextMixin:GetAssignedDesign(unit)
-  local assignments = addonTable.Config.Get(addonTable.Config.Options.DESIGNS_ASSIGNED)
   if not self.unitStates[unit] then
     self.unitStates[unit] = GenerateState(unit)
   end
   local state = self.unitStates[unit]
   state.updates = {}
 
+  return self:GetDesignFromState(state)
+end
+
+function addonTable.Display.DesignForContextMixin:GetDefaultEnemyNPCDesign()
+  return self:GetDesignFromState({
+    canAttack = true,
+    inCombat = true,
+    alignment = "enemy",
+    isPlayer = false,
+    isNPC = true,
+    isMinion = false,
+    isMinor = false,
+    classification = "normal",
+    location = "dungeon",
+    eliteType = "trival",
+    delveType = "melee",
+
+    updates = {},
+  })
+end
+
+function addonTable.Display.DesignForContextMixin:GetDefaultFriendlyPlayerDesign()
+  return self:GetDesignFromState({
+    canAttack = false,
+    inCombat = false,
+    alignment = "friend",
+    isPlayer = true,
+    isNPC = false,
+    isMinion = false,
+    isMinor = false,
+    classification = "normal",
+    location = "dungeon",
+    eliteType = nil,
+    delveType = nil,
+
+    updates = {},
+  })
+end
+
+function addonTable.Display.DesignForContextMixin:GetDesignFromState(state)
+  local assignments = addonTable.Config.Get(addonTable.Config.Options.DESIGNS_ASSIGNED)
   for index, settings in ipairs(assignments) do
     local hit = true
     for _, criteria in ipairs(settings.criteria) do

@@ -370,9 +370,9 @@ function addonTable.Display.NameplateMixin:ApplyPixelPerfectSizing()
   self.lastScale = self:GetEffectiveScale()
 end
 
-function addonTable.Display.NameplateMixin:InitializeWidgets(design, scale)
-  self.offsetScale = (scale or 1) * UIParent:GetEffectiveScale() * addonTable.Config.Get(addonTable.Config.Options.GLOBAL_SCALE)
-  self.scale = design.scale
+function addonTable.Display.NameplateMixin:InitializeWidgets(design, scaleOffset, scaleMod)
+  self.offsetScale = (scaleOffset or 1) * UIParent:GetEffectiveScale() * addonTable.Config.Get(addonTable.Config.Options.GLOBAL_SCALE)
+  self.scale = design.scale * scaleMod
 
   self.lastScale = self:GetEffectiveScale()
 

@@ -11,7 +11,7 @@ local contextCriteria = {
   {key = "out-combat", label = addonTable.Locales.OUT_OF_COMBAT},
 
   {title = addonTable.Locales.FACTION},
-  {key = "friendly", label = addonTable.Locales.FRIENDLY},
+  {key = "friend", label = addonTable.Locales.FRIENDLY},
   {key = "hostile", label = addonTable.Locales.HOSTILE},
   {key = "neutral", label = addonTable.Locales.NEUTRAL},
 
