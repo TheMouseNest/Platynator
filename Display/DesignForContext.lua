@@ -66,6 +66,7 @@ local assignmentsPossibilities = {
   ["class-rare"] = { updates = "classification", check = function(state) local c = state.classification; return c == "rare" or c == "rareelite" end },
   ["class-elite"] = { updates = "classification", check = function(state) local c = state.classification; return c == "elite" or c == "rareelite" end },
   ["class-worldboss"] = { updates = "classification", check = function(state) return state.classification == "worldboss" end },
+  ["class-normal"] = { updates = "classification", check = function(state) return state.classification == "normal" end },
   ["class-minor"] = { updates = "classification", check = function(state) return state.classification == "minor" end },
   ["class-trivial"] = { updates = "classification", check = function(state) return state.classification == "trivial" end },
 

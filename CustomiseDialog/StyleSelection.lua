@@ -24,6 +24,7 @@ local contextCriteria = {
   {key = "class-rare", label = addonTable.Locales.RARE},
   {key = "class-elite", label = addonTable.Locales.ELITE},
   {key = "class-worldboss", label = addonTable.Locales.WORLD_BOSS},
+  {key = "class-normal", label = addonTable.Locales.NORMAL},
   {key = "class-minor", label = addonTable.Locales.MINOR},
   {key = "class-trivial", label = addonTable.Locales.TRIVIAL},
 
