@@ -526,7 +526,7 @@ local function MigrateSettingsv1()
   local legacyDesign = addonTable.Config.Get(addonTable.Config.Options.LEGACY_DESIGN)
 
   if legacyDesign.appliesToAll then
-    local mapping = addonTable.Config.Get(addonTable.Config.Options.DESIGNS_ASSIGNED)
+    local mapping = addonTable.Config.Get(addonTable.Config.Options.LEGACY_DESIGNS_ASSIGNED)
     local styleName = addonTable.Config.Get(addonTable.Config.Options.STYLE)
     if styleName == "custom" then
       mapping["friend"] = addonTable.Constants.CustomName
@@ -540,7 +540,7 @@ local function MigrateSettingsv1()
     addonTable.Config.Set(addonTable.Config.Options.STYLE, mapping["friend"])
   end
 
-  local mapping = addonTable.Config.Get(addonTable.Config.Options.DESIGNS_ASSIGNED)
+  local mapping = addonTable.Config.Get(addonTable.Config.Options.LEGACY_DESIGNS_ASSIGNED)
   if mapping["enemySimplified"] == nil or addonTable.Core.GetDesignByName(mapping["enemySimplified"]) == nil then
     mapping["enemySimplified"] = "_hare_simplified"
   end
@@ -579,6 +579,11 @@ local function MigrateSettingsv1()
 end
 
 local function MigrateSettingsv2()
+  local enabled = addonTable.Config.Get(addonTable.Config.Options.LEGACY_DESIGNS_ENABLED)
+  local assigned = addonTable.Config.Get(addonTable.Config.Options.LEGACY_DESIGNS_ASSIGNED)
+  local simplified = addonTable.Config.Get(addonTable.Config.Options.LEGACY_SIMPLIFIED_NAMEPLATES)
+
+  local newAssignments = addonTable.Config.Get(addonTable.Config.Options.DESIGN_ASSIGNMENTS)
 end
 
 function addonTable.Core.MigrateSettings()

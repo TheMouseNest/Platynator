@@ -11,18 +11,18 @@ local settings = {
   GLOBAL_SCALE = {key = "global_scale", default = 1, refresh = {addonTable.Constants.RefreshReason.Scale}},
 
   LEGACY_DESIGN = {key = "design_all", default = {}},
+  LEGACY_DESIGNS_ASSIGNED = {key = "designs_assigned", default = {}},
+  LEGACY_DESIGNS_ENABLED = {key = "designs_enabled", default = { pvpInstance = false, pvpWorld = false, combat = false }},
+  LEGACY_SIMPLIFIED_NAMEPLATES = {key = "simplified_nameplates", default = {minion = true, minor = true, instancesNormal = true}},
 
   DESIGNS = {key = "designs", default = {}, refresh = {addonTable.Constants.RefreshReason.Design}},
-  DESIGNS_ASSIGNED = {key = "designs_assigned", default = {}},
   DESIGN_ASSIGNMENTS = {key = "design_assignments", default = {}, new = {
-    {criteria = {"can-attack", "class-minor"}, simplified = true, scale = 1, style = "_deer"},
-    {criteria = {"can-attack", "minion"}, simplified = true, scale = 1, style = "_deer"},
-    {criteria = {"can-attack", "dungeon", "class-normal"}, simplified = true, scale = 1, style = "_deer"},
-    {criteria = {"can-attack"}, simplified = false, scale = 1, style = "_deer"},
     {criteria = {"cannot-attack"}, simplified = false, scale = 1, style = "_name-only"},
+    {criteria = {"can-attack", "class-minor"}, simplified = true, scale = 1, style = "_hare_simplified"},
+    {criteria = {"can-attack", "minion"}, simplified = true, scale = 1, style = "_hare_simplified"},
+    {criteria = {"can-attack", "dungeon", "class-normal"}, simplified = true, scale = 1, style = "_hare_simplified"},
+    {criteria = {"can-attack"}, simplified = false, scale = 1, style = "_deer"},
   }},
-
-  DESIGNS_ENABLED = {key = "designs_enabled", default = { pvpInstance = false, pvpWorld = false, combat = false }, refresh = {addonTable.Constants.RefreshReason.Design}},
 
   TARGET_SCALE = {key = "target_scale", default = 1.2, refresh = {addonTable.Constants.RefreshReason.TargetBehaviour}},
   CAST_SCALE = {key = "cast_scale", default = 1.1, refresh = {addonTable.Constants.RefreshReason.TargetBehaviour}},
@@ -43,9 +43,10 @@ local settings = {
   STACK_REGION_SCALE_Y = {key = "stack_region_scale_y", default = 1.4, refresh = {addonTable.Constants.RefreshReason.StackingBehaviour}},
 
   SHOW_NAMEPLATES_ONLY_NEEDED = {key = "show_nameplates_only_needed", default = false, refresh = {addonTable.Constants.RefreshReason.ShowBehaviour}},
-  SHOW_NAMEPLATES = {key = "show_nameplates", default = {friendlyNPC = true, friendlyPlayer = true, friendlyMinion = false, enemy = true, enemyMinion = true, enemyMinor = true}, refresh = {addonTable.Constants.RefreshReason.ShowBehaviour}},
+  SHOW_NAMEPLATES = {key = "show_nameplates", default = {
+    friendlyNPC = true, friendlyPlayer = true, friendlyMinion = false, enemy = true, enemyMinion = true, enemyMinor = true
+  }, refresh = {addonTable.Constants.RefreshReason.ShowBehaviour}},
   SHOW_FRIENDLY_IN_INSTANCES = {key = "show_friendly_in_instances_1", default = "always", refresh = {addonTable.Constants.RefreshReason.ShowBehaviour}},
-  SIMPLIFIED_NAMEPLATES = {key = "simplified_nameplates", default = {minion = true, minor = true, instancesNormal = true}, refresh = {addonTable.Constants.RefreshReason.Simplified}},
 
   SIMPLIFIED_SCALE = {key = "simplified_scale", default = 0.6, refresh = {addonTable.Constants.RefreshReason.SimplifiedScale}},
   BLIZZARD_WIDGET_SCALE = {key = "blizzard_widget_scale", default = 1.2},
