@@ -1006,7 +1006,7 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
     for _, w in ipairs(widgets) do
       w:SetClampedToScreen(true)
       if w.kind == "bars" then
-        local defaultColor = {1, 1, 1}
+        local defaultColor
         if w.details.kind == "health" then
           for _, s in ipairs(w.details.autoColors) do
             if s.kind == "threat" then
