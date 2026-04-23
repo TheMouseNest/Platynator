@@ -517,7 +517,7 @@ addonTable.CustomiseDialog.DesignWidgets = {
     },
   },
   {
-    name = addonTable.Locales.MYTHIC_PLUS_FORCES_VALUE_12005,
+    name = addonTable.Locales.MYTHIC_PLUS_FORCES_VALUE,
     kind = "texts",
     default = {
       kind = "mythicPlusForces",
