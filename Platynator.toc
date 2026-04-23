@@ -32,6 +32,7 @@ Core/Utilities.lua
 Core/Dialogs.lua
 Core/SlashCmd.lua
 Core/Fonts.lua
+Core/Migration.lua
 Core/Initialize.lua
 
 Display/Templates.xml

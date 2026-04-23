@@ -3,6 +3,8 @@ local addonTable = select(2, ...)
 addonTable.Config = {}
 
 local settings = {
+  MIGRATION = {key = "migration", default = 1, new = 3},
+
   STYLE = {key = "style", default = "_deer"},
   CURRENT_SKIN = {key = "current_skin", default = "blizzard", refresh = {addonTable.Constants.RefreshReason.Skin}},
 
@@ -11,11 +13,14 @@ local settings = {
   LEGACY_DESIGN = {key = "design_all", default = {}},
 
   DESIGNS = {key = "designs", default = {}, refresh = {addonTable.Constants.RefreshReason.Design}},
-  DESIGNS_ASSIGNED = {key = "designs_assigned", default = {
-    ["friend"] = "_name-only", ["friendCombat"] = "_deer", ["friendPvPPlayer"] = "_name-only",
-    ["enemy"] = "_deer", ["enemyCombat"] = "_deer", ["enemyPvPPlayer"] = "_deer",
-    ["enemySimplified"] = "_hare_simplified", ["enemySimplifiedCombat"] = "_hare_simplified",
-  }, refresh = {addonTable.Constants.RefreshReason.Design}},
+  DESIGNS_ASSIGNED = {key = "designs_assigned", default = {}},
+  DESIGN_ASSIGNMENTS = {key = "design_assignments", default = {}, new = {
+    {criteria = {"can-attack", "class-minor"}, simplified = true, scale = 1, style = "_deer"},
+    {criteria = {"can-attack", "minion"}, simplified = true, scale = 1, style = "_deer"},
+    {criteria = {"can-attack", "dungeon", "class-normal"}, simplified = true, scale = 1, style = "_deer"},
+    {criteria = {"can-attack"}, simplified = false, scale = 1, style = "_deer"},
+    {criteria = {"cannot-attack"}, simplified = false, scale = 1, style = "_name-only"},
+  }},
 
   DESIGNS_ENABLED = {key = "designs_enabled", default = { pvpInstance = false, pvpWorld = false, combat = false }, refresh = {addonTable.Constants.RefreshReason.Design}},
 
@@ -52,6 +57,7 @@ addonTable.Config.RefreshType = {}
 
 addonTable.Config.Options = {}
 addonTable.Config.Defaults = {}
+addonTable.Config.NewDefaults = {}
 
 for key, details in pairs(settings) do
   if details.refresh then
@@ -63,6 +69,11 @@ for key, details in pairs(settings) do
   end
   addonTable.Config.Options[key] = details.key
   addonTable.Config.Defaults[details.key] = details.default
+  if details.new ~= nil then
+    addonTable.Config.NewDefaults[details.key] = details.new
+  else
+    addonTable.Config.NewDefaults[details.key] = details.default
+  end
 end
 
 function addonTable.Config.IsValidOption(name)
@@ -191,7 +202,8 @@ function addonTable.Config.Reset()
 end
 
 local function ImportDefaultsToProfile()
-  for option, value in pairs(addonTable.Config.Defaults) do
+  local isNew = next(addonTable.Config.CurrentProfile) == nil
+  for option, value in pairs(isNew and addonTable.Config.NewDefaults or addonTable.Config.Defaults) do
     if addonTable.Config.CurrentProfile[option] == nil then
       if type(value) == "table" then
         addonTable.Config.CurrentProfile[option] = CopyTable(value)

@@ -29,10 +29,6 @@ else
   end
 end
 
-local function IsMinor(unit)
-  return UnitClassification(unit) == "minus"
-end
-
 local function IsNPC(unit)
   return not IsPlayer(unit) and not IsMinion(unit)
 end
@@ -61,13 +57,12 @@ local assignmentsPossibilities = {
   ["player"] = { check = function(state) return state.isPlayer end },
   ["npc"] = { check = function(state) return state.isNPC end },
   ["minion"] = { check = function(state) return state.isMinon end },
-  ["minor"] = { check = function(state) return state.isMinor end },
 
   ["class-rare"] = { updates = "classification", check = function(state) local c = state.classification; return c == "rare" or c == "rareelite" end },
   ["class-elite"] = { updates = "classification", check = function(state) local c = state.classification; return c == "elite" or c == "rareelite" end },
   ["class-worldboss"] = { updates = "classification", check = function(state) return state.classification == "worldboss" end },
   ["class-normal"] = { updates = "classification", check = function(state) return state.classification == "normal" end },
-  ["class-minor"] = { updates = "classification", check = function(state) return state.classification == "minor" end },
+  ["class-minor"] = { updates = "classification", check = function(state) return state.classification == "minus" end },
   ["class-trivial"] = { updates = "classification", check = function(state) return state.classification == "trivial" end },
 
   ["loc-world"] = { check = function(state) return state.location == "world" end },
@@ -117,7 +112,6 @@ local function GenerateState(unit)
     isPlayer = IsPlayer(unit),
     isNPC = IsNPC(unit),
     isMinion = IsMinion(unit),
-    isMinor = IsMinor(unit),
     classification = UnitClassification(unit),
     location = location,
     eliteType = GetEliteType(unit),
@@ -251,7 +245,7 @@ function addonTable.Display.DesignForContextMixin:GetDesignFromState(state)
     end
 
     if hit then
-      return settings.style, settings.scaleMultiplier, settings.simplified or false, index
+      return settings.style, settings.scale, settings.simplified or false, index
     end
   end
 
