@@ -188,7 +188,7 @@ function addonTable.Display.ManagerMixin:OnLoad()
     if state[addonTable.Constants.RefreshReason.Design] then
       self:SetScript("OnUpdate", function()
         local design = addonTable.Core.GetDesign("enemy")
-        addonTable.CurrentFont = addonTable.Core.GetFontByDesign(design)
+        addonTable.CurrentFont, addonTable.CurrentFontUsesSmoothing = addonTable.Core.GetFontByDesign(design)
         self.styleIndex = self.styleIndex + 1
         self:SetScript("OnUpdate", nil)
         for unit, display in pairs(self.nameplateDisplays) do
@@ -843,7 +843,7 @@ function addonTable.Display.ManagerMixin:OnEvent(eventName, ...)
   elseif eventName == "PLAYER_LOGIN" then
     local design = addonTable.Core.GetDesign("enemy")
 
-    addonTable.CurrentFont = addonTable.Core.GetFontByDesign(design)
+    addonTable.CurrentFont, addonTable.CurrentFontUsesSmoothing = addonTable.Core.GetFontByDesign(design)
     self:UpdateFriendlyFont()
   elseif eventName == "VARIABLES_LOADED" then
     if addonTable.Constants.IsRetail then

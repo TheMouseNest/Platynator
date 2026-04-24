@@ -649,9 +649,6 @@ function addonTable.Display.GetText(frame, parent)
   frame.Wrapper:SetSize(1, 1)
 
   frame.text = frame.Wrapper:CreateFontString(nil, nil, "GameFontNormal")
-  if frame.text.SetSmoothScaling then
-    frame.text:SetSmoothScaling(true)
-  end
   frame.text:SetPoint("CENTER", frame.Wrapper)
   frame.text:SetText(" ")
 
@@ -683,6 +680,7 @@ function addonTable.Display.GetText(frame, parent)
     local scale = details.scale * 0.85
     local width = details.maxWidth * addonTable.Assets.BarBordersSize.width
     if frame.text.SetSmoothScaling then
+      frame.text:SetSmoothScaling(addonTable.CurrentFontUsesSmoothing)
       frame.text:SetScale(scale)
       frame.text:SetWidth(width / scale)
     else
