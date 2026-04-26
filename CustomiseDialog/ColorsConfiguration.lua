@@ -255,7 +255,15 @@ addonTable.CustomiseDialog.ColorsConfig = {
         melee = GetColor("fcfcfc"),
         trivial = GetColor("b28e55"),
       },
+      enabled = {
+        boss = true,
+        miniboss = true,
+        caster = true,
+        melee = true,
+        trivial = true,
+      },
       instancesOnly = true,
+      applyCasterAlways = false,
     },
     entries = {
       {
@@ -290,22 +298,24 @@ addonTable.CustomiseDialog.ColorsConfig = {
       },
       {
         label = addonTable.Locales.MELEE,
-        kind = "colorPicker",
+        kind = "colorPickerWithCheckbox",
         setter = function(details, value)
-          details.colors.melee = value
+          details.colors.melee = value.color
+          details.enabled.melee = value.enabled
         end,
         getter = function(details)
-          return details.colors.melee
+          return {color = details.colors.melee, enabled = details.enabled.melee}
         end,
       },
       {
         label = addonTable.Locales.TRIVIAL,
-        kind = "colorPicker",
+        kind = "colorPickerWithCheckbox",
         setter = function(details, value)
-          details.colors.trivial = value
+          details.colors.trivial = value.color
+          details.enabled.trivial = value.enabled
         end,
         getter = function(details)
-          return details.colors.trivial
+          return {color = details.colors.trivial, enabled = details.enabled.trivial}
         end,
       },
       { kind = "spacer" },

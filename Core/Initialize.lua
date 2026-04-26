@@ -194,6 +194,15 @@ function addonTable.Core.UpgradeDesign(design)
       if ac.kind == "eliteType" and ac.applyCasterAlways == nil then
         ac.applyCasterAlways = false
       end
+      if ac.kind == "eliteType" and ac.enabled == nil then
+        ac.enabled = {
+          boss = true,
+          miniboss = true,
+          caster = true,
+          melee = true,
+          trivial = true,
+        }
+      end
       if ac.kind == "threat" and ac.useSafeColor == nil then
         ac.useSafeColor = true
       end

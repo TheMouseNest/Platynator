@@ -213,7 +213,7 @@ function addonTable.Display.GetColor(settings, state, unit)
     elseif s.kind == "eliteType" then
       if (inRelevantEliteInstance or not s.instancesOnly) and not addonTable.Display.Utilities.IsNeutralUnit(unit) then
         local t = GetEliteType(unit, s.applyCasterAlways)
-        if t then
+        if t and s.enabled[t] ~= false then
           table.insert(colorQueue, {color = s.colors[t]})
           break
         end
