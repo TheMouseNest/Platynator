@@ -55,6 +55,7 @@ local kindToCallback = {
   quest = {"QuestInfoUpdate"},
   mouseover = {"MouseoverUpdate"},
   threat = {"CombatStatusChange", "RoleChange"},
+  inCombat = {"CombatStatusChange"},
 }
 local kindToCache = {
   interruptReady = {"cast"},
@@ -213,7 +214,7 @@ function addonTable.Display.GetColor(settings, state, unit)
     elseif s.kind == "eliteType" then
       if (inRelevantEliteInstance or not s.instancesOnly) and not addonTable.Display.Utilities.IsNeutralUnit(unit) then
         local t = GetEliteType(unit, s.applyCasterAlways)
-        if t and s.enabled[t] ~= false then
+        if t and s.enabled[t] then
           table.insert(colorQueue, {color = s.colors[t]})
           break
         end
@@ -221,7 +222,7 @@ function addonTable.Display.GetColor(settings, state, unit)
     elseif s.kind == "delveType" then
       if (inRelevantDelveInstance and s.delves or not inRelevantThreatInstance and s.outsideInstances) and not addonTable.Display.Utilities.IsNeutralUnit(unit) then
         local t = GetDelveType(unit)
-        if t then
+        if t and s.enabled[t] then
           table.insert(colorQueue, {color = s.colors[t]})
           break
         end
@@ -414,8 +415,14 @@ function addonTable.Display.GetColor(settings, state, unit)
           local percent = UnitHealth(unit) / UnitHealthMax(unit)
           if percent <= addonTable.Display.Utilities.GetExecuteRange() then
             table.insert(colorQueue, {color = s.colors.execute})
+            break
           end
         end
+      end
+    elseif s.kind == "inCombat" then
+      if IsInCombatWith(unit) then
+        table.insert(colorQueue, {color = s.colors.inCombat})
+        break
       end
     elseif s.kind == "energy" then
       local _, kind = UnitPowerType(unit)
