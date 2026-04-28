@@ -278,7 +278,10 @@ function addonTable.Display.GetColor(settings, state, unit)
         notInterruptible = channelInfo[7]
       end
       state.frequentUpdater.interruptReady = nil
-      if notInterruptible ~= nil then
+      if castInfo[1] or channelInfo[1] then
+        if notInterruptible == nil then
+          notInterruptible = false
+        end
         local interruptSpells = GetInterruptSpells()
         state.frequentUpdater.interruptReady = true
         if C_Spell.GetSpellCooldownDuration then
@@ -286,7 +289,7 @@ function addonTable.Display.GetColor(settings, state, unit)
             local duration = C_Spell.GetSpellCooldownDuration(spellID)
             table.insert(colorQueue, {state = {{value = duration:IsZero()}, {value = notInterruptible, invert = true}}, color = s.colors.ready})
           end
-        elseif notInterruptible == false then
+        elseif notInterruptible ~= true then
           local any = false
           for _, spellID in ipairs(interruptSpells) do
             local cooldownInfo = C_Spell.GetSpellCooldown(spellID)
@@ -310,7 +313,10 @@ function addonTable.Display.GetColor(settings, state, unit)
         notInterruptible = channelInfo[7]
       end
       state.frequentUpdater.interruptNotReady = nil
-      if notInterruptible ~= nil then
+      if castInfo[1] or channelInfo[1] then
+        if notInterruptible == nil then
+          notInterruptible = false
+        end
         local spells = GetInterruptSpells()
         if #spells > 0 then
           state.frequentUpdater.interruptNotReady = true
@@ -321,7 +327,7 @@ function addonTable.Display.GetColor(settings, state, unit)
               table.insert(conditions, {value = duration:IsZero(), invert = true})
             end
             table.insert(colorQueue, {state = conditions, color = s.colors.notReady})
-          elseif notInterruptible == false then
+          elseif notInterruptible ~= true then
             local any = false
             for _, spellID in ipairs(spells) do
               local cooldownInfo = C_Spell.GetSpellCooldown(spellID)
