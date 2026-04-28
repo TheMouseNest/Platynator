@@ -309,11 +309,11 @@ function addonTable.Display.GetColor(settings, state, unit)
       if notInterruptible == nil then
         notInterruptible = channelInfo[7]
       end
-      state.frequentUpdater.interruptReady = nil
+      state.frequentUpdater.interruptNotReady = nil
       if notInterruptible ~= nil then
         local spells = GetInterruptSpells()
         if #spells > 0 then
-          state.frequentUpdater.interruptReady = true
+          state.frequentUpdater.interruptNotReady = true
           if C_Spell.GetSpellCooldownDuration then
             local conditions = {{value = notInterruptible, invert = true}}
             for _, spellID in ipairs(spells) do
