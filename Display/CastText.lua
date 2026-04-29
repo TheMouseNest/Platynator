@@ -9,7 +9,7 @@ function addonTable.Display.CastTextMixin:SetUnit(unit)
     self.interrupted = nil
 
     addonTable.Display.Cache:RegisterCallback(self.unit, "cast", function(state)
-      if state.interrupterGUID then
+      if state.interrupted then
         self:ApplyInterrupt()
       elseif state.cast[1] == nil and state.channel[1] == nil then
         self:ClearCast()

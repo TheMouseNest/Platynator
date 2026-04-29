@@ -7,8 +7,8 @@ function addonTable.Display.CastInterrupterTextMixin:SetUnit(unit)
   self.unit = unit
   if self.unit then
     addonTable.Display.Cache:RegisterCallback(self.unit, "cast", function(state)
-      if state.interrupterGUID then
-        self:UpdateFromGUID(state.interrupterGUID)
+      if state.interrupted and state.interrupted.guid then
+        self:UpdateFromGUID(state.interrupted.guid)
       elseif state.cast[1] or state.channel[1] then
         if self.timer then
           self.timer:Cancel()
@@ -20,8 +20,8 @@ function addonTable.Display.CastInterrupterTextMixin:SetUnit(unit)
     self:Hide()
 
     local state = addonTable.Display.Cache:Get(self.unit, "cast")
-    if state.interrupterGUID then
-      self:UpdateFromGUID(state.interrupterGUID)
+    if state.interrupted and state.interrupted.guid then
+      self:UpdateFromGUID(state.interrupted.guid)
     end
   else
     self:Strip()

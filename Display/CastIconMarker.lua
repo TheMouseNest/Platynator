@@ -26,7 +26,7 @@ function addonTable.Display.CastIconMarkerMixin:SetUnit(unit)
   self.unit = unit
   if self.unit then
     addonTable.Display.Cache:RegisterCallback(self.unit, "cast", function(state)
-      if state.interrupterGUID then
+      if state.interrupted then
         self:ApplyInterrupt()
       elseif state.cast[3] or state.channel[3] then
         self:ApplyCasting(state.cast[3] or state.channel[3])

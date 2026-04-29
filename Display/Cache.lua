@@ -19,16 +19,16 @@ local getter = {
   ["cast"] = function(oldState, unit, eventName, ...)
     if eventName == "UNIT_SPELLCAST_INTERRUPTED" or eventName == "UNIT_SPELLCAST_CHANNEL_STOP" then
       local _, _, interrupterGUID = ...
-      return {cast = {}, channel = {}, interrupterGUID = interrupterGUID}, true
+      return {cast = {}, channel = {}, interrupted = {guid = interrupterGUID}}, true
     end
     if eventName == "UNIT_SPELLCAST_EMPOWER_STOP" then
       local _, _, _, interrupterGUID = ...
-      return {cast = {}, channel = {}, interrupterGUID = interrupterGUID}, true
+      return {cast = {}, channel = {}, interrupted = {guid = interrupterGUID}}, true
     end
     if eventName == "UNIT_SPELLCAST_DELAYED" and next(oldState.cast) == nil or eventName == "UNIT_SPELLCAST_CHANNEL_UPDATE" and next(oldState.channel) == nil then
-      return {cast = {}, channel = {}}, false
+      return {cast = {}, channel = {}, interrupted = nil}, false
     end
-    return {cast = {UnitCastingInfo(unit)}, channel = {UnitChannelInfo(unit)}}, true
+    return {cast = {UnitCastingInfo(unit)}, channel = {UnitChannelInfo(unit)}, interrupted = nil}, true
   end,
   ["threat"] = function(oldState, unit)
     local newThreat = UnitThreatSituation("player", unit)
@@ -96,7 +96,7 @@ function addonTable.Display.CacheMixin:OnLoad()
   addonTable.CallbackRegistry:RegisterCallback("LegacyInterrupter", function(_, playerGUID, destGUID)
     for unit, details in pairs(self.monitoring) do
       if details.cast and UnitGUID(unit) == destGUID then
-        local data = {cast = {}, channel = {}, interrupterGUID = playerGUID}
+        local data = {cast = {}, channel = {}, interrupted = {guid = playerGUID}}
         self.state[unit]["cast"] = data
         for _, callback in ipairs(self.registeredCallbacks[unit]["cast"]) do
           callback(data)
