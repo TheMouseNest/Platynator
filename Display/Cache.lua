@@ -17,9 +17,13 @@ addonTable.Display.CacheMixin = {}
 
 local getter = {
   ["cast"] = function(oldState, unit, eventName, ...)
-    if eventName == "UNIT_SPELLCAST_INTERRUPTED" or eventName == "UNIT_SPELLCAST_CHANNEL_STOP" then
+    if eventName == "UNIT_SPELLCAST_INTERRUPTED" then
       local _, _, interrupterGUID = ...
       return {cast = {}, channel = {}, interrupted = {guid = interrupterGUID}}, true
+    end
+    if eventName == "UNIT_SPELLCAST_CHANNEL_STOP" then
+      local _, _, interrupterGUID = ...
+      return {cast = {}, channel = {}, interrupted = interrupterGUID and {guid = interrupterGUID} or nil}, true
     end
     if eventName == "UNIT_SPELLCAST_EMPOWER_STOP" then
       local _, _, _, interrupterGUID = ...
