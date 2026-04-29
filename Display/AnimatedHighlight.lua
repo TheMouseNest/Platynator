@@ -7,7 +7,6 @@ function addonTable.Display.AnimatedBorderHighlightMixin:SetUnit(unit)
   self.unit = unit
   if self.unit then
     addonTable.Display.RegisterForColorEvents(self, self.details.autoColors)
-    self:SetColor(addonTable.Display.GetColor(self.details.autoColors, self.colorState, self.unit))
   else
     self:Strip()
   end

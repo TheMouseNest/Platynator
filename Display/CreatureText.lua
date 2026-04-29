@@ -10,13 +10,12 @@ function addonTable.Display.CreatureTextMixin:SetUnit(unit)
     self.defaultText = UnitName(self.unit)
     self.text:SetText(self.defaultText)
 
-    addonTable.Display.RegisterForColorEvents(self, self.details.autoColors, self.details.color)
-    self:SetColor(addonTable.Display.GetColor(self.details.autoColors, self.colorState, self.unit))
-
     if self.details.showWhenWowDoes then
       self:RegisterUnitEvent("UNIT_HEALTH", self.unit)
       self:SetShown(UnitShouldDisplayName(self.unit))
     end
+
+    addonTable.Display.RegisterForColorEvents(self, self.details.autoColors, self.details.color)
   else
     addonTable.Display.UnregisterForColorEvents(self)
     self:UnregisterAllEvents()

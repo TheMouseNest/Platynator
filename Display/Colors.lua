@@ -142,6 +142,9 @@ function addonTable.Display.RegisterForColorEvents(frame, settings, defaultColor
       end
     end
   end
+
+  -- Set the color at least once
+  frame:ColorEventHandler("FORCED")
 end
 
 local function SplitEvaluate(state, r1, g1, b1, a1, r2, g2, b2, a2)
