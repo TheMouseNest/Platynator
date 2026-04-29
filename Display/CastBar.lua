@@ -119,7 +119,7 @@ if UnitCastingDuration then
     self.isChanneled = state.channel[1] ~= nil
     local isEmpowered = state.channel[9] == true
     local castDuration
-    if self.isEmpowered then
+    if isEmpowered then
       castDuration = UnitEmpoweredChannelDuration(self.unit, true)
     elseif self.isChanneled then
       castDuration = UnitChannelDuration(self.unit)
