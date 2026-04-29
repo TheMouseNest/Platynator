@@ -443,6 +443,38 @@ local function SetupBehaviour(parent)
   applyCvarsCheckbox:SetPoint("TOP", allFrames[#allFrames], "BOTTOM", 0, -30)
   table.insert(allFrames, applyCvarsCheckbox)
 
+  -- Arena Names override
+  local arenaNamesCheckbox = addonTable.CustomiseDialog.Components.GetCheckbox(container, addonTable.Locales.ARENA_NAMES_ENABLED, 28, function(value)
+    addonTable.Config.Set(addonTable.Config.Options.ARENA_NAMES_ENABLED, value)
+    addonTable.CallbackRegistry:TriggerEvent("ArenaNamesSettingChanged")
+  end)
+  arenaNamesCheckbox.option = addonTable.Config.Options.ARENA_NAMES_ENABLED
+  arenaNamesCheckbox:SetPoint("TOP", allFrames[#allFrames], "BOTTOM", 0, -30)
+  table.insert(allFrames, arenaNamesCheckbox)
+
+  local arenaFormatDropdown = addonTable.CustomiseDialog.Components.GetBasicDropdown(container, addonTable.Locales.ARENA_NAMES_FORMAT)
+  arenaFormatDropdown:SetPoint("TOP", allFrames[#allFrames], "BOTTOM")
+  do
+    local values = {"id_only", "id_spec", "spec_only"}
+    local labels = {
+      addonTable.Locales.ARENA_NAMES_FORMAT_ID_ONLY,
+      addonTable.Locales.ARENA_NAMES_FORMAT_ID_SPEC,
+      addonTable.Locales.ARENA_NAMES_FORMAT_SPEC_ONLY,
+    }
+    arenaFormatDropdown.DropDown:SetDefaultText(NONE)
+    arenaFormatDropdown.DropDown:SetupMenu(function(_, rootDescription)
+      for index, l in ipairs(labels) do
+        rootDescription:CreateRadio(l, function()
+          return addonTable.Config.Get(addonTable.Config.Options.ARENA_NAMES_FORMAT) == values[index]
+        end, function()
+          addonTable.Config.Set(addonTable.Config.Options.ARENA_NAMES_FORMAT, values[index])
+          addonTable.CallbackRegistry:TriggerEvent("ArenaNamesSettingChanged")
+        end)
+      end
+    end)
+  end
+  table.insert(allFrames, arenaFormatDropdown)
+
   container:SetScript("OnShow", function()
     targetScaleSlider:SetValue(addonTable.Config.Get(addonTable.Config.Options.TARGET_SCALE) * 100)
     castScaleSlider:SetValue(addonTable.Config.Get(addonTable.Config.Options.CAST_SCALE) * 100)
@@ -962,7 +994,7 @@ function addonTable.CustomiseDialog.Toggle()
   frame:SetToplevel(true)
   customisers[addonTable.Config.Get(addonTable.Config.Options.CURRENT_SKIN)] = frame
   table.insert(UISpecialFrames, frame:GetName())
-  frame:SetSize(600, 830)
+  frame:SetSize(600, 980)
   frame:SetPoint("CENTER")
   frame:Hide()
 

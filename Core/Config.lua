@@ -46,6 +46,9 @@ local settings = {
   BLIZZARD_WIDGET_SCALE = {key = "blizzard_widget_scale", default = 1.2},
 
   APPLY_CVARS = {key = "apply_cvars", default = true},
+
+  ARENA_NAMES_ENABLED = {key = "arena_names_enabled", default = false},
+  ARENA_NAMES_FORMAT = {key = "arena_names_format", default = "id_spec"},
 }
 
 addonTable.Config.RefreshType = {}

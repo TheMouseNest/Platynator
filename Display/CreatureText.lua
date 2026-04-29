@@ -51,6 +51,7 @@ function addonTable.Display.CreatureTextMixin:OnEvent(eventName, ...)
   elseif eventName == "UNIT_NAME_UPDATE" then
     self.defaultText = UnitName(self.unit)
     self.text:SetText(self.defaultText)
+    if self.ApplyTextOverride then self:ApplyTextOverride() end
   end
 
   self:ColorEventHandler(eventName)

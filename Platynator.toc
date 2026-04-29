@@ -1,6 +1,6 @@
 ## Interface: 120005, 120001, 50503, 38001, 20505, 11508
 ## Title: Platynator
-## Version: @project-version@
+## Version: 373
 ## Author: plusmouse
 ## SavedVariables: PLATYNATOR_CONFIG
 ## SavedVariablesPerCharacter: PLATYNATOR_CURRENT_PROFILE, PLATYNATOR_LAST_INSTANCE
@@ -78,6 +78,7 @@ Display/FactionMarker.lua
 Display/Widgets.lua
 
 API/Main.lua
+Modules/ArenaNames.lua
 
 Design.lua
 Assets.lua
