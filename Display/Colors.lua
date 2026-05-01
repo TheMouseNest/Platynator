@@ -10,10 +10,6 @@ local GetInterruptSpells = addonTable.Display.Utilities.GetInterruptSpells
 
 local transparency = {r = 1, g = 1, b = 1, a = 0}
 
-local function DoesOtherTankHaveAggro(unit)
-  return IsInRaid() and UnitGroupRolesAssigned(unit .. "target") == "TANK"
-end
-
 local IsTankRole = addonTable.Display.Utilities.IsTankRole
 local GetEliteType = addonTable.Display.Utilities.GetEliteType
 local GetDelveType = addonTable.Display.Utilities.GetDelveType
@@ -188,11 +184,13 @@ function addonTable.Display.GetColor(settings, state, unit)
         break
       end
     elseif s.kind == "threat" then
-      local threat = addonTable.Display.Cache:Get(unit, "threat")
+      local threatDetails = addonTable.Display.Cache:Get(unit, "threat")
+      local threat = threatDetails.situation
+      local doesOtherTankHaveAggro = threatDetails.otherTankAggro
       local hostile = state.hostile
       local isTank = IsTankRole()
       if not state.isPlayer and (inRelevantThreatInstance or not s.instancesOnly) and (threat or (hostile and not s.combatOnly) or IsInCombatWith(unit)) and (not s.tanksOnly or isTank) then
-        if (isTank and (threat == 0 or threat == nil) and (not s.useOffTankColor or not DoesOtherTankHaveAggro(unit))) or (not isTank and threat == 3) then
+        if (isTank and (threat == 0 or threat == nil) and (not s.useOffTankColor or not doesOtherTankHaveAggro)) or (not isTank and threat == 3) then
           table.insert(colorQueue, {color = s.colors.warning})
           break
         elseif threat == 1 or threat == 2 then
@@ -201,7 +199,7 @@ function addonTable.Display.GetColor(settings, state, unit)
         elseif s.useSafeColor and ((isTank and threat == 3) or (not isTank and (threat == 0 or threat == nil))) then
           table.insert(colorQueue, {color = s.colors.safe})
           break
-        elseif s.useOffTankColor and isTank and (threat == 0 or threat == nil) and DoesOtherTankHaveAggro(unit) then
+        elseif s.useOffTankColor and isTank and (threat == 0 or threat == nil) and doesOtherTankHaveAggro then
           table.insert(colorQueue, {color = s.colors.offtank})
           break
         end

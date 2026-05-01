@@ -1,6 +1,9 @@
 ---@class addonTablePlatynator
 local addonTable = select(2, ...)
 
+local GetOtherTanks = addonTable.Display.Utilities.GetOtherTanks
+local IsTank = addonTable.Display.Utilities.IsTankRole
+
 -- For clients other than Midnight
 if not C_Secrets then
   local frame = CreateFrame("Frame")
@@ -35,8 +38,16 @@ local getter = {
     return {cast = {UnitCastingInfo(unit)}, channel = {UnitChannelInfo(unit)}, interrupted = nil}, true
   end,
   ["threat"] = function(oldState, unit)
-    local newThreat = UnitThreatSituation("player", unit)
-    return newThreat, newThreat ~= oldState
+    local result = {situation = UnitThreatSituation("player", unit), otherTankAggro = false}
+    if result.situation ~= 3 and result.situation ~= 2 and IsTank() then
+      for _, tankUnit in ipairs(GetOtherTanks()) do
+        if UnitThreatSituation(tankUnit, unit) == 3 then
+          result.otherTankAggro = true
+          break
+        end
+      end
+    end
+    return result, not oldState or result.situation ~= oldState.situation or result.otherTankAggro ~= oldState.otherTankAggro
   end,
 }
 

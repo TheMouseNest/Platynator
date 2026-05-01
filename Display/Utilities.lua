@@ -595,3 +595,62 @@ do
     end
   end
 end
+
+do
+  local groupTracker = CreateFrame("Frame")
+  groupTracker:RegisterEvent("PLAYER_ENTERING_WORLD")
+  groupTracker:RegisterEvent("INSTANCE_GROUP_SIZE_CHANGED")
+  groupTracker:RegisterEvent("GROUP_ROSTER_UPDATE")
+  groupTracker:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
+  groupTracker:RegisterEvent("UNIT_PET")
+
+  local knownTanksAndPetsMap = {}
+  local knownTanksAndPetsList = {}
+
+  groupTracker:SetScript("OnEvent", function(_, event, unit)
+    local inRaid = IsInRaid()
+    if event == "PLAYER_SPECIALIZATION_CHANGED" then
+      if inRaid and unit:match("^raid") or not inRaid and unit:match("^party") then
+        local role = UnitGroupRolesAssigned(unit)
+        knownTanksAndPetsMap[unit] = role == "TANK" or nil
+      end
+    elseif event == "UNIT_PET" then
+      local petUnit
+      if inRaid and unit:match("^raid") then
+        petUnit = "raidpet" .. unit:gsub("raid", "")
+      elseif not inRaid and unit:match("^party") then
+        petUnit = "partypet" .. unit:gsub("party", "")
+      elseif not inRaid and unit == "player" then
+        petUnit = "pet"
+      end
+      knownTanksAndPetsMap[petUnit] = UnitExists(petUnit) or nil
+    elseif inRaid then
+      knownTanksAndPetsMap = {}
+      for i = 1, 40 do
+        local playerUnit = "raid" .. i
+        if not UnitIsUnit(playerUnit, "player") then
+          local role = UnitGroupRolesAssigned(playerUnit)
+          knownTanksAndPetsMap[playerUnit] = role == "TANK" or nil
+          local petUnit = "raidpet" .. i
+          knownTanksAndPetsMap[petUnit] = UnitExists(petUnit) or nil
+        end
+      end
+    else
+      knownTanksAndPetsMap = {}
+      for i = 1, 4 do
+        local playerUnit = "party" .. i
+        local role = UnitGroupRolesAssigned(playerUnit)
+        knownTanksAndPetsMap[playerUnit] = role == "TANK" or nil
+        local petUnit = "partypet" .. i
+        knownTanksAndPetsMap[petUnit] = UnitExists(petUnit) or nil
+      end
+      knownTanksAndPetsMap["pet"] = UnitExists("pet") or nil
+    end
+
+    knownTanksAndPetsList = GetKeysArray(knownTanksAndPetsMap)
+  end)
+
+  function addonTable.Display.Utilities.GetOtherTanks()
+    return knownTanksAndPetsList
+  end
+end
