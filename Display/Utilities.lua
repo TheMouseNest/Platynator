@@ -623,7 +623,9 @@ do
       elseif not inRaid and unit == "player" then
         petUnit = "pet"
       end
-      knownTanksAndPetsMap[petUnit] = UnitExists(petUnit) or nil
+      if petUnit then
+        knownTanksAndPetsMap[petUnit] = UnitExists(petUnit) or nil
+      end
     elseif inRaid then
       knownTanksAndPetsMap = {}
       for i = 1, 40 do
