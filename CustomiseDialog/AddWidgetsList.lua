@@ -86,7 +86,46 @@ addonTable.CustomiseDialog.DesignWidgets = {
     },
   },
   {
-    name = addonTable.Locales.POWER,
+    name = addonTable.Locales.ENERGY,
+    kind = "bars",
+    default = {
+      kind = "energy",
+      anchor = {"TOPLEFT", -140, 50},
+      autoColors = {
+        CopyTable(addonTable.CustomiseDialog.ColorsConfig["energy"].default),
+      },
+      powerTypes = {
+        mana = false,
+        rage = true,
+        energy = true,
+      },
+      mobTypes = {
+        boss = true,
+        miniboss = true,
+      },
+      marker = {
+        asset = "none",
+      },
+      background = {
+        asset = "Platy: Fade Bottom",
+        color = GetColor("FFFFFF", 1),
+        applyColor = false,
+      },
+      foreground = {
+        asset = "Platy: Fade Bottom",
+      },
+      border = {
+        asset = "Platy: 7px",
+        color = GetColor("000000", 1),
+        width = 1,
+        height = 1,
+      },
+      scale = 1,
+      layer = 1,
+    },
+  },
+  {
+    name = addonTable.Locales.PLAYER_POWER,
     kind = "specialBars",
     default = {
       kind = "power",
@@ -401,6 +440,31 @@ addonTable.CustomiseDialog.DesignWidgets = {
     },
   },
   {
+    name = addonTable.Locales.ENERGY_PERCENTAGE,
+    kind = "texts",
+    default = {
+      kind = "energy",
+      scale = 1,
+      layer = 2,
+      anchor = {"TOPLEFT", -140, 50},
+      color = GetColor("FFFFFF"),
+      maxWidth = 0,
+      align = "CENTER",
+      shorten = "NONE",
+
+      showPercentSymbol = true,
+      powerTypes = {
+        mana = false,
+        rage = true,
+        energy = true,
+      },
+      mobTypes = {
+        boss = true,
+        miniboss = true,
+      },
+    },
+  },
+  {
     name = addonTable.Locales.CAST_NAME,
     kind = "texts",
     default = {
@@ -413,14 +477,6 @@ addonTable.CustomiseDialog.DesignWidgets = {
       align = "CENTER",
       shorten = "NONE",
       truncate = false,
-      colors = {
-        npc = {
-          friendly = GetColor("00FF00"),
-          neutral = GetColor("FFFF00"),
-          hostile = GetColor("FF0000"),
-          tapped = GetColor("6E6E6E"),
-        },
-      },
     },
   },
   {

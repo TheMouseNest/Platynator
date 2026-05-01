@@ -434,15 +434,10 @@ function addonTable.Display.GetColor(settings, state, unit)
         break
       end
     elseif s.kind == "energy" then
-      local _, kind = UnitPowerType(unit)
-      if kind == "MANA" then
-        table.insert(colorQueue, {color = s.colors.mana})
-        break
-      elseif kind == "RAGE" then
-        table.insert(colorQueue, {color = s.colors.rage})
-        break
-      elseif kind == "ENERGY" then
-        table.insert(colorQueue, {color = s.colors.energy})
+      local kind = UnitPowerType(unit)
+      local mapped = addonTable.Constants.PowerMap[kind]
+      if s.colors[mapped] then
+        table.insert(colorQueue, {color = s.colors[mapped]})
         break
       end
     end

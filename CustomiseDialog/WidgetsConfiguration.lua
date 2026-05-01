@@ -262,6 +262,61 @@ local multipleValuesDisplay = {
   end
 }
 
+local energyTypes = {
+  {
+    label = addonTable.Locales.ENERGY,
+    kind = "checkbox",
+    setter = function(details, value)
+      details.powerTypes.energy = value
+    end,
+    getter = function(details)
+      return details.powerTypes.energy
+    end,
+  },
+  {
+    label = addonTable.Locales.MANA,
+    kind = "checkbox",
+    setter = function(details, value)
+      details.powerTypes.mana = value
+    end,
+    getter = function(details)
+      return details.powerTypes.mana
+    end,
+  },
+  {
+    label = addonTable.Locales.RAGE,
+    kind = "checkbox",
+    setter = function(details, value)
+      details.powerTypes.rage = value
+    end,
+    getter = function(details)
+      return details.powerTypes.rage
+    end,
+  },
+}
+local energyMobs = {
+  {
+    label = addonTable.Locales.BOSS,
+    kind = "checkbox",
+    setter = function(details, value)
+      details.mobTypes.boss = value
+    end,
+    getter = function(details)
+      return details.mobTypes.boss
+    end,
+  },
+  {
+    label = addonTable.Locales.MINIBOSS,
+    kind = "checkbox",
+    setter = function(details, value)
+      details.mobTypes.miniboss = value
+    end,
+    getter = function(details)
+      return details.mobTypes.miniboss
+    end,
+  },
+}
+
 addonTable.CustomiseDialog.WidgetsConfig = {
   ["bars"] = {
     ["*"] = {
@@ -502,6 +557,30 @@ addonTable.CustomiseDialog.WidgetsConfig = {
             end,
           },
         },
+      },
+    },
+    ["energy"] = {
+      {
+        label = addonTable.Locales.COLORS,
+        entries = {
+          {
+            label = "",
+            kind = "autoColors",
+            lockedElements = {energy = true},
+            setter = function() end,
+            getter = function(details)
+              return details.autoColors
+            end,
+          },
+        },
+      },
+      {
+        label = addonTable.Locales.TYPES,
+        entries = energyTypes,
+      },
+      {
+        label = addonTable.Locales.MOBS,
+        entries = energyMobs,
       },
     },
   },
@@ -864,7 +943,32 @@ addonTable.CustomiseDialog.WidgetsConfig = {
           multipleValuesDisplay,
         }
       }
-    }
+    },
+    ["energy"] = {
+      {
+        label = addonTable.Locales.GENERAL,
+        entries = {
+          {
+            label = addonTable.Locales.SHOW_PERCENT_SYMBOL,
+            kind = "checkbox",
+            setter = function(details, value)
+              details.showPercentSymbol = value
+            end,
+            getter = function(details)
+              return details.showPercentSymbol
+            end,
+          },
+        },
+      },
+      {
+        label = addonTable.Locales.TYPES,
+        entries = energyTypes,
+      },
+      {
+        label = addonTable.Locales.MOBS,
+        entries = energyMobs,
+      },
+    },
   },
   ["markers"] = {
     ["*"] = {

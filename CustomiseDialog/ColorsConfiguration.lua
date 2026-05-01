@@ -912,6 +912,49 @@ addonTable.CustomiseDialog.ColorsConfig = {
       },
     }
   },
+  ["energy"] = {
+    label = addonTable.Locales.ENERGY,
+    default = {
+      kind = "energy",
+      colors = {
+        energy = GetColor("fff700"),
+        mana = GetColor("00aaff"),
+        rage = GetColor("ff5500"),
+      }
+    },
+    entries = {
+      {
+        label = addonTable.Locales.ENERGY,
+        kind = "colorPicker",
+        setter = function(details, value)
+          details.colors.energy = value
+        end,
+        getter = function(details)
+          return details.colors.energy
+        end,
+      },
+      {
+        label = addonTable.Locales.RAGE,
+        kind = "colorPicker",
+        setter = function(details, value)
+          details.colors.rage = value
+        end,
+        getter = function(details)
+          return details.colors.rage
+        end,
+      },
+      {
+        label = addonTable.Locales.MANA,
+        kind = "colorPicker",
+        setter = function(details, value)
+          details.colors.mana = value
+        end,
+        getter = function(details)
+          return details.colors.mana
+        end,
+      },
+    },
+  },
 }
 
 addonTable.CustomiseDialog.ColorsConfigOrder = {

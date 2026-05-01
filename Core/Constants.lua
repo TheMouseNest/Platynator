@@ -63,3 +63,9 @@ addonTable.Constants.OldFontMapping = {
   ["DiabloHeavy"] = "Diablo Heavy",
   ["AtkinsonHyperlegible-Regular"] = "Atkinson Hyperlegible Next",
 }
+
+addonTable.Constants.PowerMap = {
+  [Enum.PowerType.Mana] = "mana",
+  [Enum.PowerType.Rage] = "rage",
+  [Enum.PowerType.Energy] = "energy",
+}

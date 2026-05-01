@@ -45,12 +45,14 @@ Display/Nameplate.lua
 Display/Auras.lua
 Display/HealthBar.lua
 Display/CastBar.lua
+Display/EnergyBar.lua
 Display/PowerBar.lua
 Display/CreatureText.lua
 Display/CreatureTextMSP.lua
 Display/GuildText.lua
 Display/HealthText.lua
 Display/AbsorbText.lua
+Display/EnergyText.lua
 Display/CastText.lua
 Display/CastTimeText.lua
 Display/CastTargetText.lua

@@ -1017,8 +1017,10 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
               break
             end
           end
-        else
+        elseif w.details.kind == "cast" then
           defaultColor = w.details.autoColors[#w.details.autoColors].colors.cast
+        elseif w.details.kind == "energy" then
+          defaultColor = w.details.autoColors[#w.details.autoColors].colors.energy
         end
         w.statusBar:SetMinMaxValues(0, 100)
         w.statusBar:SetValue(70)
@@ -1109,6 +1111,11 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
             display = string.format("%s", values[types[1]])
           else
             display = addonTable.Locales.NO_VALUE_UPPER
+          end
+        elseif w.details.kind == "energy" then
+          display = "50"
+          if w.details.showPercentSymbol then
+            display = display .. "%"
           end
         end
         if display then
