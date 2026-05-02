@@ -39,6 +39,7 @@ addonTable.Constants.Events = {
   "MouseoverUpdate",
 
   "RoleChange",
+  "EncounterUpdate",
 }
 
 addonTable.Constants.RefreshReason = {

@@ -30,7 +30,11 @@ function addonTable.Display.EnergyTextMixin:SetUnit(unit)
       self:RegisterUnitEvent("UNIT_POWER_UPDATE", self.unit)
       self:RegisterUnitEvent("UNIT_MAXPOWER", self.unit)
       self:UpdateValue()
-      self:Show()
+
+      addonTable.CallbackRegistry:RegisterCallback("EncounterUpdate", function()
+        self:SetShown(addonTable.Display.Utilities.ShouldShowEnergy())
+      end, self)
+      self:SetShown(addonTable.Display.Utilities.ShouldShowEnergy())
     else
       self:Hide()
     end
