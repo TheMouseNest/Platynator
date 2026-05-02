@@ -33,6 +33,8 @@ addonTable.Constants.Events = {
 
   "TextOverrideUpdated",
 
+  "ArenaNamesSettingChanged",
+
   "LegacyInterrupter",
   "QuestInfoUpdate",
   "CombatStatusChange",

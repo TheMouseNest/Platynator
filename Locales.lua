@@ -167,6 +167,12 @@ L["TAPPED"] = "Tapped"
 L["FOCUS"] = "Focus"
 L["APPLY_OTHER_CVARS"] = "Apply other CVars"
 
+L["ARENA_NAMES_ENABLED"] = "Arena name override"
+L["ARENA_NAMES_FORMAT"] = "Arena format"
+L["ARENA_NAMES_FORMAT_ID_ONLY"] = "Replace name with Arena ID"
+L["ARENA_NAMES_FORMAT_SPEC_ONLY"] = "Replace name with spec"
+L["ARENA_NAMES_FORMAT_ID_SPEC"] = "Replace name with spec and Arena ID"
+
 L["ENTER_PROFILE_NAME"] = "Enter Profile Name:"
 L["PROFILES"] = "Profiles"
 L["NEW_PROFILE_CLONE"] = "New Profile (clone current)"
