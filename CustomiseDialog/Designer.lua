@@ -622,8 +622,10 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
   local UpdateSelection
   local widgets
   local selectionIndexes = {}
+  local hiddenIndexes = {}
   local fociOnDown = {}
   local autoSelectedDetails
+  local UpdateHiding
 
   local titleMap = {}
 
@@ -655,7 +657,7 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
 
   local contextHoverMarker = GetSelectorMarker(CreateFrame("Frame", nil, container), false)
 
-  local function ToggleSelection(rawFoci)
+  local function ToggleSelection(rawFoci, rawButton)
     local foci = tFilter(rawFoci, function(w) return w:GetParent() == preview end, true)
     local ApplyIndex
     if IsShiftKeyDown() then
@@ -667,6 +669,11 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
           table.insert(selectionIndexes, index)
         end
         UpdateSelection()
+      end
+    elseif rawButton == "MiddleButton" then
+      ApplyIndex = function(index)
+        hiddenIndexes[index] = true
+        UpdateHiding()
       end
     else
       ApplyIndex = function(index)
@@ -819,8 +826,18 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
       local kind = widgets[index].kind
       local details = widgets[index].details
       local design = addonTable.CustomiseDialog.GetCurrentDesign()
-      local index = tIndexOf(design[kind], details)
-      table.remove(design[kind], index)
+      table.remove(design[kind], tIndexOf(design[kind], details))
+
+      -- Update hidden widget indexes
+      local keys = GetKeysArray(hiddenIndexes)
+      hiddenIndexes = {}
+      for _, k in ipairs(keys) do
+        if k > w.superIndex then
+          hiddenIndexes[k - 1] = true
+        elseif k ~= w.superIndex then
+          hiddenIndexes[k] = true
+        end
+      end
     end
     selectionIndexes = {}
     Announce()
@@ -878,7 +895,7 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
   end)
 
   local addButton = CreateFrame("DropdownButton", nil, previewInset, "UIPanelDynamicResizeButtonTemplate")
-  addButton:SetText(addonTable.Locales.ADD_WIDGET)
+  addButton:SetText(addonTable.Locales.ADD)
   DynamicResizeButton_Resize(addButton)
   addButton:SetPoint("TOPLEFT", 0, addButton:GetHeight() + 2)
   addButton:SetupMenu(function(menu, rootDescription)
@@ -911,12 +928,34 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
   end)
 
   local deleteButton = CreateFrame("Button", nil, previewInset, "UIPanelDynamicResizeButtonTemplate")
-  deleteButton:SetText(addonTable.Locales.DELETE_WIDGET)
+  deleteButton:SetText(addonTable.Locales.DELETE)
   DynamicResizeButton_Resize(deleteButton)
   deleteButton:SetPoint("TOPRIGHT", 0, addButton:GetHeight() + 2)
   deleteButton:SetScript("OnClick", function()
     DeleteCurrentWidget()
   end)
+
+
+  local showAllButton = CreateFrame("Button", nil, previewInset, "UIPanelDynamicResizeButtonTemplate")
+  showAllButton:SetText(addonTable.Locales.SHOW_ALL)
+  DynamicResizeButton_Resize(showAllButton)
+  showAllButton:SetPoint("TOP", 0, addButton:GetHeight() + 2)
+  showAllButton:SetScript("OnClick", function()
+    hiddenIndexes = {}
+    UpdateHiding()
+  end)
+
+  UpdateHiding = function()
+    for index, w in ipairs(widgets) do
+      w:SetShown(hiddenIndexes[index] ~= true)
+    end
+    showAllButton:SetShown(next(hiddenIndexes) ~= nil)
+    local oldSize = #selectionIndexes
+    selectionIndexes = tFilter(selectionIndexes, function(i) return not hiddenIndexes[i] end, true)
+    if #selectionIndexes ~= oldSize then
+      UpdateSelection()
+    end
+  end
 
   local auraContainers = {
     buffs = CreateFrame("Frame", nil, preview, "PlatynatorPropagateMouseTemplate"),
@@ -991,8 +1030,8 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
         ForceSelection(fociOnDown)
         StartMovingSelection()
       end)
-      w:SetScript("OnMouseUp", function()
-        ToggleSelection(GetMouseFoci())
+      w:SetScript("OnMouseUp", function(_, button)
+        ToggleSelection(GetMouseFoci(), button)
       end)
     end
   end
@@ -1138,7 +1177,7 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
           w.background:Show()
         end
       elseif w.kind == "highlights" then
-        w:Show(true)
+        w:Show()
       end
 
       w:SetScript("OnEnter", function()
@@ -1169,8 +1208,8 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
         ForceSelection(fociOnDown)
         StartMovingSelection()
       end)
-      w:SetScript("OnMouseUp", function()
-        ToggleSelection(GetMouseFoci())
+      w:SetScript("OnMouseUp", function(_, button)
+        ToggleSelection(GetMouseFoci(), button)
       end)
     end
     for _, container in pairs(auraContainers) do
@@ -1222,12 +1261,20 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
       container:ClearAllPoints()
       addonTable.Display.ApplyAnchor(container, details.anchor)
     end
+
+    UpdateHiding()
   end
 
   GenerateWidgets()
 
+  local previousDesign = addonTable.Config.Get(addonTable.Config.Options.STYLE)
+
   addonTable.CallbackRegistry:RegisterCallback("RefreshStateChange", function(_, state)
     if state[addonTable.Constants.RefreshReason.Design] then
+      local currentDesign = addonTable.Config.Get(addonTable.Config.Options.STYLE)
+      if previousDesign ~= currentDesign and (not previousDesign:match("^_") or currentDesign ~= addonTable.Constants.CustomName) then
+        hiddenIndexes = {}
+      end
       local design = addonTable.CustomiseDialog.GetCurrentDesign()
       addonTable.CurrentFont = addonTable.Core.GetFontByDesign(design)
       designScale:SetValue(design.scale * 100)
