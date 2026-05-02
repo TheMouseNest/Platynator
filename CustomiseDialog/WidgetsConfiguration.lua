@@ -6,7 +6,7 @@ local LSM = LibStub("LibSharedMedia-3.0")
 local textureHeight = 20
 
 local function GetLabelsValues(allAssets, filter, showName, widthMod)
-  widthMod = widthMod or 0
+  widthMod = widthMod or 1
   local labels, values = {}, {}
 
   local allKeys = GetKeysArray(allAssets)
