@@ -5,9 +5,9 @@ addonTable.Display.EnergyTextMixin = {}
 
 function addonTable.Display.EnergyTextMixin:PostInit()
   if self.details.showPercentSymbol then
-    self.tail = "%"
+    self.pattern = "%d%%"
   else
-    self.tail = ""
+    self.pattern = "%d"
   end
 end
 
@@ -51,9 +51,12 @@ function addonTable.Display.EnergyTextMixin:Strip()
 end
 
 function addonTable.Display.EnergyTextMixin:UpdateValue()
-  self.text:SetText(string.format("%d", UnitPowerPercent(self.unit, self.powerKind, nil, CurveConstants.ScaleTo100)) .. self.tail)
+  local percent = UnitPowerPercent(self.unit, self.powerKind, nil, CurveConstants.ScaleTo100)
+  self.text:SetText(string.format(self.pattern, percent))
 end
 
 function addonTable.Display.EnergyTextMixin:OnEvent()
-  self:UpdateValue()
+  if self.unit then
+    self:UpdateValue()
+  end
 end
