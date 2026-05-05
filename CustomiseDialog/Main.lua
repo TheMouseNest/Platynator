@@ -619,9 +619,12 @@ local function SetupStyleSelect(parent)
 
     return dropdown
   end
-  local function GenerateEnableCheckbox(parent, label, key)
+  local function GenerateEnableCheckbox(parent, label, key, onToggle)
     local checkbox = addonTable.CustomiseDialog.Components.GetCheckbox(parent, label, 28, function(value)
       addonTable.Config.Get(addonTable.Config.Options.DESIGNS_ENABLED)[key] = value
+      if onToggle then
+        onToggle()
+      end
     end)
     function checkbox:CustomSetValue()
       checkbox:SetValue(addonTable.Config.Get(addonTable.Config.Options.DESIGNS_ENABLED)[key])
@@ -687,9 +690,26 @@ local function SetupStyleSelect(parent)
     table.insert(allFrames, simplifiedStyleDropdown)
   end
 
-  local combatCheckbox = GenerateEnableCheckbox(combatContainer, addonTable.Locales.ENABLE_OVERRIDE, "combat")
+  local combatCheckbox = GenerateEnableCheckbox(combatContainer, addonTable.Locales.ENABLE_COMBAT_OVERRIDE, "combat", function()
+    if UpdateCombatOverrideStyleControls then
+      UpdateCombatOverrideStyleControls()
+    end
+  end)
   combatCheckbox:SetPoint("TOP")
   table.insert(allFrames, combatCheckbox)
+
+  local combatHelpButton = CreateFrame("Button", nil, combatCheckbox, "UIPanelButtonTemplate")
+  combatHelpButton:SetText("?")
+  combatHelpButton:SetSize(22, 20)
+  combatHelpButton:SetPoint("RIGHT", combatCheckbox, "RIGHT", -6, 0)
+  combatHelpButton:SetScript("OnEnter", function(self)
+    GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+    GameTooltip:SetText(addonTable.Locales.ENABLE_COMBAT_OVERRIDE_HELP, nil, nil, nil, nil, true)
+    GameTooltip:Show()
+  end)
+  combatHelpButton:SetScript("OnLeave", function()
+    GameTooltip:Hide()
+  end)
 
   friendlyCombatStyleDropdown = GenerateDropdown(combatContainer, addonTable.Locales.FRIENDLY, "friendCombat")
   friendlyCombatStyleDropdown:SetPoint("TOP", allFrames[#allFrames], "BOTTOM", 0, -30)
@@ -720,12 +740,47 @@ local function SetupStyleSelect(parent)
     end
   end
 
-  local pvpCheckbox = GenerateEnableCheckbox(pvpContainer, addonTable.Locales.ENABLE_OVERRIDE_INSTANCES, "pvpInstance")
+  local pvpCheckbox = GenerateEnableCheckbox(pvpContainer, addonTable.Locales.ENABLE_PVP_OVERRIDE_INSTANCES, "pvpInstance", function()
+    if UpdatePvPOverrideStyleControls then
+      UpdatePvPOverrideStyleControls()
+    end
+  end)
   pvpCheckbox:SetPoint("TOP")
   table.insert(allFrames, pvpCheckbox)
-  local pvpWorldCheckbox = GenerateEnableCheckbox(pvpContainer, addonTable.Locales.ENABLE_OVERRIDE_WORLD, "pvpWorld")
+
+  local pvpInstancesHelpButton = CreateFrame("Button", nil, pvpCheckbox, "UIPanelButtonTemplate")
+  pvpInstancesHelpButton:SetText("?")
+  pvpInstancesHelpButton:SetSize(22, 20)
+  pvpInstancesHelpButton:SetPoint("RIGHT", pvpCheckbox, "RIGHT", -6, 0)
+  pvpInstancesHelpButton:SetScript("OnEnter", function(self)
+    GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+    GameTooltip:SetText(addonTable.Locales.ENABLE_PVP_OVERRIDE_INSTANCES_HELP, nil, nil, nil, nil, true)
+    GameTooltip:Show()
+  end)
+  pvpInstancesHelpButton:SetScript("OnLeave", function()
+    GameTooltip:Hide()
+  end)
+
+  local pvpWorldCheckbox = GenerateEnableCheckbox(pvpContainer, addonTable.Locales.ENABLE_PVP_OVERRIDE_WORLD, "pvpWorld", function()
+    if UpdatePvPOverrideStyleControls then
+      UpdatePvPOverrideStyleControls()
+    end
+  end)
   pvpWorldCheckbox:SetPoint("TOP", allFrames[#allFrames], "BOTTOM")
   table.insert(allFrames, pvpWorldCheckbox)
+
+  local pvpWorldHelpButton = CreateFrame("Button", nil, pvpWorldCheckbox, "UIPanelButtonTemplate")
+  pvpWorldHelpButton:SetText("?")
+  pvpWorldHelpButton:SetSize(22, 20)
+  pvpWorldHelpButton:SetPoint("RIGHT", pvpWorldCheckbox, "RIGHT", -6, 0)
+  pvpWorldHelpButton:SetScript("OnEnter", function(self)
+    GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+    GameTooltip:SetText(addonTable.Locales.ENABLE_PVP_OVERRIDE_WORLD_HELP, nil, nil, nil, nil, true)
+    GameTooltip:Show()
+  end)
+  pvpWorldHelpButton:SetScript("OnLeave", function()
+    GameTooltip:Hide()
+  end)
 
   friendlyPvPPlayerStyleDropdown = GenerateDropdown(pvpContainer, addonTable.Locales.FRIENDLY_PLAYER, "friendPvPPlayer")
   friendlyPvPPlayerStyleDropdown:SetPoint("TOP", allFrames[#allFrames], "BOTTOM", 0, -30)
