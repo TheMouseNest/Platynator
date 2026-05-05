@@ -572,6 +572,15 @@ function addonTable.Core.MigrateSettings()
   if mapping["enemySimplified"] == nil or addonTable.Core.GetDesignByName(mapping["enemySimplified"]) == nil then
     mapping["enemySimplified"] = "_hare_simplified"
   end
+  if mapping["enemySecondary"] == nil or addonTable.Core.GetDesignByName(mapping["enemySecondary"]) == nil then
+    mapping["enemySecondary"] = "_name-only"
+  end
+  if mapping["enemySecondaryCombat"] == nil or addonTable.Core.GetDesignByName(mapping["enemySecondaryCombat"]) == nil then
+    mapping["enemySecondaryCombat"] = "_name-only"
+  end
+  if mapping["enemySecondaryPvPPlayer"] == nil or addonTable.Core.GetDesignByName(mapping["enemySecondaryPvPPlayer"]) == nil then
+    mapping["enemySecondaryPvPPlayer"] = "_name-only"
+  end
 
   local simplified = addonTable.Config.Get(addonTable.Config.Options.SIMPLIFIED_NAMEPLATES)
   if simplified["instancesNormal"] == nil then
@@ -603,6 +612,15 @@ function addonTable.Core.MigrateSettings()
     state.friendlyNPC = state.npc
     state.player = nil
     state.npc = nil
+  end
+
+  -- Legacy setting from previous "show only needed" behavior.
+  local legacyOnlyNeeded = addonTable.Config.CurrentProfile.show_nameplates_only_needed
+  if legacyOnlyNeeded ~= nil then
+    if addonTable.Config.CurrentProfile.enemy_primary_secondary_style_split == nil then
+      addonTable.Config.CurrentProfile.enemy_primary_secondary_style_split = legacyOnlyNeeded and true or false
+    end
+    addonTable.Config.CurrentProfile.show_nameplates_only_needed = nil
   end
 end
 

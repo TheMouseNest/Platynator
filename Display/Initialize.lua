@@ -56,10 +56,30 @@ function addonTable.Display.ManagerMixin:OnLoad()
       frame.kind = "enemySimplifiedCombat"
       frame:OnLoad()
     end),
+    -- Secondary hostile style for units that are currently outside
+    -- primary checks
+    -- when primary/secondary enemy style splitting is enabled.
+    -- See ManagerMixin:ShouldUseSecondaryEnemyStyle.
+    enemySecondary = CreateFramePool("Frame", UIParent, nil, nil, false, function(frame)
+      Mixin(frame, addonTable.Display.NameplateMixin)
+      frame.kind = "enemySecondary"
+      frame:OnLoad()
+    end),
+    enemySecondaryCombat = CreateFramePool("Frame", UIParent, nil, nil, false, function(frame)
+      Mixin(frame, addonTable.Display.NameplateMixin)
+      frame.kind = "enemySecondaryCombat"
+      frame:OnLoad()
+    end),
+    enemySecondaryPvPPlayer = CreateFramePool("Frame", UIParent, nil, nil, false, function(frame)
+      Mixin(frame, addonTable.Display.NameplateMixin)
+      frame.kind = "enemySecondaryPvPPlayer"
+      frame:OnLoad()
+    end),
   }
   self.nameplateDisplays = {}
 
   self.MouseoverMonitor = nil
+  self.lastMouseoverNameplateUnit = nil
 
   self:SetScript("OnEvent", self.OnEvent)
 
@@ -78,8 +98,6 @@ function addonTable.Display.ManagerMixin:OnLoad()
   end
   self:RegisterEvent("UI_SCALE_CHANGED")
 
-  self:RegisterEvent("PLAYER_SOFT_INTERACT_CHANGED")
-
   self:RegisterUnitEvent("UNIT_POWER_UPDATE", "player")
   self:RegisterEvent("RUNE_POWER_UPDATE")
   if addonTable.Constants.IsRetail then
@@ -88,6 +106,7 @@ function addonTable.Display.ManagerMixin:OnLoad()
   self:RegisterEvent("UNIT_FACTION")
   self:RegisterEvent("PLAYER_REGEN_DISABLED")
   self:RegisterEvent("PLAYER_REGEN_ENABLED")
+  self:RegisterEvent("QUEST_LOG_UPDATE")
 
   C_Timer.NewTicker(0.1, function() -- Used for transitioning mobs to attackable
     local UnitCanAttack = UnitCanAttack
@@ -249,7 +268,7 @@ function addonTable.Display.ManagerMixin:OnLoad()
         self:Uninstall(unit)
         local nameplate = C_NamePlate.GetNamePlateForUnit(unit, issecure())
         if nameplate then
-          self:Install(unit, nameplate)
+          self:Install(unit)
         end
       end
     end
@@ -347,7 +366,12 @@ function addonTable.Display.ManagerMixin:UpdateShowState()
     return
   end
 
-  C_CVar.SetCVar("nameplateShowAll", addonTable.Config.Get(addonTable.Config.Options.SHOW_NAMEPLATES_ONLY_NEEDED) and "0" or "1")
+  -- We always leave nameplateShowAll enabled so that Blizzard doesn't cull
+  -- friendly (player/NPC) plates. When primary/secondary enemy style splitting is on,
+  -- hostile plates are routed to a secondary style pool when they do not match
+  -- primary checks; see ShouldUseSecondaryEnemyStyle /
+  -- RefreshPrimarySecondaryPoolForUnit.
+  C_CVar.SetCVar("nameplateShowAll", "1")
 
   local currentShow = addonTable.Config.Get(addonTable.Config.Options.SHOW_NAMEPLATES)
 
@@ -366,6 +390,86 @@ function addonTable.Display.ManagerMixin:UpdateShowState()
   self.toggledFriendly = false
 
   self:UpdateInstanceShowState()
+  self:RefreshPrimarySecondaryPoolForAllUnits()
+end
+
+-- Returns true when hostile `unit` should use the secondary enemy style pool
+-- instead of the normal hostile routing because primary/secondary style
+-- splitting is enabled and the unit does not match primary checks.
+-- Primary checks: target/focus/soft-target/soft-interact, optionally
+-- mouseover, in combat with player/party, or related to an active quest.
+-- Friendly units and disabled feature state always return false.
+function addonTable.Display.ManagerMixin:ShouldUseSecondaryEnemyStyle(unit)
+  if not unit or not UnitExists(unit) then
+    return false
+  end
+  if not addonTable.Config.Get(addonTable.Config.Options.ENEMY_PRIMARY_SECONDARY_STYLE_SPLIT) then
+    return false
+  end
+  if not UnitCanAttack("player", unit) then
+    return false
+  end
+  if UnitIsUnit(unit, "target")
+    or UnitIsUnit(unit, "focus")
+    or UnitIsUnit(unit, "softenemy")
+    or UnitIsUnit(unit, "softinteract") then
+    return false
+  end
+  if addonTable.Config.Get(addonTable.Config.Options.ENEMY_PRIMARY_MOUSEOVER_PRIORITY)
+    and UnitIsUnit(unit, "mouseover") then
+    return false
+  end
+  if addonTable.Display.Utilities.IsInCombatWith(unit) then
+    return false
+  end
+  if C_QuestLog and C_QuestLog.UnitIsRelatedToActiveQuest and C_QuestLog.UnitIsRelatedToActiveQuest(unit) then
+    return false
+  end
+  return true
+end
+
+-- If the unit's primary/secondary state disagrees with the pool its current display was
+-- acquired from (secondary vs. normal hostile routing), tear down and rebuild via Install so
+-- the correct pool is used.
+function addonTable.Display.ManagerMixin:RefreshPrimarySecondaryPoolForUnit(unit)
+  local display = self.nameplateDisplays[unit]
+  if not display then
+    return
+  end
+  local wantsSecondary = self:ShouldUseSecondaryEnemyStyle(unit)
+  local isSecondary = display.kind == "enemySecondary"
+  if wantsSecondary ~= isSecondary then
+    self:Uninstall(unit)
+    self:Install(unit)
+  end
+end
+
+function addonTable.Display.ManagerMixin:RefreshPrimarySecondaryPoolForAllUnits()
+  for _, unit in ipairs(GetKeysArray(self.nameplateDisplays)) do
+    self:RefreshPrimarySecondaryPoolForUnit(unit)
+  end
+end
+
+function addonTable.Display.ManagerMixin:GetVisibleNameplateUnitForToken(token)
+  for i = 1, 40 do
+    local unit = "nameplate" .. i
+    if UnitIsUnit(unit, token) then
+      return unit
+    end
+  end
+end
+
+function addonTable.Display.ManagerMixin:RefreshPrimarySecondaryPoolForMouseoverChange()
+  local previous = self.lastMouseoverNameplateUnit
+  local current = self:GetVisibleNameplateUnitForToken("mouseover")
+  self.lastMouseoverNameplateUnit = current
+
+  if previous and previous ~= current then
+    self:RefreshPrimarySecondaryPoolForUnit(previous)
+  end
+  if current then
+    self:RefreshPrimarySecondaryPoolForUnit(current)
+  end
 end
 
 function addonTable.Display.ManagerMixin:UpdateInstanceShowState()
@@ -461,6 +565,17 @@ function addonTable.Display.ManagerMixin:Install(unit)
       else
         newDisplay = self.pools["friend"]:Acquire()
       end
+    elseif self:ShouldUseSecondaryEnemyStyle(unit) then
+      -- Primary/secondary enemy split is on and this hostile unit does not match
+      -- primary checks; use the secondary routing path including Combat/PvP
+      -- overrides when their criteria are met.
+      if UnitIsPlayer(unit) and (not IsInInstance() and enabled.pvpWorld or enabled.pvpInstance and addonTable.Display.Utilities.IsInRelevantInstance({pvp = true})) then
+        newDisplay = self.pools["enemySecondaryPvPPlayer"]:Acquire()
+      elseif enabled.combat and addonTable.Display.Utilities.IsInCombatWith(unit) then
+        newDisplay = self.pools["enemySecondaryCombat"]:Acquire()
+      else
+        newDisplay = self.pools["enemySecondary"]:Acquire()
+      end
     else
       local simplifiedSettings = addonTable.Config.Get(addonTable.Config.Options.SIMPLIFIED_NAMEPLATES)
       local classification = UnitClassification(unit)
@@ -554,6 +669,10 @@ function addonTable.Display.ManagerMixin:UpdateForMouseoverFrequent()
     self.MouseoverMonitor:Cancel()
     self.MouseoverMonitor = nil
     self:UpdateForMouseover()
+    if addonTable.Config.Get(addonTable.Config.Options.ENEMY_PRIMARY_SECONDARY_STYLE_SPLIT)
+      and addonTable.Config.Get(addonTable.Config.Options.ENEMY_PRIMARY_MOUSEOVER_PRIORITY) then
+      self:RefreshPrimarySecondaryPoolForMouseoverChange()
+    end
     if IsMouseButtonDown() then -- Holding down the mouse button will remove the mouseover unit temporarily
       self:RegisterEvent("GLOBAL_MOUSE_UP")
     end
@@ -776,10 +895,18 @@ function addonTable.Display.ManagerMixin:OnEvent(eventName, ...)
     self:Uninstall(unit)
   elseif eventName == "PLAYER_TARGET_CHANGED" or eventName == "PLAYER_SOFT_ENEMY_CHANGED" or eventName == "PLAYER_SOFT_FRIEND_CHANGED" then
     self:UpdateForTarget()
+    self:RefreshPrimarySecondaryPoolForAllUnits()
   elseif eventName == "PLAYER_FOCUS_CHANGED" then
     self:UpdateForFocus()
+    self:RefreshPrimarySecondaryPoolForAllUnits()
   elseif eventName == "UPDATE_MOUSEOVER_UNIT" then
     self:UpdateForMouseover()
+    if addonTable.Config.Get(addonTable.Config.Options.ENEMY_PRIMARY_SECONDARY_STYLE_SPLIT)
+      and addonTable.Config.Get(addonTable.Config.Options.ENEMY_PRIMARY_MOUSEOVER_PRIORITY) then
+      self:RefreshPrimarySecondaryPoolForMouseoverChange()
+    end
+  elseif eventName == "QUEST_LOG_UPDATE" then
+    self:RefreshPrimarySecondaryPoolForAllUnits()
   elseif eventName == "PLAYER_SOFT_INTERACT_CHANGED" then
     if self.lastInteract and self.lastInteract.interactUnit then
       self.lastInteract:UpdateSoftInteract()
@@ -799,6 +926,7 @@ function addonTable.Display.ManagerMixin:OnEvent(eventName, ...)
     else
       self.lastInteract = nil
     end
+    self:RefreshPrimarySecondaryPoolForAllUnits()
   elseif eventName == "UNIT_POWER_UPDATE" or eventName == "RUNE_POWER_UPDATE" or eventName == "UNIT_POWER_POINT_CHARGE" then
     for _, display in pairs(self.nameplateDisplays) do
       display:UpdateForTarget()
@@ -812,9 +940,14 @@ function addonTable.Display.ManagerMixin:OnEvent(eventName, ...)
     end
   elseif eventName == "GLOBAL_MOUSE_UP" then
     self:UpdateForMouseover()
+    if addonTable.Config.Get(addonTable.Config.Options.ENEMY_PRIMARY_SECONDARY_STYLE_SPLIT)
+      and addonTable.Config.Get(addonTable.Config.Options.ENEMY_PRIMARY_MOUSEOVER_PRIORITY) then
+      self:RefreshPrimarySecondaryPoolForMouseoverChange()
+    end
     self:UnregisterEvent("GLOBAL_MOUSE_UP")
   elseif eventName == "PLAYER_REGEN_DISABLED" then
     self:UpdateObscuredAlpha()
+    self:RefreshPrimarySecondaryPoolForAllUnits()
   elseif eventName == "PLAYER_REGEN_ENABLED" then
     if self.combatChangesPending then
       self.combatChangesPending = false
@@ -826,6 +959,7 @@ function addonTable.Display.ManagerMixin:OnEvent(eventName, ...)
       self:UpdateClickable()
     end
     self:UpdateObscuredAlpha()
+    self:RefreshPrimarySecondaryPoolForAllUnits()
   elseif eventName == "UI_SCALE_CHANGED" then
     for unit, display in pairs(self.nameplateDisplays) do
       display.offsetScale = addonTable.Core.GetDesignScale(display.kind) * UIParent:GetEffectiveScale() * addonTable.Config.Get(addonTable.Config.Options.GLOBAL_SCALE)
