@@ -143,7 +143,7 @@ else
   interruptMap = {
     ["DEATHKNIGHT"] = {47528},
     ["WARRIOR"] = {6552},
-    ["WARLOCK"] = {89766, 119910},
+    ["WARLOCK"] = {89766, 119910, 132409},
     ["SHAMAN"] = {57994},
     ["ROGUE"] = {1766},
     ["PRIEST"] = {15487},
