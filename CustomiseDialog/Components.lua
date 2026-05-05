@@ -33,12 +33,27 @@ function addonTable.CustomiseDialog.Components.GetCheckbox(parent, label, spacin
   end)
 
   holder:SetScript("OnMouseUp", function()
-    checkBox:Click()
+    if checkBox:IsEnabled() then
+      checkBox:Click()
+    end
   end)
 
   checkBox:SetScript("OnClick", function()
     callback(checkBox:GetChecked())
   end)
+
+  holder.CheckBox = checkBox
+  function holder:SetControlEnabled(enabled)
+    if enabled then
+      checkBox:Enable()
+      checkBox:SetNormalFontObject(GameFontHighlight)
+      checkBox:SetAlpha(1)
+    else
+      checkBox:Disable()
+      checkBox:SetNormalFontObject(GameFontDisable)
+      checkBox:SetAlpha(0.85)
+    end
+  end
 
   return holder
 end
@@ -107,6 +122,17 @@ function addonTable.CustomiseDialog.Components.GetBasicDropdown(parent, labelTex
   end
   frame.Label = label
   frame.DropDown = dropdown
+  function frame:SetControlEnabled(enabled)
+    if enabled then
+      dropdown:Enable()
+      label:SetFontObject(GameFontHighlight)
+      dropdown:SetAlpha(1)
+    else
+      dropdown:Disable()
+      label:SetFontObject(GameFontDisable)
+      dropdown:SetAlpha(0.85)
+    end
+  end
   frame:SetHeight(40)
   --addonTable.Skins.AddFrame("Dropdown", frame.DropDown)
 

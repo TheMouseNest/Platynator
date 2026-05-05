@@ -233,15 +233,57 @@ local function SetupBehaviour(parent)
 
   local allFrames = {}
 
-  local showNameplatesWhenNeededCheckbox = addonTable.CustomiseDialog.Components.GetCheckbox(container, addonTable.Locales.SHOW_NAMEPLATES_ONLY_IF_NEEDED, 28, function(value)
+  local primarySecondaryEnemySplitCheckbox = addonTable.CustomiseDialog.Components.GetCheckbox(container, addonTable.Locales.USE_PRIMARY_SECONDARY_ENEMY_STYLES, 28, function(value)
     if InCombatLockdown() then
       return
     end
-    addonTable.Config.Set(addonTable.Config.Options.SHOW_NAMEPLATES_ONLY_NEEDED, value)
+    addonTable.Config.Set(addonTable.Config.Options.ENEMY_PRIMARY_SECONDARY_STYLE_SPLIT, value)
   end)
-  showNameplatesWhenNeededCheckbox.option = addonTable.Config.Options.SHOW_NAMEPLATES_ONLY_NEEDED
-  showNameplatesWhenNeededCheckbox:SetPoint("TOP")
-  table.insert(allFrames, showNameplatesWhenNeededCheckbox)
+  primarySecondaryEnemySplitCheckbox.option = addonTable.Config.Options.ENEMY_PRIMARY_SECONDARY_STYLE_SPLIT
+  primarySecondaryEnemySplitCheckbox:SetPoint("TOP")
+  table.insert(allFrames, primarySecondaryEnemySplitCheckbox)
+
+  local primarySecondaryHelpButton = CreateFrame("Button", nil, primarySecondaryEnemySplitCheckbox, "UIPanelButtonTemplate")
+  primarySecondaryHelpButton:SetText("?")
+  primarySecondaryHelpButton:SetSize(22, 20)
+  primarySecondaryHelpButton:SetPoint("RIGHT", primarySecondaryEnemySplitCheckbox, "RIGHT", -6, 0)
+  primarySecondaryHelpButton:SetScript("OnEnter", function(self)
+    GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+    GameTooltip:SetText(addonTable.Locales.ENEMY_PRIMARY_SECONDARY_STYLE_SPLIT_HELP, nil, nil, nil, nil, true)
+    GameTooltip:Show()
+  end)
+  primarySecondaryHelpButton:SetScript("OnLeave", function()
+    GameTooltip:Hide()
+  end)
+
+  local mouseoverPriorityCheckbox = addonTable.CustomiseDialog.Components.GetCheckbox(container, addonTable.Locales.ENEMY_PRIMARY_MOUSEOVER_PRIORITY, 28, function(value)
+    if InCombatLockdown() then
+      return
+    end
+    addonTable.Config.Set(addonTable.Config.Options.ENEMY_PRIMARY_MOUSEOVER_PRIORITY, value)
+  end)
+  mouseoverPriorityCheckbox.option = addonTable.Config.Options.ENEMY_PRIMARY_MOUSEOVER_PRIORITY
+  mouseoverPriorityCheckbox:SetPoint("TOP", allFrames[#allFrames], "BOTTOM", 0, 0)
+  table.insert(allFrames, mouseoverPriorityCheckbox)
+
+  local mouseoverDisabledHelpButton = CreateFrame("Button", nil, mouseoverPriorityCheckbox, "UIPanelButtonTemplate")
+  mouseoverDisabledHelpButton:SetText("?")
+  mouseoverDisabledHelpButton:SetSize(22, 20)
+  mouseoverDisabledHelpButton:SetPoint("RIGHT", mouseoverPriorityCheckbox, "RIGHT", -6, 0)
+  mouseoverDisabledHelpButton:SetScript("OnEnter", function(self)
+    GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+    GameTooltip:SetText(addonTable.Locales.ENEMY_PRIMARY_SECONDARY_DISABLED_HELP, nil, nil, nil, nil, true)
+    GameTooltip:Show()
+  end)
+  mouseoverDisabledHelpButton:SetScript("OnLeave", function()
+    GameTooltip:Hide()
+  end)
+
+  local function UpdatePrimarySecondaryBehaviourControls()
+    local enabled = addonTable.Config.Get(addonTable.Config.Options.ENEMY_PRIMARY_SECONDARY_STYLE_SPLIT)
+    mouseoverPriorityCheckbox:SetControlEnabled(enabled)
+    mouseoverDisabledHelpButton:SetShown(not enabled)
+  end
 
   local applyNameplatesDropdown = addonTable.CustomiseDialog.Components.GetBasicDropdown(container, addonTable.Locales.USE_NAMEPLATES_FOR)
   applyNameplatesDropdown:SetPoint("TOP", allFrames[#allFrames], "BOTTOM")
@@ -465,6 +507,13 @@ local function SetupBehaviour(parent)
         end
       end
     end
+    UpdatePrimarySecondaryBehaviourControls()
+  end)
+
+  addonTable.CallbackRegistry:RegisterCallback("SettingChanged", function(_, settingName)
+    if settingName == addonTable.Config.Options.ENEMY_PRIMARY_SECONDARY_STYLE_SPLIT and container:IsVisible() then
+      UpdatePrimarySecondaryBehaviourControls()
+    end
   end)
 
   return container
@@ -570,9 +619,12 @@ local function SetupStyleSelect(parent)
 
     return dropdown
   end
-  local function GenerateEnableCheckbox(parent, label, key)
+  local function GenerateEnableCheckbox(parent, label, key, onToggle)
     local checkbox = addonTable.CustomiseDialog.Components.GetCheckbox(parent, label, 28, function(value)
       addonTable.Config.Get(addonTable.Config.Options.DESIGNS_ENABLED)[key] = value
+      if onToggle then
+        onToggle()
+      end
     end)
     function checkbox:CustomSetValue()
       checkbox:SetValue(addonTable.Config.Get(addonTable.Config.Options.DESIGNS_ENABLED)[key])
@@ -588,6 +640,49 @@ local function SetupStyleSelect(parent)
   enemyStyleDropdown:SetPoint("TOP", allFrames[#allFrames], "BOTTOM")
   table.insert(allFrames, enemyStyleDropdown)
 
+  -- Style used for hostile plates when primary/secondary enemy splitting is enabled
+  -- and the unit is not currently in a primary bucket.
+  -- See ManagerMixin:ShouldUseSecondaryEnemyStyle.
+  local enemySecondaryStyleDropdown = GenerateDropdown(defaultContainer, addonTable.Locales.SECONDARY_ENEMY, "enemySecondary")
+  enemySecondaryStyleDropdown:SetPoint("TOP", allFrames[#allFrames], "BOTTOM")
+  table.insert(allFrames, enemySecondaryStyleDropdown)
+
+  local styleDisabledHelpButton = CreateFrame("Button", nil, defaultContainer, "UIPanelButtonTemplate")
+  styleDisabledHelpButton:SetText("?")
+  styleDisabledHelpButton:SetSize(22, 20)
+  styleDisabledHelpButton:SetPoint("RIGHT", enemySecondaryStyleDropdown, "RIGHT", -6, 0)
+  styleDisabledHelpButton:SetScript("OnEnter", function(self)
+    GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+    GameTooltip:SetText(addonTable.Locales.ENEMY_PRIMARY_SECONDARY_DISABLED_HELP, nil, nil, nil, nil, true)
+    GameTooltip:Show()
+  end)
+  styleDisabledHelpButton:SetScript("OnLeave", function()
+    GameTooltip:Hide()
+  end)
+
+  local friendlyCombatStyleDropdown
+  local enemyCombatStyleDropdown
+  local enemySecondaryCombatStyleDropdown
+  local simplifiedCombatStyleDropdown
+  local friendlyPvPPlayerStyleDropdown
+  local enemyPvPPlayerStyleDropdown
+  local enemySecondaryPvPPlayerStyleDropdown
+
+  local UpdateCombatOverrideStyleControls
+  local UpdatePvPOverrideStyleControls
+
+  local function UpdatePrimarySecondaryStyleControls()
+    local splitEnabled = addonTable.Config.Get(addonTable.Config.Options.ENEMY_PRIMARY_SECONDARY_STYLE_SPLIT)
+    enemySecondaryStyleDropdown:SetControlEnabled(splitEnabled)
+    if UpdateCombatOverrideStyleControls then
+      UpdateCombatOverrideStyleControls()
+    end
+    if UpdatePvPOverrideStyleControls then
+      UpdatePvPOverrideStyleControls()
+    end
+    styleDisabledHelpButton:SetShown(not splitEnabled)
+  end
+
   local simplifiedStyleDropdown
   if C_NamePlateManager and C_NamePlateManager.SetNamePlateSimplified then
     simplifiedStyleDropdown = GenerateDropdown(defaultContainer, addonTable.Locales.SIMPLIFIED, "enemySimplified")
@@ -595,41 +690,125 @@ local function SetupStyleSelect(parent)
     table.insert(allFrames, simplifiedStyleDropdown)
   end
 
-  local combatCheckbox = GenerateEnableCheckbox(combatContainer, addonTable.Locales.ENABLE_OVERRIDE, "combat")
+  local combatCheckbox = GenerateEnableCheckbox(combatContainer, addonTable.Locales.ENABLE_COMBAT_OVERRIDE, "combat", function()
+    if UpdateCombatOverrideStyleControls then
+      UpdateCombatOverrideStyleControls()
+    end
+  end)
   combatCheckbox:SetPoint("TOP")
   table.insert(allFrames, combatCheckbox)
 
-  local friendlyCombatStyleDropdown = GenerateDropdown(combatContainer, addonTable.Locales.FRIENDLY, "friendCombat")
+  local combatHelpButton = CreateFrame("Button", nil, combatCheckbox, "UIPanelButtonTemplate")
+  combatHelpButton:SetText("?")
+  combatHelpButton:SetSize(22, 20)
+  combatHelpButton:SetPoint("RIGHT", combatCheckbox, "RIGHT", -6, 0)
+  combatHelpButton:SetScript("OnEnter", function(self)
+    GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+    GameTooltip:SetText(addonTable.Locales.ENABLE_COMBAT_OVERRIDE_HELP, nil, nil, nil, nil, true)
+    GameTooltip:Show()
+  end)
+  combatHelpButton:SetScript("OnLeave", function()
+    GameTooltip:Hide()
+  end)
+
+  friendlyCombatStyleDropdown = GenerateDropdown(combatContainer, addonTable.Locales.FRIENDLY, "friendCombat")
   friendlyCombatStyleDropdown:SetPoint("TOP", allFrames[#allFrames], "BOTTOM", 0, -30)
   table.insert(allFrames, friendlyCombatStyleDropdown)
 
-  local enemyCombatStyleDropdown = GenerateDropdown(combatContainer, addonTable.Locales.ENEMY, "enemyCombat")
+  enemyCombatStyleDropdown = GenerateDropdown(combatContainer, addonTable.Locales.ENEMY, "enemyCombat")
   enemyCombatStyleDropdown:SetPoint("TOP", allFrames[#allFrames], "BOTTOM")
   table.insert(allFrames, enemyCombatStyleDropdown)
 
-  local simplifiedCombatStyleDropdown
+  enemySecondaryCombatStyleDropdown = GenerateDropdown(combatContainer, addonTable.Locales.SECONDARY_ENEMY, "enemySecondaryCombat")
+  enemySecondaryCombatStyleDropdown:SetPoint("TOP", allFrames[#allFrames], "BOTTOM")
+  table.insert(allFrames, enemySecondaryCombatStyleDropdown)
+
   if C_NamePlateManager and C_NamePlateManager.SetNamePlateSimplified then
     simplifiedCombatStyleDropdown = GenerateDropdown(combatContainer, addonTable.Locales.SIMPLIFIED, "enemySimplifiedCombat")
     simplifiedCombatStyleDropdown:SetPoint("TOP", allFrames[#allFrames], "BOTTOM")
     table.insert(allFrames, simplifiedCombatStyleDropdown)
   end
 
-  local pvpCheckbox = GenerateEnableCheckbox(pvpContainer, addonTable.Locales.ENABLE_OVERRIDE_INSTANCES, "pvpInstance")
+  UpdateCombatOverrideStyleControls = function()
+    local state = addonTable.Config.Get(addonTable.Config.Options.DESIGNS_ENABLED)
+    local splitEnabled = addonTable.Config.Get(addonTable.Config.Options.ENEMY_PRIMARY_SECONDARY_STYLE_SPLIT)
+    friendlyCombatStyleDropdown:SetControlEnabled(state.combat)
+    enemyCombatStyleDropdown:SetControlEnabled(state.combat)
+    enemySecondaryCombatStyleDropdown:SetControlEnabled(state.combat and splitEnabled)
+    if simplifiedCombatStyleDropdown then
+      simplifiedCombatStyleDropdown:SetControlEnabled(state.combat)
+    end
+  end
+
+  local pvpCheckbox = GenerateEnableCheckbox(pvpContainer, addonTable.Locales.ENABLE_PVP_OVERRIDE_INSTANCES, "pvpInstance", function()
+    if UpdatePvPOverrideStyleControls then
+      UpdatePvPOverrideStyleControls()
+    end
+  end)
   pvpCheckbox:SetPoint("TOP")
   table.insert(allFrames, pvpCheckbox)
-  table.insert(allFrames, pvpCheckbox)
 
-  local pvpWorldCheckbox = GenerateEnableCheckbox(pvpContainer, addonTable.Locales.ENABLE_OVERRIDE_WORLD, "pvpWorld")
+  local pvpInstancesHelpButton = CreateFrame("Button", nil, pvpCheckbox, "UIPanelButtonTemplate")
+  pvpInstancesHelpButton:SetText("?")
+  pvpInstancesHelpButton:SetSize(22, 20)
+  pvpInstancesHelpButton:SetPoint("RIGHT", pvpCheckbox, "RIGHT", -6, 0)
+  pvpInstancesHelpButton:SetScript("OnEnter", function(self)
+    GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+    GameTooltip:SetText(addonTable.Locales.ENABLE_PVP_OVERRIDE_INSTANCES_HELP, nil, nil, nil, nil, true)
+    GameTooltip:Show()
+  end)
+  pvpInstancesHelpButton:SetScript("OnLeave", function()
+    GameTooltip:Hide()
+  end)
+
+  local pvpWorldCheckbox = GenerateEnableCheckbox(pvpContainer, addonTable.Locales.ENABLE_PVP_OVERRIDE_WORLD, "pvpWorld", function()
+    if UpdatePvPOverrideStyleControls then
+      UpdatePvPOverrideStyleControls()
+    end
+  end)
   pvpWorldCheckbox:SetPoint("TOP", allFrames[#allFrames], "BOTTOM")
   table.insert(allFrames, pvpWorldCheckbox)
 
-  local friendlyPvPPlayerStyleDropdown = GenerateDropdown(pvpContainer, addonTable.Locales.FRIENDLY_PLAYER, "friendPvPPlayer")
+  local pvpWorldHelpButton = CreateFrame("Button", nil, pvpWorldCheckbox, "UIPanelButtonTemplate")
+  pvpWorldHelpButton:SetText("?")
+  pvpWorldHelpButton:SetSize(22, 20)
+  pvpWorldHelpButton:SetPoint("RIGHT", pvpWorldCheckbox, "RIGHT", -6, 0)
+  pvpWorldHelpButton:SetScript("OnEnter", function(self)
+    GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+    GameTooltip:SetText(addonTable.Locales.ENABLE_PVP_OVERRIDE_WORLD_HELP, nil, nil, nil, nil, true)
+    GameTooltip:Show()
+  end)
+  pvpWorldHelpButton:SetScript("OnLeave", function()
+    GameTooltip:Hide()
+  end)
+
+  friendlyPvPPlayerStyleDropdown = GenerateDropdown(pvpContainer, addonTable.Locales.FRIENDLY_PLAYER, "friendPvPPlayer")
   friendlyPvPPlayerStyleDropdown:SetPoint("TOP", allFrames[#allFrames], "BOTTOM", 0, -30)
   table.insert(allFrames, friendlyPvPPlayerStyleDropdown)
 
-  local enemyPvPPlayerStyleDropdown = GenerateDropdown(pvpContainer, addonTable.Locales.ENEMY_PLAYER, "enemyPvPPlayer")
+  enemyPvPPlayerStyleDropdown = GenerateDropdown(pvpContainer, addonTable.Locales.ENEMY_PLAYER, "enemyPvPPlayer")
   enemyPvPPlayerStyleDropdown:SetPoint("TOP", allFrames[#allFrames], "BOTTOM")
   table.insert(allFrames, enemyPvPPlayerStyleDropdown)
+
+  enemySecondaryPvPPlayerStyleDropdown = GenerateDropdown(pvpContainer, addonTable.Locales.SECONDARY_PVP_ENEMY, "enemySecondaryPvPPlayer")
+  enemySecondaryPvPPlayerStyleDropdown:SetPoint("TOP", allFrames[#allFrames], "BOTTOM")
+  table.insert(allFrames, enemySecondaryPvPPlayerStyleDropdown)
+
+  UpdatePvPOverrideStyleControls = function()
+    local state = addonTable.Config.Get(addonTable.Config.Options.DESIGNS_ENABLED)
+    local splitEnabled = addonTable.Config.Get(addonTable.Config.Options.ENEMY_PRIMARY_SECONDARY_STYLE_SPLIT)
+    local pvpEnabled = state.pvpInstance or state.pvpWorld
+    friendlyPvPPlayerStyleDropdown:SetControlEnabled(pvpEnabled)
+    enemyPvPPlayerStyleDropdown:SetControlEnabled(pvpEnabled)
+    enemySecondaryPvPPlayerStyleDropdown:SetControlEnabled(pvpEnabled and splitEnabled)
+  end
+
+  local function UpdatePrimarySecondaryEnemyLabels()
+    local splitEnabled = addonTable.Config.Get(addonTable.Config.Options.ENEMY_PRIMARY_SECONDARY_STYLE_SPLIT)
+    enemyStyleDropdown.Label:SetText(splitEnabled and addonTable.Locales.PRIMARY_ENEMY or addonTable.Locales.ENEMY)
+    enemyCombatStyleDropdown.Label:SetText(splitEnabled and addonTable.Locales.PRIMARY_ENEMY or addonTable.Locales.ENEMY)
+    enemyPvPPlayerStyleDropdown.Label:SetText(splitEnabled and addonTable.Locales.PRIMARY_ENEMY_PLAYER or addonTable.Locales.ENEMY_PLAYER)
+  end
 
   local tabContainers = {
     {name = addonTable.Locales.DEFAULT, container = defaultContainer},
@@ -695,10 +874,19 @@ local function SetupStyleSelect(parent)
         frame:CustomSetValue()
       end
     end
+    UpdatePrimarySecondaryEnemyLabels()
+    UpdatePrimarySecondaryStyleControls()
     tabContainers[1].container.button:Click()
   end
   container:SetScript("OnShow", function()
     Update()
+  end)
+
+  addonTable.CallbackRegistry:RegisterCallback("SettingChanged", function(_, settingName)
+    if settingName == addonTable.Config.Options.ENEMY_PRIMARY_SECONDARY_STYLE_SPLIT and container:IsVisible() then
+      UpdatePrimarySecondaryEnemyLabels()
+      UpdatePrimarySecondaryStyleControls()
+    end
   end)
 
   return container

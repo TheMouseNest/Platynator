@@ -715,14 +715,17 @@ function addonTable.Display.GetText(frame, parent)
 
   frame:SetAllPoints(frame.text)
 
-  function frame:Init(details)
+  function frame:Init(details, font, fontUsesSmoothing)
     if frame.Strip then
       frame:Strip()
     end
 
     frame.details = details
 
-    frame.text:SetFontObject(addonTable.CurrentFont)
+    -- Prefer the design-specific font when provided (so edits in the Font tab
+    -- for a given style only affect plates using that style). Fall back to
+    -- the global CurrentFont for any callers that don't pass one through.
+    frame.text:SetFontObject(font or addonTable.CurrentFont)
     frame.text:SetParent(frame)
     frame.text:ClearAllPoints()
     frame.text:SetPoint(details.anchor[1] or "CENTER", frame.Wrapper)
@@ -741,7 +744,11 @@ function addonTable.Display.GetText(frame, parent)
     local scale = details.scale * 0.85
     local width = details.maxWidth * addonTable.Assets.BarBordersSize.width
     if frame.text.SetSmoothScaling then
-      frame.text:SetSmoothScaling(addonTable.CurrentFontUsesSmoothing)
+      local smoothing = fontUsesSmoothing
+      if smoothing == nil then
+        smoothing = addonTable.CurrentFontUsesSmoothing
+      end
+      frame.text:SetSmoothScaling(smoothing)
       frame.text:SetScale(scale)
       frame.text:SetWidth(width / scale)
     else
@@ -834,6 +841,12 @@ function addonTable.Display.GetWidgets(design, parent, isEditor)
 
   local pools = isEditor and editorPools or livePools
 
+  -- Resolve the font for this design once up front. Passed into each text
+  -- widget's Init so outline/shadow/slug/asset changes on a given style only
+  -- affect plates using that style, instead of relying on the global
+  -- CurrentFont which only tracks the "enemy" design.
+  local designFont, designFontUsesSmoothing = addonTable.Core.GetFontByDesign(design)
+
   for index, barDetails in ipairs(design.bars) do
     local w = pools[barDetails.kind .. "Bars"]:Acquire()
     poolType[w] = barDetails.kind .. "Bars"
@@ -857,7 +870,7 @@ function addonTable.Display.GetWidgets(design, parent, isEditor)
     w:SetFrameStrata("MEDIUM")
     w.Wrapper:SetFrameLevel(layerStep * textDetails.layer + index * 10)
     w:SetFrameLevel(layerStep * textDetails.layer + index * 10)
-    w:Init(textDetails)
+    w:Init(textDetails, designFont, designFontUsesSmoothing)
     w.kind = "texts"
     w.kindIndex = index
     table.insert(widgets, w)
