@@ -80,6 +80,7 @@ Display/FactionMarker.lua
 Display/Widgets.lua
 
 API/Main.lua
+API/ProfileAPI.lua
 
 Design.lua
 Assets.lua
