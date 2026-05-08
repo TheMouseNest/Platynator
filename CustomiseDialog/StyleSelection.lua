@@ -163,7 +163,6 @@ local function GetDefaultOptions(container)
         end
       end
     end
-    dropdown.DropDown:SetDefaultText(addonTable.Locales.UNSET)
     return dropdown
   end
 
@@ -181,8 +180,13 @@ local function GetDefaultOptions(container)
     simplifiedStyleDropdown = GenerateDropdown(defaultContainer, addonTable.Locales.SIMPLIFIED, allCriteria)
     simplifiedStyleDropdown:SetPoint("TOP", allFrames[#allFrames], "BOTTOM", 0, -30)
     table.insert(allFrames, simplifiedStyleDropdown)
+
+    local fallback = addonTable.Config.Get(addonTable.Config.Options.SIMPLIFIED_ASSIGNED_FALLBACK)
+    simplifiedStyleDropdown.DropDown:SetDefaultText(GRAY_FONT_COLOR:WrapTextInColorCode(addonTable.Design.NameMap[fallback] or fallback))
+
     local appliesToDropdown = addonTable.CustomiseDialog.Components.GetBasicDropdown(defaultContainer, addonTable.Locales.APPLIES_TO)
     appliesToDropdown.DropDown:SetDefaultText(addonTable.Locales.NONE)
+
     local function GetOption(rootDescription, label, criteria)
       rootDescription:CreateCheckbox(label, function()
         local assignments = addonTable.Config.Get(addonTable.Config.Options.DESIGN_ASSIGNMENTS)
@@ -226,6 +230,13 @@ local function GetDefaultOptions(container)
       GetOption(rootDescription, addonTable.Locales.MINOR, allCriteria[1])
     end)
     appliesToDropdown:SetPoint("TOP", simplifiedStyleDropdown, "BOTTOM")
+
+    addonTable.CallbackRegistry:RegisterCallback("SettingChanged", function(_, setting)
+      if setting == addonTable.Config.Options.SIMPLIFIED_ASSIGNED_FALLBACK then
+        local fallback = addonTable.Config.Get(addonTable.Config.Options.SIMPLIFIED_ASSIGNED_FALLBACK)
+        simplifiedStyleDropdown.DropDown:SetDefaultText(GRAY_FONT_COLOR:WrapTextInColorCode(addonTable.Design.NameMap[fallback] or fallback))
+      end
+    end)
   end
 
   defaultContainer:SetScript("OnShow", function()
