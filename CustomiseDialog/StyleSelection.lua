@@ -208,8 +208,12 @@ local function GetDefaultOptions(container)
             {criteria = CopyTable(criteria), simplified = true, scale = 1, style = assignments[2].style}
           )
         else
+          local fallback = addonTable.Config.Get(addonTable.Config.Options.SIMPLIFIED_ASSIGNED_FALLBACK)
+          if not addonTable.Core.GetDesignByName(fallback) then
+            fallback = "_hare_simplified"
+          end
           table.insert(assignments, 2,
-            {criteria = CopyTable(criteria), simplified = true, scale = 1, style = addonTable.Config.Get(addonTable.Config.Options.SIMPLIFIED_ASSIGNED_FALLBACK)}
+            {criteria = CopyTable(criteria), simplified = true, scale = 1, style = fallback}
           )
         end
         Announce()
