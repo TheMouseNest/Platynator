@@ -40,6 +40,9 @@ addonTable.Constants.Events = {
 
   "RoleChange",
   "EncounterUpdate",
+
+  "CustomiseDesignsAssigned",
+  "UnitDesignChange",
 }
 
 addonTable.Constants.RefreshReason = {
@@ -52,6 +55,7 @@ addonTable.Constants.RefreshReason = {
   SimplifiedScale = 7,
   Clickable = 8,
   BlizzardWidgetScale = 9,
+  DesignSelection = 10,
 }
 
 addonTable.Constants.OldFontMapping = {

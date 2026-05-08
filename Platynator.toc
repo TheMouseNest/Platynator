@@ -32,6 +32,7 @@ Core/Utilities.lua
 Core/Dialogs.lua
 Core/SlashCmd.lua
 Core/Fonts.lua
+Core/Migration.lua
 Core/Initialize.lua
 
 Display/Templates.xml
@@ -39,6 +40,7 @@ Display/Templates.xml
 Display/Initialize.lua
 Display/Utilities.lua
 Display/Cache.lua
+Display/DesignForContext.lua
 Display/CVars.lua
 Display/Colors.lua
 Display/Nameplate.lua
@@ -92,5 +94,6 @@ CustomiseDialog/WidgetsConfiguration.lua
 CustomiseDialog/Designer.lua
 CustomiseDialog/ImportDialog.lua
 CustomiseDialog/ImportExport.lua
+CustomiseDialog/StyleSelection.lua
 CustomiseDialog/Main.lua
 CustomiseDialog/Initialize.lua

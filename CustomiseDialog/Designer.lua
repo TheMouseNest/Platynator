@@ -7,6 +7,12 @@ local function Announce()
   if addonTable.Config.Get(addonTable.Config.Options.STYLE):match("^_") then
     addonTable.Config.Set(addonTable.Config.Options.STYLE, addonTable.Constants.CustomName)
   end
+  local design = addonTable.CustomiseDialog.GetCurrentDesign()
+  local click, stack = addonTable.Utilities.GenerateRects(design)
+  design.regions = {
+    click = addonTable.Utilities.ConvertRectToWidget(click),
+    stack = addonTable.Utilities.ConvertRectToWidget(stack),
+  }
   addonTable.CallbackRegistry:TriggerEvent("RefreshStateChange", {[addonTable.Constants.RefreshReason.Design] = true})
 end
 

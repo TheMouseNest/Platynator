@@ -302,40 +302,11 @@ local function SetupBehaviour(parent)
 
   local simplifiedScaleSlider
   if addonTable.Constants.IsRetail then
-    local simplifiedPlatesDropdown = addonTable.CustomiseDialog.Components.GetBasicDropdown(container, addonTable.Locales.SIMPLIFIED_NAMEPLATES)
-    simplifiedPlatesDropdown:SetPoint("TOP", allFrames[#allFrames], "BOTTOM", 0, -30)
-    do
-      local values = {
-        "instancesNormal",
-        "minion",
-        "minor",
-      }
-      local labels = {
-        addonTable.Locales.NORMAL_INSTANCES_ONLY,
-        addonTable.Locales.MINION,
-        addonTable.Locales.MINOR,
-      }
-
-      simplifiedPlatesDropdown.DropDown:SetDefaultText(NONE)
-      simplifiedPlatesDropdown.DropDown:SetupMenu(function(_, rootDescription)
-        for index, l in ipairs(labels) do
-          rootDescription:CreateCheckbox(l, function()
-            return addonTable.Config.Get(addonTable.Config.Options.SIMPLIFIED_NAMEPLATES)[values[index]]
-          end, function()
-            local current = addonTable.Config.Get(addonTable.Config.Options.SIMPLIFIED_NAMEPLATES)[values[index]]
-            addonTable.Config.Get(addonTable.Config.Options.SIMPLIFIED_NAMEPLATES)[values[index]] = not current
-            addonTable.CallbackRegistry:TriggerEvent("RefreshStateChange", {[addonTable.Constants.RefreshReason.Simplified] = true})
-          end)
-        end
-      end)
-    end
-    table.insert(allFrames, simplifiedPlatesDropdown)
-
     if C_CVar.GetCVarInfo("nameplateSimplifiedScale") then
       simplifiedScaleSlider = addonTable.CustomiseDialog.Components.GetSlider(container, addonTable.Locales.SIMPLIFIED_SCALE, 1, 100, function(value) return ("%d%%"):format(value) end, function(value)
         addonTable.Config.Set(addonTable.Config.Options.SIMPLIFIED_SCALE, value / 100)
       end)
-      simplifiedScaleSlider:SetPoint("TOP", allFrames[#allFrames], "BOTTOM", 0, 0)
+      simplifiedScaleSlider:SetPoint("TOP", allFrames[#allFrames], "BOTTOM", 0, -30)
       table.insert(allFrames, simplifiedScaleSlider)
     end
   end
@@ -551,7 +522,7 @@ local function SetupPositioning(parent)
   return container
 end
 
-local function SetupStyleSelect(parent)
+--[[local function SetupStyleSelect(parent)
   local container = CreateFrame("Frame", nil, parent)
 
   local allFrames = {}
@@ -702,7 +673,7 @@ local function SetupStyleSelect(parent)
   end)
 
   return container
-end
+end]]
 
 local function SetupFont(parent)
   local container = CreateFrame("Frame", nil, parent)
@@ -945,7 +916,7 @@ end
 local TabSetups = {
   {callback = SetupGeneral, name = addonTable.Locales.GENERAL},
   {callback = addonTable.CustomiseDialog.GetMainDesigner, name = addonTable.Locales.DESIGNER},
-  {callback = SetupStyleSelect, name = addonTable.Locales.STYLE_SELECT},
+  {callback = addonTable.CustomiseDialog.GetStyleSelection, name = addonTable.Locales.STYLE_SELECT},
   {callback = SetupBehaviour, name = addonTable.Locales.BEHAVIOUR},
   {callback = SetupPositioning, name = addonTable.Locales.POSITIONING},
   {callback = SetupFont, name = addonTable.Locales.FONT},
