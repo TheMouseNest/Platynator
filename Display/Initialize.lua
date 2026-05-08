@@ -438,7 +438,7 @@ function addonTable.Display.ManagerMixin:UpdateClickRegion(unit)
       region.height * clickScale * globalScale * addonTable.Assets.BarBordersSize.height * addonTable.Config.Get(addonTable.Config.Options.CLICK_REGION_SCALE_Y)
     )
     if region.anchor[2] then
-      clickRegion:SetPoint(region.anchor[1] or "CENTER", nameplate, "CENTER", region.anchor[2] * clickScale, region.anchor[3] * clickScale)
+      clickRegion:SetPoint(region.anchor[1] or "CENTER", nameplate, "CENTER", region.anchor[2] * clickScale * globalScale, region.anchor[3] * clickScale * globalScale)
     else
       clickRegion:SetPoint(region.anchor[1] or "CENTER", nameplate, "CENTER")
     end
@@ -572,7 +572,7 @@ function addonTable.Display.ManagerMixin:UpdateNamePlateSize()
     left = math.min(newLeft, left)
     bottom = math.min(newBottom, bottom)
     right = math.max(newRight, right)
-    top = math.min(newTop, top)
+    top = math.max(newTop, top)
   end
 
   local globalScale = addonTable.Config.Get(addonTable.Config.Options.GLOBAL_SCALE)
