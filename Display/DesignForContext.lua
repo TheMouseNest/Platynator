@@ -258,16 +258,16 @@ function addonTable.Display.DesignForContextMixin:GetClickRegion(unit)
   local state = self.unitStates[unit]
 
   local tmp = CopyTable(state)
-  tmp.canAttack = state.alignment ~= "friend"
+  tmp.canAttack = tmp.alignment ~= "friend"
   tmp.inCombat = true
 
-  if state.alignment == "neutral" then
-    state.alignment = "hostile"
+  if tmp.alignment == "neutral" then
+    tmp.alignment = "hostile"
   end
 
   local style, scale = addonTable.Display.DesignForContextMixin:GetDesignFromState(tmp)
 
   local design = addonTable.Core.GetDesignByName(style)
 
-  return design.regions.click, scale
+  return design.regions.click, scale * design.scale
 end

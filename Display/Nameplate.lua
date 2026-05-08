@@ -448,7 +448,8 @@ end
 function addonTable.Display.NameplateMixin:Install(nameplate)
   self:Show()
   self:SetFrameStrata("BACKGROUND")
-  self:SetPoint("CENTER", nameplate)
+  local verticalOffset = addonTable.Config.Get(addonTable.Config.Options.VERTICAL_OFFSET) * addonTable.Assets.BarBordersSize.height
+  self:SetPoint("CENTER", nameplate, "CENTER", 0, verticalOffset)
   self:SetSize(10, 10)
 
   -- We force a sizing immediately to avoid 0 size widgets breaking the textures from the Blizz animations

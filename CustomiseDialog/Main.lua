@@ -506,11 +506,23 @@ local function SetupPositioning(parent)
   stackRegionSliderY:SetPoint("TOP", allFrames[#allFrames], "BOTTOM", 0, 0)
   table.insert(allFrames, stackRegionSliderY)
 
+  local verticalOffset
+  if addonTable.Constants.IsRetail then
+    verticalOffset = addonTable.CustomiseDialog.Components.GetSlider(container, addonTable.Locales.VERTICAL_OFFSET, 0, 500, function(value) return ("%d%%"):format(value) end, function(value)
+      addonTable.Config.Set(addonTable.Config.Options.VERTICAL_OFFSET, value / 100)
+    end)
+    verticalOffset:SetPoint("TOP", allFrames[#allFrames], "BOTTOM", 0, -30)
+    table.insert(allFrames, verticalOffset)
+  end
+
   container:SetScript("OnShow", function()
     clickRegionSliderX:SetValue(addonTable.Config.Get(addonTable.Config.Options.CLICK_REGION_SCALE_X) * 100)
     clickRegionSliderY:SetValue(addonTable.Config.Get(addonTable.Config.Options.CLICK_REGION_SCALE_Y) * 100)
     stackRegionSliderX:SetValue(addonTable.Config.Get(addonTable.Config.Options.STACK_REGION_SCALE_X) * 100)
     stackRegionSliderY:SetValue(addonTable.Config.Get(addonTable.Config.Options.STACK_REGION_SCALE_Y) * 100)
+    if verticalOffset then
+      verticalOffset:SetValue(addonTable.Config.Get(addonTable.Config.Options.VERTICAL_OFFSET) * 100)
+    end
 
     for _, f in ipairs(allFrames) do
       if f.SetValue and f.option then
