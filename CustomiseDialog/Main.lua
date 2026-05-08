@@ -814,20 +814,18 @@ function addonTable.CustomiseDialog.GetStyleDropdown(parent)
           addonTable.Dialogs.ShowConfirm(addonTable.Locales.CONFIRM_DELETE_STYLE_X:format(entry.label), YES, NO, function()
             addonTable.Config.Get(addonTable.Config.Options.DESIGNS)[entry.value] = nil
             ---@type table
-            local assigned = addonTable.Config.Get(addonTable.Config.Options.DESIGNS_ASSIGNED)
-            local keys = GetKeysArray(assigned)
-            for _, k in ipairs(keys) do
-              local value = assigned[k]
-              if value == entry.value then
-                if k:match("^enemySimplified") then
-                  assigned[k] = "_hare_simplified"
+            local assignments = addonTable.Config.Get(addonTable.Config.Options.DESIGN_ASSIGNMENTS)
+            for _, a in ipairs(assignments) do
+              if a.style == entry.value then
+                if a.simplified then
+                  a.style = "_hare_simplified"
                 else
-                  assigned[k] = addonTable.Constants.CustomName
+                  a.style = addonTable.Constants.CustomName
                 end
               end
             end
             if addonTable.Config.Get(addonTable.Config.Options.STYLE) == entry.value then
-              addonTable.Config.Set(addonTable.Config.Options.STYLE, addonTable.Constants.CustomName) 
+              addonTable.Config.Set(addonTable.Config.Options.STYLE, addonTable.Constants.CustomName)
             end
             addonTable.CallbackRegistry:TriggerEvent("RefreshStateChange", {[addonTable.Constants.RefreshReason.Design] = true})
           end)
