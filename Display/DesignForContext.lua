@@ -56,7 +56,7 @@ local assignmentsPossibilities = {
 
   ["player"] = { check = function(state) return state.isPlayer end },
   ["npc"] = { check = function(state) return state.isNPC end },
-  ["minion"] = { check = function(state) return state.isMinon end },
+  ["minion"] = { check = function(state) return state.isMinion end },
 
   ["class-rare"] = { updates = "classification", check = function(state) local c = state.classification; return c == "rare" or c == "rareelite" end },
   ["class-elite"] = { updates = "classification", check = function(state) local c = state.classification; return c == "elite" or c == "rareelite" end },
