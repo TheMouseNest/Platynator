@@ -613,10 +613,7 @@ function addonTable.Display.ManagerMixin:UpdateNamePlateSize()
       end
     end
   elseif C_NamePlate.SetNamePlateSize then
-    width = width * addonTable.Config.Get(addonTable.Config.Options.CLICK_REGION_SCALE_X)
-    if width < 200 then
-      width = 200
-    end
+    width = math.max(200, width * addonTable.Config.Get(addonTable.Config.Options.CLICK_REGION_SCALE_X))
     height = height * addonTable.Config.Get(addonTable.Config.Options.CLICK_REGION_SCALE_Y)
     C_NamePlate.SetNamePlateSize(width, height)
   end
