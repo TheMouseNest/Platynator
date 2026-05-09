@@ -437,12 +437,12 @@ function addonTable.Display.ManagerMixin:UpdateClickRegion(unit)
     clickRegion:Show()
     clickRegion:ClearAllPoints()
     local globalScale = addonTable.Config.Get(addonTable.Config.Options.GLOBAL_SCALE)
-    local region, clickScale = addonTable.Display.Context:GetClickRegion(unit)
+    local region, clickScale, designScale = addonTable.Display.Context:GetClickRegion(unit)
     clickRegion:SetSize(
       region.width * clickScale * globalScale * addonTable.Assets.BarBordersSize.width * addonTable.Config.Get(addonTable.Config.Options.CLICK_REGION_SCALE_X),
       region.height * clickScale * globalScale * addonTable.Assets.BarBordersSize.height * addonTable.Config.Get(addonTable.Config.Options.CLICK_REGION_SCALE_Y)
     )
-    local verticalOffset = addonTable.Config.Get(addonTable.Config.Options.VERTICAL_OFFSET) * addonTable.Assets.BarBordersSize.height * clickScale * globalScale
+    local verticalOffset = addonTable.Config.Get(addonTable.Config.Options.VERTICAL_OFFSET) * addonTable.Assets.BarBordersSize.height * clickScale * designScale * globalScale
     if region.anchor[2] then
       clickRegion:SetPoint(region.anchor[1], nameplate, "CENTER", region.anchor[2] * clickScale * globalScale, region.anchor[3] * clickScale * globalScale + verticalOffset)
     else

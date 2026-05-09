@@ -1,9 +1,9 @@
 ---@class addonTablePlatynator
 local addonTable = select(2, ...)
 
-function addonTable.Utilities.GetAssetRect(asset, scale, anchor)
-  local width = asset.width * scale
-  local height = asset.height * scale
+function addonTable.Utilities.GetRectFromRegion(region, scale, anchor)
+  local width = region.width * scale
+  local height = region.height * scale
   local left, bottom
   if anchor[1] == "BOTTOMLEFT" then
     left = anchor[2] or 0
@@ -36,10 +36,16 @@ function addonTable.Utilities.GetAssetRect(asset, scale, anchor)
   return {left = left, bottom = bottom, width = width, height = height}
 end
 
-function addonTable.Core.GetDesignRects(design)
-  local left, right, top, bottom = 0, 0, 0, 0
+function addonTable.Utilities.GenerateRects(design)
+  local left, right, top, bottom
 
   local function CacheSize(rect)
+    if left == nil then
+      left = rect.left
+      bottom = rect.bottom
+      right = rect.left + rect.width
+      top = rect.bottom + rect.height
+    end
     left = math.min(left, rect.left)
     bottom = math.min(bottom, rect.bottom)
     top = math.max(rect.bottom + rect.height, top)
@@ -49,21 +55,55 @@ function addonTable.Core.GetDesignRects(design)
   for _, barDetails in ipairs(design.bars) do
     if barDetails.kind == "health" then
       local width, height = barDetails.border.width * addonTable.Assets.BarBordersSize.width, barDetails.border.height * addonTable.Assets.BarBordersSize.height
-      local rect = addonTable.Utilities.GetAssetRect({width = width, height = height}, barDetails.scale, barDetails.anchor)
+      local rect = addonTable.Utilities.GetRectFromRegion({width = width, height = height}, barDetails.scale, barDetails.anchor)
       CacheSize(rect)
     end
   end
 
-  local clickRect = {left = left * design.scale, bottom = bottom * design.scale, width = (right ~= left and right - left or 125) * design.scale, height = (top ~= bottom and top - bottom or 10) * design.scale}
+  local hit
+  if left ~= nil then
+    hit = {left = left * design.scale, bottom = bottom * design.scale, width = (right ~= left and right - left or 125) * design.scale, height = (top ~= bottom and top - bottom or 10) * design.scale}
+  end
 
   for _, textDetails in ipairs(design.texts) do
     if textDetails.kind == "creatureName" then
-      local rect = addonTable.Utilities.GetAssetRect({width = textDetails.maxWidth * addonTable.Assets.BarBordersSize.width, height = 10 * textDetails.scale}, 1, textDetails.anchor)
+      local rect = addonTable.Utilities.GetRectFromRegion({width = textDetails.maxWidth * addonTable.Assets.BarBordersSize.width, height = 10 * textDetails.scale}, 1, textDetails.anchor)
       CacheSize(rect)
     end
   end
 
-  local stackRect = {left = left * design.scale, bottom = bottom * design.scale, width = (right ~= left and right - left or 125) * design.scale, height = (top ~= bottom and top - bottom or 10) * design.scale}
+  local stack
+  if left ~= nil then
+    stack = {left = left * design.scale, bottom = bottom * design.scale, width = (right ~= left and right - left or 125) * design.scale, height = (top ~= bottom and top - bottom or 10) * design.scale}
+  else
+    stack = {left = 0, bottom = 0, width = 0, height = 0}
+  end
+  if hit == nil then
+    hit = stack
+  end
 
-  return {click = clickRect, stack = stackRect}
+  return hit, stack
+end
+
+local function Round100(value)
+  return Round(value * 100) / 100
+end
+
+function addonTable.Utilities.ConvertRectToWidget(rect)
+  local width = Round100(rect.width / addonTable.Assets.BarBordersSize.width)
+  local height = Round100(rect.height / addonTable.Assets.BarBordersSize.height)
+  if Round100(-rect.left / addonTable.Assets.BarBordersSize.width * 2) == width and
+    Round100(-rect.bottom / addonTable.Assets.BarBordersSize.height * 2) == height then
+    return {
+      width = width, height = height,
+      anchor = {"CENTER"},
+      autoSized = true
+    }
+  else
+    return {
+      width = width, height = height,
+      anchor = {"BOTTOMLEFT", rect.left, rect.bottom},
+      autoSized = true
+    }
+  end
 end

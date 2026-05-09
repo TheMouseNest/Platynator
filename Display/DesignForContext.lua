@@ -269,5 +269,5 @@ function addonTable.Display.DesignForContextMixin:GetClickRegion(unit)
 
   local design = addonTable.Core.GetDesignByName(style)
 
-  return design.regions.click, scale * design.scale
+  return design.regions.click, scale, design.scale
 end

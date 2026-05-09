@@ -29,6 +29,7 @@ Core/Locales.lua
 Core/Constants.lua
 Core/Config.lua
 Core/Utilities.lua
+Core/Sizing.lua
 Core/Dialogs.lua
 Core/SlashCmd.lua
 Core/Fonts.lua
