@@ -136,15 +136,17 @@ function addonTable.Display.ManagerMixin:OnLoad()
         local defaultEnemyDesign = addonTable.Core.GetDesignByName(addonTable.Display.Context:GetDefaultEnemyNPCDesign())
         addonTable.CurrentFont, addonTable.CurrentFontUsesSmoothing = addonTable.Core.GetFontByDesign(defaultEnemyDesign)
         self.styleIndex = self.styleIndex + 1
+        self:UpdateNamePlateSize()
         self:SetScript("OnUpdate", nil)
+        local globalScale = addonTable.Config.Get(addonTable.Config.Options.GLOBAL_SCALE)
         for unit, display in pairs(self.nameplateDisplays) do
           display.styleIndex = self.styleIndex
           local nameplate = C_NamePlate.GetNamePlateForUnit(unit, issecure())
-          if nameplate then
-            display:Install(nameplate)
-          end
           local designName, scale, shouldSimplify = addonTable.Display.Context:GetAssignedDesign(unit)
           local design = addonTable.Core.GetDesignByName(designName)
+          if nameplate then
+            display:Install(nameplate, self.baseOffset / scale / design.scale / globalScale)
+          end
           display:InitializeWidgets(design, addonTable.Core.GetDesignScale(addonTable.Constants.IsRetail and shouldSimplify), scale)
           if display.stackRegion then
             display.stackRegion.rect = addonTable.Utilities.GetRectFromRegion(design.regions.stack, design.scale * scale, design.regions.stack.anchor)
@@ -157,7 +159,6 @@ function addonTable.Display.ManagerMixin:OnLoad()
           self.lastInteract:UpdateSoftInteract()
         end
         self:UpdateFriendlyFont()
-        self:UpdateNamePlateSize()
         self:UpdateStacking()
         self:UpdateAllClickRegions()
         self:UpdateTargetScale()
@@ -167,6 +168,8 @@ function addonTable.Display.ManagerMixin:OnLoad()
       self:UpdateSimplifiedScale()
     end
     if state[addonTable.Constants.RefreshReason.Scale] or state[addonTable.Constants.RefreshReason.TargetBehaviour] then
+      self:UpdateNamePlateSize()
+
       for unit, display in pairs(self.nameplateDisplays) do
         local _, _, shouldSimplify = addonTable.Display.Context:GetAssignedDesign(unit)
         display.offsetScale = addonTable.Core.GetDesignScale(shouldSimplify) * UIParent:GetEffectiveScale() * addonTable.Config.Get(addonTable.Config.Options.GLOBAL_SCALE)
@@ -176,22 +179,23 @@ function addonTable.Display.ManagerMixin:OnLoad()
         end
       end
       self:UpdateFriendlyFont()
-      self:UpdateNamePlateSize()
       self:UpdateAllClickRegions()
       self:UpdateTargetScale()
     end
     if state[addonTable.Constants.RefreshReason.StackingBehaviour] then
-      self:UpdateStacking()
       self:UpdateNamePlateSize()
+      self:UpdateStacking()
       for unit, display in pairs(self.nameplateDisplays) do
         if display.stackRegion then
           self:UpdateStackingRegion(unit)
         end
       end
+      self:RepositionDisplays()
     end
     if state[addonTable.Constants.RefreshReason.ShowBehaviour] then
       self:UpdateFriendlyFont()
       self:UpdateNamePlateSize()
+      self:RepositionDisplays()
       self:UpdateShowState()
     end
     if state[addonTable.Constants.RefreshReason.Simplified] then
@@ -203,10 +207,11 @@ function addonTable.Display.ManagerMixin:OnLoad()
           self:Install(unit)
         end
       end
+      self:RepositionDisplays()
     end
     if state[addonTable.Constants.RefreshReason.Clickable] then
-      self:UpdateClickable()
       self:UpdateNamePlateSize()
+      self:UpdateClickable()
     end
     if state[addonTable.Constants.RefreshReason.DesignSelection] then
       self.styleIndex = self.styleIndex + 1
@@ -215,6 +220,7 @@ function addonTable.Display.ManagerMixin:OnLoad()
       self:UpdateNamePlateSize()
       self:UpdateAllClickRegions()
       self:UpdateFriendlyFont()
+      self:RepositionDisplays()
     end
   end)
 
@@ -223,11 +229,11 @@ function addonTable.Display.ManagerMixin:OnLoad()
       or settingName == addonTable.Config.Options.CLICK_REGION_SCALE_Y
       or settingName == addonTable.Config.Options.VERTICAL_OFFSET
     then
+      self:UpdateNamePlateSize()
       for unit, display in pairs(self.nameplateDisplays) do
         self:UpdateStackingRegion(unit)
-        display:Install(C_NamePlate.GetNamePlateForUnit(unit))
       end
-      self:UpdateNamePlateSize()
+      self:RepositionDisplays()
       self:UpdateAllClickRegions()
       self:UpdateStacking()
     elseif settingName == addonTable.Config.Options.APPLY_CVARS then
@@ -421,9 +427,9 @@ function addonTable.Display.ManagerMixin:UpdateStackingRegion(unit)
 	stackRegion:SetPoint(
 		"BOTTOMLEFT",
 		stackRegion:GetParent(),
-		"CENTER",
+		"BOTTOM",
 		stackRegion.rect.left - (newWidth - stackRegion.rect.width) / 2,
-		stackRegion.rect.bottom - (newHeight - stackRegion.rect.height) / 2 + verticalOffset
+		stackRegion.rect.bottom - (newHeight - stackRegion.rect.height) / 2 + verticalOffset + self.baseOffset
 	)
   stackRegion:SetSize(newWidth, newHeight)
 end
@@ -435,12 +441,12 @@ function addonTable.Display.ManagerMixin:UpdateClickRegion(unit)
     if not clickRegion then
       clickRegion = self.clickRegionPool:Acquire()
       clickRegion:SetParent(nameplate)
-      --[[local t = clickRegion:CreateTexture()
+      local t = clickRegion:CreateTexture()
       t:SetColorTexture(0, 1, 0, 0.5)
       t:SetAllPoints()
       t = nameplate:CreateTexture()
       t:SetColorTexture(1, 0, 0, 0.5)
-      t:SetAllPoints()]]
+      t:SetAllPoints()
       self.nameplateClickRegions[nameplate:GetName()] = clickRegion
     end
     clickRegion:Show()
@@ -458,10 +464,10 @@ function addonTable.Display.ManagerMixin:UpdateClickRegion(unit)
         nameplate,
         "CENTER",
         region.anchor[2] * clickScale * globalScale * addonTable.Config.Get(addonTable.Config.Options.CLICK_REGION_SCALE_X),
-        region.anchor[3] * clickScale * globalScale * addonTable.Config.Get(addonTable.Config.Options.CLICK_REGION_SCALE_Y) + verticalOffset
+        region.anchor[3] * clickScale * globalScale * addonTable.Config.Get(addonTable.Config.Options.CLICK_REGION_SCALE_Y) + verticalOffset + self.baseOffset
       )
     else
-      clickRegion:SetPoint("CENTER", nameplate, "CENTER", 0, verticalOffset)
+      clickRegion:SetPoint("CENTER", nameplate, "CENTER", 0, verticalOffset + self.baseOffset)
     end
     nameplate:SetAllHitTestPoints(clickRegion)
   end
@@ -510,9 +516,11 @@ function addonTable.Display.ManagerMixin:Install(unit)
 
     self:UpdateClickRegion(unit)
 
-    newDisplay:Install(nameplate)
+    local globalScale = addonTable.Config.Get(addonTable.Config.Options.GLOBAL_SCALE)
+    newDisplay:Install(nameplate, self.baseOffset / scale / design.scale / globalScale)
     if newDisplay.styleIndex ~= self.styleIndex then
-      newDisplay:InitializeWidgets(design, addonTable.Core.GetDesignScale(addonTable.Constants.IsRetail and shouldSimplify), scale)
+      local scaleOffset, scaleMod = addonTable.Core.GetDesignScale(addonTable.Constants.IsRetail and shouldSimplify), scale
+      newDisplay:InitializeWidgets(design, scaleOffset, scaleMod)
       newDisplay.styleIndex = self.styleIndex
     end
     self:ListenToBuffs(newDisplay, unit)
@@ -601,7 +609,8 @@ function addonTable.Display.ManagerMixin:UpdateNamePlateSize()
   local verticalOffset = addonTable.Config.Get(addonTable.Config.Options.VERTICAL_OFFSET) * addonTable.Assets.BarBordersSize.height
   top = top + verticalOffset
 
-  local width, height = math.max(math.abs(right), math.abs(left)) * 2 * globalScale, math.max(math.abs(top), math.abs(bottom)) * 2 * globalScale
+  local width, height = math.max(math.abs(right), math.abs(left)) * 2 * globalScale, (math.abs(top) + math.abs(bottom)) * globalScale
+  self.baseOffset = - height / 2 + math.abs(bottom) * globalScale
 
   if C_NamePlate.SetNamePlateEnemySize and not addonTable.Constants.IsRetail then
     width = width * addonTable.Config.Get(addonTable.Config.Options.CLICK_REGION_SCALE_X) * UIParent:GetScale()
@@ -631,6 +640,15 @@ function addonTable.Display.ManagerMixin:UpdateNamePlateSize()
     width = math.max(200, width * addonTable.Config.Get(addonTable.Config.Options.CLICK_REGION_SCALE_X))
     height = height * addonTable.Config.Get(addonTable.Config.Options.CLICK_REGION_SCALE_Y)
     C_NamePlate.SetNamePlateSize(width, height)
+  end
+end
+
+function addonTable.Display.ManagerMixin:RepositionDisplays()
+  local globalScale = addonTable.Config.Get(addonTable.Config.Options.GLOBAL_SCALE)
+  for unit, display in pairs(self.nameplateDisplays) do
+    local styleName, scale = addonTable.Display.Context:GetAssignedDesign(unit)
+    local design = addonTable.Core.GetDesignByName(styleName)
+    display:Install(C_NamePlate.GetNamePlateForUnit(unit), self.baseOffset / scale / design.scale / globalScale)
   end
 end
 
