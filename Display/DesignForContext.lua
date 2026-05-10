@@ -258,7 +258,7 @@ function addonTable.Display.DesignForContextMixin:GetClickRegion(unit)
   local state = self.unitStates[unit]
 
   local tmp = CopyTable(state)
-  tmp.canAttack = tmp.alignment ~= "friend"
+  tmp.canAttack = tmp.canAttack or tmp.alignment ~= "friend"
   tmp.inCombat = true
 
   if tmp.alignment == "neutral" then
