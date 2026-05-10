@@ -424,15 +424,14 @@ function addonTable.Display.ManagerMixin:UpdateStackingRegion(unit)
     return
   end
   local globalScale = addonTable.Config.Get(addonTable.Config.Options.GLOBAL_SCALE)
-  local newWidth = stackRegion.rect.width * addonTable.Assets.BarBordersSize.width * addonTable.Config.Get(addonTable.Config.Options.STACK_REGION_SCALE_X) * globalScale
-  local newHeight = stackRegion.rect.height * addonTable.Assets.BarBordersSize.height * addonTable.Config.Get(addonTable.Config.Options.STACK_REGION_SCALE_Y) * globalScale
-  local verticalOffset = addonTable.Config.Get(addonTable.Config.Options.VERTICAL_OFFSET) * addonTable.Assets.BarBordersSize.height * globalScale
+  local newWidth = stackRegion.rect.width * addonTable.Config.Get(addonTable.Config.Options.STACK_REGION_SCALE_X) * globalScale
+  local newHeight = stackRegion.rect.height * addonTable.Config.Get(addonTable.Config.Options.STACK_REGION_SCALE_Y) * globalScale
 	stackRegion:SetPoint(
 		"BOTTOMLEFT",
 		stackRegion:GetParent(),
 		"BOTTOM",
 		stackRegion.rect.left - (newWidth - stackRegion.rect.width) / 2,
-		stackRegion.rect.bottom - (newHeight - stackRegion.rect.height) / 2 + verticalOffset + self.baseOffset
+		stackRegion.rect.bottom - (newHeight - stackRegion.rect.height) / 2 + self.baseOffset
 	)
   stackRegion:SetSize(newWidth, newHeight)
 end
@@ -455,22 +454,25 @@ function addonTable.Display.ManagerMixin:UpdateClickRegion(unit)
     clickRegion:Show()
     clickRegion:ClearAllPoints()
     local globalScale = addonTable.Config.Get(addonTable.Config.Options.GLOBAL_SCALE)
-    local region, clickScale, designScale = addonTable.Display.Context:GetClickRegion(unit)
-    clickRegion:SetSize(
-      region.width * clickScale * globalScale * addonTable.Assets.BarBordersSize.width * addonTable.Config.Get(addonTable.Config.Options.CLICK_REGION_SCALE_X),
-      region.height * clickScale * globalScale * addonTable.Assets.BarBordersSize.height * addonTable.Config.Get(addonTable.Config.Options.CLICK_REGION_SCALE_Y)
-    )
-    local verticalOffset = addonTable.Config.Get(addonTable.Config.Options.VERTICAL_OFFSET) * addonTable.Assets.BarBordersSize.height * clickScale * designScale * globalScale
+    local region, clickScale = addonTable.Display.Context:GetClickRegion(unit)
+    local width = region.width * clickScale * globalScale * addonTable.Assets.BarBordersSize.width * addonTable.Config.Get(addonTable.Config.Options.CLICK_REGION_SCALE_X)
+    local height = region.height * clickScale * globalScale * addonTable.Assets.BarBordersSize.height * addonTable.Config.Get(addonTable.Config.Options.CLICK_REGION_SCALE_Y)
+    clickRegion:SetSize(width, height)
     if region.anchor[2] then
+      local rect = addonTable.Utilities.GetRectFromRegion(region, clickScale * globalScale, region.anchor)
+      local midPointX = rect.left + rect.width / 2
+      local midPointY = rect.bottom + rect.height / 2
+      local newLeft = midPointX - width / 2
+      local newBottom = midPointY - height / 2
       clickRegion:SetPoint(
         region.anchor[1],
         nameplate,
         "CENTER",
-        region.anchor[2] * clickScale * globalScale * addonTable.Config.Get(addonTable.Config.Options.CLICK_REGION_SCALE_X),
-        region.anchor[3] * clickScale * globalScale * addonTable.Config.Get(addonTable.Config.Options.CLICK_REGION_SCALE_Y) + verticalOffset + self.baseOffset
+        newLeft,
+        newBottom + self.baseOffset
       )
     else
-      clickRegion:SetPoint("CENTER", nameplate, "CENTER", 0, verticalOffset + self.baseOffset)
+      clickRegion:SetPoint("CENTER", nameplate, "CENTER", 0, self.baseOffset)
     end
     nameplate:SetAllHitTestPoints(clickRegion)
   end
@@ -590,10 +592,13 @@ function addonTable.Display.ManagerMixin:UpdateNamePlateSize()
   for _, details in ipairs(assignments) do
     local design = addonTable.Core.GetDesignByName(details.style)
     local click = design.regions.click
-    local newLeft = (click.anchor[2] or -click.width/2 * addonTable.Assets.BarBordersSize.width) * details.scale
-    local newBottom = (click.anchor[3] or -click.height/2 * addonTable.Assets.BarBordersSize.height) * details.scale
-    local newRight = newLeft + click.width * addonTable.Assets.BarBordersSize.width * details.scale
-    local newTop = newBottom + click.height * addonTable.Assets.BarBordersSize.height * details.scale
+    local rect = addonTable.Utilities.GetRectFromRegion(click, details.scale, click.anchor)
+    local midPointX = rect.left + rect.width / 2
+    local midPointY = rect.bottom + rect.height / 2
+    local newLeft = midPointX - rect.width * addonTable.Config.Get(addonTable.Config.Options.CLICK_REGION_SCALE_X) / 2
+    local newBottom = midPointY - rect.height * addonTable.Config.Get(addonTable.Config.Options.CLICK_REGION_SCALE_Y) / 2
+    local newRight = newLeft + rect.width * addonTable.Config.Get(addonTable.Config.Options.CLICK_REGION_SCALE_X)
+    local newTop = newBottom + rect.height * addonTable.Config.Get(addonTable.Config.Options.CLICK_REGION_SCALE_Y)
     if left == nil then
       left = newLeft
       bottom = newBottom
@@ -608,16 +613,17 @@ function addonTable.Display.ManagerMixin:UpdateNamePlateSize()
   end
 
   local globalScale = addonTable.Config.Get(addonTable.Config.Options.GLOBAL_SCALE)
-
   local verticalOffset = addonTable.Config.Get(addonTable.Config.Options.VERTICAL_OFFSET) * addonTable.Assets.BarBordersSize.height
-  top = top + verticalOffset
 
-  local width, height = math.max(math.abs(right), math.abs(left)) * 2 * globalScale, (math.abs(top) + math.abs(bottom)) * globalScale
-  self.baseOffset = - height / 2 + math.abs(bottom) * globalScale
+  local width = math.max(math.abs(right), math.abs(left)) * 2 * globalScale
+  local height = (top - bottom) * globalScale
+  self.baseOffset = - height / 2 - bottom * globalScale + verticalOffset * globalScale / 2
+
+  height = height + verticalOffset * globalScale
 
   if C_NamePlate.SetNamePlateEnemySize and not addonTable.Constants.IsRetail then
-    width = width * addonTable.Config.Get(addonTable.Config.Options.CLICK_REGION_SCALE_X) * UIParent:GetScale()
-    height = height * addonTable.Config.Get(addonTable.Config.Options.CLICK_REGION_SCALE_Y) * UIParent:GetScale()
+    width = width * UIParent:GetScale()
+    height = height * UIParent:GetScale()
     local stackState = addonTable.Config.Get(addonTable.Config.Options.STACKING_NAMEPLATES)
     local anyStack = stackState.enemy or stackState.friend
     if stackState.enemy or not anyStack then
@@ -640,8 +646,8 @@ function addonTable.Display.ManagerMixin:UpdateNamePlateSize()
       end
     end
   elseif C_NamePlate.SetNamePlateSize then
-    width = math.max(200, width * addonTable.Config.Get(addonTable.Config.Options.CLICK_REGION_SCALE_X))
-    height = height * addonTable.Config.Get(addonTable.Config.Options.CLICK_REGION_SCALE_Y)
+    width = math.max(200, width)
+    height = height
     C_NamePlate.SetNamePlateSize(width, height)
   end
 end

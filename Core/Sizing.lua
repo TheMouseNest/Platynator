@@ -2,8 +2,8 @@
 local addonTable = select(2, ...)
 
 function addonTable.Utilities.GetRectFromRegion(region, scale, anchor)
-  local width = region.width * scale
-  local height = region.height * scale
+  local width = region.width * scale * addonTable.Assets.BarBordersSize.width
+  local height = region.height * scale * addonTable.Assets.BarBordersSize.height
   local left, bottom
   if anchor[1] == "BOTTOMLEFT" then
     left = anchor[2] or 0
@@ -33,7 +33,7 @@ function addonTable.Utilities.GetRectFromRegion(region, scale, anchor)
     left = -width / 2
     bottom = -height / 2
   end
-  return {left = left, bottom = bottom, width = width, height = height}
+  return {left = left * scale, bottom = bottom * scale, width = width, height = height}
 end
 
 function addonTable.Utilities.GenerateRects(design)
@@ -54,8 +54,7 @@ function addonTable.Utilities.GenerateRects(design)
 
   for _, barDetails in ipairs(design.bars) do
     if barDetails.kind == "health" then
-      local width, height = barDetails.border.width * addonTable.Assets.BarBordersSize.width, barDetails.border.height * addonTable.Assets.BarBordersSize.height
-      local rect = addonTable.Utilities.GetRectFromRegion({width = width, height = height}, barDetails.scale, barDetails.anchor)
+      local rect = addonTable.Utilities.GetRectFromRegion({width = barDetails.border.width, height = barDetails.border.height}, barDetails.scale, barDetails.anchor)
       CacheSize(rect)
     end
   end
@@ -67,7 +66,7 @@ function addonTable.Utilities.GenerateRects(design)
 
   for _, textDetails in ipairs(design.texts) do
     if textDetails.kind == "creatureName" then
-      local rect = addonTable.Utilities.GetRectFromRegion({width = textDetails.maxWidth * addonTable.Assets.BarBordersSize.width, height = 10 * textDetails.scale}, 1, textDetails.anchor)
+      local rect = addonTable.Utilities.GetRectFromRegion({width = textDetails.maxWidth, height = 10/addonTable.Assets.BarBordersSize.height}, 1, textDetails.anchor)
       CacheSize(rect)
     end
   end
