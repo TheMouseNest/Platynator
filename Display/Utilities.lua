@@ -661,6 +661,9 @@ do
     -- Midnight: Magister's Terrace
     [3073] = true, -- Gemellus
     [3074] = true, -- Degentrius
+    -- Midnight: Maisara Caverns
+    [3212] = true, -- Muro'jin
+    [3213] = true, -- Vordaza
     -- Draenor: Skyreach
     [1698] = true, -- Ranjit
   }
