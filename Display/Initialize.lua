@@ -449,7 +449,6 @@ function addonTable.Display.ManagerMixin:UpdateClickRegion(unit)
       region.height * clickScale * globalScale * addonTable.Assets.BarBordersSize.height * addonTable.Config.Get(addonTable.Config.Options.CLICK_REGION_SCALE_Y)
     )
     local verticalOffset = addonTable.Config.Get(addonTable.Config.Options.VERTICAL_OFFSET) * addonTable.Assets.BarBordersSize.height * clickScale * designScale * globalScale
-    DevTools_Dump(region)
     if region.anchor[2] then
       clickRegion:SetPoint(
         region.anchor[1],
