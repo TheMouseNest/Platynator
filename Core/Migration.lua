@@ -618,14 +618,14 @@ local function MigrateSettingsv2()
   if enabled.pvpInstance then
     tAppendAll(newAssignments, {
       {criteria = {"loc-pvp", "player", "cannot-attack"}, simplified = false, scale = 1, style = assigned.friendPvPPlayer},
-      {criteria = {"loc-pvp", "player", "can-attack"}, simplified = true, scale = 1, style = assigned.enemyPvPPlayer},
+      {criteria = {"loc-pvp", "player", "can-attack"}, simplified = false, scale = 1, style = assigned.enemyPvPPlayer},
     })
   end
 
   if enabled.pvpWorld then
     tAppendAll(newAssignments, {
       {criteria = {"loc-world", "player", "cannot-attack"}, simplified = false, scale = 1, style = assigned.friendPvPPlayer},
-      {criteria = {"loc-world", "player", "can-attack"}, simplified = true, scale = 1, style = assigned.enemyPvPPlayer},
+      {criteria = {"loc-world", "player", "can-attack"}, simplified = false, scale = 1, style = assigned.enemyPvPPlayer},
     })
   end
 
