@@ -432,6 +432,12 @@ function addonTable.Display.ManagerMixin:UpdateClickRegion(unit)
     if not clickRegion then
       clickRegion = self.clickRegionPool:Acquire()
       clickRegion:SetParent(nameplate)
+      --[[local t = clickRegion:CreateTexture()
+      t:SetColorTexture(0, 1, 0, 0.5)
+      t:SetAllPoints()
+      t = nameplate:CreateTexture()
+      t:SetColorTexture(1, 0, 0, 0.5)
+      t:SetAllPoints()]]
       self.nameplateClickRegions[nameplate:GetName()] = clickRegion
     end
     clickRegion:Show()
@@ -443,8 +449,15 @@ function addonTable.Display.ManagerMixin:UpdateClickRegion(unit)
       region.height * clickScale * globalScale * addonTable.Assets.BarBordersSize.height * addonTable.Config.Get(addonTable.Config.Options.CLICK_REGION_SCALE_Y)
     )
     local verticalOffset = addonTable.Config.Get(addonTable.Config.Options.VERTICAL_OFFSET) * addonTable.Assets.BarBordersSize.height * clickScale * designScale * globalScale
+    DevTools_Dump(region)
     if region.anchor[2] then
-      clickRegion:SetPoint(region.anchor[1], nameplate, "CENTER", region.anchor[2] * clickScale * globalScale, region.anchor[3] * clickScale * globalScale + verticalOffset)
+      clickRegion:SetPoint(
+        region.anchor[1],
+        nameplate,
+        "CENTER",
+        region.anchor[2] * clickScale * globalScale * addonTable.Config.Get(addonTable.Config.Options.CLICK_REGION_SCALE_X),
+        region.anchor[3] * clickScale * globalScale * addonTable.Config.Get(addonTable.Config.Options.CLICK_REGION_SCALE_Y) + verticalOffset
+      )
     else
       clickRegion:SetPoint("CENTER", nameplate, "CENTER", 0, verticalOffset)
     end
