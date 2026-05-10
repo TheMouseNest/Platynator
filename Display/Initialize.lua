@@ -420,6 +420,9 @@ end
 
 function addonTable.Display.ManagerMixin:UpdateStackingRegion(unit)
   local stackRegion = self.nameplateDisplays[unit].stackRegion
+  if not stackRegion then
+    return
+  end
   local globalScale = addonTable.Config.Get(addonTable.Config.Options.GLOBAL_SCALE)
   local newWidth = stackRegion.rect.width * addonTable.Assets.BarBordersSize.width * addonTable.Config.Get(addonTable.Config.Options.STACK_REGION_SCALE_X) * globalScale
   local newHeight = stackRegion.rect.height * addonTable.Assets.BarBordersSize.height * addonTable.Config.Get(addonTable.Config.Options.STACK_REGION_SCALE_Y) * globalScale
