@@ -62,7 +62,7 @@ function addonTable.Utilities.GenerateRects(design)
 
   local hit
   if left ~= nil then
-    hit = {left = left * design.scale, bottom = bottom * design.scale, width = right - left * design.scale, height = top - bottom * design.scale}
+    hit = {left = left * design.scale, bottom = bottom * design.scale, width = (right - left) * design.scale, height = (top - bottom) * design.scale}
   end
 
   for _, textDetails in ipairs(design.texts) do
@@ -82,7 +82,7 @@ function addonTable.Utilities.GenerateRects(design)
       top = addonTable.Assets.BarBordersSize.height / 2
       bottom = -top
     end
-    stack = {left = left * design.scale, bottom = bottom * design.scale, width = right - left * design.scale, height = top - bottom * design.scale}
+    stack = {left = left * design.scale, bottom = bottom * design.scale, width = (right - left) * design.scale, height = (top - bottom) * design.scale}
   else
     stack = {left = 0, bottom = 0, width = 0, height = 0}
   end

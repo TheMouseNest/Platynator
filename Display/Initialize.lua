@@ -177,6 +177,7 @@ function addonTable.Display.ManagerMixin:OnLoad()
       end
       self:UpdateFriendlyFont()
       self:UpdateNamePlateSize()
+      self:UpdateAllClickRegions()
       self:UpdateTargetScale()
     end
     if state[addonTable.Constants.RefreshReason.StackingBehaviour] then
@@ -211,6 +212,8 @@ function addonTable.Display.ManagerMixin:OnLoad()
       self.styleIndex = self.styleIndex + 1
       local defaultEnemyDesign = addonTable.Core.GetDesignByName(addonTable.Display.Context:GetDefaultEnemyNPCDesign())
       addonTable.CurrentFont, addonTable.CurrentFontUsesSmoothing = addonTable.Core.GetFontByDesign(defaultEnemyDesign)
+      self:UpdateNamePlateSize()
+      self:UpdateAllClickRegions()
       self:UpdateFriendlyFont()
     end
   end)
@@ -578,8 +581,8 @@ function addonTable.Display.ManagerMixin:UpdateNamePlateSize()
     local click = design.regions.click
     local newLeft = (click.anchor[2] or -click.width/2 * addonTable.Assets.BarBordersSize.width) * details.scale
     local newBottom = (click.anchor[3] or -click.height/2 * addonTable.Assets.BarBordersSize.height) * details.scale
-    local newRight = (newLeft + click.width * addonTable.Assets.BarBordersSize.width) * details.scale
-    local newTop = (newBottom + click.height * addonTable.Assets.BarBordersSize.height) * details.scale
+    local newRight = newLeft + click.width * addonTable.Assets.BarBordersSize.width * details.scale
+    local newTop = newBottom + click.height * addonTable.Assets.BarBordersSize.height * details.scale
     if left == nil then
       left = newLeft
       bottom = newBottom

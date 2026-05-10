@@ -548,6 +548,14 @@ function addonTable.Core.UpgradeDesign(design)
     UpgradeDesignv1(design)
     design.version = 2
   end
+  if design.version == 2 then
+    local click, stack = addonTable.Utilities.GenerateRects(design)
+    design.regions = {
+      click = addonTable.Utilities.ConvertRectToWidget(click),
+      stack = addonTable.Utilities.ConvertRectToWidget(stack)
+    }
+    design.version = 3
+  end
 end
 
 local function MigrateSettingsv1()
