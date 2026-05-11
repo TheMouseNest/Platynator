@@ -22,7 +22,7 @@ local settings = {
     {criteria = {"can-attack", "minion"}, simplified = true, scale = 1, style = "_hare_simplified"},
     {criteria = {"can-attack", "loc-dungeon", "class-normal"}, simplified = true, scale = 1, style = "_hare_simplified"},
     {criteria = {"can-attack"}, simplified = false, scale = 1, style = "_deer"},
-  }},
+  }, refresh = {addonTable.Constants.RefreshReason.DesignSelection, addonTable.Constants.RefreshReason.Design}},
   SIMPLIFIED_ASSIGNED_FALLBACK = {key = "simplified_assigned_fallback", default = "_hare_simplified"},
 
   TARGET_SCALE = {key = "target_scale", default = 1.2, refresh = {addonTable.Constants.RefreshReason.TargetBehaviour}},

@@ -138,22 +138,9 @@ function addonTable.Display.ManagerMixin:OnLoad()
         self.styleIndex = self.styleIndex + 1
         self:UpdateNamePlateSize()
         self:SetScript("OnUpdate", nil)
-        local globalScale = addonTable.Config.Get(addonTable.Config.Options.GLOBAL_SCALE)
-        for unit, display in pairs(self.nameplateDisplays) do
-          display.styleIndex = self.styleIndex
-          local nameplate = C_NamePlate.GetNamePlateForUnit(unit, issecure())
-          local designName, scale, shouldSimplify = addonTable.Display.Context:GetAssignedDesign(unit)
-          local design = addonTable.Core.GetDesignByName(designName)
-          if nameplate then
-            display:Install(nameplate, self.baseOffset / scale / design.scale / globalScale)
-          end
-          display:InitializeWidgets(design, addonTable.Core.GetDesignScale(addonTable.Constants.IsRetail and shouldSimplify), scale)
-          if display.stackRegion then
-            display.stackRegion.rect = addonTable.Utilities.GetRectFromRegion(design.regions.stack, design.scale * scale, design.regions.stack.anchor)
-          end
-          self:UpdateStackingRegion(unit)
-          self:ListenToBuffs(display, unit)
-          display:SetUnit(unit)
+        for unit in pairs(self.nameplateDisplays) do
+          self:Uninstall(unit)
+          self:Install(unit)
         end
         if self.lastInteract and self.lastInteract.interactUnit then
           self.lastInteract:UpdateSoftInteract()
@@ -230,7 +217,7 @@ function addonTable.Display.ManagerMixin:OnLoad()
       or settingName == addonTable.Config.Options.VERTICAL_OFFSET
     then
       self:UpdateNamePlateSize()
-      for unit, display in pairs(self.nameplateDisplays) do
+      for unit in pairs(self.nameplateDisplays) do
         self:UpdateStackingRegion(unit)
       end
       self:RepositionDisplays()
