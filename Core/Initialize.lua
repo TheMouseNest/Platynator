@@ -13,12 +13,17 @@ local offscreen = CreateFrame("Frame")
 offscreen:SetPoint("TOPLEFT", UIParent, "TOPRIGHT")
 addonTable.offscreenFrame = hidden
 
-local function SetStyle()
+local function SetStyle(isInit)
   local styleName = addonTable.Config.Get(addonTable.Config.Options.STYLE)
   if styleName:match("^_") then
     local designs = addonTable.Config.Get(addonTable.Config.Options.DESIGNS)
     designs[addonTable.Constants.CustomName] = CopyTable(addonTable.Core.GetDesignByName(styleName))
   end
+
+  if isInit then
+    return
+  end
+
   if addonTable.CustomiseDialog.IsUsingDefaultStyleSelect() then
     local assigments = addonTable.Config.Get(addonTable.Config.Options.DESIGN_ASSIGNMENTS)
     local enemyStyle = assigments[#assigments].style
@@ -73,7 +78,7 @@ function addonTable.Core.Initialize()
 
   addonTable.Core.MigrateSettings()
 
-  SetStyle()
+  SetStyle(true)
   addonTable.CallbackRegistry:RegisterCallback("SettingChanged", function(_, name)
     if name == addonTable.Config.Options.STYLE then
       SetStyle()
