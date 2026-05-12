@@ -548,13 +548,13 @@ function addonTable.Core.UpgradeDesign(design)
     UpgradeDesignv1(design)
     design.version = 2
   end
-  if design.version == 2 or design.version == 3 or design.version == 4 then
+  if design.version == 2 or design.version == 3 then
     local click, stack = addonTable.Utilities.GenerateRects(design)
     design.regions = {
       click = addonTable.Utilities.ConvertRectToWidget(click),
       stack = addonTable.Utilities.ConvertRectToWidget(stack)
     }
-    design.version = 5
+    design.version = 4
   end
 end
 
@@ -667,7 +667,30 @@ local function MigrateSettingsv2()
 end
 
 local function MigrateSettingsv3()
-  -- Add here
+  local assignments = addonTable.Config.Get(addonTable.Config.Options.DESIGN_ASSIGNMENTS)
+  if #assignments > 0 then
+    local hasTargeted = false
+    for _, a in ipairs(assignments) do
+      if tCompare(a.criteria, {"targeted", "can-attack"}) then
+        hasTargeted = true
+        break
+      end
+    end
+    if not hasTargeted then
+      local insertIndex = 1
+      local baseStyle = "_deer"
+      for i, a in ipairs(assignments) do
+        if tIndexOf(a.criteria, "can-attack") then
+          insertIndex = i
+          if not a.simplified then
+            baseStyle = a.style
+          end
+          break
+        end
+      end
+      table.insert(assignments, insertIndex, {criteria = {"targeted", "can-attack"}, simplified = false, scale = 1, style = baseStyle})
+    end
+  end
 end
 
 function addonTable.Core.MigrateSettings()
@@ -681,7 +704,10 @@ function addonTable.Core.MigrateSettings()
     addonTable.Config.Set(addonTable.Config.Options.MIGRATION, 3)
   end
 
-  MigrateSettingsv3()
+  if addonTable.Config.Get(addonTable.Config.Options.MIGRATION) == 3 then
+    MigrateSettingsv3()
+    addonTable.Config.Set(addonTable.Config.Options.MIGRATION, 4)
+  end
 
   for _, design in pairs(addonTable.Config.Get(addonTable.Config.Options.DESIGNS)) do
     addonTable.Core.UpgradeDesign(design)
