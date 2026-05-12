@@ -548,13 +548,13 @@ function addonTable.Core.UpgradeDesign(design)
     UpgradeDesignv1(design)
     design.version = 2
   end
-  if design.version == 2 or design.version == 3 then
+  if design.version == 2 or design.version == 3 or design.version == 4 then
     local click, stack = addonTable.Utilities.GenerateRects(design)
     design.regions = {
       click = addonTable.Utilities.ConvertRectToWidget(click),
       stack = addonTable.Utilities.ConvertRectToWidget(stack)
     }
-    design.version = 4
+    design.version = 5
   end
 end
 

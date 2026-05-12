@@ -1,7 +1,7 @@
 ---@class addonTablePlatynator
 local addonTable = select(2, ...)
 
-function addonTable.Utilities.GetRectFromRegion(region, scale, anchor)
+function addonTable.Utilities.GetRectFromRegion(region, scale, anchor, shouldScaleAnchor)
   local width = region.width * scale * addonTable.Assets.BarBordersSize.width
   local height = region.height * scale * addonTable.Assets.BarBordersSize.height
   local left, bottom
@@ -33,7 +33,11 @@ function addonTable.Utilities.GetRectFromRegion(region, scale, anchor)
     left = -width / 2
     bottom = -height / 2
   end
-  return {left = left * scale, bottom = bottom * scale, width = width, height = height}
+  if shouldScaleAnchor then
+    return {left = left * scale, bottom = bottom * scale, width = width, height = height}
+  else
+    return {left = left, bottom = bottom, width = width, height = height}
+  end
 end
 
 function addonTable.Utilities.GenerateRects(design)
