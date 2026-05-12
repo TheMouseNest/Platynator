@@ -482,6 +482,7 @@ function addonTable.Display.ManagerMixin:Install(unit)
   local nameplate = C_NamePlate.GetNamePlateForUnit(unit, issecure())
   -- NOTE: the nameplate _name_ does not correspond to the unit
   if nameplate and unit and (addonTable.Constants.IsRetail or not UnitIsUnit("player", unit)) then
+    local globalScale = addonTable.Config.Get(addonTable.Config.Options.GLOBAL_SCALE)
     local designName, scale, shouldSimplify, index = addonTable.Display.Context:GetAssignedDesign(unit)
     local design = addonTable.Core.GetDesignByName(designName)
     local newDisplay = self:GetPool(index):Acquire()
@@ -499,7 +500,7 @@ function addonTable.Display.ManagerMixin:Install(unit)
         tex:SetAllPoints(newDisplay.stackRegion)
       end
       newDisplay.stackRegion:SetParent(nameplate)
-      newDisplay.stackRegion.rect = addonTable.Utilities.GetRectFromRegion(design.regions.stack, design.scale * scale, design.regions.stack.anchor, true)
+      newDisplay.stackRegion.rect = addonTable.Utilities.GetRectFromRegion(design.regions.stack, scale * globalScale, design.regions.stack.anchor, true)
       nameplate:SetStackingBoundsFrame(newDisplay.stackRegion)
       self:UpdateStackingRegion(unit)
     else
@@ -508,7 +509,6 @@ function addonTable.Display.ManagerMixin:Install(unit)
 
     self:UpdateClickRegion(unit)
 
-    local globalScale = addonTable.Config.Get(addonTable.Config.Options.GLOBAL_SCALE)
     newDisplay:Install(nameplate, self.baseOffset / scale / design.scale / globalScale)
     if newDisplay.styleIndex ~= self.styleIndex then
       local scaleOffset, scaleMod = addonTable.Core.GetDesignScale(addonTable.Constants.IsRetail and shouldSimplify), scale
