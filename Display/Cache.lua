@@ -1,6 +1,7 @@
 ---@class addonTablePlatynator
 local addonTable = select(2, ...)
 
+local RangeCheck = LibStub("LibRangeCheck-3.0")
 local GetOtherTanks = addonTable.Display.Utilities.GetOtherTanks
 local IsTank = addonTable.Display.Utilities.IsTankRole
 
@@ -49,6 +50,10 @@ local getter = {
     end
     return result, not oldState or result.situation ~= oldState.situation or result.otherTankAggro ~= oldState.otherTankAggro
   end,
+  ["range"] = function(oldState, unit)
+    local range = RangeCheck:GetRange(unit)
+    return range, range ~= oldState
+  end
 }
 
 local eventsFromKind = {
@@ -108,6 +113,21 @@ function addonTable.Display.CacheMixin:OnLoad()
     self:RegisterEvent(event)
   end
 
+  C_Timer.NewTicker(0.1, function()
+    local kind = "range"
+    for unit, details in pairs(self.monitoring) do
+      if details.range then
+        local data, update = getter[kind](self.state[unit][kind], unit)
+        self.state[unit][kind] = data
+        if update then
+          for _, callback in ipairs(self.registeredCallbacks[unit][kind]) do
+            callback(data)
+          end
+        end
+      end
+    end
+  end)
+
   addonTable.CallbackRegistry:RegisterCallback("LegacyInterrupter", function(_, playerGUID, destGUID)
     for unit, details in pairs(self.monitoring) do
       if details.cast and UnitGUID(unit) == destGUID then
@@ -160,7 +180,7 @@ function addonTable.Display.CacheMixin:OnEvent(eventName, unit, ...)
     local data, update = getter[kind](self.state[unit][kind], unit, eventName, ...)
     self.state[unit][kind] = data
     if update then
-      for index, callback in ipairs(self.registeredCallbacks[unit][kind]) do
+      for _, callback in ipairs(self.registeredCallbacks[unit][kind]) do
         callback(data)
       end
     end

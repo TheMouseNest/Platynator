@@ -246,26 +246,6 @@ local function SetupBehaviour(parent)
   local applyNameplatesDropdown = addonTable.CustomiseDialog.Components.GetBasicDropdown(container, addonTable.Locales.USE_NAMEPLATES_FOR)
   applyNameplatesDropdown:SetPoint("TOP", allFrames[#allFrames], "BOTTOM")
   do
-    local labels
-    local values = {
-      "player",
-      "npc",
-      "enemy",
-    }
-    if C_CVar.GetCVarInfo("nameplateShowFriendlyPlayers") ~= nil then
-      labels = {
-        addonTable.Locales.FRIENDLY_PLAYERS,
-        addonTable.Locales.FRIENDLY_NPCS,
-        addonTable.Locales.ENEMIES,
-      }
-    else
-      labels = {
-        addonTable.Locales.PLAYERS_AND_FRIENDS,
-        addonTable.Locales.FRIENDLY_NPCS,
-        addonTable.Locales.ENEMIES,
-      }
-    end
-
     local function GetCheckbox(rootDescription, label, value)
       return rootDescription:CreateCheckbox(label, function()
         return addonTable.Config.Get(addonTable.Config.Options.SHOW_NAMEPLATES)[value]
@@ -299,6 +279,33 @@ local function SetupBehaviour(parent)
     end)
   end
   table.insert(allFrames, applyNameplatesDropdown)
+
+  local friendlyInInstancesDropdown = addonTable.CustomiseDialog.Components.GetBasicDropdown(container, addonTable.Locales.SHOW_FRIENDLY_IN_INSTANCES, function(value)
+    return addonTable.Config.Get(addonTable.Config.Options.SHOW_FRIENDLY_IN_INSTANCES) == value
+  end, function(value)
+    addonTable.Config.Set(addonTable.Config.Options.SHOW_FRIENDLY_IN_INSTANCES, value)
+    addonTable.CallbackRegistry:TriggerEvent("RefreshStateChange", {
+      [addonTable.Constants.RefreshReason.ShowBehaviour] = true,
+      --[addonTable.Constants.RefreshReason.Design] = true,
+    })
+  end)
+  friendlyInInstancesDropdown:SetPoint("TOP", allFrames[#allFrames], "BOTTOM")
+  do
+    local values = {
+      "never",
+      "always",
+    }
+    local labels = {
+      addonTable.Locales.NEVER,
+      addonTable.Locales.ALWAYS_ALL,
+    }
+    if C_CVar.GetCVarInfo("nameplateShowOnlyNameForFriendlyPlayerUnits") then
+      table.insert(values, 2, "name_only")
+      table.insert(labels, 2, addonTable.Locales.NAME_ONLY_PLAYERS)
+    end
+    friendlyInInstancesDropdown:Init(labels, values)
+  end
+  table.insert(allFrames, friendlyInInstancesDropdown)
 
   local simplifiedScaleSlider
   if addonTable.Constants.IsRetail then
@@ -334,33 +341,6 @@ local function SetupBehaviour(parent)
     end
   end)
   table.insert(allFrames, clickableNameplatesDropdown)
-
-  local friendlyInInstancesDropdown = addonTable.CustomiseDialog.Components.GetBasicDropdown(container, addonTable.Locales.SHOW_FRIENDLY_IN_INSTANCES, function(value)
-    return addonTable.Config.Get(addonTable.Config.Options.SHOW_FRIENDLY_IN_INSTANCES) == value
-  end, function(value)
-    addonTable.Config.Set(addonTable.Config.Options.SHOW_FRIENDLY_IN_INSTANCES, value)
-    addonTable.CallbackRegistry:TriggerEvent("RefreshStateChange", {
-      [addonTable.Constants.RefreshReason.ShowBehaviour] = true,
-      --[addonTable.Constants.RefreshReason.Design] = true,
-    })
-  end)
-  friendlyInInstancesDropdown:SetPoint("TOP", allFrames[#allFrames], "BOTTOM", 0, -30)
-  do
-    local values = {
-      "never",
-      "always",
-    }
-    local labels = {
-      addonTable.Locales.NEVER,
-      addonTable.Locales.ALWAYS_ALL,
-    }
-    if C_CVar.GetCVarInfo("nameplateShowOnlyNameForFriendlyPlayerUnits") then
-      table.insert(values, 2, "name_only")
-      table.insert(labels, 2, addonTable.Locales.NAME_ONLY_PLAYERS)
-    end
-    friendlyInInstancesDropdown:Init(labels, values)
-  end
-  table.insert(allFrames, friendlyInInstancesDropdown)
 
   local targetScaleSlider = addonTable.CustomiseDialog.Components.GetSlider(container, addonTable.Locales.ON_TARGET_SCALE, 1, 500, function(value) return ("%d%%"):format(value) end, function(value)
     addonTable.Config.Set(addonTable.Config.Options.TARGET_SCALE, value / 100)
@@ -404,6 +384,12 @@ local function SetupBehaviour(parent)
   obscuredCombatTransparencySlider:SetPoint("TOP", allFrames[#allFrames], "BOTTOM")
   table.insert(allFrames, obscuredCombatTransparencySlider)
 
+  local outOfRangeTransparencySlider = addonTable.CustomiseDialog.Components.GetSlider(container, addonTable.Locales.OUT_OF_RANGE_TRANSPARENCY, 0, 100, function(value) return ("%d%%"):format(value) end, function(value)
+    addonTable.Config.Set(addonTable.Config.Options.OUT_OF_RANGE_ALPHA, 1 - value / 100)
+  end)
+  outOfRangeTransparencySlider:SetPoint("TOP", allFrames[#allFrames], "BOTTOM")
+  table.insert(allFrames, outOfRangeTransparencySlider)
+
   local applyCvarsCheckbox = addonTable.CustomiseDialog.Components.GetCheckbox(container, addonTable.Locales.APPLY_OTHER_CVARS, 28, function(value)
     if InCombatLockdown() then
       return
@@ -422,6 +408,7 @@ local function SetupBehaviour(parent)
     mouseoverTransparencySlider:SetValue(100 - addonTable.Config.Get(addonTable.Config.Options.MOUSEOVER_ALPHA) * 100)
     obscuredTransparencySlider:SetValue(100 - addonTable.Config.Get(addonTable.Config.Options.OBSCURED_ALPHA) * 100)
     obscuredCombatTransparencySlider:SetValue(100 - addonTable.Config.Get(addonTable.Config.Options.OBSCURED_COMBAT_ALPHA) * 100)
+    outOfRangeTransparencySlider:SetValue(100 - addonTable.Config.Get(addonTable.Config.Options.OUT_OF_RANGE_ALPHA) * 100)
 
     if simplifiedScaleSlider then
       simplifiedScaleSlider:SetValue(addonTable.Config.Get(addonTable.Config.Options.SIMPLIFIED_SCALE) * 100)

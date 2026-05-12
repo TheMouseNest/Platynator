@@ -468,6 +468,19 @@ function addonTable.Display.NameplateMixin:SetUnit(unit)
     self.unit = unit
     addonTable.Display.Cache:AddUnit(unit)
 
+    if UnitCanAttack("player", self.unit) and addonTable.Config.Get(addonTable.Config.Options.OUT_OF_RANGE_ALPHA) ~= 1 then
+      addonTable.Display.Cache:RegisterCallback(self.unit, "range", function(state)
+        local old = self.inRange
+        self.inRange = state <= addonTable.Display.Utilities.GetRangedLimit()
+        if old ~= self.inRange then
+          self:UpdateVisual()
+        end
+      end)
+      self.inRange = addonTable.Display.Cache:Get(self.unit, "range") <= addonTable.Display.Utilities.GetRangedLimit()
+    else
+      self.inRange = true
+    end
+
     for _, w in ipairs(self.widgets) do
       w:Show()
       w:SetUnit(self.unit)
@@ -597,6 +610,9 @@ function addonTable.Display.NameplateMixin:UpdateVisual()
     if not isMouseover and not self.casting then
       alpha = addonTable.Config.Get(addonTable.Config.Options.NOT_TARGET_ALPHA)
     end
+  end
+  if not self.inRange then
+    alpha = alpha * addonTable.Config.Get(addonTable.Config.Options.OUT_OF_RANGE_ALPHA)
   end
   self:SetScale(self.scale * scale * addonTable.Config.Get(addonTable.Config.Options.GLOBAL_SCALE) * scaleMod)
   self:SetAlpha(alpha)

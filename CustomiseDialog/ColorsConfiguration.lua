@@ -955,6 +955,48 @@ addonTable.CustomiseDialog.ColorsConfig = {
       },
     },
   },
+  ["inRange"] = {
+    label = addonTable.Locales.IN_RANGE,
+    default = {
+      kind = "inRange",
+      colors = {
+        inRange = GetColor("34edd1"),
+      },
+    },
+    entries = {
+      {
+        label = addonTable.Locales.IN_RANGE,
+        kind = "colorPicker",
+        setter = function(details, value)
+          details.colors.inRange = value
+        end,
+        getter = function(details)
+          return details.colors.inRange
+        end,
+      },
+    },
+  },
+  ["outOfRange"] = {
+    label = addonTable.Locales.OUT_OF_RANGE,
+    default = {
+      kind = "outOfRange",
+      colors = {
+        outOfRange = GetColor("34edd1"),
+      },
+    },
+    entries = {
+      {
+        label = addonTable.Locales.OUT_OF_RANGE,
+        kind = "colorPicker",
+        setter = function(details, value)
+          details.colors.outOfRange = value
+        end,
+        getter = function(details)
+          return details.colors.outOfRange
+        end,
+      },
+    },
+  },
 }
 
 addonTable.CustomiseDialog.ColorsConfigOrder = {
@@ -966,6 +1008,8 @@ addonTable.CustomiseDialog.ColorsConfigOrder = {
   "mouseover",
   "threat",
   "inCombat",
+  "inRange",
+  "outOfRange",
   "delveType",
   "eliteType",
   "rarity",

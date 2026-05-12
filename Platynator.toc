@@ -21,6 +21,7 @@
 Libs\LibStub\LibStub.lua
 Libs\CallbackHandler-1.0\CallbackHandler-1.0.lua
 Libs\LibSharedMedia-3.0\lib.xml
+Libs\LibRangeCheck-3.0\LibRangeCheck-3.0.lua
 
 Locales.lua
 

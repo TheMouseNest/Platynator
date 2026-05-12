@@ -456,6 +456,7 @@ do
 
   local role = roleType.Damage
   local isTank = false
+  local rangeLimit = 0
   local _, playerClass = UnitClass("player")
 
   local function GetPlayerRole()
@@ -474,6 +475,16 @@ do
       return roleMap[role]
     end
     return roleType.Damage
+  end
+
+  local function AssignRange()
+    if addonTable.Constants.IsEra or addonTable.Constants.IsBC or addonTable.Constants.IsWrath then
+      rangeLimit = addonTable.Constants.DefaultRange[playerClass] - 3
+    else
+      local specIndex = C_SpecializationInfo.GetSpecialization()
+      local specID = C_SpecializationInfo.GetSpecializationInfo(specIndex)
+      rangeLimit = addonTable.Constants.DefaultRange[specID] - 3
+    end
   end
 
   do
@@ -497,11 +508,16 @@ do
         isTank = role == roleType.Tank
         addonTable.CallbackRegistry:TriggerEvent("RoleChange")
       end
+      AssignRange()
     end)
   end
 
   function addonTable.Display.Utilities.IsTankRole()
     return isTank
+  end
+
+  function addonTable.Display.Utilities.GetRangedLimit()
+    return rangeLimit
   end
 end
 

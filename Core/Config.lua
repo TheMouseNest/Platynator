@@ -33,6 +33,7 @@ local settings = {
 
   OBSCURED_ALPHA = {key = "obscured_alpha", default = 0.4},
   OBSCURED_COMBAT_ALPHA = {key = "obscured_combat_alpha", default = 0.4},
+  OUT_OF_RANGE_ALPHA = {key = "out_of_range_alpha", default = 1, refresh = {addonTable.Constants.RefreshReason.Design}},
 
   STACKING_NAMEPLATES = {key = "stacking_nameplates", default = {friend = false, enemy = true}, refresh = {addonTable.Constants.RefreshReason.StackingBehaviour}},
   CLOSER_TO_SCREEN_EDGES = {key = "closer_to_screen_edges", default = true, refresh = {addonTable.Constants.RefreshReason.StackingBehaviour}},

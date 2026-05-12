@@ -61,6 +61,8 @@ local kindToCache = {
   importantCast = {"cast"},
   cast = {"cast"},
   threat = {"threat"},
+  inRange = {"range"},
+  outOfRange = {"range"},
 }
 
 function addonTable.Display.UnregisterForColorEvents(frame)
@@ -436,6 +438,18 @@ function addonTable.Display.GetColor(settings, state, unit)
       local mapped = addonTable.Constants.PowerMap[kind]
       if s.colors[mapped] then
         table.insert(colorQueue, {color = s.colors[mapped]})
+        break
+      end
+    elseif s.kind == "inRange" then
+      local range = addonTable.Display.Cache:Get(unit, "range")
+      if range <= addonTable.Display.Utilities.GetRangedLimit() then
+        table.insert(colorQueue, {color = s.colors.inRange})
+        break
+      end
+    elseif s.kind == "outOfRange" then
+      local range = addonTable.Display.Cache:Get(unit, "range")
+      if range > addonTable.Display.Utilities.GetRangedLimit() then
+        table.insert(colorQueue, {color = s.colors.outOfRange})
         break
       end
     end
