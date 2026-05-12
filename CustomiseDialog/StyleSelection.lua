@@ -357,7 +357,7 @@ local function GetCustomOptions(container)
       )
     end)
     local criteriaLabel = frame:CreateFontString(nil, nil, "GameFontHighlight")
-    criteriaLabel:SetText("Activation")
+    criteriaLabel:SetText(addonTable.Locales.ACTIVATION)
     criteriaLabel:SetPoint("RIGHT", frame.criteriaDropdown, "LEFT", -10, 0)
 
     frame.styleDropdown = CreateFrame("DropdownButton", nil, frame, "WowStyle1DropdownTemplate")
