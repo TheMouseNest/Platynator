@@ -997,6 +997,27 @@ addonTable.CustomiseDialog.ColorsConfig = {
       },
     },
   },
+  ["party"] = {
+    label = addonTable.Locales.PARTY,
+    default = {
+      kind = "party",
+      colors = {
+        party = GetColor("34edd1"),
+      },
+    },
+    entries = {
+      {
+        label = addonTable.Locales.PARTY,
+        kind = "colorPicker",
+        setter = function(details, value)
+          details.colors.party = value
+        end,
+        getter = function(details)
+          return details.colors.party
+        end,
+      },
+    },
+  },
 }
 
 addonTable.CustomiseDialog.ColorsConfigOrder = {
@@ -1014,6 +1035,7 @@ addonTable.CustomiseDialog.ColorsConfigOrder = {
   "eliteType",
   "rarity",
   "quest",
+  "party",
   "guild",
   "classColors",
   "difficulty",

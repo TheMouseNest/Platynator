@@ -37,15 +37,10 @@ local kindToEvent = {
   softTarget = {"PLAYER_TARGET_CHANGED", "PLAYER_SOFT_ENEMY_CHANGED", "PLAYER_SOFT_FRIEND_CHANGED"},
   focus = {"PLAYER_FOCUS_CHANGED"},
   execute = {"UNIT_HEALTH"},
-  eliteType = {
-    "UNIT_CLASSIFICATION_CHANGED",
-  },
-  rarity = {
-    "UNIT_CLASSIFICATION_CHANGED",
-  },
-  delveType = {
-    "UNIT_CLASSIFICATION_CHANGED",
-  },
+  eliteType = {"UNIT_CLASSIFICATION_CHANGED"},
+  rarity = {"UNIT_CLASSIFICATION_CHANGED"},
+  delveType = {"UNIT_CLASSIFICATION_CHANGED"},
+  party = {"GROUP_ROSTER_UPDATE"}
 }
 local kindToCallback = {
   quest = {"QuestInfoUpdate"},
@@ -450,6 +445,11 @@ function addonTable.Display.GetColor(settings, state, unit)
       local range = addonTable.Display.Cache:Get(unit, "range")
       if range > addonTable.Display.Utilities.GetRangedLimit() then
         table.insert(colorQueue, {color = s.colors.outOfRange})
+        break
+      end
+    elseif s.kind == "party" then
+      if UnitInParty(unit) then
+        table.insert(colorQueue, {color = s.colors.party})
         break
       end
     end
