@@ -325,6 +325,10 @@ L["NPC"] = "NPC"
 L["MOB_CLASSIFICATION"] = "Mob Classification"
 L["WORLD_BOSS"] = "World Boss"
 
+L["DAMAGE"] = "Damage"
+L["HEALER"] = "Healer"
+L["TANK"] = "Tank"
+
 L["UNSET"] = "--Unset--"
 
 L["WHAT_TO_EXPORT"] = "What to export?"

@@ -1002,18 +1002,40 @@ addonTable.CustomiseDialog.ColorsConfig = {
     default = {
       kind = "party",
       colors = {
-        party = GetColor("34edd1"),
+        damage = GetColor("34edd1"),
+        healer = GetColor("34edd1"),
+        tank = GetColor("34edd1"),
       },
     },
     entries = {
       {
-        label = addonTable.Locales.PARTY,
+        label = addonTable.Locales.DAMAGE,
         kind = "colorPicker",
         setter = function(details, value)
-          details.colors.party = value
+          details.colors.damage = value
         end,
         getter = function(details)
-          return details.colors.party
+          return details.colors.damage
+        end,
+      },
+      {
+        label = addonTable.Locales.HEALER,
+        kind = "colorPicker",
+        setter = function(details, value)
+          details.colors.healer = value
+        end,
+        getter = function(details)
+          return details.colors.healer
+        end,
+      },
+      {
+        label = addonTable.Locales.TANK,
+        kind = "colorPicker",
+        setter = function(details, value)
+          details.colors.tank = value
+        end,
+        getter = function(details)
+          return details.colors.tank
         end,
       },
     },

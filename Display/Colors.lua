@@ -14,6 +14,13 @@ local IsTankRole = addonTable.Display.Utilities.IsTankRole
 local GetEliteType = addonTable.Display.Utilities.GetEliteType
 local GetDelveType = addonTable.Display.Utilities.GetDelveType
 
+local roleMap = {
+  TANK = "tank",
+  HEALER = "healer",
+  DAMAGER = "damage",
+  NONE = "damage",
+}
+
 local inRelevantThreatInstance, inRelevantEliteInstance, inRelevantDelveInstance = false, false, false
 
 -- Checking for party members below the player's level which indicates the mobs will be shifted down one
@@ -449,7 +456,15 @@ function addonTable.Display.GetColor(settings, state, unit)
       end
     elseif s.kind == "party" then
       if UnitInParty(unit) then
-        table.insert(colorQueue, {color = s.colors.party})
+        if UnitGroupRolesAssigned then
+          local role = UnitGroupRolesAssigned(unit)
+          if role then
+            table.insert(colorQueue, {color = s.colors[roleMap[role]]})
+            break
+          end
+        end
+
+        table.insert(colorQueue, {color = s.colors.damage})
         break
       end
     end
