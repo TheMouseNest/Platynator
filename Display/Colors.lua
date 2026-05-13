@@ -444,13 +444,13 @@ function addonTable.Display.GetColor(settings, state, unit)
       end
     elseif s.kind == "inRange" then
       local range = addonTable.Display.Cache:Get(unit, "range")
-      if range <= addonTable.Display.Utilities.GetRangedLimit() then
+      if range then
         table.insert(colorQueue, {color = s.colors.inRange})
         break
       end
     elseif s.kind == "outOfRange" then
       local range = addonTable.Display.Cache:Get(unit, "range")
-      if range > addonTable.Display.Utilities.GetRangedLimit() then
+      if not range then
         table.insert(colorQueue, {color = s.colors.outOfRange})
         break
       end

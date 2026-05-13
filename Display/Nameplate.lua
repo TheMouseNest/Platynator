@@ -471,12 +471,12 @@ function addonTable.Display.NameplateMixin:SetUnit(unit)
     if UnitCanAttack("player", self.unit) and addonTable.Config.Get(addonTable.Config.Options.OUT_OF_RANGE_ALPHA) ~= 1 then
       addonTable.Display.Cache:RegisterCallback(self.unit, "range", function(state)
         local old = self.inRange
-        self.inRange = state <= addonTable.Display.Utilities.GetRangedLimit()
+        self.inRange = state
         if old ~= self.inRange then
           self:UpdateVisual()
         end
       end)
-      self.inRange = addonTable.Display.Cache:Get(self.unit, "range") <= addonTable.Display.Utilities.GetRangedLimit()
+      self.inRange = addonTable.Display.Cache:Get(self.unit, "range")
     else
       self.inRange = true
     end
