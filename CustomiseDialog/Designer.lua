@@ -1186,7 +1186,10 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
         w.statusBarAbsorb:SetValue(10)
         local defaultColor
         for _, s in ipairs(w.details.autoColors) do
-          if s.kind == "threat" then
+          if s.kind == "classColors" then
+            defaultColor = RAID_CLASS_COLORS["MAGE"]
+            break
+          elseif s.kind == "threat" then
             defaultColor = s.colors.warning
             break
           elseif s.kind == "reaction" then
