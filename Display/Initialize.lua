@@ -797,7 +797,6 @@ function addonTable.Display.ManagerMixin:UpdateFriendlyFont()
         end
       end
     end
-    print(self.friendlyNameOnlyClassColors)
     C_CVar.SetCVar("nameplateUseClassColorForFriendlyPlayerUnitNames", addonTable.Display.Utilities.IsInRelevantInstance({dungeon = true, raid = true, delve = true}) and self.friendlyNameOnlyClassColors and "1" or "0")
     if scale then
       ChangeFont(SystemFont_NamePlate_Outlined, _G[addonTable.CurrentFont])
