@@ -1,9 +1,9 @@
 ---@class addonTablePlatynator
 local addonTable = select(2, ...)
 
-addonTable.Display.HealthBarMixin = {}
+addonTable.Display.HealthFillTextBarMixin = {}
 
-function addonTable.Display.HealthBarMixin:PostInit()
+function addonTable.Display.HealthFillTextBarMixin:PostInit()
   if self.details.background.applyColor then -- Apply tint to colours
     self.modColors = addonTable.Display.Utilities.TintAutoColors(self.details.autoColors, self.details.background.color)
   end
@@ -16,12 +16,19 @@ function addonTable.Display.HealthBarMixin:PostInit()
   end
 end
 
-function addonTable.Display.HealthBarMixin:SetUnit(unit)
+function addonTable.Display.HealthFillTextBarMixin:SetUnit(unit)
   self.unit = unit
   if self.unit then
     self:RegisterUnitEvent("UNIT_HEALTH", self.unit)
     self:RegisterUnitEvent("UNIT_MAXHEALTH", self.unit)
     self:RegisterUnitEvent("UNIT_ABSORB_AMOUNT_CHANGED", self.unit)
+    self:RegisterUnitEvent("UNIT_NAME_UPDATE", self.unit)
+
+    self.defaultText = UnitName(self.unit)
+    self.foreground:SetText(self.defaultText)
+    self.background:SetText(self.defaultText)
+    self.absorb:SetText(self.defaultText)
+    self.absorbPlacer:SetText(self.defaultText)
 
     -- Disable animation for initial setup
     local animate = self.animate
@@ -29,22 +36,15 @@ function addonTable.Display.HealthBarMixin:SetUnit(unit)
     self:UpdateHealth()
     self.animate = animate
 
-    if self.details.animate then
-      self.oldHealth = UnitHealth(self.unit)
-      self.statusBarCutaway:SetAlpha(0)
-    end
-
     addonTable.Display.RegisterForColorEvents(self, self.details.autoColors)
   else
     self:UnregisterAllEvents()
-    self.statusBarCutawayAnimation:Stop()
     addonTable.Display.UnregisterForColorEvents(self)
   end
 end
 
-function addonTable.Display.HealthBarMixin:Strip()
+function addonTable.Display.HealthFillTextBarMixin:Strip()
   self:UnregisterAllEvents()
-  self.statusBarCutawayAnimation:Stop()
   addonTable.Display.UnregisterForColorEvents(self)
   self.modColors = nil
   self.animate = nil
@@ -52,22 +52,20 @@ function addonTable.Display.HealthBarMixin:Strip()
 
 end
 
-function addonTable.Display.HealthBarMixin:SetColor(...)
-  self.statusBar:GetStatusBarTexture():SetVertexColor(...)
-  self.statusBarCutaway:GetStatusBarTexture():SetVertexColor(...)
+function addonTable.Display.HealthFillTextBarMixin:SetColor(...)
+  self.foreground:SetTextColor(...)
   if self.details.background.applyColor then
     local mod = self.details.background.color
     if self.modColors then
-      self.background:SetVertexColor(addonTable.Display.GetColor(self.modColors, self.colorState, self.unit))
+      self.background:SetTextColor(addonTable.Display.GetColor(self.modColors, self.colorState, self.unit))
     else
       local r, g, b = ...
-      self.background:SetVertexColor(r, g, b, mod.a)
+      self.background:SetTextColor(r, g, b, mod.a)
     end
   end
-  self.marker:SetVertexColor(...)
 end
 
-function addonTable.Display.HealthBarMixin:UpdateHealth()
+function addonTable.Display.HealthFillTextBarMixin:UpdateHealth()
   if self.calculator then
     UnitGetDetailedHealPrediction(self.unit, nil, self.calculator)
 
@@ -75,39 +73,44 @@ function addonTable.Display.HealthBarMixin:UpdateHealth()
     local maxHealth = self.calculator:GetMaximumHealth()
     self.statusBar:SetMinMaxValues(0, maxHealth)
 
-    self.statusBarCutaway:SetMinMaxValues(0, maxHealth)
     self.statusBarAbsorb:SetMinMaxValues(0, maxHealth)
 
     local absorbs = self.calculator:GetDamageAbsorbs()
     self.statusBarAbsorb:SetValue(absorbs, self.animate)
     self.calculator:SetMaximumHealthMode(Enum.UnitMaximumHealthMode.Default)
-    self.newHealth = self.calculator:GetCurrentHealth()
-    self.statusBar:SetValue(self.newHealth, self.animate)
+    local newHealth = self.calculator:GetCurrentHealth()
+    self.statusBar:SetValue(newHealth, self.animate)
   else
     local absorbs = UnitGetTotalAbsorbs(self.unit)
     local maxHealth = UnitHealthMax(self.unit)
     self.statusBar:SetMinMaxValues(0, maxHealth + absorbs)
-    self.statusBarCutaway:SetMinMaxValues(0, maxHealth)
     self.statusBarAbsorb:SetMinMaxValues(0, maxHealth)
-    self.newHealth = UnitHealth(self.unit, true)
-    self.statusBar:SetValue(self.newHealth)
+    local newHealth = UnitHealth(self.unit, true)
+    self.statusBar:SetValue(newHealth)
     self.statusBarAbsorb:SetValue(absorbs)
   end
 end
 
-function addonTable.Display.HealthBarMixin:OnEvent(eventName)
+function addonTable.Display.HealthFillTextBarMixin:OnEvent(eventName)
   if eventName == "UNIT_HEALTH" then
     self:UpdateHealth()
-    if self.details.animate then
-      self.statusBarCutaway:SetValue(self.oldHealth)
-      self.statusBarCutawayAnimation:Play()
-      self.oldHealth = self.newHealth
-    end
   elseif eventName == "UNIT_MAXHEALTH" then
     self:UpdateHealth()
   elseif eventName == "UNIT_ABSORB_AMOUNT_CHANGED" then
     self:UpdateHealth()
+  elseif eventName == "UNIT_NAME_UPDATE" then
+    self.defaultText = UnitName(self.unit)
+    self.text:SetText(self.defaultText)
   end
 
   self:ColorEventHandler(eventName)
+end
+
+function addonTable.Display.HealthFillTextBarMixin:ApplyTextOverride()
+  local override = addonTable.API.TextOverrides.name[self.unit]
+  local text = override or self.defaultText
+  self.foreground:SetText(text)
+  self.background:SetText(text)
+  self.absorb:SetText(text)
+  self.absorbPlacer:SetText(text)
 end

@@ -804,12 +804,123 @@ function addonTable.Display.GetText(frame, parent)
   return frame
 end
 
+function addonTable.Display.GetHealthFillText(frame, parent)
+  frame = frame or CreateFrame("Frame", nil, parent or UIParent)
+  -- This Wrapper workaround is so that the `frame` always has the same size as the text
+  frame.Wrapper = CreateFrame("Frame", nil, parent or UIParent)
+  frame.Wrapper:SetSize(1, 1)
+  local t = frame.Wrapper:CreateTexture()
+  t:SetColorTexture(1, 0, 0, 0.5)
+  t:SetSize(20, 20)
+
+  frame.mask = CreateFrame("Frame", nil, frame.Wrapper)
+  frame.mask:SetClipsChildren(true)
+  frame.maskAbsorb = CreateFrame("Frame", nil, frame.Wrapper)
+  frame.maskAbsorb:SetClipsChildren(true)
+
+  frame.statusBar = CreateFrame("StatusBar", nil, frame)
+  frame.statusBar:SetStatusBarTexture("Interface/AddOns/Platynator/Special/transparent.png")
+  frame.statusBar:SetMinMaxValues(0, 1)
+  frame.mask:SetAllPoints(frame.statusBar:GetStatusBarTexture())
+
+  frame.statusBarAbsorb = CreateFrame("StatusBar", nil, frame)
+  frame.statusBarAbsorb:SetStatusBarTexture("Interface/AddOns/Platynator/Special/transparent.png")
+  frame.maskAbsorb:SetAllPoints(frame.statusBarAbsorb:GetStatusBarTexture())
+
+  frame.foreground = frame.mask:CreateFontString(nil, nil, "GameFontNormal")
+  frame.foreground:SetPoint("CENTER", frame.Wrapper)
+  frame.foreground:SetText(" ")
+
+  frame.absorb = frame.maskAbsorb:CreateFontString(nil, nil, "GameFontNormal")
+  frame.absorb:SetPoint("CENTER", frame.Wrapper)
+  frame.absorb:SetText(" ")
+
+  frame.absorbPlacer = frame.Wrapper:CreateFontString(nil, nil, "GameFontNormal")
+  frame.absorbPlacer:SetPoint("LEFT", frame.statusBar:GetStatusBarTexture(), "RIGHT", -1, 0)
+  frame.absorbPlacer:SetText(" ")
+
+  frame.background = frame.Wrapper:CreateFontString(nil, nil, "GameFontNormal")
+  frame.background:SetPoint("CENTER", frame.Wrapper)
+  frame.background:SetText(" ")
+
+  frame.statusBar:SetAllPoints(frame.background)
+  frame.statusBarAbsorb:SetAllPoints(frame.absorbPlacer)
+
+  frame.texts = {frame.foreground, frame.absorb, frame.background, frame.absorbPlacer}
+
+  frame:SetAllPoints(frame.text)
+
+  function frame:Init(details)
+    if frame.Strip then
+      frame:Strip()
+    end
+
+    frame.details = details
+
+    for _, t in ipairs(frame.texts) do
+      t:SetFontObject(addonTable.CurrentFont)
+      if t ~= self.absorbPlacer then
+        t:ClearAllPoints()
+        t:SetPoint(details.anchor[1] or "CENTER", frame.Wrapper)
+      end
+      t:SetJustifyV("BOTTOM")
+
+      local scale = details.scale * 0.85
+      if t.SetSmoothScaling then
+        t:SetSmoothScaling(addonTable.CurrentFontUsesSmoothing)
+        t:SetScale(scale)
+      else
+        t:SetTextScale(scale)
+      end
+    end
+
+    frame.background:SetTextColor(details.background.color.r, details.background.color.g, details.background.color.b)
+    frame.absorb:SetTextColor(details.absorb.color.r, details.absorb.color.g, details.absorb.color.b)
+    frame.absorbPlacer:SetAlpha(0)
+
+    frame.maskAbsorb:SetFrameLevel(frame.Wrapper:GetFrameLevel() + 2)
+    frame.mask:SetFrameLevel(frame.Wrapper:GetFrameLevel() + 3)
+
+    frame:SetAllPoints(frame.background)
+
+    if details.kind == "healthFillText" then
+      Mixin(frame, addonTable.Display.HealthFillTextBarMixin)
+    else
+      assert(false)
+    end
+
+    frame:SetScript("OnEvent", frame.OnEvent)
+
+    frame:SetScript("OnShow", function()
+      frame.Wrapper:Show()
+    end)
+
+    frame:SetScript("OnHide", function()
+      frame.Wrapper:Hide()
+    end)
+
+    if frame.PostInit then
+      frame:PostInit()
+    end
+  end
+
+  function frame:ApplyAnchor()
+    ApplyAnchor(frame.Wrapper, frame.details.anchor)
+  end
+
+  function frame:ApplySize()
+  end
+
+  return frame
+end
+
 local livePools = {
   healthBars = CreateFramePool("Frame", UIParent, nil, nil, false, addonTable.Display.GetHealthBar),
+  healthFillTextSpecialBars = CreateFramePool("Frame", UIParent, nil, nil, false, addonTable.Display.GetHealthFillText),
   castBars = CreateFramePool("Frame", UIParent, nil, nil, false, addonTable.Display.GetCastBar),
   energyBars = CreateFramePool("Frame", UIParent, nil, nil, false, addonTable.Display.GetEnergyBar),
   texts = CreateFramePool("Frame", UIParent, nil, nil, false, addonTable.Display.GetText),
-  powers = CreateFramePool("Frame", UIParent, nil, nil, false, addonTable.Display.GetPower),
+  powerSpecialBars = CreateFramePool("Frame", UIParent, nil, nil, false, addonTable.Display.GetPower),
   highlights = CreateFramePool("Frame", UIParent, nil, nil, false, addonTable.Display.GetHighlight),
   animatedBorderHighlights = CreateFramePool("Frame", UIParent, nil, nil, false, addonTable.Display.GetAnimatedBorderHighlight),
   markers = CreateFramePool("Frame", UIParent, nil, nil, false, addonTable.Display.GetMarker),
@@ -817,10 +928,11 @@ local livePools = {
 
 local editorPools = {
   healthBars = CreateFramePool("Frame", UIParent, "PlatynatorPropagateMouseTemplate", nil, false, addonTable.Display.GetHealthBar),
+  healthFillTextSpecialBars = CreateFramePool("Frame", UIParent, "PlatynatorPropagateMouseTemplate", nil, false, addonTable.Display.GetHealthFillText),
   castBars = CreateFramePool("Frame", UIParent, "PlatynatorPropagateMouseTemplate", nil, false, addonTable.Display.GetCastBar),
   energyBars = CreateFramePool("Frame", UIParent, "PlatynatorPropagateMouseTemplate", nil, false, addonTable.Display.GetEnergyBar),
   texts = CreateFramePool("Frame", UIParent, "PlatynatorPropagateMouseTemplate", nil, false, addonTable.Display.GetText),
-  powers = CreateFramePool("Frame", UIParent, "PlatynatorPropagateMouseTemplate", nil, false, addonTable.Display.GetPower),
+  powerSpecialBars = CreateFramePool("Frame", UIParent, "PlatynatorPropagateMouseTemplate", nil, false, addonTable.Display.GetPower),
   highlights = CreateFramePool("Frame", UIParent, "PlatynatorPropagateMouseTemplate", nil, false, addonTable.Display.GetHighlight),
   animatedBorderHighlights = CreateFramePool("Frame", UIParent, "PlatynatorPropagateMouseTemplate", nil, false, addonTable.Display.GetAnimatedBorderHighlight),
   markers = CreateFramePool("Frame", UIParent, "PlatynatorPropagateMouseTemplate", nil, false, addonTable.Display.GetMarker),
@@ -883,9 +995,13 @@ function addonTable.Display.GetWidgets(design, parent, isEditor)
   end
 
   for index, specialDetails in ipairs(design.specialBars) do
-    assert(specialDetails.kind == "power")
-    local w = pools.powers:Acquire()
-    poolType[w] = "powers"
+    local w = pools[specialDetails.kind .. "SpecialBars"]:Acquire()
+    poolType[w] = specialDetails.kind .. "SpecialBars"
+    if w.Wrapper then
+      w.Wrapper:SetParent(parent)
+      w.Wrapper:SetFrameStrata("MEDIUM")
+      w.Wrapper:SetFrameLevel(layerStep * specialDetails.layer + index * 10)
+    end
     w:SetParent(parent)
     w:Show()
     w:SetFrameStrata("MEDIUM")

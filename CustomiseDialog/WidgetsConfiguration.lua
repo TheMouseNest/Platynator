@@ -1573,7 +1573,84 @@ addonTable.CustomiseDialog.WidgetsConfig = {
           },
         }
       }
-    }
+    },
+    ["healthFillText"] = {
+      {
+        label = addonTable.Locales.GENERAL,
+        entries = {
+          {
+            label = addonTable.Locales.SCALE,
+            kind = "slider",
+            min = 1, max = 300,
+            valuePattern = "%d%%",
+            setter = function(details, value)
+              details.scale = value / 100
+            end,
+            getter = function(details)
+              return details.scale * 100
+            end,
+          },
+          {
+            label = addonTable.Locales.LAYER,
+            kind = "slider",
+            min = 0, max = 6,
+            valuePattern = "%d",
+            setter = function(details, value)
+              details.layer = value
+            end,
+            getter = function(details)
+              return details.layer
+            end,
+          },
+          { kind = "spacer" },
+          {
+            label = addonTable.Locales.BACKGROUND_COLOR,
+            kind = "colorPicker",
+            setter = function(details, value)
+              details.background.color = value
+            end,
+            getter = function(details)
+              return details.background.color
+            end,
+          },
+          {
+            label = addonTable.Locales.ABSORB_COLOR,
+            kind = "colorPicker",
+            setter = function(details, value)
+              details.absorb.color = value
+            end,
+            getter = function(details)
+              return details.absorb.color
+            end,
+          },
+          { kind = "spacer" },
+          {
+            label = addonTable.Locales.ANIMATE,
+            kind = "checkbox",
+            setter = function(details, value)
+              details.animate = value
+            end,
+            getter = function(details)
+              return details.animate
+            end,
+          },
+        }
+      },
+      {
+        label = addonTable.Locales.COLORS,
+        entries = {
+          {
+            label = "",
+            kind = "autoColors",
+            lockedElements = {reaction = true},
+            setter = function() end,
+            getter = function(details)
+              return details.autoColors
+            end,
+          },
+        },
+      },
+    },
   }
 }
 

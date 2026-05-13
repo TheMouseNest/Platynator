@@ -804,7 +804,7 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
       newCursorY = newCursorY / preview:GetEffectiveScale()
       for _, index in ipairs(backupSelectionIndexes) do
         local w = widgets[index]
-        if w.kind == "texts" then -- Because the Wrapper determines the base position
+        if w.Wrapper then -- Because the Wrapper determines the base position
           w.Wrapper:AdjustPointsOffset(newCursorX - cursorX, newCursorY - cursorY)
         else
           w:AdjustPointsOffset(newCursorX - cursorX, newCursorY - cursorY)
@@ -1174,6 +1174,31 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
           table.insert(points, {set = i <= 4, color = color})
         end
         w:SetValue(points)
+      elseif w.kind == "specialBars" and w.details.kind == "healthFillText" then
+        local text = "Cheesanator"
+        w.background:SetText(text)
+        w.foreground:SetText(text)
+        w.absorb:SetText(text)
+        w.absorbPlacer:SetText(text)
+        w.statusBar:SetMinMaxValues(0, 100)
+        w.statusBar:SetValue(70)
+        w.statusBarAbsorb:SetMinMaxValues(0, 100)
+        w.statusBarAbsorb:SetValue(10)
+        local defaultColor
+        for _, s in ipairs(w.details.autoColors) do
+          if s.kind == "threat" then
+            defaultColor = s.colors.warning
+            break
+          elseif s.kind == "reaction" then
+            defaultColor = s.colors.hostile
+            break
+          end
+        end
+        w.foreground:SetTextColor(defaultColor.r, defaultColor.g, defaultColor.b)
+        if w.details.background.applyColor then
+          local mod = w.details.background.color
+          w.background:SetTextColor(defaultColor.r * mod.r, defaultColor.g * mod.g, defaultColor.b * mod.b, mod.a)
+        end
       elseif w.kind == "markers" then
         local asset = addonTable.Assets.Markers[w.details.asset]
         if asset.preview then

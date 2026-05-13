@@ -48,6 +48,7 @@ Display/Colors.lua
 Display/Nameplate.lua
 Display/Auras.lua
 Display/HealthBar.lua
+Display/HealthFillTextBar.lua
 Display/CastBar.lua
 Display/EnergyBar.lua
 Display/PowerBar.lua

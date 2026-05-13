@@ -19,7 +19,7 @@ addonTable.CustomiseDialog.DesignWidgets = {
       anchor = {"TOPLEFT", -140, 50},
       scale = 1,
       layer = 1,
-      aggroColoursOnHostiles = true,
+      animate = true,
       background = {
         asset = "Platy: Fade Bottom",
         color = GetColor("FFFFFF", 1),
@@ -40,6 +40,30 @@ addonTable.CustomiseDialog.DesignWidgets = {
       },
       marker = {
         asset = "none",
+      },
+      autoColors = {
+        CopyTable(addonTable.CustomiseDialog.ColorsConfig["classColors"].default),
+        CopyTable(addonTable.CustomiseDialog.ColorsConfig["tapped"].default),
+        CopyTable(addonTable.CustomiseDialog.ColorsConfig["threat"].default),
+        CopyTable(addonTable.CustomiseDialog.ColorsConfig["reaction"].default),
+      }
+    },
+  },
+  {
+    name = addonTable.Locales.HEALTH_FILL_TEXT,
+    kind = "specialBars",
+    default = {
+      kind = "healthFillText",
+      anchor = {"TOPLEFT", -140, 50},
+      scale = 1,
+      layer = 1,
+      animate = true,
+      background = {
+        color = GetColor("000000"),
+        applyColor = false,
+      },
+      absorb = {
+        color = GetColor("21c4ff")
       },
       autoColors = {
         CopyTable(addonTable.CustomiseDialog.ColorsConfig["classColors"].default),
