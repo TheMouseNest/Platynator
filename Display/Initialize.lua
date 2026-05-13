@@ -771,17 +771,33 @@ function addonTable.Display.ManagerMixin:UpdateFriendlyFont()
     local design = addonTable.Core.GetDesignByName(designName)
     local scale
     self.friendlyNameOnlyClassColors = false
-    for _, t in ipairs(design.texts) do
-      if t.kind == "creatureName" then
-        for _, c in ipairs(t.autoColors) do
-          if c.kind == "classColors" then
-            self.friendlyNameOnlyClassColors = true
+    do
+      for _, t in ipairs(design.texts) do
+        if t.kind == "creatureName" then
+          for _, c in ipairs(t.autoColors) do
+            if c.kind == "classColors" then
+              self.friendlyNameOnlyClassColors = true
+            end
           end
+          scale = t.scale
+          break
         end
-        scale = t.scale
-        break
       end
     end
+    if not self.friendlyNameOnlyClassColors then
+      for _, t in ipairs(design.specialBars) do
+        if t.kind == "healthFillText" then
+          for _, c in ipairs(t.autoColors) do
+            if c.kind == "classColors" then
+              self.friendlyNameOnlyClassColors = true
+            end
+          end
+          scale = t.scale
+          break
+        end
+      end
+    end
+    print(self.friendlyNameOnlyClassColors)
     C_CVar.SetCVar("nameplateUseClassColorForFriendlyPlayerUnitNames", addonTable.Display.Utilities.IsInRelevantInstance({dungeon = true, raid = true, delve = true}) and self.friendlyNameOnlyClassColors and "1" or "0")
     if scale then
       ChangeFont(SystemFont_NamePlate_Outlined, _G[addonTable.CurrentFont])
