@@ -25,10 +25,7 @@ function addonTable.Display.HealthFillTextBarMixin:SetUnit(unit)
     self:RegisterUnitEvent("UNIT_NAME_UPDATE", self.unit)
 
     self.defaultText = UnitName(self.unit)
-    self.foreground:SetText(self.defaultText)
-    self.background:SetText(self.defaultText)
-    self.absorb:SetText(self.defaultText)
-    self.absorbPlacer:SetText(self.defaultText)
+    self:SetText(self.defaultText)
 
     -- Disable animation for initial setup
     local animate = self.animate
@@ -41,6 +38,13 @@ function addonTable.Display.HealthFillTextBarMixin:SetUnit(unit)
     self:UnregisterAllEvents()
     addonTable.Display.UnregisterForColorEvents(self)
   end
+end
+
+function addonTable.Display.HealthFillTextBarMixin:SetText(text)
+  self.foreground:SetText(text)
+  self.background:SetText(text)
+  self.absorb:SetText(text)
+  self.absorbPlacer:SetText(text)
 end
 
 function addonTable.Display.HealthFillTextBarMixin:Strip()
@@ -100,7 +104,7 @@ function addonTable.Display.HealthFillTextBarMixin:OnEvent(eventName)
     self:UpdateHealth()
   elseif eventName == "UNIT_NAME_UPDATE" then
     self.defaultText = UnitName(self.unit)
-    self.text:SetText(self.defaultText)
+    self:SetText(self.defaultText)
   end
 
   self:ColorEventHandler(eventName)
@@ -108,9 +112,5 @@ end
 
 function addonTable.Display.HealthFillTextBarMixin:ApplyTextOverride()
   local override = addonTable.API.TextOverrides.name[self.unit]
-  local text = override or self.defaultText
-  self.foreground:SetText(text)
-  self.background:SetText(text)
-  self.absorb:SetText(text)
-  self.absorbPlacer:SetText(text)
+  self:SetText(override or self.defaultText)
 end
