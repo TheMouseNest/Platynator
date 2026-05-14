@@ -83,15 +83,15 @@ addonTable.Constants.DefaultRange = {
   [252] = 30, -- Unholy
   [1455] = 30,
   -- Demon Hunter
-  ["DEMONHUNTER"] = 20,
-  [577] = 20, -- Havoc
-  [581] = 20, -- Vengeance
-  [1480] = 25, -- Devourer
-  [1456] = 20,
+  ["DEMONHUNTER"] = 40,
+  [577] = 40, -- Havoc
+  [581] = 40, -- Vengeance
+  [1480] = 40, -- Devourer
+  [1456] = 40,
   -- Druid
   ["DRUID"] = 30,
   [102] = 40, -- Balance
-  [103] = 5, -- Feral (8)
+  [103] = 40, -- Feral (8)
   [104] = 40, -- Guardian
   [105] = 40, -- Resto
   [1447] = 40,
@@ -114,16 +114,16 @@ addonTable.Constants.DefaultRange = {
   [64] = 40, -- Frost
   [1449] = 40,
   -- Monk
-  ["MONK"] = 20,
-  [268] = 25, -- Brewmaster
+  ["MONK"] = 30,
+  [268] = 40, -- Brewmaster
   [270] = 40, -- Mistweaver
-  [269] = 5, -- Windwalker
+  [269] = 40, -- Windwalker
   [1450] = 30,
   -- Paladin
   ["PALADIN"] = 30,
   [65] = 40, -- Holy
   [66] = 30, -- Protection
-  [70] = 20, -- Retribution
+  [70] = 30, -- Retribution
   [1451] = 30,
   -- Priest
   ["PRIEST"] = 30,
@@ -132,11 +132,11 @@ addonTable.Constants.DefaultRange = {
   [258] = 46, -- Shadow
   [1452] = 46,
   -- Rogue
-  ["ROGUE"] = 5,
-  [259] = 5, -- Assassination (8)
-  [260] = 5, -- Outlaw
-  [261] = 5, -- Subtlety
-  [1453] = 5,
+  ["ROGUE"] = 30,
+  [259] = 30, -- Assassination (8)
+  [260] = 30, -- Outlaw
+  [261] = 30, -- Subtlety
+  [1453] = 30,
   -- Shaman
   ["SHAMAN"] = 30,
   [262] = 40, -- Elemental
@@ -150,8 +150,8 @@ addonTable.Constants.DefaultRange = {
   [267] = 40, -- Destruction
   [1454] = 40,
   ["WARRIOR"] = 20,
-  [71] = 25, -- Arms
-  [72] = 25, -- Fury
-  [73] = 25, -- Protection
-  [1446] = 25,
+  [71] = 30, -- Arms
+  [72] = 30, -- Fury
+  [73] = 30, -- Protection
+  [1446] = 30,
 }
