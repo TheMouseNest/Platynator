@@ -809,9 +809,6 @@ function addonTable.Display.GetHealthFillText(frame, parent)
   -- This Wrapper workaround is so that the `frame` always has the same size as the text
   frame.Wrapper = CreateFrame("Frame", nil, parent or UIParent)
   frame.Wrapper:SetSize(1, 1)
-  local t = frame.Wrapper:CreateTexture()
-  t:SetColorTexture(1, 0, 0, 0.5)
-  t:SetSize(20, 20)
 
   frame.mask = CreateFrame("Frame", nil, frame.Wrapper)
   frame.mask:SetClipsChildren(true)
