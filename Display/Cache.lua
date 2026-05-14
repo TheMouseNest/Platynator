@@ -51,8 +51,9 @@ local getter = {
     return result, not oldState or result.situation ~= oldState.situation or result.otherTankAggro ~= oldState.otherTankAggro
   end,
   ["range"] = function(oldState, unit)
-    local range = RangeCheck:GetRange(unit) <= addonTable.Display.Utilities.GetRangedLimit()
-    return range, range ~= oldState
+    local range = RangeCheck:GetRange(unit)
+    local result = range == nil or range <= addonTable.Display.Utilities.GetRangedLimit()
+    return result, result ~= oldState
   end
 }
 
