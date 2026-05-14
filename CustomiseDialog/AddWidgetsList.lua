@@ -59,7 +59,7 @@ addonTable.CustomiseDialog.DesignWidgets = {
       layer = 1,
       animate = true,
       background = {
-        color = GetColor("000000"),
+        color = GetColor("4F4F4F"),
         applyColor = false,
       },
       absorb = {
