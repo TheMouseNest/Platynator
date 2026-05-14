@@ -77,19 +77,19 @@ addonTable.Constants.PowerMap = {
 
 addonTable.Constants.DefaultRange = {
   -- Death Knight
-  ["DEATHKNIGHT"] = 30,
+  ["DEATHKNIGHT"] = 30, -- (death's reach (40))
   [250] = 30, -- Blood
   [251] = 30, -- Frost
   [252] = 30, -- Unholy
   [1455] = 30,
   -- Demon Hunter
-  ["DEMONHUNTER"] = 40,
-  [577] = 40, -- Havoc
-  [581] = 40, -- Vengeance
-  [1480] = 40, -- Devourer
-  [1456] = 40,
+  ["DEMONHUNTER"] = 30, -- (champion of the glaive (40))
+  [577] = 30, -- Havoc,
+  [581] = 30, -- Vengeance
+  [1480] = 30, -- Devourer
+  [1456] = 30,
   -- Druid
-  ["DRUID"] = 30,
+  ["DRUID"] = 30, -- (astral influence (45))
   [102] = 40, -- Balance
   [103] = 40, -- Feral (8)
   [104] = 40, -- Guardian
@@ -126,15 +126,15 @@ addonTable.Constants.DefaultRange = {
   [70] = 30, -- Retribution
   [1451] = 30,
   -- Priest
-  ["PRIEST"] = 30,
-  [256] = 46, -- Discipline
-  [257] = 46, -- Holy
-  [258] = 46, -- Shadow
-  [1452] = 46,
+  ["PRIEST"] = 30, -- (Phantom Reach (46))
+  [256] = 40, -- Discipline
+  [257] = 40, -- Holy
+  [258] = 40, -- Shadow
+  [1452] = 40,
   -- Rogue
   ["ROGUE"] = 30,
   [259] = 30, -- Assassination (8)
-  [260] = 30, -- Outlaw
+  [260] = 20, -- Outlaw (Precision shot (30))
   [261] = 30, -- Subtlety
   [1453] = 30,
   -- Shaman
@@ -149,7 +149,7 @@ addonTable.Constants.DefaultRange = {
   [266] = 40, -- Demonology
   [267] = 40, -- Destruction
   [1454] = 40,
-  ["WARRIOR"] = 20,
+  ["WARRIOR"] = 20, -- (Javelineer (35))
   [71] = 30, -- Arms
   [72] = 30, -- Fury
   [73] = 30, -- Protection
