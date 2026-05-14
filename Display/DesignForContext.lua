@@ -53,6 +53,7 @@ local assignmentsPossibilities = {
   ["friend"] = { updates = "alignment", check = function(state) return state.alignment == "friend" end},
   ["hostile"] = { updates = "alignment", check = function(state) return state.alignment == "hostile" end},
   ["neutral"] = { updates = "alignment", check = function(state) return state.alignment == "neutral" end},
+  ["targeted"] = { updates = "isTarget", check = function(state) return state.isTarget end },
 
   ["player"] = { check = function(state) return state.isPlayer end },
   ["npc"] = { check = function(state) return state.isNPC end },
@@ -116,6 +117,7 @@ local function GenerateState(unit)
     location = location,
     eliteType = GetEliteType(unit),
     delveType = GetDelveType(unit),
+    isTarget = UnitIsUnit(unit, "target"),
 
     updates = {},
   }
@@ -159,6 +161,7 @@ function addonTable.Display.DesignForContextMixin:OnLoad()
 
   self:RegisterEvent("NAME_PLATE_UNIT_REMOVED")
   self:RegisterEvent("UNIT_CLASSIFICATION_CHANGED")
+  self:RegisterEvent("PLAYER_TARGET_CHANGED")
   self:SetScript("OnEvent", self.OnEvent)
 end
 
@@ -177,6 +180,15 @@ function addonTable.Display.DesignForContextMixin:OnEvent(event, unit)
       self.unitStates[unit].alignment = GetAlignment(unit)
       if changes then
         addonTable.CallbackRegistry:TriggerEvent("UnitDesignChange", unit)
+      end
+    end
+  elseif event == "PLAYER_TARGET_CHANGED" then
+    for u, state in pairs(self.unitStates) do
+      local isTarget = UnitIsUnit(u, "target")
+      local changes = state.updates.isTarget and isTarget ~= state.isTarget
+      state.isTarget = isTarget
+      if changes then
+        addonTable.CallbackRegistry:TriggerEvent("UnitDesignChange", u)
       end
     end
   elseif event == "NAME_PLATE_UNIT_REMOVED" then

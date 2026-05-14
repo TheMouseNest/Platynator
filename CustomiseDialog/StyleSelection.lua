@@ -20,6 +20,7 @@ local contextCriteria = {
   {key = "neutral", label = addonTable.Locales.NEUTRAL},
 
   {title = addonTable.Locales.SPECIAL},
+  {key = "targeted", label = addonTable.Locales.TARGETED},
   {key = "player", label = addonTable.Locales.PLAYER},
   {key = "npc", label = addonTable.Locales.NPC},
   {key = "minion", label = addonTable.Locales.MINION},
@@ -94,6 +95,7 @@ end
 function addonTable.CustomiseDialog.IsUsingDefaultStyleSelect()
   local cmp = {
     {criteria = {"cannot-attack"}, simplified = false, scale = 1, style = "_name-only"},
+    {criteria = {"targeted", "can-attack"}, simplified = false, scale = 1, style = "_deer"},
     {criteria = {"can-attack", "class-minor"}, simplified = true, scale = 1, style = "_hare_simplified"},
     {criteria = {"can-attack", "minion"}, simplified = true, scale = 1, style = "_hare_simplified"},
     {criteria = {"can-attack", "loc-dungeon", "class-normal"}, simplified = true, scale = 1, style = "_hare_simplified"},
@@ -102,26 +104,30 @@ function addonTable.CustomiseDialog.IsUsingDefaultStyleSelect()
 
   local current = addonTable.Config.Get(addonTable.Config.Options.DESIGN_ASSIGNMENTS)
 
-  if #current > #cmp or #current < 2 then
+  if #current > #cmp or #current < 3 then
     return false
   end
 
   if not tCompare(current[1].criteria, cmp[1].criteria) or current[1].simplified or current[1].scale ~= 1 then
     return false
   end
+  if not tCompare(current[2].criteria, cmp[2].criteria) or current[2].simplified or current[2].scale ~= 1 then
+    return false
+  end
+
   local tail = #current
   if not tCompare(current[tail].criteria, cmp[#cmp].criteria) or current[tail].simplified or current[tail].scale ~= 1 then
     return false
   end
 
-  if #current > 2 then
-    local first = current[2].style
-    for i = 2, #current - 1 do
+  if #current > 3 then
+    local first = current[3].style
+    for i = 3, #current - 1 do
       if current[i].style ~= first or not current[i].simplified or current[i].scale ~= 1 then
         return false
       end
       local any = false
-      for j = 2, 4 do
+      for j = 3, 5 do
         if tCompare(cmp[j].criteria, current[i].criteria) then
           any = true
           break
@@ -173,6 +179,10 @@ local function GetDefaultOptions(container)
   local enemyStyleDropdown = GenerateDropdown(defaultContainer, addonTable.Locales.ENEMY, {{"can-attack"}})
   enemyStyleDropdown:SetPoint("TOP", allFrames[#allFrames], "BOTTOM")
   table.insert(allFrames, enemyStyleDropdown)
+
+  local targetedStyleDropdown = GenerateDropdown(defaultContainer, addonTable.Locales.TARGETED, {{"targeted", "can-attack"}})
+  targetedStyleDropdown:SetPoint("TOP", allFrames[#allFrames], "BOTTOM")
+  table.insert(allFrames, targetedStyleDropdown)
 
   local simplifiedStyleDropdown
   if C_NamePlateManager and C_NamePlateManager.SetNamePlateSimplified then
@@ -446,6 +456,7 @@ local function GetCustomOptions(container)
     addonTable.Config.ResetOne(addonTable.Config.Options.DESIGN_ASSIGNMENTS)
     local assignments = addonTable.Config.Get(addonTable.Config.Options.DESIGN_ASSIGNMENTS)
     assignments[1].style = friendly
+    assignments[2].style = enemy
     assignments[#assignments].style = enemy
     Refresh()
     Announce()

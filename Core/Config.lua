@@ -3,7 +3,7 @@ local addonTable = select(2, ...)
 addonTable.Config = {}
 
 local settings = {
-  MIGRATION = {key = "migration", default = 1, new = 3},
+  MIGRATION = {key = "migration", default = 1, new = 4},
 
   STYLE = {key = "style", default = "_deer"},
   CURRENT_SKIN = {key = "current_skin", default = "blizzard", refresh = {addonTable.Constants.RefreshReason.Skin}},
@@ -18,11 +18,12 @@ local settings = {
   DESIGNS = {key = "designs", default = {}, refresh = {addonTable.Constants.RefreshReason.Design}},
   DESIGN_ASSIGNMENTS = {key = "design_assignments", default = {}, new = {
     {criteria = {"cannot-attack"}, simplified = false, scale = 1, style = "_name-only"},
+    {criteria = {"targeted", "can-attack"}, simplified = false, scale = 1, style = "_deer"},
     {criteria = {"can-attack", "class-minor"}, simplified = true, scale = 1, style = "_hare_simplified"},
     {criteria = {"can-attack", "minion"}, simplified = true, scale = 1, style = "_hare_simplified"},
     {criteria = {"can-attack", "loc-dungeon", "class-normal"}, simplified = true, scale = 1, style = "_hare_simplified"},
     {criteria = {"can-attack"}, simplified = false, scale = 1, style = "_deer"},
-  }, refresh = {addonTable.Constants.RefreshReason.DesignSelection, addonTable.Constants.RefreshReason.Design}},
+  }},
   SIMPLIFIED_ASSIGNED_FALLBACK = {key = "simplified_assigned_fallback", default = "_hare_simplified"},
 
   TARGET_SCALE = {key = "target_scale", default = 1.2, refresh = {addonTable.Constants.RefreshReason.TargetBehaviour}},
