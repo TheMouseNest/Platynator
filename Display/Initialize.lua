@@ -136,6 +136,7 @@ function addonTable.Display.ManagerMixin:OnLoad()
         local defaultEnemyDesign = addonTable.Core.GetDesignByName(addonTable.Display.Context:GetDefaultEnemyNPCDesign())
         addonTable.CurrentFont, addonTable.CurrentFontUsesSmoothing = addonTable.Core.GetFontByDesign(defaultEnemyDesign)
         self.styleIndex = self.styleIndex + 1
+        self:UpdateFriendlyFont()
         self:UpdateNamePlateSize()
         self:SetScript("OnUpdate", nil)
         for unit in pairs(self.nameplateDisplays) do
@@ -145,7 +146,6 @@ function addonTable.Display.ManagerMixin:OnLoad()
         if self.lastInteract and self.lastInteract.interactUnit then
           self.lastInteract:UpdateSoftInteract()
         end
-        self:UpdateFriendlyFont()
         self:UpdateStacking()
         self:UpdateAllClickRegions()
         self:UpdateTargetScale()
@@ -155,6 +155,7 @@ function addonTable.Display.ManagerMixin:OnLoad()
       self:UpdateSimplifiedScale()
     end
     if state[addonTable.Constants.RefreshReason.Scale] or state[addonTable.Constants.RefreshReason.TargetBehaviour] then
+      self:UpdateFriendlyFont()
       self:UpdateNamePlateSize()
 
       for unit, display in pairs(self.nameplateDisplays) do
@@ -165,7 +166,6 @@ function addonTable.Display.ManagerMixin:OnLoad()
           self:UpdateStackingRegion(unit)
         end
       end
-      self:UpdateFriendlyFont()
       self:UpdateAllClickRegions()
       self:UpdateTargetScale()
     end
@@ -633,7 +633,7 @@ function addonTable.Display.ManagerMixin:UpdateNamePlateSize()
       end
     end
   elseif C_NamePlate.SetNamePlateSize then
-    width = math.max(200, width)
+    width = math.max(math.min(250, 200 * NamePlateConstants.NAME_PLATE_SCALES[tonumber(C_CVar.GetCVar("nameplateSize"))].horizontal), width)
     height = height
     C_NamePlate.SetNamePlateSize(width, height)
   end
