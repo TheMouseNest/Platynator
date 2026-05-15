@@ -632,6 +632,7 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
   local fociOnDown = {}
   local autoSelectedDetails
   local UpdateHiding
+  local GenerateWidgets
 
   local titleMap = {}
 
@@ -669,6 +670,7 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
       previewInset:SetSize(math.min(UIParent:GetWidth() * 0.8, container:GetHeight() * 2), container:GetHeight() * 0.95)
       preview:SetScale(4)
       preview:SetPoint("TOP", 0, 0)
+      GenerateWidgets()
       UpdateSelection()
     else
       maximizeButton:SetMaximizedLook()
@@ -678,6 +680,7 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
       previewInset:SetHeight(235)
       preview:SetPoint("TOP", 0, -15)
       preview:SetScale(2)
+      GenerateWidgets()
       UpdateSelection()
     end
   end
@@ -1071,7 +1074,7 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
     end
   end
 
-  local function GenerateWidgets()
+  GenerateWidgets = function ()
     if widgets then
       addonTable.Display.ReleaseWidgets(tFilter(widgets, function(w) return w.Strip end, true), true)
     end
@@ -1609,8 +1612,6 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
 
     selectionIndexes = {}
     SetPreviewMaximised(false)
-    UpdateSelection()
-
   end)
 
   return container
