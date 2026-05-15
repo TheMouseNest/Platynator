@@ -648,18 +648,45 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
   end
 
   local previewInset = CreateFrame("Frame", nil, container, "InsetFrameTemplate")
-  previewInset:SetPoint("TOP", allFrames[#allFrames], "BOTTOM", 0, -30)
-  previewInset:SetPoint("LEFT", 20, 0)
-  previewInset:SetPoint("RIGHT", -20, 0)
-  previewInset:SetHeight(220)
+  previewInset:EnableMouse(true)
+  previewInset:SetFrameStrata("HIGH")
+  local maximizeButton = CreateFrame("Frame", nil, previewInset, "MaximizeMinimizeButtonFrameTemplate")
+  local isMaximized = false
 
   local preview = CreateFrame("Frame", nil, previewInset)
 
-  preview:SetPoint("TOP")
+  preview:SetPoint("TOP", 0, -15)
 
   preview:SetAllPoints()
   preview:SetFlattensRenderLayers(true)
-  preview:SetScale(2)
+
+  local function SetPreviewMaximised(state)
+    previewInset:ClearAllPoints()
+    isMaximized = state
+    if state then
+      maximizeButton:SetMinimizedLook()
+      previewInset:SetPoint("CENTER", UIParent)
+      previewInset:SetSize(UIParent:GetWidth() * 0.8, UIParent:GetHeight() * 0.8)
+      preview:SetScale(4)
+      UpdateSelection()
+    else
+      maximizeButton:SetMaximizedLook()
+      previewInset:SetPoint("TOP", allFrames[2], "BOTTOM", 0, -15)
+      previewInset:SetPoint("LEFT", 20, 0)
+      previewInset:SetPoint("RIGHT", -20, 0)
+      previewInset:SetHeight(235)
+      preview:SetScale(2)
+      UpdateSelection()
+    end
+  end
+
+  maximizeButton:SetPoint("BOTTOMRIGHT", previewInset)
+  function maximizeButton.maximizedCallback()
+    SetPreviewMaximised(true)
+  end
+  function maximizeButton.minimizedCallback()
+    SetPreviewMaximised(false)
+  end
 
   local contextHoverMarker = GetSelectorMarker(CreateFrame("Frame", nil, container), false)
 
@@ -849,11 +876,11 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
     Announce()
   end
 
-  local selectorPool = CreateFramePool("Frame", container, nil, nil, false, GetSelectorMarker)
+  local selectorPool = CreateFramePool("Frame", previewInset, nil, nil, false, GetSelectorMarker)
   local keyboardTrap = CreateFrame("Frame", nil, container)
   keyboardTrap:Hide()
 
-  local hoverMarker = GetSelectorMarker(CreateFrame("Frame", nil, container), true)
+  local hoverMarker = GetSelectorMarker(CreateFrame("Frame", nil, previewInset), true)
 
   local titleText = container:CreateFontString(nil, nil, "GameFontHighlightLarge")
   titleText:SetPoint("TOP", previewInset, "BOTTOM", 0, -15)
@@ -903,7 +930,7 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
   local addButton = CreateFrame("DropdownButton", nil, previewInset, "UIPanelDynamicResizeButtonTemplate")
   addButton:SetText(addonTable.Locales.ADD)
   DynamicResizeButton_Resize(addButton)
-  addButton:SetPoint("TOPLEFT", 0, addButton:GetHeight() + 2)
+  addButton:SetPoint("TOPLEFT", 1, -1)
   addButton:SetupMenu(function(menu, rootDescription)
     local design = addonTable.CustomiseDialog.GetCurrentDesign()
     for _, details in ipairs(addonTable.CustomiseDialog.DesignWidgets) do
@@ -936,7 +963,7 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
   local deleteButton = CreateFrame("Button", nil, previewInset, "UIPanelDynamicResizeButtonTemplate")
   deleteButton:SetText(addonTable.Locales.DELETE)
   DynamicResizeButton_Resize(deleteButton)
-  deleteButton:SetPoint("TOPRIGHT", 0, addButton:GetHeight() + 2)
+  deleteButton:SetPoint("TOPRIGHT", -1, -1)
   deleteButton:SetScript("OnClick", function()
     DeleteCurrentWidget()
   end)
@@ -945,7 +972,7 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
   local showAllButton = CreateFrame("Button", nil, previewInset, "UIPanelDynamicResizeButtonTemplate")
   showAllButton:SetText(addonTable.Locales.SHOW_ALL)
   DynamicResizeButton_Resize(showAllButton)
-  showAllButton:SetPoint("TOP", 0, addButton:GetHeight() + 2)
+  showAllButton:SetPoint("TOP", 0, -1)
   showAllButton:SetScript("OnClick", function()
     hiddenIndexes = {}
     UpdateHiding()
@@ -1531,17 +1558,23 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
       local w = widgets[selectionIndexes[1]]
       titleText:SetText(titleMap[w.kind] and titleMap[w.kind][w.details.kind] or UNKNOWN)
 
-      for _, frame in ipairs(settingsFrames) do
-        if not frame:IsFor(w.kind, w.details) then
-          frame:Hide()
+      if not isMaximized then
+        for _, frame in ipairs(settingsFrames) do
+          if not frame:IsFor(w.kind, w.details) then
+            frame:Hide()
+          end
         end
-      end
 
-      for _, frame in ipairs(settingsFrames) do
-        if frame:IsFor(w.kind, w.details) then
-          frame.details = nil
-          frame:Show()
-          frame:Set(w.details)
+        for _, frame in ipairs(settingsFrames) do
+          if frame:IsFor(w.kind, w.details) then
+            frame.details = nil
+            frame:Show()
+            frame:Set(w.details)
+          end
+        end
+      else
+        for _, frame in ipairs(settingsFrames) do
+          frame:Hide()
         end
       end
     end
@@ -1573,6 +1606,7 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
     designScale:SetValue(addonTable.CustomiseDialog.GetCurrentDesign().scale * 100)
 
     selectionIndexes = {}
+    SetPreviewMaximised(false)
     UpdateSelection()
 
   end)
