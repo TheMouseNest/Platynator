@@ -430,12 +430,12 @@ function addonTable.Display.ManagerMixin:UpdateClickRegion(unit)
     if not clickRegion then
       clickRegion = self.clickRegionPool:Acquire()
       clickRegion:SetParent(nameplate)
-      --[[local t = clickRegion:CreateTexture()
+      local t = clickRegion:CreateTexture()
       t:SetColorTexture(0, 1, 0, 0.5)
       t:SetAllPoints()
       t = nameplate:CreateTexture()
       t:SetColorTexture(1, 0, 0, 0.5)
-      t:SetAllPoints()]]
+      t:SetAllPoints()
       self.nameplateClickRegions[nameplate:GetName()] = clickRegion
     end
     clickRegion:Show()
@@ -634,7 +634,12 @@ function addonTable.Display.ManagerMixin:UpdateNamePlateSize()
     end
   elseif C_NamePlate.SetNamePlateSize then
     width = math.max(math.min(250, 200 * NamePlateConstants.NAME_PLATE_SCALES[tonumber(C_CVar.GetCVar("nameplateSize"))].horizontal), width)
-    height = height
+    if addonTable.Constants.IsRetail then
+      if self.baseBlizzHeight and self.baseBlizzHeight > height then
+        self.baseOffset = self.baseOffset - (self.baseBlizzHeight - height) / 2
+        height = self.baseBlizzHeight
+      end
+    end
     C_NamePlate.SetNamePlateSize(width, height)
   end
 end
@@ -909,6 +914,8 @@ function addonTable.Display.ManagerMixin:OnEvent(eventName, ...)
     self:UpdateStacking()
     self:UpdateShowState()
     self:UpdateTargetScale()
+    local _
+    _, self.baseBlizzHeight = C_NamePlate.GetNamePlateSize()
     self:UpdateNamePlateSize()
     self:UpdateSimplifiedScale()
     self:UpdateObscuredAlpha()
