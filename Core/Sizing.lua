@@ -77,7 +77,7 @@ function addonTable.Utilities.GenerateRects(design)
 
   for _, textDetails in ipairs(design.texts) do
     if textDetails.kind == "creatureName" then
-      local rect = addonTable.Utilities.GetRectFromRegion({width = textDetails.maxWidth, height = 10/addonTable.Assets.BarBordersSize.height}, 1, textDetails.anchor)
+      local rect = addonTable.Utilities.GetRectFromRegion({width = textDetails.maxWidth, height = 10/addonTable.Assets.BarBordersSize.height * textDetails.scale}, 1, textDetails.anchor)
       CacheSize(rect)
     end
   end
