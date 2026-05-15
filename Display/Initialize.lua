@@ -430,12 +430,12 @@ function addonTable.Display.ManagerMixin:UpdateClickRegion(unit)
     if not clickRegion then
       clickRegion = self.clickRegionPool:Acquire()
       clickRegion:SetParent(nameplate)
-      local t = clickRegion:CreateTexture()
+      --[[local t = clickRegion:CreateTexture()
       t:SetColorTexture(0, 1, 0, 0.5)
       t:SetAllPoints()
       t = nameplate:CreateTexture()
       t:SetColorTexture(1, 0, 0, 0.5)
-      t:SetAllPoints()
+      t:SetAllPoints()]]
       self.nameplateClickRegions[nameplate:GetName()] = clickRegion
     end
     clickRegion:Show()
