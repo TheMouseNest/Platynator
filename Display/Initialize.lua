@@ -914,8 +914,10 @@ function addonTable.Display.ManagerMixin:OnEvent(eventName, ...)
     self:UpdateStacking()
     self:UpdateShowState()
     self:UpdateTargetScale()
-    local _
-    _, self.baseBlizzHeight = C_NamePlate.GetNamePlateSize()
+    if addonTable.Constants.IsRetail then
+      local _
+      _, self.baseBlizzHeight = C_NamePlate.GetNamePlateSize()
+    end
     self:UpdateNamePlateSize()
     self:UpdateSimplifiedScale()
     self:UpdateObscuredAlpha()
