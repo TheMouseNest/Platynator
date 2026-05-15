@@ -666,8 +666,9 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
     if state then
       maximizeButton:SetMinimizedLook()
       previewInset:SetPoint("CENTER", UIParent)
-      previewInset:SetSize(UIParent:GetWidth() * 0.8, UIParent:GetHeight() * 0.8)
+      previewInset:SetSize(math.min(UIParent:GetWidth() * 0.8, container:GetHeight() * 2), container:GetHeight() * 0.95)
       preview:SetScale(4)
+      preview:SetPoint("TOP", 0, 0)
       UpdateSelection()
     else
       maximizeButton:SetMaximizedLook()
@@ -675,6 +676,7 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
       previewInset:SetPoint("LEFT", 20, 0)
       previewInset:SetPoint("RIGHT", -20, 0)
       previewInset:SetHeight(235)
+      preview:SetPoint("TOP", 0, -15)
       preview:SetScale(2)
       UpdateSelection()
     end
