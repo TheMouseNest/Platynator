@@ -532,7 +532,8 @@ addonTable.CustomiseDialog.DesignWidgets = {
       truncate = false,
       autoColors = {
         CopyTable(addonTable.CustomiseDialog.ColorsConfig["difficulty"].default),
-      }
+      },
+      showModifiers = false,
     },
   },
   {

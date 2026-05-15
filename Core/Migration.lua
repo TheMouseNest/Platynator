@@ -543,6 +543,14 @@ local function UpgradeDesignv1(design)
   end
 end
 
+local function UpgradeDesignv6(design)
+  for _, text in ipairs(design.texts) do
+    if text.kind == "level" and text.showModifiers == nil then
+      text.showModifiers = false
+    end
+  end
+end
+
 function addonTable.Core.UpgradeDesign(design)
   if design.version == 1 or design.version == nil then
     UpgradeDesignv1(design)
@@ -555,6 +563,9 @@ function addonTable.Core.UpgradeDesign(design)
       stack = addonTable.Utilities.ConvertRectToWidget(stack)
     }
     design.version = 6
+  end
+  if design.version == 6 then
+    UpgradeDesignv6(design)
   end
 end
 

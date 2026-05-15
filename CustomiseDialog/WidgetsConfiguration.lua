@@ -834,6 +834,21 @@ addonTable.CustomiseDialog.WidgetsConfig = {
     },
     ["level"] = {
       {
+        label = addonTable.Locales.GENERAL,
+        entries = {
+          {
+            label = addonTable.Locales.SHOW_MODIFIERS_BRACKETS_EXAMPLES,
+            kind = "checkbox",
+            setter = function(details, value)
+              details.showModifiers = value
+            end,
+            getter = function(details)
+              return details.showModifiers
+            end,
+          },
+        }
+      },
+      {
         label = addonTable.Locales.COLORS,
         entries = {
           {
