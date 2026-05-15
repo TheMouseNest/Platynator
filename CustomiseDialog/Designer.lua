@@ -804,7 +804,7 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
       newCursorY = newCursorY / preview:GetEffectiveScale()
       for _, index in ipairs(backupSelectionIndexes) do
         local w = widgets[index]
-        if w.Wrapper then -- Because the Wrapper determines the base position
+        if w.Wrapper and w.kind ~= "auras" then -- Because the Wrapper determines the base position
           w.Wrapper:AdjustPointsOffset(newCursorX - cursorX, newCursorY - cursorY)
         else
           w:AdjustPointsOffset(newCursorX - cursorX, newCursorY - cursorY)
