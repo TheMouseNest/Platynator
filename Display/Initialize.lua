@@ -413,10 +413,13 @@ function addonTable.Display.ManagerMixin:UpdateStackingRegion(unit)
   local globalScale = addonTable.Config.Get(addonTable.Config.Options.GLOBAL_SCALE)
   local newWidth = stackRegion.rect.width * addonTable.Config.Get(addonTable.Config.Options.STACK_REGION_SCALE_X) * globalScale
   local newHeight = stackRegion.rect.height * addonTable.Config.Get(addonTable.Config.Options.STACK_REGION_SCALE_Y) * globalScale
+  local uiParentScale = UIParent:GetScale()
+  newWidth = newWidth / uiParentScale - 1 / uiParentScale^2
+  newHeight = newHeight / uiParentScale - 1 / uiParentScale^2
 	stackRegion:SetPoint(
 		"BOTTOMLEFT",
 		stackRegion:GetParent(),
-		"BOTTOM",
+		"CENTER",
 		stackRegion.rect.left - (newWidth - stackRegion.rect.width) / 2,
 		stackRegion.rect.bottom - (newHeight - stackRegion.rect.height) / 2 + self.baseOffset
 	)
@@ -490,7 +493,6 @@ function addonTable.Display.ManagerMixin:Install(unit)
       C_NamePlateManager.SetNamePlateSimplified(unit, shouldSimplify)
     end
     self.nameplateDisplays[unit] = newDisplay
-    local UF = self.ModifiedUFs[unit]
     if nameplate.SetStackingBoundsFrame then
       newDisplay:SetParent(nameplate)
       if not newDisplay.stackRegion then
