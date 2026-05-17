@@ -3,14 +3,15 @@ local addonTable = select(2, ...)
 
 local LSM = LibStub("LibSharedMedia-3.0")
 
-function addonTable.Display.ApplyAnchor(frame, anchor)
+function addonTable.Display.ApplyAnchor(frame, anchor, scale)
+  scale = scale or 1
   frame:ClearAllPoints()
   if #anchor == 0 then
     frame:SetPoint("CENTER")
   elseif #anchor == 3 then
-    PixelUtil.SetPoint(frame, anchor[1], frame:GetParent(), "CENTER", anchor[2], anchor[3])
+    PixelUtil.SetPoint(frame, anchor[1], frame:GetParent(), "CENTER", anchor[2] * scale, anchor[3] * scale)
   elseif #anchor == 2 then
-    PixelUtil.SetPoint(frame, "CENTER", frame:GetParent(), "CENTER", anchor[1], anchor[2])
+    PixelUtil.SetPoint(frame, "CENTER", frame:GetParent(), "CENTER", anchor[1] * scale, anchor[2] * scale)
   elseif #anchor == 1 then
     frame:SetPoint("TOP", frame:GetParent(), "CENTER")
   end

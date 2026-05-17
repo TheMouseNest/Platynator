@@ -518,7 +518,8 @@ local function GetAurasTextPositioning(rootParent, iconID)
       else
         preview.widgets[key]:SetAlpha(0.5)
       end
-      preview.widgets[key]:SetSize(text:GetSize())
+      local w, h = text:GetSize()
+      preview.widgets[key]:SetSize(w * text:GetScale(), h * text:GetScale())
       preview.widgets[key].details = textDetails
 
       addonTable.Display.ApplyAnchor(preview.widgets[key], textDetails.anchor)
@@ -1318,7 +1319,7 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
       container.auras[1].Cooldown:SetHideCountdownNumbers(not details.texts.countdown.visible)
       container.auras[1].Cooldown:SetDrawSwipe(details.showSwipe)
       container.auras[1].Cooldown:SetDrawEdge(details.showSwipe)
-      addonTable.Display.ApplyAnchor(cdText, details.texts.countdown.anchor)
+      addonTable.Display.ApplyAnchor(cdText, details.texts.countdown.anchor, addonTable.CurrentFontUsesSmoothing and 1/details.texts.countdown.scale or 1)
       container.auras[1].CountFrame.Count:SetText(2)
       container.auras[1].CountFrame.Count:SetFontObject(addonTable.CurrentFont)
       container.auras[1].CountFrame.Count:SetShown(details.texts.stacks.visible)
@@ -1332,7 +1333,7 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
         container.auras[1].CountFrame.Count:SetTextScale(details.texts.stacks.scale)
         container.auras[1].CountFrame.Count:SetScale(1)
       end
-      addonTable.Display.ApplyAnchor(container.auras[1].CountFrame.Count, details.texts.stacks.anchor)
+      addonTable.Display.ApplyAnchor(container.auras[1].CountFrame.Count, details.texts.stacks.anchor, addonTable.CurrentFontUsesSmoothing and 1/details.texts.stacks.scale or 1)
       container.auras[1].CountFrame.Count:SetTextColor(details.texts.stacks.color.r, details.texts.stacks.color.g, details.texts.stacks.color.b)
       container.auras[1].DispelBorder:SetShown(details.showType)
       container:SetSize(22 * container.count * details.scale, 20 * details.height * details.scale)

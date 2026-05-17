@@ -229,7 +229,7 @@ function addonTable.Display.NameplateMixin:OnLoad()
           auraFrame.styleIndex = self.styleIndex
           auraFrame.CountFrame.Count:SetFontObject(addonTable.CurrentFont)
           auraFrame.CountFrame.Count:ClearAllPoints()
-          addonTable.Display.ApplyAnchor(auraFrame.CountFrame.Count, details.texts.stacks.anchor)
+          addonTable.Display.ApplyAnchor(auraFrame.CountFrame.Count, details.texts.stacks.anchor, addonTable.CurrentFontUsesSmoothing and 1/details.texts.stacks.scale or 1)
           if addonTable.CurrentFontUsesSmoothing then
             auraFrame.CountFrame.Count:SetTextScale(1)
             auraFrame.CountFrame.Count:SetScale(details.texts.stacks.scale)
@@ -246,7 +246,7 @@ function addonTable.Display.NameplateMixin:OnLoad()
           if details.texts.countdown.visible then
             auraFrame.Cooldown.Text:SetFontObject(addonTable.CurrentFont)
             auraFrame.Cooldown.Text:ClearAllPoints()
-            addonTable.Display.ApplyAnchor(auraFrame.Cooldown.Text, details.texts.countdown.anchor)
+            addonTable.Display.ApplyAnchor(auraFrame.Cooldown.Text, details.texts.countdown.anchor, addonTable.CurrentFontUsesSmoothing and 1/details.texts.countdown.scale or 1)
             if addonTable.CurrentFontUsesSmoothing then
               auraFrame.Cooldown.Text:SetTextScale(1)
               auraFrame.Cooldown.Text:SetScale(details.texts.countdown.scale)
