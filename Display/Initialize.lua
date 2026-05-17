@@ -204,9 +204,9 @@ function addonTable.Display.ManagerMixin:OnLoad()
       self.styleIndex = self.styleIndex + 1
       local defaultEnemyDesign = addonTable.Core.GetDesignByName(addonTable.Display.Context:GetDefaultEnemyNPCDesign())
       addonTable.CurrentFont, addonTable.CurrentFontUsesSmoothing = addonTable.Core.GetFontByDesign(defaultEnemyDesign)
+      self:UpdateFriendlyFont()
       self:UpdateNamePlateSize()
       self:UpdateAllClickRegions()
-      self:UpdateFriendlyFont()
       self:RepositionDisplays()
     end
   end)
@@ -819,7 +819,11 @@ function addonTable.Display.ManagerMixin:UpdateFriendlyFont()
           if systemFontSizes[index - 1] and math.abs(systemFontSizes[index - 1] - friendlyFontSize) < math.abs(size - friendlyFontSize) then
             index = index - 1
           end
+          local oldSize = C_CVar.GetCVar("nameplateSize")
           C_CVar.SetCVar("nameplateSize", tostring(index))
+          if oldSize ~= tostring(index) then
+            self:UpdateBaseNamePlateInfo()
+          end
           break
         end
       end
@@ -827,6 +831,19 @@ function addonTable.Display.ManagerMixin:UpdateFriendlyFont()
   else
     ChangeFont(SystemFont_NamePlate_Outlined, PlatynatorOriginalSystemFontOutlined)
     ChangeFont(SystemFont_NamePlate, PlatynatorOriginalSystemFont)
+  end
+end
+
+function addonTable.Display.ManagerMixin:UpdateBaseNamePlateInfo()
+  if addonTable.Constants.IsRetail then
+    local namePlateSize = GetCVarNumberOrDefault(NamePlateConstants.SIZE_CVAR);
+    -- Remove aura height
+    local namePlateScale = NamePlateConstants.NAME_PLATE_SCALES[namePlateSize] or NamePlateConstants.NAME_PLATE_SCALES[Enum.NamePlateSize.Medium];
+    local _
+    _, self.baseBlizzHeight = C_NamePlate.GetNamePlateSize()
+    local auraScale = GetCVarNumberOrDefault(NamePlateConstants.AURA_SCALE_CVAR)
+
+    self.baseBlizzHeight = self.baseBlizzHeight - NamePlateConstants.AURA_ITEM_HEIGHT * auraScale * namePlateScale.aura - GetCVarNumberOrDefault(NamePlateConstants.DEBUFF_PADDING_CVAR)
   end
 end
 
@@ -919,10 +936,7 @@ function addonTable.Display.ManagerMixin:OnEvent(eventName, ...)
     self:UpdateStacking()
     self:UpdateShowState()
     self:UpdateTargetScale()
-    if addonTable.Constants.IsRetail then
-      local _
-      _, self.baseBlizzHeight = C_NamePlate.GetNamePlateSize()
-    end
+    self:UpdateBaseNamePlateInfo()
     self:UpdateNamePlateSize()
     self:UpdateSimplifiedScale()
     self:UpdateObscuredAlpha()
