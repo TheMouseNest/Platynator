@@ -410,7 +410,6 @@ function addonTable.Display.ManagerMixin:UpdateStackingRegion(unit)
   if not stackRegion then
     return
   end
-  local globalScale = addonTable.Config.Get(addonTable.Config.Options.GLOBAL_SCALE)
   local newWidth = stackRegion.rect.width * addonTable.Config.Get(addonTable.Config.Options.STACK_REGION_SCALE_X)
   local newHeight = stackRegion.rect.height * addonTable.Config.Get(addonTable.Config.Options.STACK_REGION_SCALE_Y)
   --stackRegion.visual:SetSize(newWidth, newHeight)
@@ -760,7 +759,7 @@ local function ChangeFont(base, new, overrideHeight)
   for _, a in ipairs(addonTable.Constants.FontFamilies) do
     local baseObj = base:GetFontObjectForAlphabet(a)
     local newObj = new:GetFontObjectForAlphabet(a)
-    local font, height, flags = newObj:GetFont()
+    local font, _, flags = newObj:GetFont()
     baseObj:SetFont(font, 9, flags)
   end
   base:SetShadowColor(new:GetShadowColor())

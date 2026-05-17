@@ -389,6 +389,7 @@ function addonTable.Display.AurasManagerMixin:OnEvent(_, _, refreshData)
       if stored then
         self.auraData[auraInstanceID] = nil
 
+        ---@type number[]
         local list = self[stored.kind]
         local index = tIndexOf(list, auraInstanceID)
         if index then

@@ -3,8 +3,6 @@ local addonTable = select(2, ...)
 
 addonTable.Display.AbsorbTextMixin = {}
 
-local significantFiguresCaches = {}
-
 function addonTable.Display.AbsorbTextMixin:SetUnit(unit)
   self.unit = unit
   if self.unit then

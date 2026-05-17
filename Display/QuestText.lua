@@ -3,8 +3,6 @@ local addonTable = select(2, ...)
 
 addonTable.Display.QuestTextMixin = {}
 
-local significantFiguresCaches = {}
-
 function addonTable.Display.QuestTextMixin:SetUnit(unit)
   self.unit = unit
   if self.unit then

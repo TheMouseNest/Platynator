@@ -871,6 +871,7 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
   local function DeleteCurrentWidget()
     table.sort(selectionIndexes, function(a, b) return a > b end)
     for _, index in ipairs(selectionIndexes) do
+      local w = widgets[index]
       local kind = widgets[index].kind
       local details = widgets[index].details
       local design = addonTable.CustomiseDialog.GetCurrentDesign()
