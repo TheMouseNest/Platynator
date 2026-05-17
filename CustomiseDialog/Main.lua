@@ -391,11 +391,11 @@ local function SetupBehaviour(parent)
   outOfRangeTransparencySlider:SetPoint("TOP", allFrames[#allFrames], "BOTTOM", 0, -30)
   table.insert(allFrames, outOfRangeTransparencySlider)
 
-  local notInCombatTransparencySlider = addonTable.CustomiseDialog.Components.GetSlider(container, addonTable.Locales.NOT_IN_COMBAT_TRANSPARENCY, 0, 100, function(value) return ("%d%%"):format(value) end, function(value)
-    addonTable.Config.Set(addonTable.Config.Options.NOT_IN_COMBAT_ALPHA, 1 - value / 100)
+  local notInPullTransparencySlider = addonTable.CustomiseDialog.Components.GetSlider(container, addonTable.Locales.NOT_IN_PULL_TRANSPARENCY, 0, 100, function(value) return ("%d%%"):format(value) end, function(value)
+    addonTable.Config.Set(addonTable.Config.Options.NOT_IN_PULL_ALPHA, 1 - value / 100)
   end)
-  notInCombatTransparencySlider:SetPoint("TOP", allFrames[#allFrames], "BOTTOM", 0, -30)
-  table.insert(allFrames, notInCombatTransparencySlider)
+  notInPullTransparencySlider:SetPoint("TOP", allFrames[#allFrames], "BOTTOM", 0, -30)
+  table.insert(allFrames, notInPullTransparencySlider)
 
   local applyCvarsCheckbox = addonTable.CustomiseDialog.Components.GetCheckbox(container, addonTable.Locales.APPLY_OTHER_CVARS, 28, function(value)
     if InCombatLockdown() then
@@ -414,7 +414,7 @@ local function SetupBehaviour(parent)
     obscuredTransparencySlider:SetValue(100 - addonTable.Config.Get(addonTable.Config.Options.OBSCURED_ALPHA) * 100)
     obscuredCombatTransparencySlider:SetValue(100 - addonTable.Config.Get(addonTable.Config.Options.OBSCURED_COMBAT_ALPHA) * 100)
     outOfRangeTransparencySlider:SetValue(100 - addonTable.Config.Get(addonTable.Config.Options.OUT_OF_RANGE_ALPHA) * 100)
-    notInCombatTransparencySlider:SetValue(100 - addonTable.Config.Get(addonTable.Config.Options.NOT_IN_COMBAT_ALPHA) * 100)
+    notInPullTransparencySlider:SetValue(100 - addonTable.Config.Get(addonTable.Config.Options.NOT_IN_PULL_ALPHA) * 100)
 
     for _, f in ipairs(allFrames) do
       if f.SetValue then
