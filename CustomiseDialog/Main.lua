@@ -170,7 +170,7 @@ local function SetupGeneral(parent)
     importButton:SetScript("OnClick", function()
       addonTable.CustomiseDialog.ShowImportDialog(function(text)
         local status, import = pcall(C_EncodingUtil.DeserializeJSON, text)
-        if not status or import.addon ~= "Platynator" then
+        if not status or type(import) ~= "table" or import.addon ~= "Platynator" then
           addonTable.Dialogs.ShowAcknowledge(addonTable.Locales.INVALID_IMPORT)
           return
         end
