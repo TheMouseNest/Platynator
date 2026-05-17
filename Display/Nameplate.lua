@@ -246,6 +246,11 @@ function addonTable.Display.NameplateMixin:OnLoad()
             auraFrame.Cooldown.Text:SetTextColor(c2.r, c2.g, c2.b)
           end
 
+          if auraFrame.CountFrame.Count.SetSmoothScaling then
+            auraFrame.CountFrame.Count:SetSmoothScaling(addonTable.CurrentFontUsesSmoothing)
+            auraFrame.Cooldown.Text:SetSmoothScaling(addonTable.CurrentFontUsesSmoothing)
+          end
+
           auraFrame.Cooldown:SetDrawEdge(details.showSwipe)
           auraFrame.Cooldown:SetDrawSwipe(details.showSwipe)
 
