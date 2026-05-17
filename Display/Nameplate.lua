@@ -230,7 +230,13 @@ function addonTable.Display.NameplateMixin:OnLoad()
           auraFrame.CountFrame.Count:SetFontObject(addonTable.CurrentFont)
           auraFrame.CountFrame.Count:ClearAllPoints()
           addonTable.Display.ApplyAnchor(auraFrame.CountFrame.Count, details.texts.stacks.anchor)
-          auraFrame.CountFrame.Count:SetTextScale(details.texts.stacks.scale)
+          if addonTable.CurrentFontUsesSmoothing then
+            auraFrame.CountFrame.Count:SetTextScale(1)
+            auraFrame.CountFrame.Count:SetScale(details.texts.stacks.scale)
+          else
+            auraFrame.CountFrame.Count:SetTextScale(details.texts.stacks.scale)
+            auraFrame.CountFrame.Count:SetScale(1)
+          end
           local c1 = details.texts.stacks.color
           auraFrame.CountFrame.Count:SetTextColor(c1.r, c1.g, c1.b)
           auraFrame.CountFrame.Count:SetShown(details.texts.stacks.visible);
@@ -241,7 +247,13 @@ function addonTable.Display.NameplateMixin:OnLoad()
             auraFrame.Cooldown.Text:SetFontObject(addonTable.CurrentFont)
             auraFrame.Cooldown.Text:ClearAllPoints()
             addonTable.Display.ApplyAnchor(auraFrame.Cooldown.Text, details.texts.countdown.anchor)
-            auraFrame.Cooldown.Text:SetTextScale(details.texts.countdown.scale)
+            if addonTable.CurrentFontUsesSmoothing then
+              auraFrame.Cooldown.Text:SetTextScale(1)
+              auraFrame.Cooldown.Text:SetScale(details.texts.countdown.scale)
+            else
+              auraFrame.Cooldown.Text:SetTextScale(details.texts.countdown.scale)
+              auraFrame.Cooldown.Text:SetScale(1)
+            end
             local c2 = details.texts.countdown.color
             auraFrame.Cooldown.Text:SetTextColor(c2.r, c2.g, c2.b)
           end

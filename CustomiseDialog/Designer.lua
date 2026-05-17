@@ -501,7 +501,16 @@ local function GetAurasTextPositioning(rootParent, iconID)
       local text = preview.widgets[key].text
       text:ClearAllPoints()
       text:SetFontObject(addonTable.CurrentFont)
-      text:SetTextScale(textDetails.scale)
+      if text.SetSmoothScaling then
+        text:SetSmoothScaling(addonTable.CurrentFontUsesSmoothing)
+      end
+      if addonTable.CurrentFontUsesSmoothing then
+        text:SetTextScale(1)
+        text:SetScale(textDetails.scale)
+      else
+        text:SetTextScale(textDetails.scale)
+        text:SetScale(1)
+      end
       text:SetPoint(textDetails.anchor[1] or "CENTER")
       text:SetTextColor(textDetails.color.r, textDetails.color.g, textDetails.color.b)
       if textDetails.visible then
@@ -1293,8 +1302,17 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
       end
       local cdText = container.auras[1].Cooldown:GetRegions()
       cdText:SetFontObject(addonTable.CurrentFont)
-      cdText:SetTextScale(details.texts.countdown.scale)
+      if addonTable.CurrentFontUsesSmoothing then
+        cdText:SetTextScale(1)
+        cdText:SetScale(details.texts.countdown.scale)
+      else
+        cdText:SetTextScale(details.texts.countdown.scale)
+        cdText:SetScale(1)
+      end
       cdText:SetTextColor(details.texts.countdown.color.r, details.texts.countdown.color.g, details.texts.countdown.color.b)
+      if cdText.SetSmoothScaling then
+        cdText:SetSmoothScaling(addonTable.CurrentFontUsesSmoothing)
+      end
       container.auras[1].Cooldown:SetCooldown(GetTime() - 2, 5)
       container.auras[1].Cooldown:Pause()
       container.auras[1].Cooldown:SetHideCountdownNumbers(not details.texts.countdown.visible)
@@ -1303,8 +1321,17 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
       addonTable.Display.ApplyAnchor(cdText, details.texts.countdown.anchor)
       container.auras[1].CountFrame.Count:SetText(2)
       container.auras[1].CountFrame.Count:SetFontObject(addonTable.CurrentFont)
-      container.auras[1].CountFrame.Count:SetTextScale(details.texts.stacks.scale)
       container.auras[1].CountFrame.Count:SetShown(details.texts.stacks.visible)
+      if container.auras[1].CountFrame.Count.SetSmoothScaling then
+        container.auras[1].CountFrame.Count:SetSmoothScaling(addonTable.CurrentFontUsesSmoothing)
+      end
+      if addonTable.CurrentFontUsesSmoothing then
+        container.auras[1].CountFrame.Count:SetTextScale(1)
+        container.auras[1].CountFrame.Count:SetScale(details.texts.stacks.scale)
+      else
+        container.auras[1].CountFrame.Count:SetTextScale(details.texts.stacks.scale)
+        container.auras[1].CountFrame.Count:SetScale(1)
+      end
       addonTable.Display.ApplyAnchor(container.auras[1].CountFrame.Count, details.texts.stacks.anchor)
       container.auras[1].CountFrame.Count:SetTextColor(details.texts.stacks.color.r, details.texts.stacks.color.g, details.texts.stacks.color.b)
       container.auras[1].DispelBorder:SetShown(details.showType)
