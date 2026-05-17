@@ -487,15 +487,24 @@ function addonTable.Display.NameplateMixin:SetUnit(unit)
 
     if UnitCanAttack("player", self.unit) and addonTable.Config.Get(addonTable.Config.Options.OUT_OF_RANGE_ALPHA) ~= 1 then
       addonTable.Display.Cache:RegisterCallback(self.unit, "range", function(state)
-        local old = self.inRange
         self.inRange = state
-        if old ~= self.inRange then
-          self:UpdateVisual()
-        end
+        self:UpdateVisual()
       end)
       self.inRange = addonTable.Display.Cache:Get(self.unit, "range")
     else
       self.inRange = true
+    end
+
+    if UnitCanAttack("player", self.unit) and addonTable.Config.Get(addonTable.Config.Options.NOT_IN_COMBAT_ALPHA) ~= 1 then
+      self.inCombat = addonTable.Display.Utilities.IsInCombatWith(self.unit)
+      addonTable.CallbackRegistry:RegisterCallback("CombatStatusChange", function(_, unit2)
+        if unit2 == self.unit then
+          self.inCombat = addonTable.Display.Utilities.IsInCombatWith(self.unit)
+          self:UpdateVisual()
+        end
+      end, self)
+    else
+      self.inCombat = true
     end
 
     for _, w in ipairs(self.widgets) do
@@ -556,6 +565,7 @@ function addonTable.Display.NameplateMixin:SetUnit(unit)
     self.casting = false
 
     addonTable.CallbackRegistry:UnregisterCallback("TextOverrideUpdated", self)
+    addonTable.CallbackRegistry:UnregisterCallback("CombatStatusChange", self)
   end
 
   self:UpdateVisual()
@@ -630,6 +640,9 @@ function addonTable.Display.NameplateMixin:UpdateVisual()
   end
   if not self.inRange then
     alpha = alpha * addonTable.Config.Get(addonTable.Config.Options.OUT_OF_RANGE_ALPHA)
+  end
+  if not self.inCombat and UnitAffectingCombat("player") then
+    alpha = alpha * addonTable.Config.Get(addonTable.Config.Options.NOT_IN_COMBAT_ALPHA)
   end
   self:SetScale(self.scale * scale * addonTable.Config.Get(addonTable.Config.Options.GLOBAL_SCALE) * scaleMod)
   self:SetAlpha(alpha)

@@ -289,7 +289,7 @@ local function SetupBehaviour(parent)
       --[addonTable.Constants.RefreshReason.Design] = true,
     })
   end)
-  friendlyInInstancesDropdown:SetPoint("TOP", allFrames[#allFrames], "BOTTOM")
+  friendlyInInstancesDropdown:SetPoint("TOP", allFrames[#allFrames], "BOTTOM", 0, -30)
   do
     local values = {
       "never",
@@ -306,17 +306,6 @@ local function SetupBehaviour(parent)
     friendlyInInstancesDropdown:Init(labels, values)
   end
   table.insert(allFrames, friendlyInInstancesDropdown)
-
-  local simplifiedScaleSlider
-  if addonTable.Constants.IsRetail then
-    if C_CVar.GetCVarInfo("nameplateSimplifiedScale") then
-      simplifiedScaleSlider = addonTable.CustomiseDialog.Components.GetSlider(container, addonTable.Locales.SIMPLIFIED_SCALE, 1, 100, function(value) return ("%d%%"):format(value) end, function(value)
-        addonTable.Config.Set(addonTable.Config.Options.SIMPLIFIED_SCALE, value / 100)
-      end)
-      simplifiedScaleSlider:SetPoint("TOP", allFrames[#allFrames], "BOTTOM", 0, -30)
-      table.insert(allFrames, simplifiedScaleSlider)
-    end
-  end
 
   local clickableNameplatesDropdown = addonTable.CustomiseDialog.Components.GetBasicDropdown(container, addonTable.Locales.CLICKABLE_NAMEPLATES)
   clickableNameplatesDropdown:SetPoint("TOP", allFrames[#allFrames], "BOTTOM", 0, -30)
@@ -342,17 +331,29 @@ local function SetupBehaviour(parent)
   end)
   table.insert(allFrames, clickableNameplatesDropdown)
 
-  local targetScaleSlider = addonTable.CustomiseDialog.Components.GetSlider(container, addonTable.Locales.ON_TARGET_SCALE, 1, 500, function(value) return ("%d%%"):format(value) end, function(value)
-    addonTable.Config.Set(addonTable.Config.Options.TARGET_SCALE, value / 100)
+  local stackingNameplatesDropdown = addonTable.CustomiseDialog.Components.GetBasicDropdown(container, addonTable.Locales.STACKING_NAMEPLATES)
+  stackingNameplatesDropdown:SetPoint("TOP", allFrames[#allFrames], "BOTTOM")
+  local values = {
+    "friend",
+    "enemy",
+  }
+  local labels = {
+    addonTable.Locales.FRIENDLY,
+    addonTable.Locales.ENEMY,
+  }
+  stackingNameplatesDropdown.DropDown:SetDefaultText(NONE)
+  stackingNameplatesDropdown.DropDown:SetupMenu(function(_, rootDescription)
+    for index, l in ipairs(labels) do
+      rootDescription:CreateCheckbox(l, function()
+        return addonTable.Config.Get(addonTable.Config.Options.STACKING_NAMEPLATES)[values[index]]
+      end, function()
+        local current = addonTable.Config.Get(addonTable.Config.Options.STACKING_NAMEPLATES)[values[index]]
+        addonTable.Config.Get(addonTable.Config.Options.STACKING_NAMEPLATES)[values[index]] = not current
+        addonTable.CallbackRegistry:TriggerEvent("RefreshStateChange", {[addonTable.Constants.RefreshReason.StackingBehaviour] = true})
+      end)
+    end
   end)
-  targetScaleSlider:SetPoint("TOP", allFrames[#allFrames], "BOTTOM", 0, -30)
-  table.insert(allFrames, targetScaleSlider)
-
-  local castScaleSlider = addonTable.CustomiseDialog.Components.GetSlider(container, addonTable.Locales.ON_CAST_SCALE, 1, 500, function(value) return ("%d%%"):format(value) end, function(value)
-    addonTable.Config.Set(addonTable.Config.Options.CAST_SCALE, value / 100)
-  end)
-  castScaleSlider:SetPoint("TOP", allFrames[#allFrames], "BOTTOM", 0, 0)
-  table.insert(allFrames, castScaleSlider)
+  table.insert(allFrames, stackingNameplatesDropdown)
 
   local mouseoverTransparencySlider = addonTable.CustomiseDialog.Components.GetSlider(container, addonTable.Locales.ON_MOUSEOVER_TRANSPARENCY, 0, 100, function(value) return ("%d%%"):format(value) end, function(value)
     addonTable.Config.Set(addonTable.Config.Options.MOUSEOVER_ALPHA, 1 - value / 100)
@@ -387,8 +388,14 @@ local function SetupBehaviour(parent)
   local outOfRangeTransparencySlider = addonTable.CustomiseDialog.Components.GetSlider(container, addonTable.Locales.OUT_OF_RANGE_TRANSPARENCY, 0, 100, function(value) return ("%d%%"):format(value) end, function(value)
     addonTable.Config.Set(addonTable.Config.Options.OUT_OF_RANGE_ALPHA, 1 - value / 100)
   end)
-  outOfRangeTransparencySlider:SetPoint("TOP", allFrames[#allFrames], "BOTTOM")
+  outOfRangeTransparencySlider:SetPoint("TOP", allFrames[#allFrames], "BOTTOM", 0, -30)
   table.insert(allFrames, outOfRangeTransparencySlider)
+
+  local notInCombatTransparencySlider = addonTable.CustomiseDialog.Components.GetSlider(container, addonTable.Locales.NOT_IN_COMBAT_TRANSPARENCY, 0, 100, function(value) return ("%d%%"):format(value) end, function(value)
+    addonTable.Config.Set(addonTable.Config.Options.NOT_IN_COMBAT_ALPHA, 1 - value / 100)
+  end)
+  notInCombatTransparencySlider:SetPoint("TOP", allFrames[#allFrames], "BOTTOM", 0, -30)
+  table.insert(allFrames, notInCombatTransparencySlider)
 
   local applyCvarsCheckbox = addonTable.CustomiseDialog.Components.GetCheckbox(container, addonTable.Locales.APPLY_OTHER_CVARS, 28, function(value)
     if InCombatLockdown() then
@@ -401,18 +408,13 @@ local function SetupBehaviour(parent)
   table.insert(allFrames, applyCvarsCheckbox)
 
   container:SetScript("OnShow", function()
-    targetScaleSlider:SetValue(addonTable.Config.Get(addonTable.Config.Options.TARGET_SCALE) * 100)
-    castScaleSlider:SetValue(addonTable.Config.Get(addonTable.Config.Options.CAST_SCALE) * 100)
     castTransparencySlider:SetValue(100 - addonTable.Config.Get(addonTable.Config.Options.CAST_ALPHA) * 100)
     notTargetTransparencySlider:SetValue(100 - addonTable.Config.Get(addonTable.Config.Options.NOT_TARGET_ALPHA) * 100)
     mouseoverTransparencySlider:SetValue(100 - addonTable.Config.Get(addonTable.Config.Options.MOUSEOVER_ALPHA) * 100)
     obscuredTransparencySlider:SetValue(100 - addonTable.Config.Get(addonTable.Config.Options.OBSCURED_ALPHA) * 100)
     obscuredCombatTransparencySlider:SetValue(100 - addonTable.Config.Get(addonTable.Config.Options.OBSCURED_COMBAT_ALPHA) * 100)
     outOfRangeTransparencySlider:SetValue(100 - addonTable.Config.Get(addonTable.Config.Options.OUT_OF_RANGE_ALPHA) * 100)
-
-    if simplifiedScaleSlider then
-      simplifiedScaleSlider:SetValue(addonTable.Config.Get(addonTable.Config.Options.SIMPLIFIED_SCALE) * 100)
-    end
+    notInCombatTransparencySlider:SetValue(100 - addonTable.Config.Get(addonTable.Config.Options.NOT_IN_COMBAT_ALPHA) * 100)
 
     for _, f in ipairs(allFrames) do
       if f.SetValue then
@@ -428,34 +430,37 @@ local function SetupBehaviour(parent)
   return container
 end
 
-local function SetupPositioning(parent)
+local function SetupSizing(parent)
   local container = CreateFrame("Frame", nil, parent)
 
   local allFrames = {}
 
-  local stackingNameplatesDropdown = addonTable.CustomiseDialog.Components.GetBasicDropdown(container, addonTable.Locales.STACKING_NAMEPLATES)
-  stackingNameplatesDropdown:SetPoint("TOP")
-  local values = {
-    "friend",
-    "enemy",
-  }
-  local labels = {
-    addonTable.Locales.FRIENDLY,
-    addonTable.Locales.ENEMY,
-  }
-  stackingNameplatesDropdown.DropDown:SetDefaultText(NONE)
-  stackingNameplatesDropdown.DropDown:SetupMenu(function(_, rootDescription)
-    for index, l in ipairs(labels) do
-      rootDescription:CreateCheckbox(l, function()
-        return addonTable.Config.Get(addonTable.Config.Options.STACKING_NAMEPLATES)[values[index]]
-      end, function()
-        local current = addonTable.Config.Get(addonTable.Config.Options.STACKING_NAMEPLATES)[values[index]]
-        addonTable.Config.Get(addonTable.Config.Options.STACKING_NAMEPLATES)[values[index]] = not current
-        addonTable.CallbackRegistry:TriggerEvent("RefreshStateChange", {[addonTable.Constants.RefreshReason.StackingBehaviour] = true})
+  local simplifiedScaleSlider
+  if addonTable.Constants.IsRetail then
+    if C_CVar.GetCVarInfo("nameplateSimplifiedScale") then
+      simplifiedScaleSlider = addonTable.CustomiseDialog.Components.GetSlider(container, addonTable.Locales.SIMPLIFIED_SCALE, 1, 100, function(value) return ("%d%%"):format(value) end, function(value)
+        addonTable.Config.Set(addonTable.Config.Options.SIMPLIFIED_SCALE, value / 100)
       end)
+      simplifiedScaleSlider:SetPoint("TOP")
+      table.insert(allFrames, simplifiedScaleSlider)
     end
+  end
+
+  local targetScaleSlider = addonTable.CustomiseDialog.Components.GetSlider(container, addonTable.Locales.ON_TARGET_SCALE, 1, 500, function(value) return ("%d%%"):format(value) end, function(value)
+    addonTable.Config.Set(addonTable.Config.Options.TARGET_SCALE, value / 100)
   end)
-  table.insert(allFrames, stackingNameplatesDropdown)
+  if #allFrames > 0 then
+    targetScaleSlider:SetPoint("TOP", allFrames[#allFrames], "BOTTOM", 0, -30)
+  else
+    targetScaleSlider:SetPoint("TOP")
+  end
+  table.insert(allFrames, targetScaleSlider)
+
+  local castScaleSlider = addonTable.CustomiseDialog.Components.GetSlider(container, addonTable.Locales.ON_CAST_SCALE, 1, 500, function(value) return ("%d%%"):format(value) end, function(value)
+    addonTable.Config.Set(addonTable.Config.Options.CAST_SCALE, value / 100)
+  end)
+  castScaleSlider:SetPoint("TOP", allFrames[#allFrames], "BOTTOM", 0, 0)
+  table.insert(allFrames, castScaleSlider)
 
   if C_CVar.GetCVarInfo("nameplateOtherTopInset") then
     local closerToScreenEdgesCheckbox = addonTable.CustomiseDialog.Components.GetCheckbox(container, addonTable.Locales.CLOSER_TO_SCREEN_EDGES, 28, function(value)
@@ -503,6 +508,12 @@ local function SetupPositioning(parent)
   end
 
   container:SetScript("OnShow", function()
+    targetScaleSlider:SetValue(addonTable.Config.Get(addonTable.Config.Options.TARGET_SCALE) * 100)
+    if simplifiedScaleSlider then
+      simplifiedScaleSlider:SetValue(addonTable.Config.Get(addonTable.Config.Options.SIMPLIFIED_SCALE) * 100)
+    end
+
+    castScaleSlider:SetValue(addonTable.Config.Get(addonTable.Config.Options.CAST_SCALE) * 100)
     clickRegionSliderX:SetValue(addonTable.Config.Get(addonTable.Config.Options.CLICK_REGION_SCALE_X) * 100)
     clickRegionSliderY:SetValue(addonTable.Config.Get(addonTable.Config.Options.CLICK_REGION_SCALE_Y) * 100)
     stackRegionSliderX:SetValue(addonTable.Config.Get(addonTable.Config.Options.STACK_REGION_SCALE_X) * 100)
@@ -762,7 +773,7 @@ local TabSetups = {
   {callback = addonTable.CustomiseDialog.GetMainDesigner, name = addonTable.Locales.DESIGNER},
   {callback = addonTable.CustomiseDialog.GetStyleSelection, name = addonTable.Locales.STYLE_SELECT},
   {callback = SetupBehaviour, name = addonTable.Locales.BEHAVIOUR},
-  {callback = SetupPositioning, name = addonTable.Locales.POSITIONING},
+  {callback = SetupSizing, name = addonTable.Locales.SIZING},
   {callback = SetupFont, name = addonTable.Locales.FONT},
 }
 
