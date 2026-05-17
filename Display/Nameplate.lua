@@ -495,7 +495,7 @@ function addonTable.Display.NameplateMixin:SetUnit(unit)
       self.inRange = true
     end
 
-    if UnitCanAttack("player", self.unit) and addonTable.Config.Get(addonTable.Config.Options.NOT_IN_COMBAT_ALPHA) ~= 1 then
+    if UnitCanAttack("player", self.unit) and addonTable.Config.Get(addonTable.Config.Options.NOT_IN_PULL_ALPHA) ~= 1 then
       self.inCombat = addonTable.Display.Utilities.IsInCombatWith(self.unit)
       addonTable.CallbackRegistry:RegisterCallback("CombatStatusChange", function(_, unit2)
         if unit2 == self.unit then
@@ -642,7 +642,7 @@ function addonTable.Display.NameplateMixin:UpdateVisual()
     alpha = alpha * addonTable.Config.Get(addonTable.Config.Options.OUT_OF_RANGE_ALPHA)
   end
   if not self.inCombat and UnitAffectingCombat("player") then
-    alpha = alpha * addonTable.Config.Get(addonTable.Config.Options.NOT_IN_COMBAT_ALPHA)
+    alpha = alpha * addonTable.Config.Get(addonTable.Config.Options.NOT_IN_PULL_ALPHA)
   end
   self:SetScale(self.scale * scale * addonTable.Config.Get(addonTable.Config.Options.GLOBAL_SCALE) * scaleMod)
   self:SetAlpha(alpha)
