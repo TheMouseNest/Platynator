@@ -411,10 +411,11 @@ function addonTable.Display.ManagerMixin:UpdateStackingRegion(unit)
     return
   end
   local globalScale = addonTable.Config.Get(addonTable.Config.Options.GLOBAL_SCALE)
-  local newWidth = stackRegion.rect.width * addonTable.Config.Get(addonTable.Config.Options.STACK_REGION_SCALE_X) * globalScale
-  local newHeight = stackRegion.rect.height * addonTable.Config.Get(addonTable.Config.Options.STACK_REGION_SCALE_Y) * globalScale
+  local newWidth = stackRegion.rect.width * addonTable.Config.Get(addonTable.Config.Options.STACK_REGION_SCALE_X)
+  local newHeight = stackRegion.rect.height * addonTable.Config.Get(addonTable.Config.Options.STACK_REGION_SCALE_Y)
+  --stackRegion.visual:SetSize(newWidth, newHeight)
   local uiParentScale = UIParent:GetScale()
-  newWidth = newWidth / uiParentScale - 1 / uiParentScale^2
+  -- Avoid UIScale affecting stack regions
   newHeight = newHeight / uiParentScale - 1 / uiParentScale^2
 	stackRegion:SetPoint(
 		"BOTTOMLEFT",
@@ -500,6 +501,9 @@ function addonTable.Display.ManagerMixin:Install(unit)
         local tex = newDisplay.stackRegion:CreateTexture()
         tex:SetColorTexture(1, 0, 0, 0)
         tex:SetAllPoints(newDisplay.stackRegion)
+        --[[newDisplay.stackRegion.visual = nameplate:CreateTexture()
+        newDisplay.stackRegion.visual:SetColorTexture(1, 1, 0, 0.5)
+        newDisplay.stackRegion.visual:SetPoint("CENTER", newDisplay.stackRegion)]]
       end
       newDisplay.stackRegion:SetParent(nameplate)
       newDisplay.stackRegion.rect = addonTable.Utilities.GetRectFromRegion(design.regions.stack, scale * globalScale, design.regions.stack.anchor, true)
