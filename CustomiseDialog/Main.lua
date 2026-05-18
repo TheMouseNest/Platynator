@@ -121,8 +121,8 @@ local function SetupGeneral(parent)
               end)
             end)
             MenuUtil.HookTooltipScripts(delete, function(tooltip)
-              GameTooltip_SetTitle(tooltip, DELETE);
-            end);
+              GameTooltip_SetTitle(tooltip, DELETE)
+            end)
           end)
         end
       end
@@ -355,6 +355,26 @@ local function SetupBehaviour(parent)
   end)
   table.insert(allFrames, stackingNameplatesDropdown)
 
+  local placeNameplatesAtDropdown = addonTable.CustomiseDialog.Components.GetBasicDropdown(
+    container,
+    addonTable.Locales.PLACE_ENEMY_NAMEPLATES_AT,
+    function(value)
+      return addonTable.Config.Get(addonTable.Config.Options.NAMEPLATE_POSITION) == value
+    end,
+    function (value)
+      addonTable.Config.Set(addonTable.Config.Options.NAMEPLATE_POSITION, value)
+    end
+  )
+  placeNameplatesAtDropdown:SetPoint("TOP", allFrames[#allFrames], "BOTTOM")
+  placeNameplatesAtDropdown:Init({
+    addonTable.Locales.TOP,
+    addonTable.Locales.BOTTOM,
+  }, {
+    "top",
+    "bottom",
+  })
+  table.insert(allFrames, placeNameplatesAtDropdown)
+
   local mouseoverTransparencySlider = addonTable.CustomiseDialog.Components.GetSlider(container, addonTable.Locales.ON_MOUSEOVER_TRANSPARENCY, 0, 100, function(value) return ("%d%%"):format(value) end, function(value)
     addonTable.Config.Set(addonTable.Config.Options.MOUSEOVER_ALPHA, 1 - value / 100)
   end)
@@ -394,7 +414,7 @@ local function SetupBehaviour(parent)
   local notInPullTransparencySlider = addonTable.CustomiseDialog.Components.GetSlider(container, addonTable.Locales.NOT_IN_PULL_TRANSPARENCY, 0, 100, function(value) return ("%d%%"):format(value) end, function(value)
     addonTable.Config.Set(addonTable.Config.Options.NOT_IN_PULL_ALPHA, 1 - value / 100)
   end)
-  notInPullTransparencySlider:SetPoint("TOP", allFrames[#allFrames], "BOTTOM", 0, -30)
+  notInPullTransparencySlider:SetPoint("TOP", allFrames[#allFrames], "BOTTOM")
   table.insert(allFrames, notInPullTransparencySlider)
 
   local applyCvarsCheckbox = addonTable.CustomiseDialog.Components.GetCheckbox(container, addonTable.Locales.APPLY_OTHER_CVARS, 28, function(value)
@@ -688,8 +708,8 @@ function addonTable.CustomiseDialog.GetStyleDropdown(parent)
           end)
         end)
         MenuUtil.HookTooltipScripts(delete, function(tooltip)
-          GameTooltip_SetTitle(tooltip, DELETE);
-        end);
+          GameTooltip_SetTitle(tooltip, DELETE)
+        end)
       end)
     end
 

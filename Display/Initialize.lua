@@ -231,6 +231,10 @@ function addonTable.Display.ManagerMixin:OnLoad()
       for unit in pairs(self.nameplateDisplays) do
         self.ModifiedUFs[unit].WidgetContainer:SetScale(addonTable.Config.Get(addonTable.Config.Options.BLIZZARD_WIDGET_SCALE))
       end
+    elseif settingName == addonTable.Config.Options.NAMEPLATE_POSITION then
+      self:UpdateNamePlateSize()
+      self:RepositionDisplays()
+      self:UpdateNamePlatePosition()
     end
   end)
 end
@@ -383,6 +387,14 @@ function addonTable.Display.ManagerMixin:UpdateInstanceShowState()
   end
 end
 
+function addonTable.Display.ManagerMixin:UpdateNamePlatePosition()
+  if self:CombatChangesCheck() then
+    return
+  end
+
+  C_CVar.SetCVar("nameplateOtherAtBase", addonTable.Config.Get(addonTable.Config.Options.NAMEPLATE_POSITION) == "top" and 0 or 1)
+end
+
 function addonTable.Display.ManagerMixin:ListenToBuffs(display, unit)
   if addonTable.Constants.IsRetail and self.ModifiedUFs[unit] then
     local UF = self.ModifiedUFs[unit]
@@ -421,7 +433,7 @@ function addonTable.Display.ManagerMixin:UpdateStackingRegion(unit)
 		stackRegion:GetParent(),
 		"CENTER",
 		stackRegion.rect.left - (newWidth - stackRegion.rect.width) / 2,
-		stackRegion.rect.bottom - (newHeight - stackRegion.rect.height) / 2 + self.baseOffset
+		stackRegion.rect.bottom - (newHeight - stackRegion.rect.height) / 2 + self:GetBaseOffset(unit)
 	)
   stackRegion:SetSize(newWidth, newHeight)
 end
@@ -459,10 +471,10 @@ function addonTable.Display.ManagerMixin:UpdateClickRegion(unit)
         nameplate,
         "CENTER",
         newLeft,
-        newBottom + self.baseOffset
+        newBottom + self:GetBaseOffset(unit)
       )
     else
-      clickRegion:SetPoint("CENTER", nameplate, "CENTER", 0, self.baseOffset)
+      clickRegion:SetPoint("CENTER", nameplate, "CENTER", 0, self:GetBaseOffset(unit))
     end
     nameplate:SetAllHitTestPoints(clickRegion)
   end
@@ -514,7 +526,7 @@ function addonTable.Display.ManagerMixin:Install(unit)
 
     self:UpdateClickRegion(unit)
 
-    newDisplay:Install(nameplate, self.baseOffset / scale / design.scale / globalScale)
+    newDisplay:Install(nameplate, self:GetBaseOffset(unit) / scale / design.scale / globalScale)
     if newDisplay.styleIndex ~= self.styleIndex then
       local scaleOffset, scaleMod = addonTable.Core.GetDesignScale(addonTable.Constants.IsRetail and shouldSimplify), scale
       newDisplay:InitializeWidgets(design, scaleOffset, scaleMod)
@@ -609,7 +621,11 @@ function addonTable.Display.ManagerMixin:UpdateNamePlateSize()
 
   local width = math.max(math.abs(right), math.abs(left)) * 2 * globalScale
   local height = (top - bottom) * globalScale
-  self.baseOffset = - height / 2 - bottom * globalScale + verticalOffset * globalScale / 2
+  self.baseOffsetFriendly = - height / 2 - bottom * globalScale + verticalOffset * globalScale / 2
+  self.baseOffsetEnemy = self.baseOffsetFriendly
+  if addonTable.Config.Get(addonTable.Config.Options.NAMEPLATE_POSITION) == "bottom" then
+    self.baseOffsetEnemy = - self.baseOffsetEnemy
+  end
 
   height = height + verticalOffset * globalScale
 
@@ -641,7 +657,12 @@ function addonTable.Display.ManagerMixin:UpdateNamePlateSize()
     width = math.max(math.min(250, 200 * NamePlateConstants.NAME_PLATE_SCALES[tonumber(C_CVar.GetCVar("nameplateSize"))].horizontal), width)
     if addonTable.Constants.IsRetail then
       if self.baseBlizzHeight and self.baseBlizzHeight > height then
-        self.baseOffset = self.baseOffset - (self.baseBlizzHeight - height) / 2
+        local diff = -(self.baseBlizzHeight - height) / 2
+        self.baseOffsetFriendly = self.baseOffsetFriendly + diff
+        if addonTable.Config.Get(addonTable.Config.Options.NAMEPLATE_POSITION) == "bottom" then
+          diff = -diff
+        end
+        self.baseOffsetEnemy = self.baseOffsetEnemy + diff
         height = self.baseBlizzHeight
       end
     end
@@ -649,12 +670,20 @@ function addonTable.Display.ManagerMixin:UpdateNamePlateSize()
   end
 end
 
+function addonTable.Display.ManagerMixin:GetBaseOffset(unit)
+  local offset = self.baseOffsetFriendly
+  if not UnitIsFriend("player", unit) and not addonTable.Display.Utilities.IsNeutralUnit(unit) then
+    offset = self.baseOffsetEnemy
+  end
+  return offset
+end
+
 function addonTable.Display.ManagerMixin:RepositionDisplays()
   local globalScale = addonTable.Config.Get(addonTable.Config.Options.GLOBAL_SCALE)
   for unit, display in pairs(self.nameplateDisplays) do
     local styleName, scale = addonTable.Display.Context:GetAssignedDesign(unit)
     local design = addonTable.Core.GetDesignByName(styleName)
-    display:Install(C_NamePlate.GetNamePlateForUnit(unit), self.baseOffset / scale / design.scale / globalScale)
+    display:Install(C_NamePlate.GetNamePlateForUnit(unit), self:GetBaseOffset(unit) / scale / design.scale / globalScale)
   end
 end
 
@@ -898,6 +927,8 @@ function addonTable.Display.ManagerMixin:OnEvent(eventName, ...)
       self:UpdateSimplifiedScale()
       self:UpdateClickable()
       self:UpdateAllClickRegions()
+      self:UpdateNamePlatePosition()
+      self:RepositionDisplays()
     end
     self:UpdateObscuredAlpha()
   elseif eventName == "UI_SCALE_CHANGED" then
@@ -940,5 +971,6 @@ function addonTable.Display.ManagerMixin:OnEvent(eventName, ...)
     self:UpdateNamePlateSize()
     self:UpdateSimplifiedScale()
     self:UpdateObscuredAlpha()
+    self:UpdateNamePlatePosition()
   end
 end
