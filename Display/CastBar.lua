@@ -76,8 +76,10 @@ end
 
 function addonTable.Display.CastBarMixin:SetColor(r, g, b)
   if r == nil then
-    r, g, b = 1, 1, 1
+    self:Hide()
+    return
   end
+
   self.statusBar:GetStatusBarTexture():SetVertexColor(r, g, b)
   self.marker:SetVertexColor(r, g, b)
   if self.details.background.applyColor then
