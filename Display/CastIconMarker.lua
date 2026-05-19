@@ -48,11 +48,6 @@ end
 
 function addonTable.Display.CastIconMarkerMixin:StripInternal()
   self:UnregisterAllEvents()
-  if self.timer then
-    self.timer:Cancel()
-    self.timer = nil
-  end
-  self.interrupted = nil
 end
 
 function addonTable.Display.CastIconMarkerMixin:Strip()
@@ -68,30 +63,14 @@ function addonTable.Display.CastIconMarkerMixin:Strip()
 end
 
 function addonTable.Display.CastIconMarkerMixin:ApplyInterrupt()
-  self.interrupted = true
   self:Show()
-  self.timer = C_Timer.NewTimer(addonTable.Constants.CastInterruptedDelay, function()
-    if self.interrupted then
-      self.interrupted = nil
-      self:Hide()
-    end
-    self.timer = nil
-  end)
 end
 
 function addonTable.Display.CastIconMarkerMixin:ClearCast()
-  if not self.interrupted then
-    self:Hide()
-  end
+  self:Hide()
 end
 
 function addonTable.Display.CastIconMarkerMixin:ApplyCasting(texture)
-  if self.timer then
-    self.timer:Cancel()
-    self.interrupted = nil
-    self.timer = nil
-  end
-
   self.marker:SetTexture(texture)
   self:Show()
 end

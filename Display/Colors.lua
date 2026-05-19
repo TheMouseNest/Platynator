@@ -408,10 +408,11 @@ function addonTable.Display.GetColor(settings, state, unit)
       end
       if text ~= nil then
         table.insert(colorQueue, {color = isEmpowered and s.colors.empowered or isChannel and s.colors.channel or s.colors.cast})
-      else
+        break
+      elseif cacheInfo.interrupted then
         table.insert(colorQueue, {color = s.colors.interrupted})
+        break
       end
-      break
     elseif s.kind == "fixed" then
       table.insert(colorQueue, {color = s.colors.fixed})
       break
