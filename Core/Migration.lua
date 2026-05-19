@@ -549,6 +549,12 @@ local function UpgradeDesignv6(design)
       text.showModifiers = false
     end
   end
+
+  for _, auras in ipairs(design.auras) do
+    if auras.showTooltips == nil then
+      auras.showTooltips = true
+    end
+  end
 end
 
 function addonTable.Core.UpgradeDesign(design)

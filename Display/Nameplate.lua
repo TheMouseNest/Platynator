@@ -227,6 +227,9 @@ function addonTable.Display.NameplateMixin:OnLoad()
         if auraFrame.styleIndex ~= self.styleIndex or auraFrame.kind ~= details.kind then
           auraFrame.kind = details.kind
           auraFrame.styleIndex = self.styleIndex
+
+          auraFrame:EnableMouse(details.showTooltips)
+
           auraFrame.CountFrame.Count:SetFontObject(addonTable.CurrentFont)
           auraFrame.CountFrame.Count:ClearAllPoints()
           addonTable.Display.ApplyAnchor(auraFrame.CountFrame.Count, details.texts.stacks.anchor, addonTable.CurrentFontUsesSmoothing and 1/details.texts.stacks.scale or 1)

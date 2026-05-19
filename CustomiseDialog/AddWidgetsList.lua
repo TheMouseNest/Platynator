@@ -301,6 +301,7 @@ addonTable.CustomiseDialog.DesignWidgets = {
       },
       showType = false,
       showSwipe = true,
+      showTooltips = true,
       texts = {
         countdown = {
           anchor = {},
@@ -339,6 +340,7 @@ addonTable.CustomiseDialog.DesignWidgets = {
       },
       showType = true,
       showSwipe = true,
+      showTooltips = true,
       texts = {
         countdown = {
           anchor = {},
@@ -369,6 +371,7 @@ addonTable.CustomiseDialog.DesignWidgets = {
       direction = "RIGHT",
       showType = false,
       showSwipe = true,
+      showTooltips = true,
       sorting = {
         kind = "duration",
         reversed = false,

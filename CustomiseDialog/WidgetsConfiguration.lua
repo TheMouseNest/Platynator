@@ -1168,6 +1168,7 @@ addonTable.CustomiseDialog.WidgetsConfig = {
               return details.limit
             end,
           },
+          { kind = "spacer" },
           {
             label = addonTable.Locales.SHOW_TYPE_BORDER,
             kind = "checkbox",
@@ -1186,6 +1187,16 @@ addonTable.CustomiseDialog.WidgetsConfig = {
             end,
             getter = function(details)
               return details.showSwipe
+            end,
+          },
+          {
+            label = addonTable.Locales.SHOW_TOOLTIPS,
+            kind = "checkbox",
+            setter = function(details, value)
+              details.showTooltips = value
+            end,
+            getter = function(details)
+              return details.showTooltips
             end,
           },
         },
@@ -1231,21 +1242,6 @@ addonTable.CustomiseDialog.WidgetsConfig = {
     },
     ["debuffs"] = {
       {
-        label = addonTable.Locales.GENERAL,
-        entries = {
-          {
-            label = addonTable.Locales.SHOW_PANDEMIC,
-            kind = "checkbox",
-            setter = function(details, value)
-              details.showPandemic = value
-            end,
-            getter = function(details)
-              return details.showPandemic
-            end,
-          },
-        },
-      },
-      {
         label = addonTable.Locales.TEXTS,
         entries = {
           {
@@ -1284,24 +1280,24 @@ addonTable.CustomiseDialog.WidgetsConfig = {
             end,
           },
         }
-      }
-    },
-    ["buffs"] = {
+      },
       {
-        label = addonTable.Locales.GENERAL,
+        label = addonTable.Locales.PANDEMIC,
         entries = {
           {
-            label = addonTable.Locales.SHOW_PURGEABLE_BORDER,
+            label = addonTable.Locales.SHOW_PANDEMIC,
             kind = "checkbox",
             setter = function(details, value)
-              details.showStealable = value
+              details.showPandemic = value
             end,
             getter = function(details)
-              return details.showStealable
+              return details.showPandemic
             end,
           },
         },
       },
+    },
+    ["buffs"] = {
       {
         label = addonTable.Locales.TEXTS,
         entries = {
@@ -1351,7 +1347,22 @@ addonTable.CustomiseDialog.WidgetsConfig = {
             end,
           },
         }
-      }
+      },
+      {
+        label = addonTable.Locales.PURGEABLE,
+        entries = {
+          {
+            label = addonTable.Locales.SHOW_PURGEABLE_BORDER,
+            kind = "checkbox",
+            setter = function(details, value)
+              details.showStealable = value
+            end,
+            getter = function(details)
+              return details.showStealable
+            end,
+          },
+        },
+      },
     },
     ["crowdControl"] = {
       {
