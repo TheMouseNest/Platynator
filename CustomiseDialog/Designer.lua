@@ -871,7 +871,6 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
   local function DeleteCurrentWidget()
     table.sort(selectionIndexes, function(a, b) return a > b end)
     for _, index in ipairs(selectionIndexes) do
-      local w = widgets[index]
       local kind = widgets[index].kind
       local details = widgets[index].details
       local design = addonTable.CustomiseDialog.GetCurrentDesign()
@@ -881,9 +880,9 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
       local keys = GetKeysArray(hiddenIndexes)
       hiddenIndexes = {}
       for _, k in ipairs(keys) do
-        if k > w.superIndex then
+        if k > index then
           hiddenIndexes[k - 1] = true
-        elseif k ~= w.superIndex then
+        elseif k ~= index then
           hiddenIndexes[k] = true
         end
       end
