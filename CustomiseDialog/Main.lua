@@ -365,7 +365,7 @@ local function SetupBehaviour(parent)
       addonTable.Config.Set(addonTable.Config.Options.NAMEPLATE_POSITION, value)
     end
   )
-  placeNameplatesAtDropdown:SetPoint("TOP", allFrames[#allFrames], "BOTTOM")
+  placeNameplatesAtDropdown:SetPoint("TOP", allFrames[#allFrames], "BOTTOM", 0, -30)
   placeNameplatesAtDropdown:Init({
     addonTable.Locales.TOP,
     addonTable.Locales.BOTTOM,
@@ -375,47 +375,12 @@ local function SetupBehaviour(parent)
   })
   table.insert(allFrames, placeNameplatesAtDropdown)
 
-  local mouseoverTransparencySlider = addonTable.CustomiseDialog.Components.GetSlider(container, addonTable.Locales.ON_MOUSEOVER_TRANSPARENCY, 0, 100, function(value) return ("%d%%"):format(value) end, function(value)
-    addonTable.Config.Set(addonTable.Config.Options.MOUSEOVER_ALPHA, 1 - value / 100)
-  end)
-  mouseoverTransparencySlider:SetPoint("TOP", allFrames[#allFrames], "BOTTOM", 0, -30)
-  table.insert(allFrames, mouseoverTransparencySlider)
 
-  local castTransparencySlider = addonTable.CustomiseDialog.Components.GetSlider(container, addonTable.Locales.ON_CAST_TRANSPARENCY, 0, 100, function(value) return ("%d%%"):format(value) end, function(value)
-    addonTable.Config.Set(addonTable.Config.Options.CAST_ALPHA,  1 - value / 100)
+  local castInterruptedTimeoutSlider = addonTable.CustomiseDialog.Components.GetSlider(container, addonTable.Locales.CAST_INTERRUPTED_TIMEOUT, 0, 50, function(value) return ("%.1fs"):format(value/10) end, function(value)
+    addonTable.Config.Set(addonTable.Config.Options.CAST_INTERRUPTED_TIMEOUT, value / 10)
   end)
-  castTransparencySlider:SetPoint("TOP", allFrames[#allFrames], "BOTTOM", 0, 0)
-  table.insert(allFrames, castTransparencySlider)
-
-  local notTargetTransparencySlider = addonTable.CustomiseDialog.Components.GetSlider(container, addonTable.Locales.ON_NOT_TARGET_TRANSPARENCY, 0, 100, function(value) return ("%d%%"):format(value) end, function(value)
-    addonTable.Config.Set(addonTable.Config.Options.NOT_TARGET_ALPHA, 1 - value / 100)
-  end)
-  notTargetTransparencySlider:SetPoint("TOP", allFrames[#allFrames], "BOTTOM", 0, 0)
-  table.insert(allFrames, notTargetTransparencySlider)
-
-  local obscuredTransparencySlider = addonTable.CustomiseDialog.Components.GetSlider(container, addonTable.Locales.OBSCURED_TRANSPARENCY, 0, 100, function(value) return ("%d%%"):format(value) end, function(value)
-    addonTable.Config.Set(addonTable.Config.Options.OBSCURED_ALPHA, 1 - value / 100)
-  end)
-  obscuredTransparencySlider:SetPoint("TOP", allFrames[#allFrames], "BOTTOM", 0, -30)
-  table.insert(allFrames, obscuredTransparencySlider)
-
-  local obscuredCombatTransparencySlider = addonTable.CustomiseDialog.Components.GetSlider(container, addonTable.Locales.COMBAT_OBSCURED_TRANSPARENCY, 0, 100, function(value) return ("%d%%"):format(value) end, function(value)
-    addonTable.Config.Set(addonTable.Config.Options.OBSCURED_COMBAT_ALPHA, 1 - value / 100)
-  end)
-  obscuredCombatTransparencySlider:SetPoint("TOP", allFrames[#allFrames], "BOTTOM")
-  table.insert(allFrames, obscuredCombatTransparencySlider)
-
-  local outOfRangeTransparencySlider = addonTable.CustomiseDialog.Components.GetSlider(container, addonTable.Locales.OUT_OF_RANGE_TRANSPARENCY, 0, 100, function(value) return ("%d%%"):format(value) end, function(value)
-    addonTable.Config.Set(addonTable.Config.Options.OUT_OF_RANGE_ALPHA, 1 - value / 100)
-  end)
-  outOfRangeTransparencySlider:SetPoint("TOP", allFrames[#allFrames], "BOTTOM", 0, -30)
-  table.insert(allFrames, outOfRangeTransparencySlider)
-
-  local notInPullTransparencySlider = addonTable.CustomiseDialog.Components.GetSlider(container, addonTable.Locales.NOT_IN_PULL_TRANSPARENCY, 0, 100, function(value) return ("%d%%"):format(value) end, function(value)
-    addonTable.Config.Set(addonTable.Config.Options.NOT_IN_PULL_ALPHA, 1 - value / 100)
-  end)
-  notInPullTransparencySlider:SetPoint("TOP", allFrames[#allFrames], "BOTTOM")
-  table.insert(allFrames, notInPullTransparencySlider)
+  castInterruptedTimeoutSlider:SetPoint("TOP", allFrames[#allFrames], "BOTTOM", 0, -30)
+  table.insert(allFrames, castInterruptedTimeoutSlider)
 
   local applyCvarsCheckbox = addonTable.CustomiseDialog.Components.GetCheckbox(container, addonTable.Locales.APPLY_OTHER_CVARS, 28, function(value)
     if InCombatLockdown() then
@@ -428,13 +393,7 @@ local function SetupBehaviour(parent)
   table.insert(allFrames, applyCvarsCheckbox)
 
   container:SetScript("OnShow", function()
-    castTransparencySlider:SetValue(100 - addonTable.Config.Get(addonTable.Config.Options.CAST_ALPHA) * 100)
-    notTargetTransparencySlider:SetValue(100 - addonTable.Config.Get(addonTable.Config.Options.NOT_TARGET_ALPHA) * 100)
-    mouseoverTransparencySlider:SetValue(100 - addonTable.Config.Get(addonTable.Config.Options.MOUSEOVER_ALPHA) * 100)
-    obscuredTransparencySlider:SetValue(100 - addonTable.Config.Get(addonTable.Config.Options.OBSCURED_ALPHA) * 100)
-    obscuredCombatTransparencySlider:SetValue(100 - addonTable.Config.Get(addonTable.Config.Options.OBSCURED_COMBAT_ALPHA) * 100)
-    outOfRangeTransparencySlider:SetValue(100 - addonTable.Config.Get(addonTable.Config.Options.OUT_OF_RANGE_ALPHA) * 100)
-    notInPullTransparencySlider:SetValue(100 - addonTable.Config.Get(addonTable.Config.Options.NOT_IN_PULL_ALPHA) * 100)
+    castInterruptedTimeoutSlider:SetValue(addonTable.Config.Get(addonTable.Config.Options.CAST_INTERRUPTED_TIMEOUT) * 10)
 
     for _, f in ipairs(allFrames) do
       if f.SetValue then
@@ -547,6 +506,66 @@ local function SetupSizing(parent)
         f:SetValue(addonTable.Config.Get(f.option))
       end
     end
+  end)
+
+  return container
+end
+
+local function SetupFading(parent)
+  local container = CreateFrame("Frame", nil, parent)
+
+  local allFrames = {}
+
+  local mouseoverTransparencySlider = addonTable.CustomiseDialog.Components.GetSlider(container, addonTable.Locales.ON_MOUSEOVER_TRANSPARENCY, 0, 100, function(value) return ("%d%%"):format(value) end, function(value)
+    addonTable.Config.Set(addonTable.Config.Options.MOUSEOVER_ALPHA, 1 - value / 100)
+  end)
+  mouseoverTransparencySlider:SetPoint("TOP")
+  table.insert(allFrames, mouseoverTransparencySlider)
+
+  local castTransparencySlider = addonTable.CustomiseDialog.Components.GetSlider(container, addonTable.Locales.ON_CAST_TRANSPARENCY, 0, 100, function(value) return ("%d%%"):format(value) end, function(value)
+    addonTable.Config.Set(addonTable.Config.Options.CAST_ALPHA,  1 - value / 100)
+  end)
+  castTransparencySlider:SetPoint("TOP", allFrames[#allFrames], "BOTTOM", 0, 0)
+  table.insert(allFrames, castTransparencySlider)
+
+  local notTargetTransparencySlider = addonTable.CustomiseDialog.Components.GetSlider(container, addonTable.Locales.ON_NOT_TARGET_TRANSPARENCY, 0, 100, function(value) return ("%d%%"):format(value) end, function(value)
+    addonTable.Config.Set(addonTable.Config.Options.NOT_TARGET_ALPHA, 1 - value / 100)
+  end)
+  notTargetTransparencySlider:SetPoint("TOP", allFrames[#allFrames], "BOTTOM", 0, 0)
+  table.insert(allFrames, notTargetTransparencySlider)
+
+  local obscuredTransparencySlider = addonTable.CustomiseDialog.Components.GetSlider(container, addonTable.Locales.OBSCURED_TRANSPARENCY, 0, 100, function(value) return ("%d%%"):format(value) end, function(value)
+    addonTable.Config.Set(addonTable.Config.Options.OBSCURED_ALPHA, 1 - value / 100)
+  end)
+  obscuredTransparencySlider:SetPoint("TOP", allFrames[#allFrames], "BOTTOM", 0, -30)
+  table.insert(allFrames, obscuredTransparencySlider)
+
+  local obscuredCombatTransparencySlider = addonTable.CustomiseDialog.Components.GetSlider(container, addonTable.Locales.COMBAT_OBSCURED_TRANSPARENCY, 0, 100, function(value) return ("%d%%"):format(value) end, function(value)
+    addonTable.Config.Set(addonTable.Config.Options.OBSCURED_COMBAT_ALPHA, 1 - value / 100)
+  end)
+  obscuredCombatTransparencySlider:SetPoint("TOP", allFrames[#allFrames], "BOTTOM")
+  table.insert(allFrames, obscuredCombatTransparencySlider)
+
+  local outOfRangeTransparencySlider = addonTable.CustomiseDialog.Components.GetSlider(container, addonTable.Locales.OUT_OF_RANGE_TRANSPARENCY, 0, 100, function(value) return ("%d%%"):format(value) end, function(value)
+    addonTable.Config.Set(addonTable.Config.Options.OUT_OF_RANGE_ALPHA, 1 - value / 100)
+  end)
+  outOfRangeTransparencySlider:SetPoint("TOP", allFrames[#allFrames], "BOTTOM", 0, -30)
+  table.insert(allFrames, outOfRangeTransparencySlider)
+
+  local notInPullTransparencySlider = addonTable.CustomiseDialog.Components.GetSlider(container, addonTable.Locales.NOT_IN_PULL_TRANSPARENCY, 0, 100, function(value) return ("%d%%"):format(value) end, function(value)
+    addonTable.Config.Set(addonTable.Config.Options.NOT_IN_PULL_ALPHA, 1 - value / 100)
+  end)
+  notInPullTransparencySlider:SetPoint("TOP", allFrames[#allFrames], "BOTTOM")
+  table.insert(allFrames, notInPullTransparencySlider)
+
+  container:SetScript("OnShow", function()
+    castTransparencySlider:SetValue(100 - addonTable.Config.Get(addonTable.Config.Options.CAST_ALPHA) * 100)
+    notTargetTransparencySlider:SetValue(100 - addonTable.Config.Get(addonTable.Config.Options.NOT_TARGET_ALPHA) * 100)
+    mouseoverTransparencySlider:SetValue(100 - addonTable.Config.Get(addonTable.Config.Options.MOUSEOVER_ALPHA) * 100)
+    obscuredTransparencySlider:SetValue(100 - addonTable.Config.Get(addonTable.Config.Options.OBSCURED_ALPHA) * 100)
+    obscuredCombatTransparencySlider:SetValue(100 - addonTable.Config.Get(addonTable.Config.Options.OBSCURED_COMBAT_ALPHA) * 100)
+    outOfRangeTransparencySlider:SetValue(100 - addonTable.Config.Get(addonTable.Config.Options.OUT_OF_RANGE_ALPHA) * 100)
+    notInPullTransparencySlider:SetValue(100 - addonTable.Config.Get(addonTable.Config.Options.NOT_IN_PULL_ALPHA) * 100)
   end)
 
   return container
@@ -793,6 +812,7 @@ local TabSetups = {
   {callback = addonTable.CustomiseDialog.GetMainDesigner, name = addonTable.Locales.DESIGNER},
   {callback = addonTable.CustomiseDialog.GetStyleSelection, name = addonTable.Locales.STYLE_SELECT},
   {callback = SetupBehaviour, name = addonTable.Locales.BEHAVIOUR},
+  {callback = SetupFading, name = addonTable.Locales.FADING},
   {callback = SetupSizing, name = addonTable.Locales.SIZING},
   {callback = SetupFont, name = addonTable.Locales.FONT},
 }

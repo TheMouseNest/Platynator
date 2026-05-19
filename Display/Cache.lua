@@ -23,15 +23,15 @@ local getter = {
   ["cast"] = function(oldState, unit, eventName, ...)
     if eventName == "UNIT_SPELLCAST_INTERRUPTED" then
       local _, _, interrupterGUID = ...
-      return {cast = {}, channel = {}, interrupted = {guid = interrupterGUID, time = GetTime() * 1000}}, true, addonTable.Constants.CastInterruptedDelay
+      return {cast = {}, channel = {}, interrupted = {guid = interrupterGUID, time = GetTime() * 1000}}, true, addonTable.Config.Get(addonTable.Config.Options.CAST_INTERRUPTED_TIMEOUT)
     end
     if eventName == "UNIT_SPELLCAST_CHANNEL_STOP" then
       local _, _, interrupterGUID = ...
-      return {cast = {}, channel = {}, interrupted = interrupterGUID and {guid = interrupterGUID, time = GetTime() * 1000} or nil}, true, interrupterGUID and addonTable.Constants.CastInterruptedDelay or nil
+      return {cast = {}, channel = {}, interrupted = interrupterGUID and {guid = interrupterGUID, time = GetTime() * 1000} or nil}, true, interrupterGUID and addonTable.Config.Get(addonTable.Config.Options.CAST_INTERRUPTED_TIMEOUT) or nil
     end
     if eventName == "UNIT_SPELLCAST_EMPOWER_STOP" then
       local _, _, _, interrupterGUID = ...
-      return {cast = {}, channel = {}, interrupted = interrupterGUID and {guid = interrupterGUID, time = GetTime() * 1000} or nil}, true, interrupterGUID and addonTable.Constants.CastInterruptedDelay or nil
+      return {cast = {}, channel = {}, interrupted = interrupterGUID and {guid = interrupterGUID, time = GetTime() * 1000} or nil}, true, interrupterGUID and addonTable.Config.Get(addonTable.Config.Options.CAST_INTERRUPTED_TIMEOUT) or nil
     end
     local new, state = nil, false
     if eventName == "UNIT_SPELLCAST_DELAYED" and next(oldState.cast) == nil or eventName == "UNIT_SPELLCAST_CHANNEL_UPDATE" and next(oldState.channel) == nil then
@@ -40,7 +40,7 @@ local getter = {
       new, state = {cast = {UnitCastingInfo(unit)}, channel = {UnitChannelInfo(unit)}, interrupted = nil}, true
     end
     -- Using approximated milliseconds to avoid rounding errors breaking the time comparison
-    if oldState and oldState.interrupted and math.ceil(GetTime()*1000) - math.floor(oldState.interrupted.time) < addonTable.Constants.CastInterruptedDelay * 1000 and next(new.cast) == nil and next(new.channel) == nil then
+    if oldState and oldState.interrupted and math.ceil(GetTime()*1000) - math.floor(oldState.interrupted.time) < addonTable.Config.Get(addonTable.Config.Options.CAST_INTERRUPTED_TIMEOUT) * 1000 and next(new.cast) == nil and next(new.channel) == nil then
       new.interrupted = oldState.interrupted
     end
     return new, state
