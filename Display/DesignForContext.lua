@@ -58,6 +58,9 @@ local assignmentsPossibilities = {
   ["npc"] = { check = function(state) return state.isNPC end },
   ["minion"] = { check = function(state) return state.isMinion end },
 
+  ["pet"] = { check = function(state) return state.isPet end },
+  ["totem"] = { check = function(state) return state.isTotem end },
+
   ["class-rare"] = { updates = "classification", check = function(state) local c = state.classification; return c == "rare" or c == "rareelite" end },
   ["class-elite"] = { updates = "classification", check = function(state) local c = state.classification; return c == "elite" or c == "rareelite" end },
   ["class-worldboss"] = { updates = "classification", check = function(state) return state.classification == "worldboss" end },
@@ -105,13 +108,17 @@ instanceTracker:SetScript("OnEvent", function()
 end)
 
 local function GenerateState(unit)
+  local isMinion = IsMinion(unit)
+  local isPet = UnitIsOtherPlayersPet(unit) or UnitIsUnit(unit, "pet")
   return {
     canAttack = UnitCanAttack("player", unit),
     inCombat = IsInCombat(unit),
     alignment = GetAlignment(unit),
     isPlayer = IsPlayer(unit),
     isNPC = IsNPC(unit),
-    isMinion = IsMinion(unit),
+    isMinion = isMinion,
+    isTotem = isMinion and not isPet,
+    isPet = isPet,
     classification = UnitClassification(unit),
     location = location,
     eliteType = GetEliteType(unit),
@@ -202,6 +209,8 @@ function addonTable.Display.DesignForContextMixin:GetDefaultEnemyNPCDesign()
     isPlayer = false,
     isNPC = true,
     isMinion = false,
+    isTotem = false,
+    isPet = false,
     classification = "normal",
     location = "world",
     eliteType = "trival",
@@ -219,6 +228,8 @@ function addonTable.Display.DesignForContextMixin:GetDefaultFriendlyPlayerDesign
     isPlayer = true,
     isNPC = false,
     isMinion = false,
+    isTotem = false,
+    isPet = false,
     classification = "normal",
     location = "dungeon",
     eliteType = nil,
