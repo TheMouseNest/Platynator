@@ -44,8 +44,6 @@ local function GetLabelsValues(allAssets, filter, showName, widthMod)
       end
       if details.mode == addonTable.Assets.Mode.Special then
         text = text .. " " .. addonTable.Locales.SPECIAL_BRACKETS
-      elseif details.mode ~= nil and showHeight then
-        text = text .. " " .. addonTable.Locales.PERCENT_BRACKETS:format(details.mode)
       end
 
       table.insert(labels, text)
