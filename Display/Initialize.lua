@@ -672,7 +672,7 @@ end
 
 function addonTable.Display.ManagerMixin:GetBaseOffset(unit)
   local offset = self.baseOffsetFriendly
-  if not UnitIsFriend("player", unit) and not UnitReaction(unit, "player") == 4 --[[different neutral check due to np behaviour]] then
+  if not UnitIsFriend("player", unit) and UnitReaction(unit, "player") ~= 4 --[[different neutral check due to np behaviour]] then
     offset = self.baseOffsetEnemy
   end
   return offset
