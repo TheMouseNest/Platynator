@@ -138,6 +138,16 @@ function addonTable.CustomiseDialog.Components.GetSlider(parent, label, min, max
   holder.Slider:RegisterCallback(MinimalSliderWithSteppersMixin.Event.OnValueChanged, function(_, value)
     callback(value)
   end)
+  holder.Slider.Slider:HookScript("OnEnter", function()
+    if holder:GetScript("OnEnter") then
+      holder:GetScript("OnEnter")(holder)
+    end
+  end)
+  holder.Slider.Slider:HookScript("OnLeave", function()
+    if holder:GetScript("OnLeave") then
+      holder:GetScript("OnLeave")(holder)
+    end
+  end)
 
   function holder:GetValue()
     return holder.Slider.Slider:GetValue()

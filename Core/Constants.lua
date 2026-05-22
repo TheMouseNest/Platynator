@@ -24,6 +24,11 @@ addonTable.Constants = {
   LayerFrameLevelStep = 500,
 
   CastInterruptedDelay = 0.3,
+
+  ClickRegionColor = CreateColor(5/255, 38/255, 223/255, 0.3),
+  ClickRegionBorderColor = CreateColor(3/255, 21/255, 124/255),
+  StackRegionColor = CreateColor(198/255, 0/255, 0/255, 0.3),
+  StackRegionBorderColor = CreateColor(104/255, 0/255, 0/255),
 }
 addonTable.Constants.Events = {
   "SettingChanged",
@@ -43,6 +48,7 @@ addonTable.Constants.Events = {
 
   "CustomiseDesignsAssigned",
   "UnitDesignChange",
+  "ShowRegion",
 }
 
 addonTable.Constants.RefreshReason = {

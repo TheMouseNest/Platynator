@@ -41,6 +41,7 @@ function addonTable.Utilities.GetRectFromRegion(region, scale, anchor, shouldSca
 end
 
 function addonTable.Utilities.GenerateRects(design)
+  local hit, stack
   local left, right, top, bottom
 
   local function CacheSize(rect)
@@ -57,7 +58,7 @@ function addonTable.Utilities.GenerateRects(design)
   end
 
   for _, barDetails in ipairs(design.bars) do
-    if barDetails.kind == "health" then
+    if barDetails.kind == "health" or barDetails.kind == "cast" then
       local rect = addonTable.Utilities.GetRectFromRegion({width = barDetails.border.width, height = barDetails.border.height}, barDetails.scale, barDetails.anchor)
       CacheSize(rect)
     end
@@ -70,19 +71,13 @@ function addonTable.Utilities.GenerateRects(design)
     end
   end
 
-  local hit
-  if left ~= nil then
-    hit = {left = left * design.scale, bottom = bottom * design.scale, width = (right - left) * design.scale, height = (top - bottom) * design.scale}
-  end
-
   for _, textDetails in ipairs(design.texts) do
     if textDetails.kind == "creatureName" then
-      local rect = addonTable.Utilities.GetRectFromRegion({width = textDetails.maxWidth, height = 10/addonTable.Assets.BarBordersSize.height * textDetails.scale}, 1, textDetails.anchor)
+      local rect = addonTable.Utilities.GetRectFromRegion({width = textDetails.maxWidth, height = 11/addonTable.Assets.BarBordersSize.height * textDetails.scale}, 1, textDetails.anchor)
       CacheSize(rect)
     end
   end
 
-  local stack
   if left ~= nil then
     if left == right then
       right = addonTable.Assets.BarBordersSize.width / 2
@@ -92,13 +87,11 @@ function addonTable.Utilities.GenerateRects(design)
       top = addonTable.Assets.BarBordersSize.height / 2
       bottom = -top
     end
-    stack = {left = left * design.scale, bottom = bottom * design.scale, width = (right - left) * design.scale, height = (top - bottom) * design.scale}
+    stack = {left = left, bottom = bottom, width = (right - left), height = (top - bottom)}
   else
     stack = {left = 0, bottom = 0, width = 0, height = 0}
   end
-  if hit == nil then
-    hit = stack
-  end
+  hit = CopyTable(stack)
 
   return hit, stack
 end
@@ -115,13 +108,13 @@ function addonTable.Utilities.ConvertRectToWidget(rect)
     return {
       width = width, height = height,
       anchor = {"CENTER"},
-      autoSized = true
+      autoSized = true,
     }
   else
     return {
       width = width, height = height,
       anchor = {"BOTTOMLEFT", rect.left, rect.bottom},
-      autoSized = true
+      autoSized = true,
     }
   end
 end

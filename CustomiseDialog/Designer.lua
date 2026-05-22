@@ -9,10 +9,12 @@ local function Announce()
   end
   local design = addonTable.CustomiseDialog.GetCurrentDesign()
   local click, stack = addonTable.Utilities.GenerateRects(design)
-  design.regions = {
-    click = addonTable.Utilities.ConvertRectToWidget(click),
-    stack = addonTable.Utilities.ConvertRectToWidget(stack),
-  }
+  if design.regions.click.autoSized then
+    design.regions.click = addonTable.Utilities.ConvertRectToWidget(click)
+  end
+  if design.regions.stack.autoSized then
+    design.regions.stack = addonTable.Utilities.ConvertRectToWidget(stack)
+  end
   addonTable.CallbackRegistry:TriggerEvent("RefreshStateChange", {[addonTable.Constants.RefreshReason.Design] = true})
 end
 
@@ -641,6 +643,7 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
   local hiddenIndexes = {}
   local fociOnDown = {}
   local autoSelectedDetails
+  local shouldShowRegions = false
   local UpdateHiding
   local GenerateWidgets
 
@@ -872,18 +875,22 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
     table.sort(selectionIndexes, function(a, b) return a > b end)
     for _, index in ipairs(selectionIndexes) do
       local kind = widgets[index].kind
-      local details = widgets[index].details
-      local design = addonTable.CustomiseDialog.GetCurrentDesign()
-      table.remove(design[kind], tIndexOf(design[kind], details))
+      if kind == "regions" then
+        widgets[index].details.autoSized = true
+      else
+        local details = widgets[index].details
+        local design = addonTable.CustomiseDialog.GetCurrentDesign()
+        table.remove(design[kind], tIndexOf(design[kind], details))
 
-      -- Update hidden widget indexes
-      local keys = GetKeysArray(hiddenIndexes)
-      hiddenIndexes = {}
-      for _, k in ipairs(keys) do
-        if k > index then
-          hiddenIndexes[k - 1] = true
-        elseif k ~= index then
-          hiddenIndexes[k] = true
+        -- Update hidden widget indexes
+        local keys = GetKeysArray(hiddenIndexes)
+        hiddenIndexes = {}
+        for _, k in ipairs(keys) do
+          if k > index then
+            hiddenIndexes[k - 1] = true
+          elseif k ~= index then
+            hiddenIndexes[k] = true
+          end
         end
       end
     end
@@ -954,6 +961,9 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
       else
         local skip = false
         if details.noDuplicates then
+          if design[details.kind][details.default.kind] then
+            skip = true
+          end
           for _, entry in ipairs(design[details.kind]) do
             if entry.kind == details.default.kind then
               skip = true
@@ -983,7 +993,6 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
     DeleteCurrentWidget()
   end)
 
-
   local showAllButton = CreateFrame("Button", nil, previewInset, "UIPanelDynamicResizeButtonTemplate")
   showAllButton:SetText(addonTable.Locales.SHOW_ALL)
   DynamicResizeButton_Resize(showAllButton)
@@ -993,13 +1002,32 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
     UpdateHiding()
   end)
 
+  local showRegionsButton = CreateFrame("Button", nil, previewInset, "UIPanelDynamicResizeButtonTemplate")
+  showRegionsButton:SetText(addonTable.Locales.REGIONS)
+  DynamicResizeButton_Resize(showRegionsButton)
+  showRegionsButton:SetPoint("BOTTOMLEFT", 1, 1)
+  showRegionsButton:SetScript("OnClick", function()
+    shouldShowRegions = not shouldShowRegions
+    UpdateHiding()
+    if not shouldShowRegions then
+      addonTable.CallbackRegistry:TriggerEvent("ShowRegion", "click", false)
+      addonTable.CallbackRegistry:TriggerEvent("ShowRegion", "stack", false)
+    else
+      addonTable.CallbackRegistry:TriggerEvent("ShowRegion", "click", addonTable.CustomiseDialog.GetCurrentDesign().regions.click.autoSized)
+    end
+  end)
+  if not addonTable.Constants.IsRetail then
+    showRegionsButton:Hide()
+  end
+
   UpdateHiding = function()
     for index, w in ipairs(widgets) do
-      w:SetShown(hiddenIndexes[index] ~= true)
+      w:SetShown(hiddenIndexes[index] ~= true and (w.kind ~= "regions" or shouldShowRegions))
     end
     showAllButton:SetShown(next(hiddenIndexes) ~= nil)
+    DynamicResizeButton_Resize(showRegionsButton)
     local oldSize = #selectionIndexes
-    selectionIndexes = tFilter(selectionIndexes, function(i) return not hiddenIndexes[i] end, true)
+    selectionIndexes = tFilter(selectionIndexes, function(i) return not hiddenIndexes[i] and (widgets[i].kind ~= "regions" or shouldShowRegions) end, true)
     if #selectionIndexes ~= oldSize then
       UpdateSelection()
     end
@@ -1083,6 +1111,58 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
       end)
     end
   end
+
+  local regionWidgets = {
+    click = CreateFrame("Frame", nil, preview, "PlatynatorPropagateMouseTemplate"),
+    stack = CreateFrame("Frame", nil, preview, "PlatynatorPropagateMouseTemplate"),
+  }
+  for _, w in pairs(regionWidgets) do
+    w.kind = "regions"
+    w.visual = w:CreateTexture()
+    w.visual:SetAllPoints()
+    w.border = w:CreateTexture()
+    w.border:SetAllPoints()
+    local borderSliceDetails = LSM:Fetch("nineslice", "Platy: 4px")
+    assert(borderSliceDetails)
+    w.border:SetTexture(borderSliceDetails.file)
+    w.border:SetScale(borderSliceDetails.scaleModifier)
+    w.border:SetTextureSliceMargins(borderSliceDetails.margins.left, borderSliceDetails.margins.top, borderSliceDetails.margins.right, borderSliceDetails.margins.bottom)
+    w:SetScript("OnEnter", function()
+      if w == GetMouseFoci()[1] then
+        hoverMarker:Show()
+        hoverMarker:SetFrameStrata("HIGH")
+        hoverMarker:ClearAllPoints()
+        hoverMarker:SetPoint("TOPLEFT", w, "TOPLEFT", -2, 2)
+        hoverMarker:SetPoint("BOTTOMRIGHT", w, "BOTTOMRIGHT", 2, -2)
+      end
+    end)
+    w:SetScript("OnLeave", function()
+      local foci = GetMouseFoci()
+      if foci[1] and foci[1]:GetParent() == preview then
+        foci[1]:GetScript("OnEnter")()
+      else
+        hoverMarker:Hide()
+      end
+    end)
+    w:SetMovable(true)
+    w:EnableMouse(true)
+    w:RegisterForDrag("LeftButton")
+    w:SetScript("OnMouseDown", function()
+      NotifyMouseDown()
+    end)
+    w:SetScript("OnDragStart", function()
+      ForceSelection(fociOnDown)
+      w.details.autoSized = false
+      StartMovingSelection()
+    end)
+    w:SetScript("OnMouseUp", function(_, button)
+      ToggleSelection(GetMouseFoci(), button)
+    end)
+  end
+  regionWidgets.click.visual:SetColorTexture(addonTable.Constants.ClickRegionColor.r, addonTable.Constants.ClickRegionColor.g, addonTable.Constants.ClickRegionColor.b, addonTable.Constants.ClickRegionColor.a)
+  regionWidgets.click.border:SetVertexColor(addonTable.Constants.ClickRegionBorderColor.r, addonTable.Constants.ClickRegionBorderColor.g, addonTable.Constants.ClickRegionBorderColor.b)
+  regionWidgets.stack.visual:SetColorTexture(addonTable.Constants.StackRegionColor.r, addonTable.Constants.StackRegionColor.g, addonTable.Constants.StackRegionColor.b, addonTable.Constants.StackRegionColor.a)
+  regionWidgets.stack.border:SetVertexColor(addonTable.Constants.StackRegionBorderColor.r, addonTable.Constants.StackRegionBorderColor.g, addonTable.Constants.StackRegionBorderColor.b)
 
   GenerateWidgets = function ()
     if widgets then
@@ -1356,6 +1436,18 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
       addonTable.Display.ApplyAnchor(container, details.anchor)
     end
 
+    for _, key in pairs({"click", "stack"}) do
+      local details = design.regions[key]
+      local w = regionWidgets[key]
+      w.details = details
+      w.details.kind = key
+      w:SetSize(details.width * addonTable.Assets.BarBordersSize.width, details.height * addonTable.Assets.BarBordersSize.height)
+      w:SetFrameLevel(9000 + 10 * (key == "click" and 1 or 0))
+      addonTable.Display.ApplyAnchor(w, details.anchor)
+      w:SetShown(shouldShowRegions)
+      table.insert(widgets, w)
+    end
+
     UpdateHiding()
   end
 
@@ -1567,6 +1659,14 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
 
   UpdateSelection = function()
     selectionIndexes = tFilter(selectionIndexes, function(i) return i <= #widgets end, true)
+
+    if shouldShowRegions then
+      local stackSelected = tIndexOf(selectionIndexes, tIndexOf(widgets, regionWidgets.stack)) ~= nil
+      local clickSelected = tIndexOf(selectionIndexes, tIndexOf(widgets, regionWidgets.click)) ~= nil
+      addonTable.CallbackRegistry:TriggerEvent("ShowRegion", "click", regionWidgets.click.details.autoSized and not stackSelected or clickSelected)
+      addonTable.CallbackRegistry:TriggerEvent("ShowRegion", "stack", stackSelected)
+    end
+
     if #selectionIndexes == 0 then
       keyboardTrap:Hide()
       deleteButton:Disable()
@@ -1640,6 +1740,10 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
 
     selectionIndexes = {}
     SetPreviewMaximised(false)
+  end)
+  container:SetScript("OnHide", function()
+    addonTable.CallbackRegistry:TriggerEvent("ShowRegion", "click", false)
+    addonTable.CallbackRegistry:TriggerEvent("ShowRegion", "stack", false)
   end)
 
   return container

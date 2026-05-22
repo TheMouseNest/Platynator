@@ -13,7 +13,7 @@ function addonTable.Display.ApplyAnchor(frame, anchor, scale)
   elseif #anchor == 2 then
     PixelUtil.SetPoint(frame, "CENTER", frame:GetParent(), "CENTER", anchor[1] * scale, anchor[2] * scale)
   elseif #anchor == 1 then
-    frame:SetPoint("TOP", frame:GetParent(), "CENTER")
+    frame:SetPoint(anchor[1], frame:GetParent(), "CENTER")
   end
 end
 

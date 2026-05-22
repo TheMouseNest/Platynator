@@ -1675,6 +1675,57 @@ addonTable.CustomiseDialog.WidgetsConfig = {
         },
       },
     },
+  },
+  ["regions"] = {
+    ["*"] = {
+      {
+        label = addonTable.Locales.GENERAL,
+        entries = {
+          {
+            label = addonTable.Locales.AUTOMATICALLY_SIZED,
+            kind = "checkbox",
+            setter = function(details, value)
+              details.autoSized = value
+            end,
+            getter = function(details)
+              return details.autoSized
+            end
+          },
+          {
+            label = addonTable.Locales.HEIGHT,
+            kind = "slider",
+            min = 10, max = 1500,
+            formatter = function(value) return value .. "%" end,
+            setter = function(details, value)
+              local old = details.height
+              details.height = value / 100
+              if details.height ~= old then
+                details.autoSized = false
+              end
+            end,
+            getter = function(details)
+              return details.height * 100
+            end,
+          },
+          {
+            label = addonTable.Locales.WIDTH,
+            kind = "slider",
+            min = 10, max = 1000,
+            formatter = function(value) return value .. "%" end,
+            setter = function(details, value)
+              local old = details.width
+              details.width = value / 100
+              if details.width ~= old then
+                details.autoSized = false
+              end
+            end,
+            getter = function(details)
+              return details.width * 100
+            end,
+          },
+        },
+      },
+    }
   }
 }
 

@@ -731,4 +731,24 @@ addonTable.CustomiseDialog.DesignWidgets = {
       anchor = {"TOPLEFT", -140, 50},
     },
   },
+  {
+    name = addonTable.Locales.REGIONS,
+    special = "header",
+  },
+  {
+    name = addonTable.Locales.CLICK,
+    kind = "regions",
+    noDuplicates = true,
+    default = {
+      kind = "click",
+    },
+  },
+  {
+    name = addonTable.Locales.STACK,
+    kind = "regions",
+    noDuplicates = true,
+    default = {
+      kind = "stack",
+    },
+  },
 }

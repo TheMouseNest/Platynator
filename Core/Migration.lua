@@ -572,6 +572,12 @@ function addonTable.Core.UpgradeDesign(design)
   end
   if design.version == 6 then
     UpgradeDesignv6(design)
+    local click, stack = addonTable.Utilities.GenerateRects(design)
+    design.regions = {
+      click = addonTable.Utilities.ConvertRectToWidget(click),
+      stack = addonTable.Utilities.ConvertRectToWidget(stack)
+    }
+    design.version = 7
   end
 end
 
@@ -684,7 +690,8 @@ local function MigrateSettingsv2()
 end
 
 local function MigrateSettingsv3()
-  -- Add here
+  addonTable.Config.ResetOne(addonTable.Config.Options.STACK_REGION_SCALE_X, false)
+  addonTable.Config.ResetOne(addonTable.Config.Options.STACK_REGION_SCALE_Y, false)
 end
 
 function addonTable.Core.MigrateSettings()
@@ -698,7 +705,10 @@ function addonTable.Core.MigrateSettings()
     addonTable.Config.Set(addonTable.Config.Options.MIGRATION, 3)
   end
 
-  MigrateSettingsv3()
+  if addonTable.Config.Get(addonTable.Config.Options.MIGRATION) == 3 then
+    MigrateSettingsv3()
+    addonTable.Config.Set(addonTable.Config.Options.MIGRATION, 4)
+  end
 
   for _, design in pairs(addonTable.Config.Get(addonTable.Config.Options.DESIGNS)) do
     addonTable.Core.UpgradeDesign(design)
