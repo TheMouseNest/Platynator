@@ -1016,7 +1016,7 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
       addonTable.CallbackRegistry:TriggerEvent("ShowRegion", "click", addonTable.CustomiseDialog.GetCurrentDesign().regions.click.autoSized)
     end
   end)
-  if not addonTable.Constants.IsRetail then
+  if not addonTable.Constants.IsHitTestPointsAvailable then
     showRegionsButton:Hide()
   end
 

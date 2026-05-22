@@ -463,7 +463,7 @@ local function GetCustomOptions(container)
 
     local offsetY = 0
     for _, entry in ipairs(assignments) do
-      if addonTable.Constants.IsRetail or not entry.simplified then
+      if addonTable.Constants.IsSimplifiedAvailable or not entry.simplified then
         local holder = holderPool:Acquire()
         table.insert(allFrames, holder)
         holder:SetEntry(entry)

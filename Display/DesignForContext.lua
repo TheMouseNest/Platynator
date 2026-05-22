@@ -254,7 +254,7 @@ function addonTable.Display.DesignForContextMixin:GetDesignFromState(state)
       end
     end
 
-    if hit and (addonTable.Constants.IsRetail or not settings.simplified) then
+    if hit and (addonTable.Constants.IsSimplifiedAvailable or not settings.simplified) then
       return settings.style, settings.scale, settings.simplified or false, index
     end
   end

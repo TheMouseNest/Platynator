@@ -276,7 +276,7 @@ function addonTable.Display.ManagerMixin:UpdateStacking()
   if self:CombatChangesCheck() then
     return
   end
-  if addonTable.Constants.IsRetail then
+  if addonTable.Constants.IsHitTestPointsAvailable then
     local state = addonTable.Config.Get(addonTable.Config.Options.STACKING_NAMEPLATES)
     C_CVar.SetCVarBitfield("nameplateStackingTypes", Enum.NamePlateStackType.Enemy, state.enemy)
     C_CVar.SetCVarBitfield("nameplateStackingTypes", Enum.NamePlateStackType.Friendly, state.friend)
@@ -453,10 +453,13 @@ end
 
 function addonTable.Display.ManagerMixin:UpdateClickRegion(unit)
   local nameplate = C_NamePlate.GetNamePlateForUnit(unit, issecure())
-  if nameplate and nameplate.CanChangeHitTestPoints and nameplate:CanChangeHitTestPoints() then
+  if nameplate and addonTable.Constants.IsHitTestPointsAvailable and nameplate:CanChangeHitTestPoints() then
     local clickRegion = self.nameplateClickRegions[nameplate:GetName()]
     if not clickRegion then
       clickRegion = self.clickRegionPool:Acquire()
+      if addonTable.Constants.IsClassic then
+        clickRegion:SetScale(UIParent:GetScale())
+      end
       clickRegion:SetParent(nameplate)
       clickRegion.visual = clickRegion:CreateTexture()
       clickRegion.visual:SetColorTexture(addonTable.Constants.ClickRegionColor.r, addonTable.Constants.ClickRegionColor.g, addonTable.Constants.ClickRegionColor.b, addonTable.Constants.ClickRegionColor.a)
@@ -524,8 +527,13 @@ function addonTable.Display.ManagerMixin:Install(unit)
         newDisplay.stackRegion.visual = nameplate:CreateTexture()
         newDisplay.stackRegion.visual:SetColorTexture(addonTable.Constants.StackRegionColor.r, addonTable.Constants.StackRegionColor.g, addonTable.Constants.StackRegionColor.b, addonTable.Constants.StackRegionColor.a)
         newDisplay.stackRegion.visual:SetPoint("CENTER", newDisplay.stackRegion)
+        if addonTable.Constants.IsClassic then
+          newDisplay.stackRegion:SetScale(UIParent:GetScale())
+          newDisplay.stackRegion.visual:SetScale(UIParent:GetScale())
+        end
       end
       newDisplay.stackRegion:SetParent(nameplate)
+      newDisplay.stackRegion.visual:SetParent(nameplate)
       newDisplay.stackRegion.rect = addonTable.Utilities.GetRectFromRegion(design.regions.stack, scale * design.scale * globalScale, design.regions.stack.anchor, true)
       nameplate:SetStackingBoundsFrame(newDisplay.stackRegion)
       self:UpdateStackingRegion(unit)
@@ -537,7 +545,7 @@ function addonTable.Display.ManagerMixin:Install(unit)
 
     newDisplay:Install(nameplate, self:GetBaseOffset(unit) / scale / design.scale / globalScale)
     if newDisplay.styleIndex ~= self.styleIndex then
-      local scaleOffset, scaleMod = addonTable.Core.GetDesignScale(addonTable.Constants.IsRetail and shouldSimplify), scale
+      local scaleOffset, scaleMod = addonTable.Core.GetDesignScale(shouldSimplify), scale
       newDisplay:InitializeWidgets(design, scaleOffset, scaleMod)
       newDisplay.styleIndex = self.styleIndex
     end
@@ -636,7 +644,19 @@ function addonTable.Display.ManagerMixin:UpdateNamePlateSize()
 
   height = height + verticalOffset * globalScale
 
-  if C_NamePlate.SetNamePlateEnemySize and not addonTable.Constants.IsRetail then
+  if C_NamePlate.SetNamePlateSize then
+    width = math.max(math.min(250, 200 * NamePlateConstants.NAME_PLATE_SCALES[tonumber(C_CVar.GetCVar("nameplateSize"))].horizontal), width)
+    if self.baseBlizzHeight and self.baseBlizzHeight > height then
+      local diff = -(self.baseBlizzHeight - height) / 2
+      self.baseOffsetFriendly = self.baseOffsetFriendly + diff
+      if addonTable.Config.Get(addonTable.Config.Options.NAMEPLATE_POSITION) == "bottom" then
+        diff = -diff
+      end
+      self.baseOffsetEnemy = self.baseOffsetEnemy + diff
+      height = self.baseBlizzHeight
+    end
+    C_NamePlate.SetNamePlateSize(width, height)
+  elseif C_NamePlate.SetNamePlateEnemySize then
     width = width * UIParent:GetScale() * addonTable.Config.Get(addonTable.Config.Options.CLICK_REGION_SCALE_X)
     height = height * UIParent:GetScale() * addonTable.Config.Get(addonTable.Config.Options.CLICK_REGION_SCALE_Y)
     local stackState = addonTable.Config.Get(addonTable.Config.Options.STACKING_NAMEPLATES)
@@ -660,20 +680,6 @@ function addonTable.Display.ManagerMixin:UpdateNamePlateSize()
         end
       end
     end
-  elseif C_NamePlate.SetNamePlateSize then
-    width = math.max(math.min(250, 200 * NamePlateConstants.NAME_PLATE_SCALES[tonumber(C_CVar.GetCVar("nameplateSize"))].horizontal), width)
-    if addonTable.Constants.IsRetail then
-      if self.baseBlizzHeight and self.baseBlizzHeight > height then
-        local diff = -(self.baseBlizzHeight - height) / 2
-        self.baseOffsetFriendly = self.baseOffsetFriendly + diff
-        if addonTable.Config.Get(addonTable.Config.Options.NAMEPLATE_POSITION) == "bottom" then
-          diff = -diff
-        end
-        self.baseOffsetEnemy = self.baseOffsetEnemy + diff
-        height = self.baseBlizzHeight
-      end
-    end
-    C_NamePlate.SetNamePlateSize(width, height)
   end
 end
 

@@ -11,6 +11,8 @@ addonTable.Constants = {
   IsClassic = WOW_PROJECT_ID ~= WOW_PROJECT_MAINLINE,
 
   IsMidnightNext = select(4, GetBuildInfo()) >= 120007,
+  IsHitTestPointsAvailable = C_NamePlate.SetNamePlateSize ~= nil,
+  IsSimplifiedAvailable = C_NamePlateManager and C_NamePlateManager.SetNamePlateSimplified ~= nil,
 
   DeathKnightMaxRunes = 6,
 

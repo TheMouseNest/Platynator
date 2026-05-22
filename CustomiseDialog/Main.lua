@@ -414,7 +414,7 @@ local function SetupSizing(parent)
   local allFrames = {}
 
   local simplifiedScaleSlider
-  if addonTable.Constants.IsRetail then
+  if addonTable.Constants.IsSimplifiedAvailable then
     if C_CVar.GetCVarInfo("nameplateSimplifiedScale") then
       simplifiedScaleSlider = addonTable.CustomiseDialog.Components.GetSlider(container, addonTable.Locales.SIMPLIFIED_SCALE, 1, 100, function(value) return ("%d%%"):format(value) end, function(value)
         addonTable.Config.Set(addonTable.Config.Options.SIMPLIFIED_SCALE, value / 100)
@@ -452,7 +452,7 @@ local function SetupSizing(parent)
     table.insert(allFrames, closerToScreenEdgesCheckbox)
   end
 
-  if not addonTable.Constants.IsRetail then
+  if not addonTable.Constants.IsHitTestPointsAvailable then
     local clickRegionSliderX = addonTable.CustomiseDialog.Components.GetSlider(container, addonTable.Locales.CLICK_REGION_WIDTH, 1, 300, function(value) return ("%d%%"):format(value) end, function(value)
       addonTable.Config.Set(addonTable.Config.Options.CLICK_REGION_SCALE_X, value / 100)
     end)
@@ -503,7 +503,7 @@ local function SetupSizing(parent)
   table.insert(allFrames, stackRegionSliderY)
 
   local verticalOffset
-  if addonTable.Constants.IsRetail then
+  if addonTable.Constants.IsHitTestPointsAvailable then
     verticalOffset = addonTable.CustomiseDialog.Components.GetSlider(container, addonTable.Locales.VERTICAL_OFFSET, 0, 500, function(value) return ("%d%%"):format(value) end, function(value)
       addonTable.Config.Set(addonTable.Config.Options.VERTICAL_OFFSET, value / 100)
     end)
