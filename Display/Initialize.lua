@@ -472,10 +472,8 @@ function addonTable.Display.ManagerMixin:UpdateClickRegion(unit)
     clickRegion:SetSize(width, height)
     if region.anchor[2] then
       local rect = addonTable.Utilities.GetRectFromRegion(region, clickScale * scale * globalScale, region.anchor, true)
-      local midPointX = rect.left + rect.width / 2
-      local midPointY = rect.bottom + rect.height / 2
-      local newLeft = midPointX - width / 2
-      local newBottom = midPointY - height / 2
+      local newLeft = rect.left
+      local newBottom = rect.bottom
       clickRegion:SetPoint(
         "BOTTOMLEFT",
         nameplate,
