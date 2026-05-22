@@ -3,7 +3,7 @@ local addonTable = select(2, ...)
 addonTable.Config = {}
 
 local settings = {
-  MIGRATION = {key = "migration", default = 1, new = 3},
+  MIGRATION = {key = "migration", default = 1, new = 4},
 
   STYLE = {key = "style", default = "_deer"},
   CURRENT_SKIN = {key = "current_skin", default = "blizzard", refresh = {addonTable.Constants.RefreshReason.Skin}},
