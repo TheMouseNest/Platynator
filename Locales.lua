@@ -205,6 +205,7 @@ L["BLIZZARD"] = "Blizzard"
 L["BLIZZARD_CLASSIC"] = "Blizzard Classic"
 L["NAME_ONLY"] = "Name Only"
 L["CUSTOM"] = "Custom"
+L["BLANK"] = "Blank"
 L["SAVE_AS"] = "Save as"
 L["SAVE_CUSTOM_AS"] = "Save Custom as"
 
