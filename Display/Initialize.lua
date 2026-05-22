@@ -655,7 +655,12 @@ function addonTable.Display.ManagerMixin:UpdateNamePlateSize()
       self.baseOffsetEnemy = self.baseOffsetEnemy + diff
       height = self.baseBlizzHeight
     end
-    C_NamePlate.SetNamePlateSize(width, height)
+    if addonTable.Constants.IsClassic then
+      local uiParentScale = UIParent:GetScale()
+      C_NamePlate.SetNamePlateSize(width * uiParentScale, height * uiParentScale)
+    else
+      C_NamePlate.SetNamePlateSize(width, height)
+    end
   elseif C_NamePlate.SetNamePlateEnemySize then
     width = width * UIParent:GetScale() * addonTable.Config.Get(addonTable.Config.Options.CLICK_REGION_SCALE_X)
     height = height * UIParent:GetScale() * addonTable.Config.Get(addonTable.Config.Options.CLICK_REGION_SCALE_Y)
