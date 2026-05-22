@@ -100,20 +100,43 @@ local function Round100(value)
 end
 
 function addonTable.Utilities.ConvertRectToWidget(rect)
-  local width = Round100(rect.width / addonTable.Assets.BarBordersSize.width)
-  local height = Round100(rect.height / addonTable.Assets.BarBordersSize.height)
-  if Round100(-rect.left / addonTable.Assets.BarBordersSize.width * 2) == width and
-    Round100(-rect.bottom / addonTable.Assets.BarBordersSize.height * 2) == height then
-    return {
-      width = width, height = height,
-      anchor = {"CENTER"},
-      autoSized = true,
-    }
+  local center = {x = rect.left + rect.width / 2, y = rect.bottom + rect.height / 2}
+  local snapping = 0.25
+  local point, x, y = "", 0, 0
+
+  if math.abs(center.y) < snapping then
+    point = point
+  elseif center.y < 0 then
+    point = "TOP" .. point
+    y = rect.bottom + rect.height
   else
-    return {
-      width = width, height = height,
-      anchor = {"BOTTOMLEFT", rect.left, rect.bottom},
-      autoSized = true,
-    }
+    point = "BOTTOM" .. point
+    y = rect.bottom
   end
+
+  if math.abs(center.x) < snapping then
+    point = point
+  elseif center.x < 0 then
+    point = point .. "LEFT"
+    x = rect.left
+  else
+    point = point .. "RIGHT"
+    x = rect.left + rect.width
+  end
+
+  local anchor
+  if point == "" then
+    anchor = {}
+  elseif x == 0 and y == 0 then
+    anchor = {point}
+  else
+    anchor = {point, Round100(x), Round100(y)}
+  end
+
+  return {
+    anchor = anchor,
+    width = Round100(rect.width / addonTable.Assets.BarBordersSize.width),
+    height = Round100(rect.height / addonTable.Assets.BarBordersSize.height),
+    autoSized = true,
+  }
 end
