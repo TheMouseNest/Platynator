@@ -10,7 +10,6 @@ function addonTable.CustomiseDialog.ImportData(import, name, overwrite)
     return false, 2
   end
 
-  import.version = nil
   import.addon = nil
   if import.kind == nil or import.kind == "style" then
     local designs = addonTable.Config.Get(addonTable.Config.Options.DESIGNS)
@@ -22,6 +21,7 @@ function addonTable.CustomiseDialog.ImportData(import, name, overwrite)
     addonTable.Config.Get(addonTable.Config.Options.DESIGNS)[name] = import
     addonTable.Config.Set(addonTable.Config.Options.STYLE, name)
   elseif import.kind == "profile" then
+    import.version = nil
     import.kind = nil
     if overwrite and PLATYNATOR_CONFIG.Profiles[name] then
       local oldDesigns = PLATYNATOR_CONFIG.Profiles[name].designs

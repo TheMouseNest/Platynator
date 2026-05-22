@@ -149,7 +149,6 @@ local function SetupGeneral(parent)
         function()
           local design = CopyTable(addonTable.Core.GetDesignByName(addonTable.Config.Get(addonTable.Config.Options.STYLE)))
           design.addon = "Platynator"
-          design.version = 1
           design.kind = "style"
           addonTable.Dialogs.ShowCopy(C_EncodingUtil.SerializeJSON(design):gsub("%|%|", "|"):gsub("%|", "||"))
         end, function()
