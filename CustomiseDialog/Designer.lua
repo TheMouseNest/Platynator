@@ -1027,7 +1027,7 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
     showAllButton:SetShown(next(hiddenIndexes) ~= nil)
     DynamicResizeButton_Resize(showRegionsButton)
     local oldSize = #selectionIndexes
-    selectionIndexes = tFilter(selectionIndexes, function(i) return not hiddenIndexes[i] and (widgets[i].kind ~= "regions" or shouldShowRegions) end, true)
+    selectionIndexes = tFilter(selectionIndexes, function(i) return widgets[i] and not hiddenIndexes[i] and (widgets[i].kind ~= "regions" or shouldShowRegions) end, true)
     if #selectionIndexes ~= oldSize then
       UpdateSelection()
     end
@@ -1742,6 +1742,7 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
     SetPreviewMaximised(false)
   end)
   container:SetScript("OnHide", function()
+    shouldShowRegions = false
     addonTable.CallbackRegistry:TriggerEvent("ShowRegion", "click", false)
     addonTable.CallbackRegistry:TriggerEvent("ShowRegion", "stack", false)
   end)
