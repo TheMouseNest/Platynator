@@ -515,8 +515,8 @@ function addonTable.Display.ManagerMixin:Install(unit)
       C_NamePlateManager.SetNamePlateSimplified(unit, shouldSimplify)
     end
     self.nameplateDisplays[unit] = newDisplay
+    newDisplay:SetParent(nameplate)
     if nameplate.SetStackingBoundsFrame then
-      newDisplay:SetParent(nameplate)
       if not newDisplay.stackRegion then
         newDisplay.stackRegion = CreateFrame("Frame", nil, newDisplay)
         local tex = newDisplay.stackRegion:CreateTexture()
@@ -535,8 +535,6 @@ function addonTable.Display.ManagerMixin:Install(unit)
       newDisplay.stackRegion.rect = addonTable.Utilities.GetRectFromRegion(design.regions.stack, scale * design.scale * globalScale, design.regions.stack.anchor, true)
       nameplate:SetStackingBoundsFrame(newDisplay.stackRegion)
       self:UpdateStackingRegion(unit)
-    else
-      newDisplay:SetParent(nameplate)
     end
 
     self:UpdateClickRegion(unit)
