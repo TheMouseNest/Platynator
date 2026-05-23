@@ -192,6 +192,8 @@ addonTable.Assets.Markers = {
   ["faction-icon"] = {preview = "Interface/AddOns/Platynator/Assets/%s/Markers/faction-icon-horde.png", alliance = "Interface/AddOns/Platynator/Assets/%s/Markers/faction-icon-alliance.png", horde = "Interface/AddOns/Platynator/Assets/%s/Markers/faction-icon-horde.png", width = 200, height = 200, tag = "faction", text = "Icon", has4k = true},
   ["faction-shield"] = {preview = "Interface/AddOns/Platynator/Assets/%s/Markers/faction-shield-horde.png", alliance = "Interface/AddOns/Platynator/Assets/%s/Markers/faction-shield-alliance.png", horde = "Interface/AddOns/Platynator/Assets/%s/Markers/faction-shield-horde.png", width = 200, height = 200, tag = "faction", text = "Shield", has4k = true},
   ["faction-grey"] = {preview = "Interface/AddOns/Platynator/Assets/%s/Markers/faction-grey-horde.png", alliance = "Interface/AddOns/Platynator/Assets/%s/Markers/faction-grey-alliance.png", horde = "Interface/AddOns/Platynator/Assets/%s/Markers/faction-grey-horde.png", width = 200, height = 200, tag = "faction", text = "Grey", has4k = true},
+
+  ["portrait-circle"] = {preview = "Interface/AddOns/Platynator/Assets/Special/Markers/portrait-circle.png", width = 120, height = 120, tag = "portrait", text = "Circle"},
 }
 
 addonTable.Assets.SpecialBars = {

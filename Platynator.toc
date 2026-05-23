@@ -82,6 +82,7 @@ Display/RaidMarker.lua
 Display/PvPMarker.lua
 Display/ClassMarker.lua
 Display/FactionMarker.lua
+Display/PortraitMarker.lua
 Display/Widgets.lua
 
 API/Main.lua

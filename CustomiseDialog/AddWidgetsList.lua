@@ -720,6 +720,18 @@ addonTable.CustomiseDialog.DesignWidgets = {
     },
   },
   {
+    name = addonTable.Locales.PORTRAIT,
+    kind = "markers",
+    default = {
+      kind = "portrait",
+      scale = 1,
+      layer = 3,
+      asset = "portrait-circle",
+      color = GetColor("ffffff"),
+      anchor = {"TOPLEFT", -140, 50},
+    },
+  },
+  {
     name = addonTable.Locales.RAID_MARKER,
     kind = "markers",
     default = {

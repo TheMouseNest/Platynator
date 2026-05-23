@@ -677,6 +677,8 @@ function addonTable.Display.GetMarker(frame, parent)
       Mixin(frame, addonTable.Display.ClassMarkerMixin)
     elseif details.kind == "faction" then
       Mixin(frame, addonTable.Display.FactionMarkerMixin)
+    elseif details.kind == "portrait" then
+      Mixin(frame, addonTable.Display.PortraitMarkerMixin)
     else
       assert(false)
     end
