@@ -92,6 +92,12 @@ function addonTable.Utilities.GenerateRects(design)
   end
   hit = CopyTable(stack)
 
+  local stackWidth, stackHeight = stack.width * 1.1, stack.height * 1.2
+  stack.left = stack.left - (stackWidth - stack.width) / 2
+  stack.bottom = stack.bottom - (stackHeight - stack.height) / 2
+  stack.width = stackWidth
+  stack.height = stackHeight
+
   return hit, stack
 end
 

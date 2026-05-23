@@ -42,8 +42,8 @@ local settings = {
   CLICK_REGION_SCALE_Y = {key = "click_region_scale_y", default = 1},
   CLICKABLE_NAMEPLATES = {key = "clickable_nameplates", default = {friend = false, enemy = true}, refresh = {addonTable.Constants.RefreshReason.Clickable}},
 
-  STACK_REGION_SCALE_X = {key = "stack_region_scale_x", default = 1.1, refresh = {addonTable.Constants.RefreshReason.StackingBehaviour}},
-  STACK_REGION_SCALE_Y = {key = "stack_region_scale_y", default = 1.2, refresh = {addonTable.Constants.RefreshReason.StackingBehaviour}},
+  STACK_REGION_SCALE_X = {key = "stack_region_scale_x", default = 1.2, refresh = {addonTable.Constants.RefreshReason.StackingBehaviour}},
+  STACK_REGION_SCALE_Y = {key = "stack_region_scale_y", default = 1.4, refresh = {addonTable.Constants.RefreshReason.StackingBehaviour}},
 
   VERTICAL_OFFSET = {key = "vertical_offset", default = 0},
 

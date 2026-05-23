@@ -1697,6 +1697,13 @@ addonTable.CustomiseDialog.WidgetsConfig = {
             min = 10, max = 1500,
             formatter = function(value) return value .. "%" end,
             setter = function(details, value)
+              local currentHeight = details.height * addonTable.Assets.BarBordersSize.height
+              local newHeight = value / 100 * addonTable.Assets.BarBordersSize.height
+              local rect = addonTable.Utilities.GetRectFromRegion(details, 1, details.anchor)
+              local newRect = {left = rect.left, bottom = rect.bottom - (newHeight - currentHeight) / 2, width = rect.width, height = newHeight}
+              local newDetails = addonTable.Utilities.ConvertRectToWidget(newRect)
+              details.anchor = newDetails.anchor
+
               local old = details.height
               details.height = value / 100
               if details.height ~= old then
@@ -1713,6 +1720,13 @@ addonTable.CustomiseDialog.WidgetsConfig = {
             min = 10, max = 1000,
             formatter = function(value) return value .. "%" end,
             setter = function(details, value)
+              local currentWidth = details.width * addonTable.Assets.BarBordersSize.width
+              local newWidth = value / 100 * addonTable.Assets.BarBordersSize.width
+              local rect = addonTable.Utilities.GetRectFromRegion(details, 1, details.anchor)
+              local newRect = {left = rect.left - (newWidth - currentWidth) / 2, bottom = rect.bottom, width = newWidth, height = rect.width}
+              local newDetails = addonTable.Utilities.ConvertRectToWidget(newRect)
+              details.anchor = newDetails.anchor
+
               local old = details.width
               details.width = value / 100
               if details.width ~= old then
