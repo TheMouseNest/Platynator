@@ -1717,13 +1717,13 @@ addonTable.CustomiseDialog.WidgetsConfig = {
           {
             label = addonTable.Locales.WIDTH,
             kind = "slider",
-            min = 10, max = 1000,
+            min = 10, max = 500,
             formatter = function(value) return value .. "%" end,
             setter = function(details, value)
               local currentWidth = details.width * addonTable.Assets.BarBordersSize.width
               local newWidth = value / 100 * addonTable.Assets.BarBordersSize.width
               local rect = addonTable.Utilities.GetRectFromRegion(details, 1, details.anchor)
-              local newRect = {left = rect.left - (newWidth - currentWidth) / 2, bottom = rect.bottom, width = newWidth, height = rect.width}
+              local newRect = {left = rect.left - (newWidth - currentWidth) / 2, bottom = rect.bottom, width = newWidth, height = rect.height}
               local newDetails = addonTable.Utilities.ConvertRectToWidget(newRect)
               details.anchor = newDetails.anchor
 
