@@ -452,7 +452,7 @@ local function SetupSizing(parent)
     table.insert(allFrames, closerToScreenEdgesCheckbox)
   end
 
-  local clickRegionSliderX, clickRegionSliderY, stackRegionSliderX, stackRegionSliderY, verticalOffset
+  local clickRegionSliderX, clickRegionSliderY, stackRegionSliderX, stackRegionSliderY
   if not addonTable.Constants.IsHitTestPointsAvailable then
     clickRegionSliderX = addonTable.CustomiseDialog.Components.GetSlider(container, addonTable.Locales.CLICK_REGION_WIDTH, 1, 300, function(value) return ("%d%%"):format(value) end, function(value)
       addonTable.Config.Set(addonTable.Config.Options.CLICK_REGION_SCALE_X, value / 100)
@@ -501,7 +501,22 @@ local function SetupSizing(parent)
       addonTable.CallbackRegistry:TriggerEvent("ShowRegion", "stack", false)
     end)
     table.insert(allFrames, stackRegionSliderY)
+  else
+    local wrapper = CreateFrame("Frame", nil, container)
+    wrapper:SetPoint("LEFT")
+    wrapper:SetPoint("RIGHT")
+    wrapper:SetHeight(40)
+    local label = wrapper:CreateFontString(nil, nil, "GameFontHighlight")
+    label:SetText(addonTable.Locales.STACK_CLICK_SETTINGS_HAVE_MOVED_X)
+    label:SetPoint("CENTER", 0, 0)
+    label:SetPoint("LEFT", 30, 0)
+    label:SetPoint("RIGHT", -30, 0)
+    wrapper:SetPoint("TOP", allFrames[#allFrames], "BOTTOM", 0, -30)
+    table.insert(allFrames, wrapper)
+  end
 
+  local verticalOffset
+  if addonTable.Constants.IsHitTestPointsAvailable then
     verticalOffset = addonTable.CustomiseDialog.Components.GetSlider(container, addonTable.Locales.VERTICAL_OFFSET, 0, 500, function(value) return ("%d%%"):format(value) end, function(value)
       addonTable.Config.Set(addonTable.Config.Options.VERTICAL_OFFSET, value / 100)
     end)
@@ -516,12 +531,13 @@ local function SetupSizing(parent)
     end
 
     castScaleSlider:SetValue(addonTable.Config.Get(addonTable.Config.Options.CAST_SCALE) * 100)
-    if verticalOffset then
+    if addonTable.Constants.IsHitTestPointsAvailable then
+      verticalOffset:SetValue(addonTable.Config.Get(addonTable.Config.Options.VERTICAL_OFFSET) * 100)
+    else
       clickRegionSliderX:SetValue(addonTable.Config.Get(addonTable.Config.Options.CLICK_REGION_SCALE_X) * 100)
       clickRegionSliderY:SetValue(addonTable.Config.Get(addonTable.Config.Options.CLICK_REGION_SCALE_Y) * 100)
       stackRegionSliderX:SetValue(addonTable.Config.Get(addonTable.Config.Options.STACK_REGION_SCALE_X) * 100)
       stackRegionSliderY:SetValue(addonTable.Config.Get(addonTable.Config.Options.STACK_REGION_SCALE_Y) * 100)
-      verticalOffset:SetValue(addonTable.Config.Get(addonTable.Config.Options.VERTICAL_OFFSET) * 100)
     end
 
     for _, f in ipairs(allFrames) do
