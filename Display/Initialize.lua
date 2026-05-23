@@ -12,7 +12,7 @@ function addonTable.Display.Initialize()
   context:OnLoad()
   addonTable.Display.Context = context
 
-  local manager = CreateFrame("Frame") ---@type PlatynatorDisplayManager
+  local manager = CreateFrame("Frame")
   Mixin(manager, addonTable.Display.ManagerMixin)
   manager:OnLoad()
 end
