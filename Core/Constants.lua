@@ -163,3 +163,11 @@ addonTable.Constants.DefaultRange = {
   [73] = 30, -- Protection
   [1446] = 30,
 }
+addonTable.Constants.RangeModifier = {
+  [276079] = 40, -- Death Knight, Death's Reach
+  [429211] = 40, -- Demon Hunter, Champion of the Glaive
+  [197524] = 45, -- Druid, Astral Influence
+  [459559] = 46, -- Priest, Phantom Reach
+  [428377] = 46, -- Rogue - Outlaw, Precision Shot
+  [1271948] = 35, -- Warrior, Javelineer
+}

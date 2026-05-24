@@ -484,6 +484,12 @@ do
       local specIndex = C_SpecializationInfo.GetSpecialization()
       local specID = C_SpecializationInfo.GetSpecializationInfo(specIndex)
       rangeLimit = addonTable.Constants.DefaultRange[specID] - 3
+      for spellID, range in pairs(addonTable.Constants.RangeModifier) do
+        if C_SpellBook.IsSpellKnown(spellID) then
+          rangeLimit = range
+          break
+        end
+      end
     end
   end
 
@@ -500,15 +506,18 @@ do
       specializationMonitor:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
     end
     specializationMonitor:RegisterEvent("PLAYER_ENTERING_WORLD")
+    specializationMonitor:RegisterEvent("SPELLS_CHANGED")
 
-    specializationMonitor:SetScript("OnEvent", function()
-      local newRole = GetPlayerRole()
-      if newRole ~= role then
-        role = newRole
-        isTank = role == roleType.Tank
-        addonTable.CallbackRegistry:TriggerEvent("RoleChange")
-      end
+    specializationMonitor:SetScript("OnEvent", function(_, e)
       AssignRange()
+      if e ~= "SPELLS_CHANGED" then
+        local newRole = GetPlayerRole()
+        if newRole ~= role then
+          role = newRole
+          isTank = role == roleType.Tank
+          addonTable.CallbackRegistry:TriggerEvent("RoleChange")
+        end
+      end
     end)
   end
 
