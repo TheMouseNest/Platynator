@@ -223,7 +223,10 @@ function addonTable.Display.ManagerMixin:OnLoad()
       self:UpdateObscuredAlpha()
     elseif settingName == addonTable.Config.Options.BLIZZARD_WIDGET_SCALE then
       for unit in pairs(self.nameplateDisplays) do
-        self.ModifiedUFs[unit].WidgetContainer:SetScale(addonTable.Config.Get(addonTable.Config.Options.BLIZZARD_WIDGET_SCALE))
+        local WidgetContainer = self.ModifiedUFs[unit].WidgetContainer
+        if WidgetContainer then
+          WidgetContainer:SetScale(addonTable.Config.Get(addonTable.Config.Options.BLIZZARD_WIDGET_SCALE))
+        end
       end
     elseif settingName == addonTable.Config.Options.NAMEPLATE_POSITION then
       self:UpdateNamePlateSize()
@@ -629,6 +632,9 @@ function addonTable.Display.ManagerMixin:UpdateNamePlateSize()
 
   local globalScale = addonTable.Config.Get(addonTable.Config.Options.GLOBAL_SCALE)
   local verticalOffset = addonTable.Config.Get(addonTable.Config.Options.VERTICAL_OFFSET) * addonTable.Assets.BarBordersSize.height
+  if not addonTable.Constants.IsHitTestPointsAvailable then
+    verticalOffset = 0
+  end
 
   local width = math.max(math.abs(right), math.abs(left)) * 2 * globalScale
   local height = (top - bottom) * globalScale
