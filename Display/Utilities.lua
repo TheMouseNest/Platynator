@@ -479,14 +479,14 @@ do
 
   local function AssignRange()
     if addonTable.Constants.IsEra or addonTable.Constants.IsBC or addonTable.Constants.IsWrath then
-      rangeLimit = addonTable.Constants.DefaultRange[playerClass] - 3
+      rangeLimit = addonTable.Constants.DefaultRange[playerClass] - 1
     else
       local specIndex = C_SpecializationInfo.GetSpecialization()
       local specID = C_SpecializationInfo.GetSpecializationInfo(specIndex)
-      rangeLimit = addonTable.Constants.DefaultRange[specID] - 3
+      rangeLimit = addonTable.Constants.DefaultRange[specID] - 1
       for spellID, range in pairs(addonTable.Constants.RangeModifier) do
         if C_SpellBook.IsSpellKnown(spellID) then
-          rangeLimit = range - 3
+          rangeLimit = range - 1
           break
         end
       end
