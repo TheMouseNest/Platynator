@@ -62,6 +62,8 @@ local kindToCache = {
   castTargetsYou = {"cast"},
   importantCast = {"cast"},
   cast = {"cast"},
+  notCast = {"cast"},
+  isCast = {"cast"},
   threat = {"threat"},
   inRange = {"range"},
   outOfRange = {"range"},
@@ -411,6 +413,22 @@ function addonTable.Display.GetColor(settings, state, unit)
         break
       elseif cacheInfo.interrupted then
         table.insert(colorQueue, {color = s.colors.interrupted})
+        break
+      end
+    elseif s.kind == "notCast" then
+      local cacheInfo = addonTable.Display.Cache:Get(unit, "cast")
+      local castInfo = cacheInfo.cast
+      local channelInfo = cacheInfo.channel
+      if castInfo[1] == nil and channelInfo[1] == nil and cacheInfo.interrupted == nil then
+        table.insert(colorQueue, {color = s.colors.notCast})
+        break
+      end
+    elseif s.kind == "isCast" then
+      local cacheInfo = addonTable.Display.Cache:Get(unit, "cast")
+      local castInfo = cacheInfo.cast
+      local channelInfo = cacheInfo.channel
+      if castInfo[1] ~= nil or channelInfo[1] ~= nil or cacheInfo.interrupted ~= nil then
+        table.insert(colorQueue, {color = s.colors.isCast})
         break
       end
     elseif s.kind == "fixed" then

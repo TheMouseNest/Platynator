@@ -817,6 +817,48 @@ addonTable.CustomiseDialog.ColorsConfig = {
       },
     }
   },
+  ["notCast"] = {
+    label = addonTable.Locales.NOT_CASTING,
+    default = {
+      kind = "notCast",
+      colors = {
+        notCast = GetColor("FFFFFF"),
+      },
+    },
+    entries = {
+      {
+        label = addonTable.Locales.NOT_CASTING,
+        kind = "colorPicker",
+        setter = function(details, value)
+          details.colors.notCast = value
+        end,
+        getter = function(details)
+          return details.colors.notCast
+        end,
+      },
+    },
+  },
+  ["isCast"] = {
+    label = addonTable.Locales.IS_CASTING,
+    default = {
+      kind = "isCast",
+      colors = {
+        isCast = GetColor("FFFFFF"),
+      },
+    },
+    entries = {
+      {
+        label = addonTable.Locales.IS_CASTING,
+        kind = "colorPicker",
+        setter = function(details, value)
+          details.colors.isCast = value
+        end,
+        getter = function(details)
+          return details.colors.isCast
+        end,
+      },
+    },
+  },
   ["uninterruptableCast"] = {
     label = addonTable.Locales.UNINTERRUPTABLE_CAST,
     default = {
@@ -1053,6 +1095,8 @@ addonTable.CustomiseDialog.ColorsConfigOrder = {
   "inCombat",
   "inRange",
   "outOfRange",
+  "isCast",
+  "notCast",
   "delveType",
   "eliteType",
   "rarity",
