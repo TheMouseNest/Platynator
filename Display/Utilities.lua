@@ -486,7 +486,7 @@ do
       rangeLimit = addonTable.Constants.DefaultRange[specID] - 3
       for spellID, range in pairs(addonTable.Constants.RangeModifier) do
         if C_SpellBook.IsSpellKnown(spellID) then
-          rangeLimit = range
+          rangeLimit = range - 3
           break
         end
       end
