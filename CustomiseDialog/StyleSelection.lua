@@ -24,10 +24,6 @@ local contextCriteria = {
   {key = "npc", label = addonTable.Locales.NPC},
   {key = "minion", label = addonTable.Locales.MINION},
 
-  {title = addonTable.Locales.MINION},
-  {key = "pet", label = addonTable.Locales.PET},
-  {key = "totem", label = addonTable.Locales.TOTEM},
-
   {title = addonTable.Locales.MOB_CLASSIFICATION},
   {key = "class-rare", label = addonTable.Locales.RARE},
   {key = "class-elite", label = addonTable.Locales.ELITE},

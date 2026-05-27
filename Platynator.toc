@@ -80,7 +80,6 @@ Display/EliteMarker.lua
 Display/RareMarker.lua
 Display/RaidMarker.lua
 Display/PvPMarker.lua
-Display/ClassMarker.lua
 Display/FactionMarker.lua
 Display/Widgets.lua
 

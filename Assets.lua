@@ -184,9 +184,6 @@ addonTable.Assets.Markers = {
 
   ["normal/blizzard-pvp"] = {file = "Interface/AddOns/Platynator/Assets/Special/Markers/pvp.png", width = 150, height = 150, tag = "pvp"},
 
-  ["normal/class"] = {preview = "Interface/AddOns/Platynator/Assets/Special/Markers/ClassIcons/Default/Monk.png", file = "Interface/AddOns/Platynator/Assets/Special/Markers/ClassIcons/Default/%s.png", width = 200, height = 200, tag = "class", text = "Default"},
-  ["normal/class-minimalist"] = {preview = "Interface/AddOns/Platynator/Assets/Special/Markers/ClassIcons/Minimalist/Monk.png", file = "Interface/AddOns/Platynator/Assets/Special/Markers/ClassIcons/Minimalist/%s.png", width = 200, height = 200, tag = "class", text = "Minimalist"},
-
   ["faction-legacy"] = {preview = "Interface/AddOns/Platynator/Assets/Special/Markers/faction-legacy-horde.png", alliance = "Interface/AddOns/Platynator/Assets/Special/Markers/faction-legacy-alliance.png", horde = "Interface/AddOns/Platynator/Assets/Special/Markers/faction-legacy-horde.png", width = 200, height = 200, tag = "faction", text = "Legacy"},
   ["faction-assault"] = {preview = "Interface/AddOns/Platynator/Assets/Special/Markers/faction-assault-horde.png", alliance = "Interface/AddOns/Platynator/Assets/Special/Markers/faction-assault-alliance.png", horde = "Interface/AddOns/Platynator/Assets/Special/Markers/faction-assault-horde.png", width = 200, height = 200, tag = "faction", text = "Assault"},
   ["faction-icon"] = {preview = "Interface/AddOns/Platynator/Assets/%s/Markers/faction-icon-horde.png", alliance = "Interface/AddOns/Platynator/Assets/%s/Markers/faction-icon-alliance.png", horde = "Interface/AddOns/Platynator/Assets/%s/Markers/faction-icon-horde.png", width = 200, height = 200, tag = "faction", text = "Icon", has4k = true},

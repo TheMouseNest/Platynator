@@ -557,6 +557,17 @@ local function UpgradeDesignv6(design)
   end
 end
 
+local function UpgradeDesignv9(design)
+  if #design.markers > 0 then
+    for i = #design.markers, 1, -1 do
+      local details = design.markers[i]
+      if details.kind == "class" then
+        table.remove(design.markers, i)
+      end
+    end
+  end
+end
+
 function addonTable.Core.UpgradeDesign(design)
   if design.version == 1 or design.version == nil then
     UpgradeDesignv1(design)
@@ -580,6 +591,10 @@ function addonTable.Core.UpgradeDesign(design)
       stack = addonTable.Utilities.ConvertRectToWidget(stack)
     }
     design.version = 9
+  end
+  if design.version == 9 then
+    UpgradeDesignv9(design)
+    design.version = 10
   end
 end
 
@@ -695,6 +710,16 @@ local function MigrateSettingsv3()
   -- Removed migration as its not needed anymore
 end
 
+local function MigrateSettingsv4()
+  local assignments = addonTable.Config.Get(addonTable.Config.Options.DESIGN_ASSIGNMENTS)
+  for i = #assignments, 1, -1 do
+    local details = assignments[i]
+    if tIndexOf(details.criteria, "totem") or tIndexOf(details.criteria, "pet") then
+      table.remove(assignments, i)
+    end
+  end
+end
+
 function addonTable.Core.MigrateSettings()
   if addonTable.Config.Get(addonTable.Config.Options.MIGRATION) == 1 then
     MigrateSettingsv1()
@@ -709,6 +734,11 @@ function addonTable.Core.MigrateSettings()
   if addonTable.Config.Get(addonTable.Config.Options.MIGRATION) == 3 then
     MigrateSettingsv3()
     addonTable.Config.Set(addonTable.Config.Options.MIGRATION, 4)
+  end
+
+  if addonTable.Config.Get(addonTable.Config.Options.MIGRATION) == 4 then
+    MigrateSettingsv4()
+    addonTable.Config.Set(addonTable.Config.Options.MIGRATION, 5)
   end
 
   for _, design in pairs(addonTable.Config.Get(addonTable.Config.Options.DESIGNS)) do
