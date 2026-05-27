@@ -556,6 +556,17 @@ do
     end
   end)
 
+  local HasMana
+  if UnitHasPowerType then
+    HasMana = function(unit)
+      return UnitHasPowerType(unit, Enum.PowerType.Mana)
+    end
+  else
+    HasMana = function(unit)
+      return UnitPowerType(unit) == Enum.PowerType.Mana
+    end
+  end
+
   function addonTable.Display.Utilities.GetEliteType(unit, casterOverride)
     local classification = UnitClassification(unit)
     if classification == "elite" then
@@ -569,21 +580,10 @@ do
       elseif isRetail and (level == dungeonLevel + 2 or lieutentantLevel and level == lieutentantLevel + 1) or level == -1 then
         return "boss"
       else
-        local class = UnitClassBase(unit)
-        if class == "PALADIN" or class == "MAGE" or class == "PRIEST" then
-          return "caster"
-        else
-          return "melee"
-        end
+        return HasMana(unit) and "caster" or "melee"
       end
     elseif classification == "normal" or classification == "trivial" or classification == "minus" then
-      if casterOverride then
-        local class = UnitClassBase(unit)
-        if class == "PALADIN" or class == "MAGE" or class == "PRIEST" then
-          return "caster"
-        end
-      end
-      return "trivial"
+      return casterOverride and HasMana(unit) and "caster" or "trivial"
     end
   end
 
@@ -605,12 +605,7 @@ do
     elseif classification == "rareelite" then
       return "rare"
     elseif classification == "normal" then
-      local class = UnitClassBase(unit)
-      if class == "PALADIN" or class == "MAGE" or class == "PRIEST" then
-        return "caster"
-      else
-        return "melee"
-      end
+      return HasMana(unit) and "caster" or "melee"
     elseif classification == "trivial" or classification == "minus" then
       return "trivial"
     end
