@@ -139,7 +139,7 @@ function addonTable.Display.CacheMixin:OnLoad()
   addonTable.CallbackRegistry:RegisterCallback("LegacyInterrupter", function(_, playerGUID, destGUID)
     for unit, details in pairs(self.monitoring) do
       if details.cast and UnitGUID(unit) == destGUID then
-        self:Process(self.state[unit]["cast"], unit, "UNIT_SPELLCAST_INTERRUPTED", nil, nil, playerGUID)
+        self:Process("cast", unit, "UNIT_SPELLCAST_INTERRUPTED", nil, nil, playerGUID)
       end
     end
   end)
