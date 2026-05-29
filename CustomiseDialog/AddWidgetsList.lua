@@ -308,6 +308,7 @@ addonTable.CustomiseDialog.DesignWidgets = {
           scale = Round(14/12 * 100) / 100,
           color = GetColor("FFFFFF"),
           visible = true,
+          showFractions = false,
         },
         stacks = {
           anchor = {"TOPRIGHT", 12, -1},
@@ -347,6 +348,7 @@ addonTable.CustomiseDialog.DesignWidgets = {
           scale = Round(14/12 * 100) / 100,
           color = GetColor("FFFFFF"),
           visible = true,
+          showFractions = false,
         },
         stacks = {
           anchor = {"TOPRIGHT", 12, -1},
@@ -385,6 +387,7 @@ addonTable.CustomiseDialog.DesignWidgets = {
           scale = Round(14/12 * 100) / 100,
           color = GetColor("FFFFFF"),
           visible = true,
+          showFractions = false,
         },
         stacks = {
           anchor = {"TOPRIGHT", 12, -1},

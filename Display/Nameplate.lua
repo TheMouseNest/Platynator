@@ -33,70 +33,16 @@ if C_CurveUtil then
   dispelCurve:AddPoint(11, dispelColorMap["Bleed"])
 end
 
-local auraFormatter
-if C_StringUtil and C_StringUtil.CreateNumericRuleFormatter then
-  auraFormatter = C_StringUtil.CreateNumericRuleFormatter()
-  auraFormatter:SetBreakpoints({
-    {
-      threshold = 0,
-      step = 0.1,
-      format = "%.1f",
-    },
-    {
-      threshold = 3,
-      step = 1,
-      format = "%d",
-    },
-    {
-      threshold = 60,
-      format = COOLDOWN_DURATION_MIN,
-      components = {
-        {
-          div = 60,
-          step = 1,
-        }
-      }
-    }
-  })
-end
-
-addonTable.Display.NameplateMixin = {}
-function addonTable.Display.NameplateMixin:OnLoad()
-  self:SetFlattensRenderLayers(true)
-  self:SetCollapsesLayout(true)
-
-  self.widgets = {}
-
-  self.SoftTargetIcon = self:CreateTexture(nil, "OVERLAY")
-  self.SoftTargetIcon:SetSize(34, 34)
-  self.SoftTargetIcon:SetPoint("BOTTOM", self, "TOP", 0, 24)
-  self.SoftTargetIcon:Hide()
-
-  self.BuffDisplay = CreateFrame("Frame", nil, self)
-  self.BuffDisplay:SetSize(10, 10)
-  self.BuffDisplay:SetFlattensRenderLayers(true)
-  self.DebuffDisplay = CreateFrame("Frame", nil, self)
-  self.DebuffDisplay:SetSize(10, 10)
-  self.DebuffDisplay:SetFlattensRenderLayers(true)
-  self.CrowdControlDisplay = CreateFrame("Frame", nil, self)
-  self.CrowdControlDisplay:SetSize(10, 10)
-  self.CrowdControlDisplay:SetFlattensRenderLayers(true)
-
-  self.AurasManager = addonTable.Utilities.InitFrameWithMixin(self, addonTable.Display.AurasManagerMixin)
+local function GetAurasPool(parent)
   local borderAsset = LSM:Fetch("nineslice", "Platy: 1px")
   local dispelAsset = LSM:Fetch("nineslice", "Platy: 4px")
-  self.AurasPool = CreateFramePool("Frame", self, "PlatynatorNameplateBuffButtonTemplate", nil, false, function(frame)
+  return CreateFramePool("Frame", parent, "PlatynatorNameplateBuffButtonTemplate", nil, false, function(frame)
     frame.Border = frame:CreateTexture(nil, "OVERLAY")
     frame.Border:SetAllPoints(true)
     frame.Border:SetScale(borderAsset.scaleModifier)
     frame.Border:SetTexture(borderAsset.file)
     frame.Border:SetTextureSliceMargins(borderAsset.margins.left, borderAsset.margins.top, borderAsset.margins.right, borderAsset.margins.bottom)
     frame.Border:SetVertexColor(0, 0, 0)
-    if frame.Cooldown.SetCountdownFormatter then
-      frame.Cooldown:SetCountdownFormatter(auraFormatter)
-    else
-      frame.Cooldown:SetCountdownAbbrevThreshold(20)
-    end
     frame.Cooldown.Text = frame.Cooldown:GetRegions()
     frame.Pandemic = CreateFrame("Frame", nil, frame)
     frame.Pandemic:SetAllPoints()
@@ -196,12 +142,45 @@ function addonTable.Display.NameplateMixin:OnLoad()
       GameTooltip:Hide()
     end)
   end)
+end
+
+local auraFormatter = addonTable.Display.Utilities.GetAuraNumericFormatter()
+
+addonTable.Display.NameplateMixin = {}
+function addonTable.Display.NameplateMixin:OnLoad()
+  self:SetFlattensRenderLayers(true)
+  self:SetCollapsesLayout(true)
+
+  self.widgets = {}
+
+  self.SoftTargetIcon = self:CreateTexture(nil, "OVERLAY")
+  self.SoftTargetIcon:SetSize(34, 34)
+  self.SoftTargetIcon:SetPoint("BOTTOM", self, "TOP", -1, 24)
+  self.SoftTargetIcon:Hide()
+
+  self.BuffDisplay = CreateFrame("Frame", nil, self)
+  self.BuffDisplay:SetSize(10, 10)
+  self.BuffDisplay:SetFlattensRenderLayers(true)
+  self.DebuffDisplay = CreateFrame("Frame", nil, self)
+  self.DebuffDisplay:SetSize(10, 10)
+  self.DebuffDisplay:SetFlattensRenderLayers(true)
+  self.CrowdControlDisplay = CreateFrame("Frame", nil, self)
+  self.CrowdControlDisplay:SetSize(10, 10)
+  self.CrowdControlDisplay:SetFlattensRenderLayers(true)
+
+  self.AurasPools = {
+    buffs = GetAurasPool(self),
+    debuffs = GetAurasPool(self),
+    crowdControl = GetAurasPool(self),
+  }
+  self.AurasManager = addonTable.Utilities.InitFrameWithMixin(self, addonTable.Display.AurasManagerMixin)
 
   local function GetCallback(frame)
+    local pool = self.AurasPools[frame:GetParent().kind]
     return function(data, auraFilter)
       if frame.items then
         for _, item in ipairs(frame.items) do
-          self.AurasPool:Release(item)
+          pool:Release(item)
         end
         frame.items = nil
       end
@@ -239,7 +218,7 @@ function addonTable.Display.NameplateMixin:OnLoad()
         end
 
         local aura = self.AurasManager:GetByInstanceID(auraInstanceID)
-        local auraFrame = self.AurasPool:Acquire()
+        local auraFrame = pool:Acquire()
         table.insert(frame.items, auraFrame)
         auraFrame:SetParent(frame)
 
@@ -255,7 +234,7 @@ function addonTable.Display.NameplateMixin:OnLoad()
         auraFrame.Icon:SetTexture(aura.icon);
         auraFrame.CountFrame.Count:SetText(aura.applicationsString)
 
-        if auraFrame.styleIndex ~= self.styleIndex or auraFrame.kind ~= details.kind then
+        if auraFrame.styleIndex ~= self.styleIndex then
           auraFrame.kind = details.kind
           auraFrame.styleIndex = self.styleIndex
 
@@ -290,6 +269,14 @@ function addonTable.Display.NameplateMixin:OnLoad()
             end
             local c2 = details.texts.countdown.color
             auraFrame.Cooldown.Text:SetTextColor(c2.r, c2.g, c2.b)
+            if auraFrame.Cooldown.SetCountdownFormatter then
+              if details.texts.countdown.showFractions then
+                auraFrame.Cooldown:SetCountdownFormatter(auraFormatter)
+              else
+                auraFrame.Cooldown:SetCountdownFormatter(nil)
+                auraFrame.Cooldown:SetCountdownAbbrevThreshold(20)
+              end
+            end
           end
 
           if auraFrame.CountFrame.Count.SetSmoothScaling then
@@ -367,10 +354,13 @@ function addonTable.Display.NameplateMixin:OnLoad()
 
   self.BuffDisplay.Wrapped = CreateFrame("Frame", nil, self.BuffDisplay)
   self.BuffDisplay.Wrapped:SetSize(10, 10)
+  self.BuffDisplay.kind = "buffs"
   self.DebuffDisplay.Wrapped = CreateFrame("Frame", nil, self.DebuffDisplay)
   self.DebuffDisplay.Wrapped:SetSize(10, 10)
+  self.DebuffDisplay.kind = "debuffs"
   self.CrowdControlDisplay.Wrapped = CreateFrame("Frame", nil, self.CrowdControlDisplay)
   self.CrowdControlDisplay.Wrapped:SetSize(10, 10)
+  self.CrowdControlDisplay.kind = "crowdControl"
 
   self.DebuffDisplay:Hide()
   self.BuffDisplay:Hide()
@@ -564,13 +554,13 @@ function addonTable.Display.NameplateMixin:SetUnit(unit)
 
     self.AurasManager:SetUnit(self.unit)
 
-    addonTable.Display.Cache:RegisterCallback(self.unit, "cast", function(state)
+    --[[addonTable.Display.Cache:RegisterCallback(self.unit, "cast", function(state)
       local old = self.casting
       self:UpdateCastingState(state)
       if old ~= self.casting then
         self:UpdateVisual()
       end
-    end)
+    end)]]
 
     addonTable.CallbackRegistry:RegisterCallback("TextOverrideUpdated", function(_, unit)
       if unit ~= self.unit then

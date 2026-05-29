@@ -357,12 +357,19 @@ local function GetAurasTextPositioning(rootParent, iconID)
   wrapper.Border:SetVertexColor(0, 0, 0)
   wrapper.Border:SetAllPoints()
 
-  local widgetOptionsContainer = CreateFrame("Frame", nil, container)
-  widgetOptionsContainer:SetPoint("TOP", preview, "BOTTOM", 0, -30)
-  widgetOptionsContainer:SetPoint("LEFT")
-  widgetOptionsContainer:SetPoint("RIGHT")
-  widgetOptionsContainer:SetHeight(10)
-  local allFrames = GenerateOptions(widgetOptionsContainer, 0, 0, addonTable.CustomiseDialog.AurasConfig)
+  local expectedTexts = {"countdown", "stacks"}
+
+  local widgetOptions = {}
+  for _, kind in ipairs(expectedTexts) do
+    local optionsContainer = CreateFrame("Frame", nil, container)
+    optionsContainer:SetPoint("TOP", preview, "BOTTOM", 0, -30)
+    optionsContainer:SetPoint("LEFT")
+    optionsContainer:SetPoint("RIGHT")
+    optionsContainer:SetHeight(10)
+    optionsContainer.allFrames = GenerateOptions(optionsContainer, 0, 0, addonTable.CustomiseDialog.AurasTextsConfig[kind])
+
+    widgetOptions[kind] = optionsContainer
+  end
 
   local titleText = container:CreateFontString(nil, nil, "GameFontHighlightLarge")
   titleText:SetPoint("TOP", previewInset, "BOTTOM", 0, -10)
@@ -422,13 +429,19 @@ local function GetAurasTextPositioning(rootParent, iconID)
       selectedMarker:SetPoint("TOPLEFT", selection, "TOPLEFT", -2, 2)
       selectedMarker:SetPoint("BOTTOMRIGHT", selection, "BOTTOMRIGHT", 2, -2)
 
-      widgetOptionsContainer:Show()
-      widgetOptionsContainer.details = selection.details
-      for _, f in ipairs(allFrames) do
-        if f.getInitData then
-          f:Init(f.getInitData(selection.details))
+      for kind, optionsContainer in pairs(widgetOptions) do
+        if kind == selection.kind then
+          optionsContainer:Show()
+          optionsContainer.details = selection.details
+          for _, f in ipairs(optionsContainer.allFrames) do
+            if f.getInitData then
+              f:Init(f.getInitData(selection.details))
+            end
+            f:SetValue(f.Getter())
+          end
+        else
+          optionsContainer:Hide()
         end
-        f:SetValue(f.Getter())
       end
 
       titleText:Show()
@@ -436,7 +449,9 @@ local function GetAurasTextPositioning(rootParent, iconID)
       keyboardTrap:SetShown(not InCombatLockdown())
     else
       titleText:Hide()
-      widgetOptionsContainer:Hide()
+      for _, optionsContainer in pairs(widgetOptions) do
+        optionsContainer:Hide()
+      end
       selectedMarker:Hide()
       keyboardTrap:Hide()
     end
@@ -454,8 +469,6 @@ local function GetAurasTextPositioning(rootParent, iconID)
     selection = w
     UpdateSelection()
   end
-
-  local expectedTexts = {"countdown", "stacks"}
 
   preview.widgets = {}
 
@@ -515,6 +528,13 @@ local function GetAurasTextPositioning(rootParent, iconID)
       end
       text:SetPoint(textDetails.anchor[1] or "CENTER")
       text:SetTextColor(textDetails.color.r, textDetails.color.g, textDetails.color.b)
+      if key == "countdown" then
+        if textDetails.showFractions then
+          text:SetText("2.9")
+        else
+          text:SetText("3")
+        end
+      end
       if textDetails.visible then
         preview.widgets[key]:SetAlpha(1)
       else
@@ -1394,8 +1414,9 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
       if cdText.SetSmoothScaling then
         cdText:SetSmoothScaling(addonTable.CurrentFontUsesSmoothing)
       end
-      container.auras[1].Cooldown:SetCooldown(GetTime() - 2, 5)
+      container.auras[1].Cooldown:SetCooldown(GetTime() - 2.1, 5)
       container.auras[1].Cooldown:Pause()
+      container.auras[1].Cooldown:SetCountdownFormatter(details.texts.countdown.showFractions and addonTable.Display.Utilities.GetAuraNumericFormatter() or nil)
       container.auras[1].Cooldown:SetHideCountdownNumbers(not details.texts.countdown.visible)
       container.auras[1].Cooldown:SetDrawSwipe(details.showSwipe)
       container.auras[1].Cooldown:SetDrawEdge(details.showSwipe)

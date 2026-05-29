@@ -568,6 +568,14 @@ local function UpgradeDesignv9(design)
   end
 end
 
+local function UpgradeDesignv10(design)
+  for _, auras in ipairs(design.auras) do
+    if auras.texts.countdown.showFractions == nil then
+      auras.texts.countdown.showFractions = false
+    end
+  end
+end
+
 function addonTable.Core.UpgradeDesign(design)
   if design.version == 1 or design.version == nil then
     UpgradeDesignv1(design)
