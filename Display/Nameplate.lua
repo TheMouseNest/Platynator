@@ -33,6 +33,33 @@ if C_CurveUtil then
   dispelCurve:AddPoint(11, dispelColorMap["Bleed"])
 end
 
+local auraFormatter
+if C_StringUtil and C_StringUtil.CreateNumericRuleFormatter then
+  auraFormatter = C_StringUtil.CreateNumericRuleFormatter()
+  auraFormatter:SetBreakpoints({
+    {
+      threshold = 0,
+      step = 0.1,
+      format = "%.1f",
+    },
+    {
+      threshold = 3,
+      step = 1,
+      format = "%d",
+    },
+    {
+      threshold = 60,
+      format = COOLDOWN_DURATION_MIN,
+      components = {
+        {
+          div = 60,
+          step = 1,
+        }
+      }
+    }
+  })
+end
+
 addonTable.Display.NameplateMixin = {}
 function addonTable.Display.NameplateMixin:OnLoad()
   self:SetFlattensRenderLayers(true)
@@ -65,7 +92,11 @@ function addonTable.Display.NameplateMixin:OnLoad()
     frame.Border:SetTexture(borderAsset.file)
     frame.Border:SetTextureSliceMargins(borderAsset.margins.left, borderAsset.margins.top, borderAsset.margins.right, borderAsset.margins.bottom)
     frame.Border:SetVertexColor(0, 0, 0)
-    frame.Cooldown:SetCountdownAbbrevThreshold(20)
+    if frame.Cooldown.SetCountdownFormatter then
+      frame.Cooldown:SetCountdownFormatter(auraFormatter)
+    else
+      frame.Cooldown:SetCountdownAbbrevThreshold(20)
+    end
     frame.Cooldown.Text = frame.Cooldown:GetRegions()
     frame.Pandemic = CreateFrame("Frame", nil, frame)
     frame.Pandemic:SetAllPoints()
