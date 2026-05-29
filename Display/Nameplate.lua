@@ -33,10 +33,10 @@ if C_CurveUtil then
   dispelCurve:AddPoint(11, dispelColorMap["Bleed"])
 end
 
-local function GetAurasPool(parent)
+local function GetAurasPool(self)
   local borderAsset = LSM:Fetch("nineslice", "Platy: 1px")
   local dispelAsset = LSM:Fetch("nineslice", "Platy: 4px")
-  return CreateFramePool("Frame", parent, "PlatynatorNameplateBuffButtonTemplate", nil, false, function(frame)
+  return CreateFramePool("Frame", self, "PlatynatorNameplateBuffButtonTemplate", nil, false, function(frame)
     frame.Border = frame:CreateTexture(nil, "OVERLAY")
     frame.Border:SetAllPoints(true)
     frame.Border:SetScale(borderAsset.scaleModifier)
