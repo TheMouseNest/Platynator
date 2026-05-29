@@ -528,7 +528,7 @@ local function GetAurasTextPositioning(rootParent, iconID)
       end
       text:SetPoint(textDetails.anchor[1] or "CENTER")
       text:SetTextColor(textDetails.color.r, textDetails.color.g, textDetails.color.b)
-      if key == "countdown" then
+      if key == "countdown" and addonTable.Constants.IsCooldownFormattingAvailable then
         if textDetails.showFractions then
           text:SetText("2.9")
         else
@@ -1416,7 +1416,9 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
       end
       container.auras[1].Cooldown:SetCooldown(GetTime() - 2.1, 5)
       container.auras[1].Cooldown:Pause()
-      container.auras[1].Cooldown:SetCountdownFormatter(details.texts.countdown.showFractions and addonTable.Display.Utilities.GetAuraNumericFormatter() or nil)
+      if container.auras[1].Cooldown.SetCountdownFormatter then
+        container.auras[1].Cooldown:SetCountdownFormatter(details.texts.countdown.showFractions and addonTable.Display.Utilities.GetAuraNumericFormatter() or nil)
+      end
       container.auras[1].Cooldown:SetHideCountdownNumbers(not details.texts.countdown.visible)
       container.auras[1].Cooldown:SetDrawSwipe(details.showSwipe)
       container.auras[1].Cooldown:SetDrawEdge(details.showSwipe)

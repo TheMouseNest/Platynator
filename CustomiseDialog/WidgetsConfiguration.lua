@@ -1787,6 +1787,7 @@ addonTable.CustomiseDialog.AurasTextsConfig = {
       getter = function(details)
         return details.showFractions
       end,
+      hide = not addonTable.Constants.IsCooldownFormattingAvailable,
     },
   },
   ["stacks"] = {

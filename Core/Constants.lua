@@ -13,6 +13,7 @@ addonTable.Constants = {
   IsMidnightNext = select(4, GetBuildInfo()) >= 120007,
   IsHitTestPointsAvailable = C_NamePlate.SetNamePlateSize ~= nil,
   IsSimplifiedAvailable = C_NamePlateManager and C_NamePlateManager.SetNamePlateSimplified ~= nil,
+  IsCooldownFormattingAvailable = CreateFrame("Cooldown").SetCountdownFormatter ~= nil,
 
   DeathKnightMaxRunes = 6,
 
