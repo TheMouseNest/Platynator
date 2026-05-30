@@ -125,6 +125,7 @@ addonTable.Assets.Highlights = {
   ["Platy: Arrow Solid Down"] = {file = "Interface/AddOns/Platynator/Assets/%s/Highlights/arrow-solid-down.png", width = 207, height = 132, has4k = true, mode = renderMode.Fixed, tag = "arrows"},
   ["Platy: Arrow Hi-vis"] = {file = "Interface/AddOns/Platynator/Assets/%s/Highlights/hi-vis-arrows.png", width = 158, height = 50, has4k = true, margin = 0.5, extra = 0, modifier = 0.42, shiftModifierV = 1, DPIScale = 8/10, mode = renderMode.Sliced, tag = "arrows"},
   ["Platy: Arrow Hi-vis Down"] = {file = "Interface/AddOns/Platynator/Assets/%s/Highlights/hi-vis-arrow-down.png", width = 125, height = 185, has4k = true, mode = renderMode.Fixed, tag = "arrows"},
+  ["Platy: Arrow Blocky"] = {file = "Interface/AddOns/Platynator/Assets/%s/Highlights/arrows-blocky.png", width = 68, height = 50, has4k = true, margin = 0.5, extra = 0, modifier = 0.42, shiftModifierV = 1, DPIScale = 8/10, mode = renderMode.Sliced, tag = "arrows"},
 
   ["Platy: Brackets"] = {file = "Interface/AddOns/Platynator/Assets/%s/Highlights/brackets.png", width = 154, height = 56, has4k = true, margin = 0.45, extra = 0, modifier = 0.3, shiftModifierV = 1, DPIScale = 8/10, mode = renderMode.Sliced},
 
