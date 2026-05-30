@@ -554,13 +554,16 @@ function addonTable.Display.NameplateMixin:SetUnit(unit)
 
     self.AurasManager:SetUnit(self.unit)
 
-    --[[addonTable.Display.Cache:RegisterCallback(self.unit, "cast", function(state)
-      local old = self.casting
+    if addonTable.Config.Get(addonTable.Config.Options.CAST_SCALE) ~= 1 then
       self:UpdateCastingState(state)
-      if old ~= self.casting then
-        self:UpdateVisual()
-      end
-    end)]]
+      addonTable.Display.Cache:RegisterCallback(self.unit, "cast", function(state)
+        local old = self.casting
+        self:UpdateCastingState(state)
+        if old ~= self.casting then
+          self:UpdateVisual()
+        end
+      end)
+    end
 
     addonTable.CallbackRegistry:RegisterCallback("TextOverrideUpdated", function(_, unit)
       if unit ~= self.unit then
