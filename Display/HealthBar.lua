@@ -71,7 +71,6 @@ function addonTable.Display.HealthBarMixin:UpdateHealth()
   if self.calculator then
     UnitGetDetailedHealPrediction(self.unit, nil, self.calculator)
 
-    self.calculator:SetMaximumHealthMode(Enum.UnitMaximumHealthMode.WithAbsorbs)
     local maxHealth = self.calculator:GetMaximumHealth()
     self.statusBar:SetMinMaxValues(0, maxHealth)
 
@@ -80,7 +79,6 @@ function addonTable.Display.HealthBarMixin:UpdateHealth()
 
     local absorbs = self.calculator:GetDamageAbsorbs()
     self.statusBarAbsorb:SetValue(absorbs, self.animate)
-    self.calculator:SetMaximumHealthMode(Enum.UnitMaximumHealthMode.Default)
     self.newHealth = self.calculator:GetCurrentHealth()
     self.statusBar:SetValue(self.newHealth, self.animate)
   else

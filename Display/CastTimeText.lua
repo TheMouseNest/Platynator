@@ -42,11 +42,7 @@ function addonTable.Display.CastTimeLeftTextMixin:SetUnit(unit)
   self.unit = unit
   if self.unit then
     addonTable.Display.Cache:RegisterCallback(self.unit, "cast", function(state)
-      if state.cast[1] == nil and state.channel[1] == nil then
-        self:Hide()
-      else
-        self:ApplyCasting(state)
-      end
+      self:ApplyCasting(state)
     end)
 
     self:ApplyCasting(addonTable.Display.Cache:Get(self.unit, "cast"))
@@ -75,6 +71,7 @@ function addonTable.Display.CastTimeLeftTextMixin:ApplyCasting(state)
 
   if self.timer then
     self.timer:Cancel()
+    self.timer = nil
   end
 
   if endTime then
