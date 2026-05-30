@@ -130,7 +130,7 @@ if addonTable.Constants.IsClassic then
     ["DEATHKNIGHT"] = {47528},
     ["WARRIOR"] = {6552},
     ["WARLOCK"] = {19647, 89766},
-    ["SHAMAN"] = {57994},
+    ["SHAMAN"] = {57994, --[[Earth Shock, ranks 10-1:]] 49231, 49230, 25454, 10414, 10413, 10412, 8046, 8045, 8044, 8042},
     ["ROGUE"] = {1766},
     ["PRIEST"] = {15487},
     ["PALADIN"] = {31935, 96231},
