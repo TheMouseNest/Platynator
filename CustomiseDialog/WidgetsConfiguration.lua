@@ -518,7 +518,7 @@ addonTable.CustomiseDialog.WidgetsConfig = {
     },
     ["cast"] = {
       {
-        label = addonTable.Locales.TEXTURES,
+        label = addonTable.Locales.GENERAL,
         entries = {
           {
             label = addonTable.Locales.MARK_INTERRUPT_READY_POINT,
