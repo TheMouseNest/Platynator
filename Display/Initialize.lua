@@ -510,6 +510,7 @@ function addonTable.Display.ManagerMixin:Install(unit)
   local nameplate = C_NamePlate.GetNamePlateForUnit(unit, issecure())
   -- NOTE: the nameplate _name_ does not correspond to the unit
   if nameplate and unit and (addonTable.Constants.IsRetail or not UnitIsUnit("player", unit)) then
+    addonTable.Display.Cache:AddUnit(unit)
     local globalScale = addonTable.Config.Get(addonTable.Config.Options.GLOBAL_SCALE)
     local designName, scale, shouldSimplify, index = addonTable.Display.Context:GetAssignedDesign(unit)
     local design = addonTable.Core.GetDesignByName(designName)
@@ -556,6 +557,8 @@ end
 function addonTable.Display.ManagerMixin:Uninstall(unit)
   local display = self.nameplateDisplays[unit]
   if display then
+    addonTable.Display.Cache:RemoveUnit(unit)
+    addonTable.Display.Context:RevokedUnitListeners(unit)
     display:SetUnit(nil)
     if display.stackRegion then
       display.stackRegion:SetParent(display)

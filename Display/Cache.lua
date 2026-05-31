@@ -1,9 +1,18 @@
 ---@class addonTablePlatynator
 local addonTable = select(2, ...)
 
-local RangeCheck = LibStub("LibRangeCheck-3.0")
 local GetOtherTanks = addonTable.Display.Utilities.GetOtherTanks
 local IsTank = addonTable.Display.Utilities.IsTankRole
+local GetRangeChecker = addonTable.Display.Utilities.GetRangeSpell
+
+local function IsInCombatWith(unit)
+  return UnitAffectingCombat(unit) and
+    (
+      UnitIsFriend("player", unit) and (UnitInParty(unit) == true or UnitInRaid(unit)== true) or
+      addonTable.Display.Cache:Get(unit, "threat").situation ~= nil or
+      UnitInParty(unit .. "target") == true or UnitInRaid(unit .. "target") == true
+    )
+end
 
 -- For clients other than Midnight
 if not C_Secrets then
@@ -43,6 +52,12 @@ local getter = {
     if oldState and oldState.interrupted and math.ceil(GetTime()*1000) - math.floor(oldState.interrupted.time) < addonTable.Config.Get(addonTable.Config.Options.CAST_INTERRUPTED_TIMEOUT) * 1000 and next(new.cast) == nil and next(new.channel) == nil then
       new.interrupted = oldState.interrupted
     end
+    if new.cast[1] then
+      new.castDuration = UnitCastingDuration(unit)
+    end
+    if new.channel[1] then
+      new.channelDuration = UnitChannelDuration(unit)
+    end
     return new, state
   end,
   ["threat"] = function(oldState, unit)
@@ -58,10 +73,17 @@ local getter = {
     return result, not oldState or result.situation ~= oldState.situation or result.otherTankAggro ~= oldState.otherTankAggro
   end,
   ["range"] = function(oldState, unit)
-    local range = RangeCheck:GetRange(unit)
-    local result = range == nil or range <= addonTable.Display.Utilities.GetRangedLimit()
+    local result = C_Spell.IsSpellInRange(49576, unit)
     return result, result ~= oldState
-  end
+  end,
+  ["combat"] = function(oldState, unit)
+    local inCombat = IsInCombatWith(unit)
+    return inCombat, inCombat ~= oldState
+  end,
+  ["canAttack"] = function(oldState, unit)
+    local canAttack = UnitCanAttack("player", unit)
+    return canAttack, canAttack ~= oldState
+  end,
 }
 
 local eventsFromKind = {
@@ -116,25 +138,15 @@ function addonTable.Display.CacheMixin:OnLoad()
     },
     ]]
   }
+  self.monitoringOrder = {}
+  self.step = 1
+  self.totalElapsed = 0
 
   for event in pairs(eventToKind) do
     self:RegisterEvent(event)
   end
 
-  C_Timer.NewTicker(0.1, function()
-    local kind = "range"
-    for unit, details in pairs(self.monitoring) do
-      if details.range then
-        local data, update = getter[kind](self.state[unit][kind], unit)
-        self.state[unit][kind] = data
-        if update then
-          for _, callback in ipairs(self.registeredCallbacks[unit][kind]) do
-            callback(data)
-          end
-        end
-      end
-    end
-  end)
+  self:SetScript("OnUpdate", self.OnUpdate)
 
   addonTable.CallbackRegistry:RegisterCallback("LegacyInterrupter", function(_, playerGUID, destGUID)
     for unit, details in pairs(self.monitoring) do
@@ -149,6 +161,7 @@ function addonTable.Display.CacheMixin:AddUnit(unit)
   self.monitoring[unit] = {}
   self.state[unit] = {}
   self.registeredCallbacks[unit] = {}
+  table.insert(self.monitoringOrder, unit)
   for kind in pairs(getter) do
     self.registeredCallbacks[unit][kind] = {}
   end
@@ -162,6 +175,10 @@ function addonTable.Display.CacheMixin:RemoveUnit(unit)
   self.monitoring[unit] = nil
   self.state[unit] = nil
   self.registeredCallbacks[unit] = nil
+  local index = tIndexOf(self.monitoringOrder, unit)
+  if index then
+    table.remove(self.monitoringOrder, index)
+  end
 end
 
 function addonTable.Display.CacheMixin:Get(unit, kind)
@@ -183,7 +200,7 @@ function addonTable.Display.CacheMixin:Process(kind, unit, eventName, ...)
   local data, update, timer = getter[kind](self.state[unit][kind], unit, eventName, ...)
   self.state[unit][kind] = data
   if update then
-    for _, callback in ipairs(self.registeredCallbacks[unit][kind]) do
+    for index, callback in ipairs(self.registeredCallbacks[unit][kind]) do
       callback(data)
     end
   end
@@ -197,4 +214,54 @@ end
 function addonTable.Display.CacheMixin:OnEvent(eventName, unit, ...)
   local kind = eventToKind[eventName]
   self:Process(kind, unit, eventName, ...)
+end
+
+function addonTable.Display.CacheMixin:OnUpdate(elapsed)
+  if #self.monitoringOrder == 0 then
+    return
+  end
+  if self.step > #self.monitoringOrder then
+    self.step = 1
+  end
+  self.totalElapsed = self.totalElapsed + elapsed
+  if self.totalElapsed < 1/40 then
+    return
+  end
+  self.totalElapsed = 0
+
+  local unit = self.monitoringOrder[self.step]
+  local details = self.monitoring[unit]
+  local state = self.state[unit]
+
+  if details.range then
+    local kind = "range"
+    local data, update = getter[kind](state[kind], unit)
+    state[kind] = data
+    if update then
+      for _, callback in ipairs(self.registeredCallbacks[unit][kind]) do
+        callback(data)
+      end
+    end
+  end
+  if details.combat then
+    local kind = "combat"
+    local data, update = getter[kind](state[kind], unit)
+    state[kind] = data
+    if update then
+      for _, callback in ipairs(self.registeredCallbacks[unit][kind]) do
+        callback(data)
+      end
+    end
+  end
+  if details.canAttack then
+    local kind = "canAttack"
+    local data, update = getter[kind](state[kind], unit)
+    state[kind] = data
+    if update then
+      for _, callback in ipairs(self.registeredCallbacks[unit][kind]) do
+        callback(data)
+      end
+    end
+  end
+  self.step = self.step + 1
 end

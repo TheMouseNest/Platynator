@@ -2,7 +2,6 @@
 local addonTable = select(2, ...)
 
 local IsNeutral = addonTable.Display.Utilities.IsNeutralUnit
-local IsInCombat = addonTable.Display.Utilities.IsInCombatWith
 local IsInRelevantInstance = addonTable.Display.Utilities.IsInRelevantInstance
 local GetEliteType = addonTable.Display.Utilities.GetEliteType
 local GetDelveType = addonTable.Display.Utilities.GetDelveType
@@ -108,8 +107,8 @@ local function GenerateState(unit)
   local isMinion = IsMinion(unit)
   local isPet = UnitIsOtherPlayersPet(unit) or UnitIsUnit(unit, "pet")
   return {
-    canAttack = UnitCanAttack("player", unit),
-    inCombat = IsInCombat(unit),
+    canAttack = addonTable.Display.Cache:Get(unit, "canAttack"),
+    inCombat = addonTable.Display.Cache:Get(unit, "combat"),
     alignment = GetAlignment(unit),
     isPlayer = IsPlayer(unit),
     isNPC = IsNPC(unit),
@@ -134,30 +133,7 @@ function addonTable.Display.DesignForContextMixin:OnLoad()
   end)
 
   self.unitStates = {}
-
-  C_Timer.NewTicker(0.1, function() -- Used for transitioning mobs to attackable
-    local UnitCanAttack = UnitCanAttack
-    for unit, state in pairs(self.unitStates) do
-      local canAttack = UnitCanAttack("player", unit)
-      local changes = canAttack ~= state.canAttack
-      state.canAttack = canAttack
-      if changes then
-        addonTable.CallbackRegistry:TriggerEvent("UnitDesignChange", unit)
-      end
-    end
-  end)
-
-  addonTable.CallbackRegistry:RegisterCallback("CombatStatusChange", function(_, unit)
-    local state = self.unitStates[unit]
-    if state then
-      local inCombat = IsInCombat(unit)
-      local changes = state.updates.inCombat and inCombat ~= state.inCombat
-      state.inCombat = inCombat
-      if changes then
-        addonTable.CallbackRegistry:TriggerEvent("UnitDesignChange", unit)
-      end
-    end
-  end)
+  self.unitsListening = {}
 
   self:RegisterEvent("NAME_PLATE_UNIT_REMOVED")
   self:RegisterEvent("UNIT_CLASSIFICATION_CHANGED")
@@ -183,10 +159,34 @@ function addonTable.Display.DesignForContextMixin:OnEvent(event, unit)
     end
   elseif event == "NAME_PLATE_UNIT_REMOVED" then
     self.unitStates[unit] = nil
+    self.unitsListening[unit] = nil
   end
 end
 
+function addonTable.Display.DesignForContextMixin:RevokedUnitListeners(unit)
+  self.unitsListening[unit] = nil
+end
+
 function addonTable.Display.DesignForContextMixin:GetAssignedDesign(unit)
+  if not self.unitsListening[unit] then
+    addonTable.Display.Cache:RegisterCallback(unit, "combat", function(inCombat)
+      local state = self.unitStates[unit]
+      local changes = state.updates.inCombat and inCombat ~= state.inCombat
+      state.inCombat = inCombat
+      if changes then
+        addonTable.CallbackRegistry:TriggerEvent("UnitDesignChange", unit)
+      end
+    end)
+    addonTable.Display.Cache:RegisterCallback(unit, "canAttack", function(canAttack)
+      local state = self.unitStates[unit]
+      local changes = canAttack ~= state.canAttack
+      state.canAttack = canAttack
+      if changes then
+        addonTable.CallbackRegistry:TriggerEvent("UnitDesignChange", unit)
+      end
+    end)
+    self.unitsListening[unit] = true
+  end
   if not self.unitStates[unit] then
     self.unitStates[unit] = GenerateState(unit)
   end

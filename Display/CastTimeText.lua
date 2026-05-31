@@ -78,18 +78,18 @@ function addonTable.Display.CastTimeLeftTextMixin:ApplyCasting(state)
     self:Show()
     if UnitChannelDuration then
       if isChanneled then
-        self.duration = UnitChannelDuration(self.unit)
+        self.duration = state.channelDuration
       else
-        self.duration = UnitCastingDuration(self.unit)
+        self.duration = state.castDuration
       end
       self.text:SetText(self.duration:FormatRemainingDuration(formatter))
-      self.timer = C_Timer.NewTicker(0.005, function()
+      self.timer = C_Timer.NewTicker(0.05, function()
         self.text:SetText(self.duration:FormatRemainingDuration(formatter))
       end)
     else
       self.endTime = endTime / 1000
       self.text:SetText(ClassicFormatter(self.endTime - GetTime()))
-      self.timer = C_Timer.NewTicker(0.005, function()
+      self.timer = C_Timer.NewTicker(0.1, function()
         self.text:SetText(ClassicFormatter(self.endTime - GetTime()))
       end)
     end

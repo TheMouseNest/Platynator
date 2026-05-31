@@ -95,8 +95,6 @@ local function SizeBar(frame, details)
     PixelUtil.SetSize(frame.marker, markerDetails.width * details.scale * frame.lowerScale, frame.rawHeight * frame.lowerScale)
     PixelUtil.SetSize(frame.edgeMask, markerDetails.width * details.scale, frame.rawHeight * details.scale)
   end
-
-  PixelUtil.SetSize(frame.mask, frame.rawWidth, frame.rawHeight)
 end
 
 local function AnchorBar(frame, details)
@@ -112,7 +110,6 @@ function addonTable.Display.GetHealthBar(frame, parent)
   frame = frame or CreateFrame("Frame", nil, parent or UIParent)
 
   frame.statusBarAbsorb = CreateFrame("StatusBar", nil, frame)
-  frame.statusBarAbsorb:SetClipsChildren(true)
 
   frame.statusBarCutaway = CreateFrame("StatusBar", nil, frame)
   frame.statusBarCutawayAnimation = frame.statusBarCutaway:CreateAnimationGroup()
@@ -122,14 +119,13 @@ function addonTable.Display.GetHealthBar(frame, parent)
   alpha:SetFromAlpha(1)
   alpha:SetToAlpha(0)
   alpha:SetDuration(0.3)
-  frame.statusBarCutawayMask = frame:CreateMaskTexture()
+  frame.statusBarCutawayMask = frame.statusBarCutaway:CreateMaskTexture()
   frame.statusBarCutawayMask:SetBlockingLoadsRequested(true)
   frame.statusBarCutawayMask:SetTexture("Interface/AddOns/Platynator/Assets/Special/white.png", "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
   frame.statusBarCutawayMask:SetTextureSliceMargins(1, 1, 1, 1)
 
   frame.statusBar = CreateFrame("StatusBar", nil, frame)
   frame.statusBar:SetPoint("CENTER")
-  frame.statusBar:SetClipsChildren(true)
 
   frame.statusBarCutaway:SetAllPoints(frame.statusBar)
 
@@ -143,7 +139,7 @@ function addonTable.Display.GetHealthBar(frame, parent)
   frame.border:SetPoint("CENTER", frame)
 
   frame.mask = frame:CreateMaskTexture()
-  frame.mask:SetPoint("CENTER")
+  frame.mask:SetAllPoints(frame.statusBar)
 
   frame.edgeMask = frame:CreateMaskTexture()
 
@@ -159,6 +155,7 @@ function addonTable.Display.GetHealthBar(frame, parent)
     local borderSliceDetails = LSM:Fetch("nineslice", borderDetails.nineslice)
     assert(borderSliceDetails)
 
+    frame.statusBarCutaway:SetShown(details.animate)
     frame.statusBarCutaway:SetFrameLevel(frame:GetFrameLevel() + 1)
     frame.statusBarAbsorb:SetFrameLevel(frame:GetFrameLevel() + 2)
     frame.statusBar:SetFrameLevel(frame:GetFrameLevel() + 3)
@@ -212,7 +209,6 @@ function addonTable.Display.GetCastBar(frame, parent)
 
   frame.statusBar = CreateFrame("StatusBar", nil, frame)
   frame.statusBar:SetPoint("CENTER")
-  frame.statusBar:SetClipsChildren(true)
 
   frame.marker = frame.statusBar:CreateTexture()
   frame.marker:SetSnapToPixelGrid(false)
@@ -224,7 +220,7 @@ function addonTable.Display.GetCastBar(frame, parent)
   frame.border:SetPoint("CENTER", frame)
 
   frame.mask = frame:CreateMaskTexture()
-  frame.mask:SetPoint("CENTER")
+  frame.mask:SetAllPoints(frame.statusBar)
 
   frame.edgeMask = frame:CreateMaskTexture()
 
@@ -238,7 +234,6 @@ function addonTable.Display.GetCastBar(frame, parent)
 
   frame.interruptMarker = CreateFrame("StatusBar", nil, frame)
   frame.interruptMarker:SetStatusBarTexture("Interface/AddOns/Platynator/Special/transparent.png")
-  frame.interruptMarker:SetClipsChildren(true)
   frame.interruptMarkerPoint = frame.interruptMarker:CreateTexture()
   frame.interruptMarkerPoint:SetColorTexture(1, 1, 1)
   frame.interruptMarkerPoint:SetWidth(5)
@@ -332,7 +327,6 @@ function addonTable.Display.GetEnergyBar(frame, parent)
 
   frame.statusBar = CreateFrame("StatusBar", nil, frame)
   frame.statusBar:SetPoint("CENTER")
-  frame.statusBar:SetClipsChildren(true)
 
   frame.marker = frame.statusBar:CreateTexture()
   frame.marker:SetSnapToPixelGrid(false)
@@ -344,7 +338,7 @@ function addonTable.Display.GetEnergyBar(frame, parent)
   frame.border:SetPoint("CENTER", frame)
 
   frame.mask = frame:CreateMaskTexture()
-  frame.mask:SetPoint("CENTER")
+  frame.mask:SetAllPoints(frame.statusBar)
 
   frame.edgeMask = frame:CreateMaskTexture()
 
@@ -704,15 +698,11 @@ end
 
 function addonTable.Display.GetText(frame, parent)
   frame = frame or CreateFrame("Frame", nil, parent or UIParent)
-  -- This Wrapper workaround is so that the `frame` always has the same size as the text
-  frame.Wrapper = CreateFrame("Frame", nil, parent or UIParent)
-  frame.Wrapper:SetSize(1, 1)
+  frame:SetSize(1, 1)
 
-  frame.text = frame.Wrapper:CreateFontString(nil, nil, "GameFontNormal")
-  frame.text:SetPoint("CENTER", frame.Wrapper)
+  frame.text = frame:CreateFontString(nil, nil, "GameFontNormal")
+  frame.text:SetPoint("CENTER")
   frame.text:SetText(" ")
-
-  frame:SetAllPoints(frame.text)
 
   function frame:Init(details)
     if frame.Strip then
@@ -722,15 +712,12 @@ function addonTable.Display.GetText(frame, parent)
     frame.details = details
 
     frame.text:SetFontObject(addonTable.CurrentFont)
-    frame.text:SetParent(frame)
     frame.text:ClearAllPoints()
-    frame.text:SetPoint(details.anchor[1] or "CENTER", frame.Wrapper)
+    frame.text:SetPoint(details.anchor[1] or "CENTER")
     frame.text:SetTextColor(details.color.r, details.color.g, details.color.b)
     frame.text:SetWordWrap(not details.truncate)
     frame.text:SetNonSpaceWrap(false)
     frame.text:SetSpacing(0)
-
-    frame:SetAllPoints(frame.text)
 
     frame.text:SetJustifyV("BOTTOM")
     if details.align ~= frame.text:GetJustifyH() then
@@ -745,6 +732,7 @@ function addonTable.Display.GetText(frame, parent)
       frame.text:SetWidth(width / scale)
     else
       frame.text:SetTextScale(scale)
+      frame.text:SetScale(1)
       frame.text:SetWidth(width)
     end
 
@@ -780,21 +768,13 @@ function addonTable.Display.GetText(frame, parent)
 
     frame:SetScript("OnEvent", frame.OnEvent)
 
-    frame:SetScript("OnShow", function()
-      frame.Wrapper:Show()
-    end)
-
-    frame:SetScript("OnHide", function()
-      frame.Wrapper:Hide()
-    end)
-
     if frame.PostInit then
       frame:PostInit()
     end
   end
 
   function frame:ApplyAnchor()
-    ApplyAnchor(frame.Wrapper, frame.details.anchor)
+    ApplyAnchor(frame, frame.details.anchor)
   end
 
   function frame:ApplySize()
@@ -805,13 +785,11 @@ end
 
 function addonTable.Display.GetHealthFillText(frame, parent)
   frame = frame or CreateFrame("Frame", nil, parent or UIParent)
-  -- This Wrapper workaround is so that the `frame` always has the same size as the text
-  frame.Wrapper = CreateFrame("Frame", nil, parent or UIParent)
-  frame.Wrapper:SetSize(1, 1)
+  frame:SetSize(1, 1)
 
-  frame.mask = CreateFrame("Frame", nil, frame.Wrapper)
+  frame.mask = CreateFrame("Frame", nil, frame)
   frame.mask:SetClipsChildren(true)
-  frame.maskAbsorb = CreateFrame("Frame", nil, frame.Wrapper)
+  frame.maskAbsorb = CreateFrame("Frame", nil, frame)
   frame.maskAbsorb:SetClipsChildren(true)
 
   frame.statusBar = CreateFrame("StatusBar", nil, frame)
@@ -824,19 +802,19 @@ function addonTable.Display.GetHealthFillText(frame, parent)
   frame.maskAbsorb:SetAllPoints(frame.statusBarAbsorb:GetStatusBarTexture())
 
   frame.foreground = frame.mask:CreateFontString(nil, nil, "GameFontNormal")
-  frame.foreground:SetPoint("CENTER", frame.Wrapper)
+  frame.foreground:SetPoint("CENTER", frame)
   frame.foreground:SetText(" ")
 
   frame.absorb = frame.maskAbsorb:CreateFontString(nil, nil, "GameFontNormal")
-  frame.absorb:SetPoint("CENTER", frame.Wrapper)
+  frame.absorb:SetPoint("CENTER", frame)
   frame.absorb:SetText(" ")
 
-  frame.absorbPlacer = frame.Wrapper:CreateFontString(nil, nil, "GameFontNormal")
+  frame.absorbPlacer = frame:CreateFontString(nil, nil, "GameFontNormal")
   frame.absorbPlacer:SetPoint("LEFT", frame.statusBar:GetStatusBarTexture(), "RIGHT", -1, 0)
   frame.absorbPlacer:SetText(" ")
 
-  frame.background = frame.Wrapper:CreateFontString(nil, nil, "GameFontNormal")
-  frame.background:SetPoint("CENTER", frame.Wrapper)
+  frame.background = frame:CreateFontString(nil, nil, "GameFontNormal")
+  frame.background:SetPoint("CENTER", frame)
   frame.background:SetText(" ")
 
   frame.statusBar:SetAllPoints(frame.background)
@@ -857,7 +835,7 @@ function addonTable.Display.GetHealthFillText(frame, parent)
       t:SetFontObject(addonTable.CurrentFont)
       if t ~= self.absorbPlacer then
         t:ClearAllPoints()
-        t:SetPoint(details.anchor[1] or "CENTER", frame.Wrapper)
+        t:SetPoint(details.anchor[1] or "CENTER", frame)
       end
       t:SetJustifyV("BOTTOM")
 
@@ -874,8 +852,8 @@ function addonTable.Display.GetHealthFillText(frame, parent)
     frame.absorb:SetTextColor(details.absorb.color.r, details.absorb.color.g, details.absorb.color.b)
     frame.absorbPlacer:SetAlpha(0)
 
-    frame.maskAbsorb:SetFrameLevel(frame.Wrapper:GetFrameLevel() + 2)
-    frame.mask:SetFrameLevel(frame.Wrapper:GetFrameLevel() + 3)
+    frame.maskAbsorb:SetFrameLevel(frame:GetFrameLevel() + 2)
+    frame.mask:SetFrameLevel(frame:GetFrameLevel() + 3)
 
     frame:SetAllPoints(frame.background)
 
@@ -887,21 +865,13 @@ function addonTable.Display.GetHealthFillText(frame, parent)
 
     frame:SetScript("OnEvent", frame.OnEvent)
 
-    frame:SetScript("OnShow", function()
-      frame.Wrapper:Show()
-    end)
-
-    frame:SetScript("OnHide", function()
-      frame.Wrapper:Hide()
-    end)
-
     if frame.PostInit then
       frame:PostInit()
     end
   end
 
   function frame:ApplyAnchor()
-    ApplyAnchor(frame.Wrapper, frame.details.anchor)
+    ApplyAnchor(frame, frame.details.anchor)
   end
 
   function frame:ApplySize()
@@ -911,9 +881,9 @@ function addonTable.Display.GetHealthFillText(frame, parent)
 end
 
 local livePools = {
-  healthBars = CreateFramePool("Frame", UIParent, nil, nil, false, addonTable.Display.GetHealthBar),
+  healthBars = CreateFramePool("StatusBar", UIParent, nil, nil, false, addonTable.Display.GetHealthBar),
   healthFillTextSpecialBars = CreateFramePool("Frame", UIParent, nil, nil, false, addonTable.Display.GetHealthFillText),
-  castBars = CreateFramePool("Frame", UIParent, nil, nil, false, addonTable.Display.GetCastBar),
+  castBars = CreateFramePool("StatusBar", UIParent, nil, nil, false, addonTable.Display.GetCastBar),
   energyBars = CreateFramePool("Frame", UIParent, nil, nil, false, addonTable.Display.GetEnergyBar),
   texts = CreateFramePool("Frame", UIParent, nil, nil, false, addonTable.Display.GetText),
   powerSpecialBars = CreateFramePool("Frame", UIParent, nil, nil, false, addonTable.Display.GetPower),
@@ -923,9 +893,9 @@ local livePools = {
 }
 
 local editorPools = {
-  healthBars = CreateFramePool("Frame", UIParent, "PlatynatorPropagateMouseTemplate", nil, false, addonTable.Display.GetHealthBar),
+  healthBars = CreateFramePool("StatusBar", UIParent, "PlatynatorPropagateMouseTemplate", nil, false, addonTable.Display.GetHealthBar),
   healthFillTextSpecialBars = CreateFramePool("Frame", UIParent, "PlatynatorPropagateMouseTemplate", nil, false, addonTable.Display.GetHealthFillText),
-  castBars = CreateFramePool("Frame", UIParent, "PlatynatorPropagateMouseTemplate", nil, false, addonTable.Display.GetCastBar),
+  castBars = CreateFramePool("StatusBar", UIParent, "PlatynatorPropagateMouseTemplate", nil, false, addonTable.Display.GetCastBar),
   energyBars = CreateFramePool("Frame", UIParent, "PlatynatorPropagateMouseTemplate", nil, false, addonTable.Display.GetEnergyBar),
   texts = CreateFramePool("Frame", UIParent, "PlatynatorPropagateMouseTemplate", nil, false, addonTable.Display.GetText),
   powerSpecialBars = CreateFramePool("Frame", UIParent, "PlatynatorPropagateMouseTemplate", nil, false, addonTable.Display.GetPower),
@@ -959,11 +929,8 @@ function addonTable.Display.GetWidgets(design, parent, isEditor)
     local w = pools.texts:Acquire()
     poolType[w] = "texts"
     w:SetParent(parent)
-    w.Wrapper:SetParent(parent)
     w:Show()
-    w.Wrapper:SetFrameStrata("MEDIUM")
     w:SetFrameStrata("MEDIUM")
-    w.Wrapper:SetFrameLevel(layerStep * textDetails.layer + index * 10)
     w:SetFrameLevel(layerStep * textDetails.layer + index * 10)
     w:Init(textDetails)
     w.kind = "texts"
@@ -993,11 +960,6 @@ function addonTable.Display.GetWidgets(design, parent, isEditor)
   for index, specialDetails in ipairs(design.specialBars) do
     local w = pools[specialDetails.kind .. "SpecialBars"]:Acquire()
     poolType[w] = specialDetails.kind .. "SpecialBars"
-    if w.Wrapper then
-      w.Wrapper:SetParent(parent)
-      w.Wrapper:SetFrameStrata("MEDIUM")
-      w.Wrapper:SetFrameLevel(layerStep * specialDetails.layer + index * 10)
-    end
     w:SetParent(parent)
     w:Show()
     w:SetFrameStrata("MEDIUM")

@@ -56,39 +56,8 @@ function addonTable.Display.Utilities.GetUnitDifficulty(unit)
 end
 
 do
-  local function IsInCombatWith(unit)
-    return UnitAffectingCombat(unit) and
-      (
-        UnitIsFriend("player", unit) and (UnitInParty(unit) == true or UnitInRaid(unit)== true ) or
-        UnitThreatSituation("player", unit) ~= nil or
-        UnitInParty(unit .. "target") == true or UnitInRaid(unit .. "target") == true
-      )
-  end
-
-  local watching = {}
-  C_Timer.NewTicker(0.08, function()
-    local units = GetKeysArray(watching)
-    for _, unit in ipairs(units) do
-      local newState = IsInCombatWith(unit)
-      if newState ~= watching[unit] then
-        watching[unit] = newState
-        addonTable.CallbackRegistry:TriggerEvent("CombatStatusChange", unit)
-      end
-    end
-  end)
-  local frame = CreateFrame("Frame")
-  frame:RegisterEvent("NAME_PLATE_UNIT_REMOVED")
-  frame:SetScript("OnEvent", function(_, _, unit)
-    watching[unit] = nil
-  end)
-
   function addonTable.Display.Utilities.IsInCombatWith(unit)
-    if watching[unit] ~= nil then
-      return watching[unit]
-    else
-      watching[unit] = IsInCombatWith(unit)
-      return watching[unit]
-    end
+    return addonTable.Display.Cache:Get(unit, "combat")
   end
 end
 
@@ -263,8 +232,20 @@ function addonTable.Display.Utilities.GetInterruptSpells()
   return currentInterrupt
 end
 
-function addonTable.Display.Utilities.GetInterruptSpellPriority()
-  return currentInterrupt[1]
+if C_Spell.GetSpellCooldownDuration then
+  local duration
+  local lastDurationTime = 0
+  function addonTable.Display.Utilities.GetInterruptSpellPriority()
+    if lastDurationTime ~= GetTime() then
+      duration = C_Spell.GetSpellCooldownDuration(currentInterrupt[1])
+      lastDurationTime = GetTime()
+    end
+    return currentInterrupt[1], duration
+  end
+else
+  function addonTable.Display.Utilities.GetInterruptSpellPriority()
+    return currentInterrupt[1]
+  end
 end
 
 function addonTable.Display.Utilities.GetExecuteRange()
@@ -457,7 +438,11 @@ do
   local role = roleType.Damage
   local isTank = false
   local rangeLimit = 0
+  local harmChecker
   local _, playerClass = UnitClass("player")
+
+  local RangeCheck = LibStub("LibRangeCheck-3.0")
+  RangeCheck.RegisterCallback("Platynator", RangeCheck.CHECKERS_CHANGED, function() harmChecker = RangeCheck:GetHarmMaxChecker(addonTable.Display.Utilities.GetRangedLimit() or RangeCheck.MeleeRange) end)
 
   local function GetPlayerRole()
     if addonTable.Constants.IsEra or addonTable.Constants.IsBC or addonTable.Constants.IsWrath then
@@ -479,18 +464,19 @@ do
 
   local function AssignRange()
     if addonTable.Constants.IsEra or addonTable.Constants.IsBC or addonTable.Constants.IsWrath then
-      rangeLimit = addonTable.Constants.DefaultRange[playerClass] - 1
+      rangeLimit = addonTable.Constants.DefaultRange[playerClass]
     else
       local specIndex = C_SpecializationInfo.GetSpecialization()
       local specID = C_SpecializationInfo.GetSpecializationInfo(specIndex)
-      rangeLimit = addonTable.Constants.DefaultRange[specID] - 1
+      rangeLimit = addonTable.Constants.DefaultRange[specID]
       for spellID, range in pairs(addonTable.Constants.RangeModifier) do
         if C_SpellBook.IsSpellKnown(spellID) then
-          rangeLimit = range - 1
+          rangeLimit = range
           break
         end
       end
     end
+    harmChecker = RangeCheck:GetHarmMaxChecker(addonTable.Display.Utilities.GetRangedLimit())
   end
 
   do
@@ -527,6 +513,10 @@ do
 
   function addonTable.Display.Utilities.GetRangedLimit()
     return rangeLimit
+  end
+
+  function addonTable.Display.Utilities.GetRangeChecker()
+    return harmChecker
   end
 end
 

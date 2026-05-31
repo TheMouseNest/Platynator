@@ -43,7 +43,6 @@ addonTable.Constants.Events = {
 
   "LegacyInterrupter",
   "QuestInfoUpdate",
-  "CombatStatusChange",
   "MouseoverUpdate",
 
   "RoleChange",

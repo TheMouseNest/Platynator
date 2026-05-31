@@ -44,18 +44,19 @@ local kindToEvent = {
   softTarget = {"PLAYER_TARGET_CHANGED", "PLAYER_SOFT_ENEMY_CHANGED", "PLAYER_SOFT_FRIEND_CHANGED"},
   focus = {"PLAYER_FOCUS_CHANGED"},
   execute = {"UNIT_HEALTH"},
-  eliteType = {"UNIT_CLASSIFICATION_CHANGED"},
+  eliteType = {"UNIT_CLASSIFICATION_CHANGED", "UNIT_FACTION"},
   rarity = {"UNIT_CLASSIFICATION_CHANGED"},
-  delveType = {"UNIT_CLASSIFICATION_CHANGED"},
+  delveType = {"UNIT_CLASSIFICATION_CHANGED", "UNIT_FACTION"},
   party = {"GROUP_ROSTER_UPDATE"}
 }
 local kindToCallback = {
   quest = {"QuestInfoUpdate"},
   mouseover = {"MouseoverUpdate"},
-  threat = {"CombatStatusChange", "RoleChange"},
-  inCombat = {"CombatStatusChange"},
+  threat = {"RoleChange"},
 }
 local kindToCache = {
+  threat = {"combat"},
+  inCombat = {"combat"},
   interruptReady = {"cast"},
   interruptNotReady = {"cast"},
   uninterruptableCast = {"cast"},
@@ -495,6 +496,7 @@ function addonTable.Display.GetColor(settings, state, unit)
 
   local defaultColor = state.defaultColor
   if C_CurveUtil then
+    local start = debugprofilestop()
     local r, g, b, a = defaultColor.r, defaultColor.g, defaultColor.b, defaultColor.a or 1
     for index = #colorQueue, 1, -1 do
       local details = colorQueue[index]

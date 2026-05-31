@@ -869,11 +869,7 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
       newCursorY = newCursorY / preview:GetEffectiveScale()
       for _, index in ipairs(backupSelectionIndexes) do
         local w = widgets[index]
-        if w.Wrapper and w.kind ~= "auras" then -- Because the Wrapper determines the base position
-          w.Wrapper:AdjustPointsOffset(newCursorX - cursorX, newCursorY - cursorY)
-        else
-          w:AdjustPointsOffset(newCursorX - cursorX, newCursorY - cursorY)
-        end
+        w:AdjustPointsOffset(newCursorX - cursorX, newCursorY - cursorY)
       end
       cursorX = newCursorX
       cursorY = newCursorY
@@ -1276,7 +1272,7 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
             end
           end
         elseif w.details.kind == "castTimeLeft" then
-          w.text:SetText("1.2")
+          display = "1.2"
         elseif w.details.kind == "guild" then
           display = "Surge of Awesome"
         elseif w.details.kind == "castSpellName" then
@@ -1307,6 +1303,8 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
         end
         if display then
           w.text:SetText(display)
+          local width, height = w.text:GetSize()
+          w:SetSize(width*w.text:GetScale(), height*w.text:GetScale())
         end
 
       elseif w.kind == "specialBars" and w.details.kind == "power" then
@@ -1326,6 +1324,8 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
         w.statusBar:SetValue(70)
         w.statusBarAbsorb:SetMinMaxValues(0, 100)
         w.statusBarAbsorb:SetValue(10)
+        local width, height = w.foreground:GetSize()
+        w:SetSize(width*w.foreground:GetScale(), height*w.foreground:GetScale())
         local defaultColor
         for _, s in ipairs(w.details.autoColors) do
           if s.kind == "classColors" then

@@ -378,6 +378,9 @@ function addonTable.Display.NameplateMixin:OnLoad()
 end
 
 function addonTable.Display.NameplateMixin:OnSizeChanged()
+  if self:ShouldNotSize() then
+    return
+  end
   -- Optimisation to avoid recalculating anchors/sizes while nameplate scales up/down
   self.sizeChangeCount = 0
   self:SetScript("OnUpdate", function()
@@ -393,7 +396,7 @@ end
 -- shrinking cause the nameplate is disappearing
 function addonTable.Display.NameplateMixin:ShouldNotSize()
   -- Detect sizing down, which we should ignore
-  if not self.unit or not self:IsVisible() then
+  if not self.unit then
     return true
   end
   local scale = self:GetEffectiveScale()
@@ -507,7 +510,6 @@ function addonTable.Display.NameplateMixin:SetUnit(unit)
   self.interactUnit = unit
   if unit and (not UnitNameplateShowsWidgetsOnly or not UnitNameplateShowsWidgetsOnly(unit)) and not UnitIsGameObject(unit) then
     self.unit = unit
-    addonTable.Display.Cache:AddUnit(unit)
 
     if UnitCanAttack("player", self.unit) and addonTable.Config.Get(addonTable.Config.Options.OUT_OF_RANGE_ALPHA) ~= 1 then
       addonTable.Display.Cache:RegisterCallback(self.unit, "range", function(state)
@@ -521,12 +523,10 @@ function addonTable.Display.NameplateMixin:SetUnit(unit)
 
     if UnitCanAttack("player", self.unit) and addonTable.Config.Get(addonTable.Config.Options.NOT_IN_PULL_ALPHA) ~= 1 then
       self.inCombat = addonTable.Display.Utilities.IsInCombatWith(self.unit)
-      addonTable.CallbackRegistry:RegisterCallback("CombatStatusChange", function(_, unit2)
-        if unit2 == self.unit then
-          self.inCombat = addonTable.Display.Utilities.IsInCombatWith(self.unit)
-          self:UpdateVisual()
-        end
-      end, self)
+      addonTable.Display.Cache:RegisterCallback(self.unit, "combat", function(inCombat)
+        self.inCombat = inCombat
+        self:UpdateVisual()
+      end)
     else
       self.inCombat = true
     end
@@ -554,7 +554,7 @@ function addonTable.Display.NameplateMixin:SetUnit(unit)
 
     self.AurasManager:SetUnit(self.unit)
 
-    self:UpdateCastingState(state)
+    self:UpdateCastingState(addonTable.Display.Cache:Get(self.unit, "cast"))
     addonTable.Display.Cache:RegisterCallback(self.unit, "cast", function(state)
       local old = self.casting
       self:UpdateCastingState(state)
@@ -590,14 +590,12 @@ function addonTable.Display.NameplateMixin:SetUnit(unit)
     self.casting = false
 
     addonTable.CallbackRegistry:UnregisterCallback("TextOverrideUpdated", self)
-    addonTable.CallbackRegistry:UnregisterCallback("CombatStatusChange", self)
   end
 
   self:UpdateVisual()
 end
 
 function addonTable.Display.NameplateMixin:UpdateCastingState(state)
-  state = state or addonTable.Display.Cache:Get(self.unit, "cast")
   self.casting = state.cast[1] ~= nil or state.channel[1] ~= nil
 end
 
