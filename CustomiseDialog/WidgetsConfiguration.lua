@@ -462,7 +462,7 @@ addonTable.CustomiseDialog.WidgetsConfig = {
         label = addonTable.Locales.GENERAL,
         entries = {
           {
-            label = addonTable.Locales.ANIMATE,
+            label = addonTable.Locales.ANIMATE_X,
             kind = "checkbox",
             setter = function(details, value)
               details.animate = value
@@ -1649,7 +1649,7 @@ addonTable.CustomiseDialog.WidgetsConfig = {
           },
           { kind = "spacer" },
           {
-            label = addonTable.Locales.ANIMATE,
+            label = addonTable.Locales.ANIMATE_X,
             kind = "checkbox",
             setter = function(details, value)
               details.animate = value
