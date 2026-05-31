@@ -140,7 +140,6 @@ function addonTable.Display.CacheMixin:OnLoad()
   }
   self.monitoringOrder = {}
   self.step = 1
-  self.totalElapsed = 0
 
   for event in pairs(eventToKind) do
     self:RegisterEvent(event)
@@ -223,11 +222,6 @@ function addonTable.Display.CacheMixin:OnUpdate(elapsed)
   if self.step > #self.monitoringOrder then
     self.step = 1
   end
-  self.totalElapsed = self.totalElapsed + elapsed
-  if self.totalElapsed < 1/40 then
-    return
-  end
-  self.totalElapsed = 0
 
   local unit = self.monitoringOrder[self.step]
   local details = self.monitoring[unit]
