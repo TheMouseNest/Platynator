@@ -95,7 +95,7 @@ else
     if endTime then
       local endTime = endTime / 1000
       self.text:SetText(ClassicFormatter(endTime - GetTime()))
-      self.timer = C_Timer.NewTicker(0.1, function()
+      self.timer = C_Timer.NewTicker(0.05, function()
         self.text:SetText(ClassicFormatter(endTime - GetTime()))
       end)
     end
