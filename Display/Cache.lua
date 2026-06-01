@@ -231,7 +231,7 @@ function addonTable.Display.CacheMixin:OnUpdate(elapsed)
   local toProcess = self.totalElapsed * 4 * length
   self.totalElapsed = 0
 
-  for i = self.step, math.min(length, self.step + toProcess) do
+  for i = self.step, math.min(length, self.step + toProcess - 1) do
     local unit = self.monitoringOrder[i]
     local details = self.monitoring[unit]
     local state = self.state[unit]
