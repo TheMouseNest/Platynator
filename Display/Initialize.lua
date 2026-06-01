@@ -1029,7 +1029,9 @@ function addonTable.Display.ManagerMixin:OnEvent(eventName, ...)
     end
   elseif eventName == "UNIT_POWER_UPDATE" or eventName == "RUNE_POWER_UPDATE" or eventName == "UNIT_POWER_POINT_CHARGE" then
     local display = self.nameplateDisplays[self.targetingState.target] or self.nameplateDisplays[self.targetingState.softTarget]
-    display:UpdateForTarget()
+    if display then
+      display:UpdateForTarget()
+    end
   elseif eventName == "GLOBAL_MOUSE_UP" then
     self:UpdateForMouseover()
     self:UnregisterEvent("GLOBAL_MOUSE_UP")
