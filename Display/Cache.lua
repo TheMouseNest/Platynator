@@ -123,11 +123,7 @@ end
 local eventToKind = {}
 for kind, events in pairs(eventsFromKind) do
   for _, e in ipairs(events) do
-    if eventToKind[e] then
-      table.insert(eventToKind[e], kind)
-    else
-      eventToKind[e] = {kind}
-    end
+    eventToKind[e] = kind
   end
 end
 
@@ -215,8 +211,8 @@ function addonTable.Display.CacheMixin:Process(kind, unit, eventName, ...)
   end
 
   local data, update, timer = getter[kind](self.state[unit][kind], unit, eventName, ...)
-  self.state[unit][kind] = data
   if update then
+    self.state[unit][kind] = data
     for index, callback in ipairs(self.registeredCallbacks[unit][kind]) do
       callback(data)
     end
