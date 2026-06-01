@@ -107,8 +107,8 @@ local function GenerateState(unit)
   local isMinion = IsMinion(unit)
   local isPet = UnitIsOtherPlayersPet(unit) or UnitIsUnit(unit, "pet")
   return {
-    canAttack = addonTable.Display.Cache:Get(unit, "canAttack"),
-    inCombat = addonTable.Display.Cache:Get(unit, "combat"),
+    canAttack = addonTable.Cache:Get(unit, "canAttack"),
+    inCombat = addonTable.Cache:Get(unit, "combat"),
     alignment = GetAlignment(unit),
     isPlayer = IsPlayer(unit),
     isNPC = IsNPC(unit),
@@ -169,7 +169,7 @@ end
 
 function addonTable.Display.DesignForContextMixin:GetAssignedDesign(unit)
   if not self.unitsListening[unit] then
-    addonTable.Display.Cache:RegisterCallback(unit, "combat", function(inCombat)
+    addonTable.Cache:RegisterCallback(unit, "combat", function(inCombat)
       local state = self.unitStates[unit]
       local changes = state.updates.inCombat and inCombat ~= state.inCombat
       state.inCombat = inCombat
@@ -177,7 +177,7 @@ function addonTable.Display.DesignForContextMixin:GetAssignedDesign(unit)
         addonTable.CallbackRegistry:TriggerEvent("UnitDesignChange", unit)
       end
     end)
-    addonTable.Display.Cache:RegisterCallback(unit, "canAttack", function(canAttack)
+    addonTable.Cache:RegisterCallback(unit, "canAttack", function(canAttack)
       local state = self.unitStates[unit]
       local changes = canAttack ~= state.canAttack
       state.canAttack = canAttack

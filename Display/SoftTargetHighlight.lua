@@ -5,6 +5,7 @@ addonTable.Display.SoftTargetHighlightMixin = {}
 
 function addonTable.Display.SoftTargetHighlightMixin:SetUnit(unit)
   self.unit = unit
+  self:Hide()
 end
 
 function addonTable.Display.SoftTargetHighlightMixin:Strip()
@@ -12,5 +13,5 @@ function addonTable.Display.SoftTargetHighlightMixin:Strip()
 end
 
 function addonTable.Display.SoftTargetHighlightMixin:ApplyTarget()
-  self:SetShown(not UnitIsUnit("target", self.unit) and (UnitIsUnit("softenemy", self.unit) or UnitIsUnit("softfriend", self.unit)))
+  self:SetShown(addonTable.Cache:Get(self.unit, "softTarget"))
 end

@@ -41,11 +41,11 @@ end
 function addonTable.Display.CastTimeLeftTextMixin:SetUnit(unit)
   self.unit = unit
   if self.unit then
-    addonTable.Display.Cache:RegisterCallback(self.unit, "cast", function(state)
+    addonTable.Cache:RegisterCallback(self.unit, "cast", function(state)
       self:ApplyCasting(state)
     end)
 
-    self:ApplyCasting(addonTable.Display.Cache:Get(self.unit, "cast"))
+    self:ApplyCasting(addonTable.Cache:Get(self.unit, "cast"))
   else
     self:Strip()
   end

@@ -1,6 +1,8 @@
 ---@class addonTablePlatynator
 local addonTable = select(2, ...)
 
+local SetPoint = addonTable.PixelPerfect.SetPoint
+
 local borderPool = CreateTexturePool(UIParent, "BACKGROUND", 0, nil, function(_, tex)
   tex:SetColorTexture(0, 0, 0)
 end)
@@ -16,8 +18,8 @@ function addonTable.Display.CastIconMarkerMixin:PostInit()
     self.marker:SetTexCoord(0.1, 0.9, 0.1, 0.9)
 
     self.PostApplyAnchor = function()
-      PixelUtil.SetPoint(self.background, "TOPLEFT", self, "TOPLEFT", -1, 1)
-      PixelUtil.SetPoint(self.background, "BOTTOMRIGHT", self, "BOTTOMRIGHT", 1, -1)
+      SetPoint(self.background, "TOPLEFT", self, "TOPLEFT", -1, 1)
+      SetPoint(self.background, "BOTTOMRIGHT", self, "BOTTOMRIGHT", 1, -1)
     end
   end
 end
@@ -25,7 +27,7 @@ end
 function addonTable.Display.CastIconMarkerMixin:SetUnit(unit)
   self.unit = unit
   if self.unit then
-    addonTable.Display.Cache:RegisterCallback(self.unit, "cast", function(state)
+    addonTable.Cache:RegisterCallback(self.unit, "cast", function(state)
       if state.interrupted then
         self:ApplyInterrupt()
       elseif state.cast[3] or state.channel[3] then
@@ -35,7 +37,7 @@ function addonTable.Display.CastIconMarkerMixin:SetUnit(unit)
       end
     end)
 
-    local state = addonTable.Display.Cache:Get(self.unit, "cast")
+    local state = addonTable.Cache:Get(self.unit, "cast")
     if state.cast[3] or state.channel[3] then
       self:ApplyCasting(state.cast[3] or state.channel[3])
     else

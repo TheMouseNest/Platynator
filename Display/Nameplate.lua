@@ -1,6 +1,10 @@
 ---@class addonTablePlatynator
 local addonTable = select(2, ...)
 
+local SetPoint = addonTable.PixelPerfect.SetPoint
+local SetSize = addonTable.PixelPerfect.SetSize
+local ConvertPixelsToUIForRegion = addonTable.PixelPerfect.ConvertPixelsToUIForRegion
+
 local LSM = LibStub("LibSharedMedia-3.0")
 
 local pandemicCurve
@@ -189,9 +193,9 @@ function addonTable.Display.NameplateMixin:OnLoad()
         return
       end
 
-      local pandemicDim = PixelUtil.ConvertPixelsToUIForRegion(1, frame)
+      local pandemicDim = ConvertPixelsToUIForRegion(1, frame)
 
-      local step = PixelUtil.ConvertPixelsToUIForRegion(22, frame)
+      local step = ConvertPixelsToUIForRegion(22, frame)
       local currentX = 0
       local currentY = 0
       local xOffset = 0
@@ -287,9 +291,9 @@ function addonTable.Display.NameplateMixin:OnLoad()
           auraFrame.Cooldown:SetDrawEdge(details.showSwipe)
           auraFrame.Cooldown:SetDrawSwipe(details.showSwipe)
 
-          PixelUtil.SetSize(auraFrame, 20, 20 * details.height)
-          PixelUtil.SetSize(auraFrame.Border, 20, 20 * details.height)
-          PixelUtil.SetSize(auraFrame.Icon, 20, 20 * details.height)
+          SetSize(auraFrame, 20, 20 * details.height)
+          SetSize(auraFrame.Border, 20, 20 * details.height)
+          SetSize(auraFrame.Icon, 20, 20 * details.height)
           auraFrame.Icon:SetTexCoord(0.05, 0.95, 0.05 + texBase, 0.95 - texBase)
 
           auraFrame.Dispel:SetShown(details.showType)
@@ -346,7 +350,7 @@ function addonTable.Display.NameplateMixin:OnLoad()
 
         auraFrame:Show();
 
-        PixelUtil.SetPoint(auraFrame, anchor, frame, anchor, currentX, currentY)
+        SetPoint(auraFrame, anchor, frame, anchor, currentX, currentY)
         currentX = currentX + xOffset
       end
     end
@@ -408,8 +412,12 @@ function addonTable.Display.NameplateMixin:ApplyPixelPerfectSizing()
     return
   end
   for _, w in ipairs(self.widgets) do
-    w:ApplyAnchor()
-    w:ApplySize()
+    if w:IsShown() then
+      w:ApplyAnchor()
+      w:ApplySize()
+    else
+      w.pixelChange = true
+    end
   end
   self.lastScale = self:GetEffectiveScale()
 end
@@ -449,7 +457,7 @@ function addonTable.Display.NameplateMixin:InitializeWidgets(design, scaleOffset
       self.DebuffDisplay.Wrapped:SetPoint(designInfo.debuffs.anchor[1] or "CENTER")
       self.DebuffDisplay.Wrapped:SetScale(designInfo.debuffs.scale)
     end
-    PixelUtil.SetSize(self.DebuffDisplay, defaultSize * designInfo.debuffs.scale, defaultSize * designInfo.debuffs.scale)
+    SetSize(self.DebuffDisplay, defaultSize * designInfo.debuffs.scale, defaultSize * designInfo.debuffs.scale)
     addonTable.Display.ApplyAnchor(self.DebuffDisplay, designInfo.debuffs.anchor)
   end
   if designInfo.buffs then
@@ -463,7 +471,7 @@ function addonTable.Display.NameplateMixin:InitializeWidgets(design, scaleOffset
       self.BuffDisplay.Wrapped:SetScale(designInfo.buffs.scale)
       self.BuffDisplay.Wrapped:SetPoint(designInfo.buffs.anchor[1] or "CENTER")
     end
-    PixelUtil.SetSize(self.BuffDisplay, defaultSize * designInfo.buffs.scale, defaultSize * designInfo.buffs.scale)
+    SetSize(self.BuffDisplay, defaultSize * designInfo.buffs.scale, defaultSize * designInfo.buffs.scale)
     addonTable.Display.ApplyAnchor(self.BuffDisplay, designInfo.buffs.anchor)
   end
   if designInfo.crowdControl then
@@ -477,7 +485,7 @@ function addonTable.Display.NameplateMixin:InitializeWidgets(design, scaleOffset
       self.CrowdControlDisplay.Wrapped:SetScale(designInfo.crowdControl.scale)
       self.CrowdControlDisplay.Wrapped:SetPoint(designInfo.crowdControl.anchor[1] or "CENTER")
     end
-    PixelUtil.SetSize(self.CrowdControlDisplay, defaultSize * designInfo.crowdControl.scale, defaultSize * designInfo.crowdControl.scale)
+    SetSize(self.CrowdControlDisplay, defaultSize * designInfo.crowdControl.scale, defaultSize * designInfo.crowdControl.scale)
     addonTable.Display.ApplyAnchor(self.CrowdControlDisplay, designInfo.crowdControl.anchor)
   end
 
@@ -501,10 +509,6 @@ function addonTable.Display.NameplateMixin:Install(nameplate, offsetY)
 end
 
 function addonTable.Display.NameplateMixin:SetUnit(unit)
-  if self.unit then
-    addonTable.Display.Cache:RemoveUnit(self.unit)
-  end
-
   self.SoftTargetIcon:Hide()
 
   self.interactUnit = unit
@@ -512,18 +516,18 @@ function addonTable.Display.NameplateMixin:SetUnit(unit)
     self.unit = unit
 
     if UnitCanAttack("player", self.unit) and addonTable.Config.Get(addonTable.Config.Options.OUT_OF_RANGE_ALPHA) ~= 1 then
-      addonTable.Display.Cache:RegisterCallback(self.unit, "range", function(state)
+      addonTable.Cache:RegisterCallback(self.unit, "range", function(state)
         self.inRange = state
         self:UpdateVisual()
       end)
-      self.inRange = addonTable.Display.Cache:Get(self.unit, "range")
+      self.inRange = addonTable.Cache:Get(self.unit, "range")
     else
       self.inRange = true
     end
 
     if UnitCanAttack("player", self.unit) and addonTable.Config.Get(addonTable.Config.Options.NOT_IN_PULL_ALPHA) ~= 1 then
       self.inCombat = addonTable.Display.Utilities.IsInCombatWith(self.unit)
-      addonTable.Display.Cache:RegisterCallback(self.unit, "combat", function(inCombat)
+      addonTable.Cache:RegisterCallback(self.unit, "combat", function(inCombat)
         self.inCombat = inCombat
         self:UpdateVisual()
       end)
@@ -534,19 +538,52 @@ function addonTable.Display.NameplateMixin:SetUnit(unit)
     for _, w in ipairs(self.widgets) do
       w:Show()
       w:SetUnit(self.unit)
-      if w.ApplyTarget then
-        w:ApplyTarget()
-      end
-      if w.ApplyMouseover then
-        w:ApplyMouseover()
-      end
-      if w.ApplyFocus then
-        w:ApplyFocus()
-      end
-      if addonTable.API.TextOverrides.isActive and w.ApplyTextOverride then
-        w:ApplyTextOverride()
+    end
+
+    local isTarget = addonTable.Cache:Get(unit, "target")
+    local isSoftTarget = addonTable.Cache:Get(unit, "softTarget")
+    local isMouseover = addonTable.Cache:Get(unit, "mouseover")
+    local isFocus = addonTable.Cache:Get(unit, "focus")
+
+    if isTarget or isSoftTarget then
+      for _, w in ipairs(self.widgets) do
+        if w.ApplyTarget then
+          w:ApplyTarget()
+        end
       end
     end
+
+    if isMouseover then
+      for _, w in ipairs(self.widgets) do
+        if w.ApplyMouseover then
+          w:ApplyMouseover()
+        end
+      end
+    end
+
+    if isFocus then
+      for _, w in ipairs(self.widgets) do
+        if w.ApplyFocus then
+          w:ApplyFocus()
+        end
+      end
+    end
+
+    addonTable.Cache:RegisterCallback(unit, "target", function()
+      self:UpdateForTarget()
+    end)
+
+    addonTable.Cache:RegisterCallback(unit, "softTarget", function()
+      self:UpdateForTarget()
+    end)
+
+    addonTable.Cache:RegisterCallback(unit, "mouseover", function()
+      self:UpdateForMouseover()
+    end)
+
+    addonTable.Cache:RegisterCallback(unit, "focus", function()
+      self:UpdateForFocus()
+    end)
 
     self.BuffDisplay:SetShown(self.BuffDisplay.enabled)
     self.DebuffDisplay:SetShown(self.DebuffDisplay.enabled)
@@ -554,8 +591,8 @@ function addonTable.Display.NameplateMixin:SetUnit(unit)
 
     self.AurasManager:SetUnit(self.unit)
 
-    self:UpdateCastingState(addonTable.Display.Cache:Get(self.unit, "cast"))
-    addonTable.Display.Cache:RegisterCallback(self.unit, "cast", function(state)
+    self:UpdateCastingState(addonTable.Cache:Get(self.unit, "cast"))
+    addonTable.Cache:RegisterCallback(self.unit, "cast", function(state)
       local old = self.casting
       self:UpdateCastingState(state)
       if old ~= self.casting then
