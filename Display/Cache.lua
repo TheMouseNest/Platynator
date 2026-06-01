@@ -86,6 +86,14 @@ local getter = {
     local canAttack = UnitCanAttack("player", unit)
     return canAttack, canAttack ~= oldState
   end,
+  ["target"] = function(oldState, unit)
+    local target = UnitIsUnit("target", unit)
+    return target, target ~= oldState
+  end,
+  ["softTarget"] = function(oldState, unit)
+    local target = not UnitIsUnit("target", unit) and (UnitIsUnit("softenemy", unit) or UnitIsUnit("softfriend", unit))
+    return target, target ~= oldState
+  end,
 }
 
 local eventsFromKind = {
@@ -103,7 +111,7 @@ local eventsFromKind = {
   },
   ["threat"] = {
     "UNIT_THREAT_LIST_UPDATE",
-  }
+  },
 }
 if addonTable.Constants.IsRetail then
   tAppendAll(eventsFromKind["cast"], {
@@ -115,7 +123,11 @@ end
 local eventToKind = {}
 for kind, events in pairs(eventsFromKind) do
   for _, e in ipairs(events) do
-    eventToKind[e] = kind
+    if eventToKind[e] then
+      table.insert(eventToKind[e], kind)
+    else
+      eventToKind[e] = {kind}
+    end
   end
 end
 
@@ -147,6 +159,9 @@ function addonTable.Display.CacheMixin:OnLoad()
   for event in pairs(eventToKind) do
     self:RegisterEvent(event)
   end
+  self:RegisterEvent("PLAYER_TARGET_CHANGED")
+  self:RegisterEvent("PLAYER_SOFT_ENEMY_CHANGED")
+  self:RegisterEvent("PLAYER_SOFT_FRIEND_CHANGED")
 
   self:SetScript("OnUpdate", self.OnUpdate)
 
@@ -214,8 +229,19 @@ function addonTable.Display.CacheMixin:Process(kind, unit, eventName, ...)
 end
 
 function addonTable.Display.CacheMixin:OnEvent(eventName, unit, ...)
-  local kind = eventToKind[eventName]
-  self:Process(kind, unit, eventName, ...)
+  if eventName == "PLAYER_TARGET_CHANGED" or eventName == "PLAYER_SOFT_FRIEND_CHANGED" or eventName == "PLAYER_SOFT_ENEMY_CHANGED" then
+    for unit, details in pairs(self.monitoring) do
+      if details.target then
+        self:Process("target", unit, eventName, ...)
+      end
+      if details.softTarget then
+        self:Process("softTarget", unit, eventName, ...)
+      end
+    end
+  else
+    local kind = eventToKind[eventName]
+    self:Process(kind, unit, eventName, ...)
+  end
 end
 
 function addonTable.Display.CacheMixin:OnUpdate(elapsed)

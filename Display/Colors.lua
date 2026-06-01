@@ -39,9 +39,6 @@ end)
 local kindToEvent = {
   reaction = {"UNIT_FACTION"},
   tapped = {"UNIT_HEALTH"},
-  target = {"PLAYER_TARGET_CHANGED"},
-  notTarget = {"PLAYER_TARGET_CHANGED"},
-  softTarget = {"PLAYER_TARGET_CHANGED", "PLAYER_SOFT_ENEMY_CHANGED", "PLAYER_SOFT_FRIEND_CHANGED"},
   focus = {"PLAYER_FOCUS_CHANGED"},
   execute = {"UNIT_HEALTH"},
   eliteType = {"UNIT_CLASSIFICATION_CHANGED", "UNIT_FACTION"},
@@ -68,6 +65,9 @@ local kindToCache = {
   threat = {"threat"},
   inRange = {"range"},
   outOfRange = {"range"},
+  target = {"target"},
+  notTarget = {"target"},
+  softTarget = {"softTarget"},
 }
 
 function addonTable.Display.UnregisterForColorEvents(frame)
@@ -166,17 +166,17 @@ function addonTable.Display.GetColor(settings, state, unit)
         break
       end
     elseif s.kind == "target" then
-      if UnitIsUnit("target", unit) then
+      if addonTable.Display.Cache:Get(unit, "target") then
         table.insert(colorQueue, {color = s.colors.target})
         break
       end
     elseif s.kind == "notTarget" then
-      if not UnitIsUnit("target", unit) then
+      if not addonTable.Display.Cache:Get(unit, "target") then
         table.insert(colorQueue, {color = s.colors.notTarget})
         break
       end
     elseif s.kind == "softTarget" then
-      if not UnitIsUnit("target", unit) and (UnitIsUnit("softenemy", unit) or UnitIsUnit("softfriend", unit)) then
+      if not addonTable.Display.Cache:Get(unit, "softTarget") then
         table.insert(colorQueue, {color = s.colors.softTarget})
         break
       end

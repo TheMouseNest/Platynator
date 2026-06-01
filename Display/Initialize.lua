@@ -28,6 +28,12 @@ function addonTable.Display.ManagerMixin:OnLoad()
   self.nameplateClickRegions = {}
 
   self.MouseoverMonitor = nil
+  self.targetingState = {
+    mouseover = nil,
+    target = nil,
+    softTarget = nil,
+    focus = nil,
+  }
 
   self:SetScript("OnEvent", self.OnEvent)
 
@@ -551,6 +557,8 @@ function addonTable.Display.ManagerMixin:Install(unit)
     end
     self:ListenToBuffs(newDisplay, unit)
     newDisplay:SetUnit(unit)
+
+    self:UpdateTargetingState(unit)
   end
 end
 
@@ -568,9 +576,68 @@ function addonTable.Display.ManagerMixin:Uninstall(unit)
   end
 end
 
+function addonTable.Display.ManagerMixin:UpdateTargetingState(unit)
+  local display = self.nameplateDisplays[unit]
+
+  if UnitIsUnit("mouseover", unit) then
+    if self.targetingState.mouseover then
+      local oldDisplay = self.nameplateDisplays[self.targetingState.mouseover]
+      if oldDisplay then
+        oldDisplay:UpdateForMouseover()
+      end
+    end
+    self.targetingState.mouseover = unit
+  end
+
+  if UnitIsUnit("focus", unit) then
+    if self.targetingState.focus then
+      local oldDisplay = self.nameplateDisplays[self.targetingState.focus]
+      if oldDisplay then
+        oldDisplay:UpdateForFocus()
+      end
+    end
+    self.targetingState.focus = unit
+  end
+
+  if UnitIsUnit("target", unit) then
+    if self.targetingState.target then
+      local oldDisplay = self.nameplateDisplays[self.targetingState.target]
+      if oldDisplay then
+        oldDisplay:UpdateForTarget()
+      end
+    end
+    self.targetingState.target = unit
+  end
+
+  if UnitIsUnit("softenemy", unit) or UnitIsUnit("softfriend", unit) then
+    if self.targetingState.softTarget then
+      local oldDisplay = self.nameplateDisplays[self.targetingState.softTarget]
+      if oldDisplay then
+        oldDisplay:UpdateForTarget()
+      end
+    end
+    self.targetingState.softTarget = unit
+  end
+end
+
 function addonTable.Display.ManagerMixin:UpdateForMouseover()
-  for _, display in pairs(self.nameplateDisplays) do
-    display:UpdateForMouseover()
+  local display, unit
+  for u, d in pairs(self.nameplateDisplays) do
+    if UnitIsUnit(u, "mouseover") then
+      unit = u
+      display = d
+      break
+    end
+  end
+  if self.targetingState.mouseover ~= unit then
+    local oldDisplay = self.nameplateDisplays[self.targetingState.mouseover]
+    if oldDisplay then
+      oldDisplay:UpdateForMouseover()
+    end
+    self.targetingState.mouseover = unit
+    if display then
+      display:UpdateForMouseover()
+    end
   end
   addonTable.CallbackRegistry:TriggerEvent("MouseoverUpdate")
 
@@ -593,8 +660,37 @@ function addonTable.Display.ManagerMixin:UpdateForMouseoverFrequent()
 end
 
 function addonTable.Display.ManagerMixin:UpdateForTarget()
-  for _, display in pairs(self.nameplateDisplays) do
-    display:UpdateForTarget()
+  local start = debugprofilestop()
+  local softUnit, unit
+  for u, d in pairs(self.nameplateDisplays) do
+    if UnitIsUnit(u, "target") then
+      unit = u
+    end
+    if UnitIsUnit(u, "softenemy") or UnitIsUnit(u, "softfriend") then
+      softUnit = u
+    end
+  end
+  if self.targetingState.target ~= unit then
+    local oldDisplay = self.nameplateDisplays[self.targetingState.target]
+    if oldDisplay then
+      oldDisplay:UpdateForTarget()
+    end
+    self.targetingState.target = unit
+    local display = self.nameplateDisplays[unit]
+    if display then
+      display:UpdateForTarget()
+    end
+  end
+  if self.targetingState.softTarget ~= unit and unit ~= softUnit then
+    local oldDisplay = self.nameplateDisplays[self.targetingState.target]
+    if oldDisplay then
+      oldDisplay:UpdateForTarget()
+    end
+    self.targetingState.softTarget = unit
+    local display = self.nameplateDisplays[softUnit]
+    if display then
+      display:UpdateForTarget()
+    end
   end
 end
 
@@ -932,9 +1028,8 @@ function addonTable.Display.ManagerMixin:OnEvent(eventName, ...)
       self.lastInteract = nil
     end
   elseif eventName == "UNIT_POWER_UPDATE" or eventName == "RUNE_POWER_UPDATE" or eventName == "UNIT_POWER_POINT_CHARGE" then
-    for _, display in pairs(self.nameplateDisplays) do
-      display:UpdateForTarget()
-    end
+    local display = self.nameplateDisplays[self.targetingState.target] or self.nameplateDisplays[self.targetingState.softTarget]
+    display:UpdateForTarget()
   elseif eventName == "GLOBAL_MOUSE_UP" then
     self:UpdateForMouseover()
     self:UnregisterEvent("GLOBAL_MOUSE_UP")
