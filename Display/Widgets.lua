@@ -855,8 +855,6 @@ function addonTable.Display.GetHealthFillText(frame, parent)
     frame.maskAbsorb:SetFrameLevel(frame:GetFrameLevel() + 2)
     frame.mask:SetFrameLevel(frame:GetFrameLevel() + 3)
 
-    frame:SetAllPoints(frame.background)
-
     if details.kind == "healthFillText" then
       Mixin(frame, addonTable.Display.HealthFillTextBarMixin)
     else
