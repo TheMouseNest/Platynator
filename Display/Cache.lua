@@ -140,6 +140,7 @@ function addonTable.Display.CacheMixin:OnLoad()
   }
   self.monitoringOrder = {}
   self.step = 1
+  self.totalElapsed = 0
 
   for event in pairs(eventToKind) do
     self:RegisterEvent(event)
@@ -216,46 +217,55 @@ function addonTable.Display.CacheMixin:OnEvent(eventName, unit, ...)
 end
 
 function addonTable.Display.CacheMixin:OnUpdate(elapsed)
-  if #self.monitoringOrder == 0 then
+  local length = #self.monitoringOrder
+  if length == 0 then
     return
   end
-  if self.step > #self.monitoringOrder then
+  if self.step > length then
     self.step = 1
   end
+  self.totalElapsed = self.totalElapsed + elapsed
+  if self.totalElapsed < 1 / 4 / length then
+    return
+  end
+  local toProcess = self.totalElapsed * 4 * length
+  self.totalElapsed = 0
 
-  local unit = self.monitoringOrder[self.step]
-  local details = self.monitoring[unit]
-  local state = self.state[unit]
+  for i = self.step, math.min(length, self.step + toProcess) do
+    local unit = self.monitoringOrder[i]
+    local details = self.monitoring[unit]
+    local state = self.state[unit]
 
-  if details.range then
-    local kind = "range"
-    local data, update = getter[kind](state[kind], unit)
-    state[kind] = data
-    if update then
-      for _, callback in ipairs(self.registeredCallbacks[unit][kind]) do
-        callback(data)
+    if details.range then
+      local kind = "range"
+      local data, update = getter[kind](state[kind], unit)
+      state[kind] = data
+      if update then
+        for _, callback in ipairs(self.registeredCallbacks[unit][kind]) do
+          callback(data)
+        end
       end
     end
-  end
-  if details.combat then
-    local kind = "combat"
-    local data, update = getter[kind](state[kind], unit)
-    state[kind] = data
-    if update then
-      for _, callback in ipairs(self.registeredCallbacks[unit][kind]) do
-        callback(data)
+    if details.combat then
+      local kind = "combat"
+      local data, update = getter[kind](state[kind], unit)
+      state[kind] = data
+      if update then
+        for _, callback in ipairs(self.registeredCallbacks[unit][kind]) do
+          callback(data)
+        end
       end
     end
-  end
-  if details.canAttack then
-    local kind = "canAttack"
-    local data, update = getter[kind](state[kind], unit)
-    state[kind] = data
-    if update then
-      for _, callback in ipairs(self.registeredCallbacks[unit][kind]) do
-        callback(data)
+    if details.canAttack then
+      local kind = "canAttack"
+      local data, update = getter[kind](state[kind], unit)
+      state[kind] = data
+      if update then
+        for _, callback in ipairs(self.registeredCallbacks[unit][kind]) do
+          callback(data)
+        end
       end
     end
+    self.step = self.step + 1
   end
-  self.step = self.step + 1
 end
