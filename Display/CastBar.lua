@@ -97,14 +97,16 @@ end
 
 if UnitCastingDuration then
   function addonTable.Display.CastBarMixin:ApplyCasting(state)
-    self.isChanneled = state.channel[1] ~= nil
-    local isEmpowered = state.channel[9] == true
+    local isEmpowered = false
     local castDuration
-    if isEmpowered then
-      castDuration = UnitEmpoweredChannelDuration(self.unit, true)
-    elseif self.isChanneled then
+    if state.empoweredDuration then
+      castDuration = state.empoweredDuration
+      isEmpowered = true
+    elseif state.channelDuration then
+      self.isChanneled = true
       castDuration = state.channelDuration
     else
+      self.isChanneled = false
       castDuration = state.castDuration
     end
     if castDuration ~= nil then

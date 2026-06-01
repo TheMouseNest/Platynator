@@ -55,7 +55,9 @@ local getter = {
     if new.cast[1] then
       new.castDuration = UnitCastingDuration(unit)
     end
-    if new.channel[1] then
+    if new.channel[9] then
+      new.empoweredDuration = UnitEmpoweredChannelDuration(unit, true)
+    elseif new.channel[1] then
       new.channelDuration = UnitChannelDuration(unit)
     end
     return new, state

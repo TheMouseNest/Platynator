@@ -56,44 +56,48 @@ function addonTable.Display.CastTimeLeftTextMixin:Strip()
     self.timer:Cancel()
     self.timer = nil
   end
-  self.duration = nil
-  self.endTime = nil
   self:UnregisterAllEvents()
 end
 
-function addonTable.Display.CastTimeLeftTextMixin:ApplyCasting(state)
-  local endTime = state.cast[5]
-  local isChanneled = false
-  if not endTime then
-    endTime = state.channel[5]
-    isChanneled = true
-  end
 
-  if self.timer then
-    self.timer:Cancel()
-    self.timer = nil
-  end
+if UnitChannelDuration then
+  function addonTable.Display.CastTimeLeftTextMixin:ApplyCasting(state)
+    if self.timer then
+      self.timer:Cancel()
+      self.timer = nil
+    end
 
-  if endTime then
-    self:Show()
-    if UnitChannelDuration then
-      if isChanneled then
-        self.duration = state.channelDuration
-      else
-        self.duration = state.castDuration
-      end
-      self.text:SetText(self.duration:FormatRemainingDuration(formatter))
+    local duration = state.empoweredDuration or state.channelDuration or state.castDuration
+
+    self:SetShown(duration ~= nil)
+    if duration then
+      self.text:SetText(duration:FormatRemainingDuration(formatter))
       self.timer = C_Timer.NewTicker(0.05, function()
-        self.text:SetText(self.duration:FormatRemainingDuration(formatter))
-      end)
-    else
-      self.endTime = endTime / 1000
-      self.text:SetText(ClassicFormatter(self.endTime - GetTime()))
-      self.timer = C_Timer.NewTicker(0.1, function()
-        self.text:SetText(ClassicFormatter(self.endTime - GetTime()))
+        self.text:SetText(duration:FormatRemainingDuration(formatter))
       end)
     end
-  else
-    self:Hide()
+  end
+else
+  function addonTable.Display.CastTimeLeftTextMixin:ApplyCasting(state)
+    if self.timer then
+      self.timer:Cancel()
+      self.timer = nil
+    end
+
+    local endTime = state.cast[5]
+    local isChanneled = false
+    if not endTime then
+      endTime = state.channel[5]
+      isChanneled = true
+    end
+
+    self:SetShown(endTime ~= nil)
+    if endTime then
+      local endTime = endTime / 1000
+      self.text:SetText(ClassicFormatter(endTime - GetTime()))
+      self.timer = C_Timer.NewTicker(0.1, function()
+        self.text:SetText(ClassicFormatter(endTime - GetTime()))
+      end)
+    end
   end
 end
