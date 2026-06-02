@@ -236,11 +236,12 @@ if C_Spell.GetSpellCooldownDuration then
   local duration
   local lastDurationTime = 0
   function addonTable.Display.Utilities.GetInterruptSpellPriority()
-    if lastDurationTime ~= GetTime() then
-      duration = C_Spell.GetSpellCooldownDuration(currentInterrupt[1])
+    local interrupt = currentInterrupt[1]
+    if interrupt and lastDurationTime ~= GetTime() then
+      duration = C_Spell.GetSpellCooldownDuration(interrupt)
       lastDurationTime = GetTime()
     end
-    return currentInterrupt[1], duration
+    return interrupt, duration
   end
 else
   function addonTable.Display.Utilities.GetInterruptSpellPriority()
