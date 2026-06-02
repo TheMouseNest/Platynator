@@ -408,8 +408,12 @@ function addonTable.Display.NameplateMixin:ApplyPixelPerfectSizing()
     return
   end
   for _, w in ipairs(self.widgets) do
-    w:ApplyAnchor()
-    w:ApplySize()
+    if w:IsShown() then
+      w:ApplyAnchor()
+      w:ApplySize()
+    else
+      w.pixelPerfectRequired = true
+    end
   end
   self.lastScale = self:GetEffectiveScale()
 end

@@ -984,6 +984,14 @@ function addonTable.Display.GetWidgets(design, parent, isEditor)
   for _, w in ipairs(widgets) do
     w:ApplyAnchor()
     w:ApplySize()
+    w.pixelPerfectRequired = nil
+    w:SetScript("OnShow", function()
+      if w.pixelPerfectRequired then
+        w.pixelPerfectRequired = nil
+        w:ApplyAnchor()
+        w:ApplySize()
+      end
+    end)
   end
 
   return widgets
