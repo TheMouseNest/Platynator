@@ -269,6 +269,12 @@ function addonTable.Display.CacheMixin:OnEvent(eventName, unit, ...)
   elseif eventName == "UPDATE_MOUSEOVER_UNIT" or eventName == "GLOBAL_MOUSE_UP" then
     self:UnregisterEvent("GLOBAL_MOUSE_UP")
     self:UpdateMouseover()
+  elseif eventName == "PLAYER_FOCUS_CHANGED" then
+    for unit, details in pairs(self.monitoring) do
+      if details.focus then
+        self:Process("focus", unit, eventName, ...)
+      end
+    end
   else
     local kind = eventToKind[eventName]
     self:Process(kind, unit, eventName, ...)
