@@ -5,6 +5,7 @@ addonTable.Display.MouseoverHighlightMixin = {}
 
 function addonTable.Display.MouseoverHighlightMixin:SetUnit(unit)
   self.unit = unit
+  self:Hide()
 end
 
 function addonTable.Display.MouseoverHighlightMixin:Strip()
@@ -19,5 +20,5 @@ function addonTable.Display.MouseoverHighlightMixin:ApplyTarget()
 end
 
 function addonTable.Display.MouseoverHighlightMixin:ApplyMouseover()
-  self:SetShown(UnitIsUnit("mouseover", self.unit) and (self.details.includeTarget or not UnitIsUnit("target", self.unit)))
+  self:SetShown(addonTable.Cache:Get(self.unit, "mouseover") and (self.details.includeTarget or not addonTable.Cache:Get(self.unit, "target")))
 end

@@ -6,12 +6,12 @@ addonTable.Display.CastTargetTextMixin = {}
 function addonTable.Display.CastTargetTextMixin:SetUnit(unit)
   self.unit = unit
   if self.unit then
-    addonTable.Display.Cache:RegisterCallback(self.unit, "cast", function(state)
+    addonTable.Cache:RegisterCallback(self.unit, "cast", function(state)
       self:UpdateTarget(state)
       self:UpdateText()
     end)
 
-    self:UpdateTarget(addonTable.Display.Cache:Get(self.unit, "cast"))
+    self:UpdateTarget(addonTable.Cache:Get(self.unit, "cast"))
     self:UpdateText()
   else
     self:Strip()

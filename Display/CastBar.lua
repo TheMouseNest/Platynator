@@ -17,7 +17,7 @@ function addonTable.Display.CastBarMixin:SetUnit(unit)
   self.unit = unit
   if self.unit then
 
-    addonTable.Display.Cache:RegisterCallback(self.unit, "cast", function(state)
+    addonTable.Cache:RegisterCallback(self.unit, "cast", function(state)
       if state.interrupted then
         self:ApplyInterrupt()
       elseif state.cast[1] == nil and state.channel[1] == nil then
@@ -27,7 +27,7 @@ function addonTable.Display.CastBarMixin:SetUnit(unit)
       end
     end)
 
-    self:ApplyCasting(addonTable.Display.Cache:Get(self.unit, "cast"))
+    self:ApplyCasting(addonTable.Cache:Get(self.unit, "cast"))
 
     addonTable.Display.RegisterForColorEvents(self, self.details.autoColors)
   else

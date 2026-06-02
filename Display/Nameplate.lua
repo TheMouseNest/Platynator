@@ -501,10 +501,6 @@ function addonTable.Display.NameplateMixin:Install(nameplate, offsetY)
 end
 
 function addonTable.Display.NameplateMixin:SetUnit(unit)
-  if self.unit then
-    addonTable.Display.Cache:RemoveUnit(self.unit)
-  end
-
   self.SoftTargetIcon:Hide()
 
   self.interactUnit = unit
@@ -512,18 +508,18 @@ function addonTable.Display.NameplateMixin:SetUnit(unit)
     self.unit = unit
 
     if UnitCanAttack("player", self.unit) and addonTable.Config.Get(addonTable.Config.Options.OUT_OF_RANGE_ALPHA) ~= 1 then
-      addonTable.Display.Cache:RegisterCallback(self.unit, "range", function(state)
+      addonTable.Cache:RegisterCallback(self.unit, "range", function(state)
         self.inRange = state
         self:UpdateVisual()
       end)
-      self.inRange = addonTable.Display.Cache:Get(self.unit, "range")
+      self.inRange = addonTable.Cache:Get(self.unit, "range")
     else
       self.inRange = true
     end
 
     if UnitCanAttack("player", self.unit) and addonTable.Config.Get(addonTable.Config.Options.NOT_IN_PULL_ALPHA) ~= 1 then
       self.inCombat = addonTable.Display.Utilities.IsInCombatWith(self.unit)
-      addonTable.Display.Cache:RegisterCallback(self.unit, "combat", function(inCombat)
+      addonTable.Cache:RegisterCallback(self.unit, "combat", function(inCombat)
         self.inCombat = inCombat
         self:UpdateVisual()
       end)
@@ -534,19 +530,52 @@ function addonTable.Display.NameplateMixin:SetUnit(unit)
     for _, w in ipairs(self.widgets) do
       w:Show()
       w:SetUnit(self.unit)
-      if w.ApplyTarget then
-        w:ApplyTarget()
-      end
-      if w.ApplyMouseover then
-        w:ApplyMouseover()
-      end
-      if w.ApplyFocus then
-        w:ApplyFocus()
-      end
-      if addonTable.API.TextOverrides.isActive and w.ApplyTextOverride then
-        w:ApplyTextOverride()
+    end
+
+    local isTarget = addonTable.Cache:Get(unit, "target")
+    local isSoftTarget = addonTable.Cache:Get(unit, "softTarget")
+    local isMouseover = addonTable.Cache:Get(unit, "mouseover")
+    local isFocus = addonTable.Cache:Get(unit, "focus")
+
+    if isTarget or isSoftTarget then
+      for _, w in ipairs(self.widgets) do
+        if w.ApplyTarget then
+          w:ApplyTarget()
+        end
       end
     end
+
+    if isMouseover then
+      for _, w in ipairs(self.widgets) do
+        if w.ApplyMouseover then
+          w:ApplyMouseover()
+        end
+      end
+    end
+
+    if isFocus then
+      for _, w in ipairs(self.widgets) do
+        if w.ApplyFocus then
+          w:ApplyFocus()
+        end
+      end
+    end
+
+    addonTable.Cache:RegisterCallback(unit, "target", function()
+      self:UpdateForTarget()
+    end)
+
+    addonTable.Cache:RegisterCallback(unit, "softTarget", function()
+      self:UpdateForTarget()
+    end)
+
+    addonTable.Cache:RegisterCallback(unit, "mouseover", function()
+      self:UpdateForMouseover()
+    end)
+
+    addonTable.Cache:RegisterCallback(unit, "focus", function()
+      self:UpdateForFocus()
+    end)
 
     self.BuffDisplay:SetShown(self.BuffDisplay.enabled)
     self.DebuffDisplay:SetShown(self.DebuffDisplay.enabled)
@@ -554,8 +583,8 @@ function addonTable.Display.NameplateMixin:SetUnit(unit)
 
     self.AurasManager:SetUnit(self.unit)
 
-    self:UpdateCastingState(addonTable.Display.Cache:Get(self.unit, "cast"))
-    addonTable.Display.Cache:RegisterCallback(self.unit, "cast", function(state)
+    self:UpdateCastingState(addonTable.Cache:Get(self.unit, "cast"))
+    addonTable.Cache:RegisterCallback(self.unit, "cast", function(state)
       local old = self.casting
       self:UpdateCastingState(state)
       if old ~= self.casting then

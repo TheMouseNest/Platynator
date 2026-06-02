@@ -57,7 +57,7 @@ end
 
 do
   function addonTable.Display.Utilities.IsInCombatWith(unit)
-    return addonTable.Display.Cache:Get(unit, "combat")
+    return addonTable.Cache:Get(unit, "combat")
   end
 end
 

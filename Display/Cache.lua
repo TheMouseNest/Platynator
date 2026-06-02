@@ -9,7 +9,7 @@ local function IsInCombatWith(unit)
   return UnitAffectingCombat(unit) and
     (
       UnitIsFriend("player", unit) and (UnitInParty(unit) == true or UnitInRaid(unit)== true) or
-      addonTable.Display.Cache:Get(unit, "threat").situation ~= nil or
+      addonTable.Cache:Get(unit, "threat").situation ~= nil or
       UnitInParty(unit .. "target") == true or UnitInRaid(unit .. "target") == true
     )
 end
@@ -94,6 +94,14 @@ local getter = {
     local target = not UnitIsUnit("target", unit) and (UnitIsUnit("softenemy", unit) or UnitIsUnit("softfriend", unit))
     return target, target ~= oldState
   end,
+  ["mouseover"] = function(oldState, unit)
+    local mouseover = UnitIsUnit("mouseover", unit)
+    return mouseover, mouseover ~= oldState
+  end,
+  ["focus"] = function(oldState, unit)
+    local focus = UnitIsUnit("focus", unit)
+    return focus, focus ~= oldState
+  end,
 }
 
 local eventsFromKind = {
@@ -158,6 +166,9 @@ function addonTable.Display.CacheMixin:OnLoad()
   self:RegisterEvent("PLAYER_TARGET_CHANGED")
   self:RegisterEvent("PLAYER_SOFT_ENEMY_CHANGED")
   self:RegisterEvent("PLAYER_SOFT_FRIEND_CHANGED")
+
+  self:RegisterEvent("PLAYER_FOCUS_CHANGED")
+  self:RegisterEvent("UPDATE_MOUSEOVER_UNIT")
 
   self:SetScript("OnUpdate", self.OnUpdate)
 
@@ -224,6 +235,27 @@ function addonTable.Display.CacheMixin:Process(kind, unit, eventName, ...)
   end
 end
 
+function addonTable.Display.CacheMixin:UpdateMouseover()
+  for unit, details in pairs(self.monitoring) do
+    if details.mouseover then
+      self:Process("mouseover", unit, "UPDATE_MOUSEOVER_UNIT")
+    end
+  end
+
+  if UnitExists("mouseover") and not self.MouseoverMonitor then
+    self.MouseoverMonitor = C_Timer.NewTicker(0.1, function()
+      if not UnitExists("mouseover") then
+        self.MouseoverMonitor:Cancel()
+        self.MouseoverMonitor = nil
+        self:UpdateMouseover()
+        if IsMouseButtonDown() then -- Holding down the mouse button will remove the mouseover unit temporarily
+          self:RegisterEvent("GLOBAL_MOUSE_UP")
+        end
+      end
+    end)
+  end
+end
+
 function addonTable.Display.CacheMixin:OnEvent(eventName, unit, ...)
   if eventName == "PLAYER_TARGET_CHANGED" or eventName == "PLAYER_SOFT_FRIEND_CHANGED" or eventName == "PLAYER_SOFT_ENEMY_CHANGED" then
     for unit, details in pairs(self.monitoring) do
@@ -234,6 +266,9 @@ function addonTable.Display.CacheMixin:OnEvent(eventName, unit, ...)
         self:Process("softTarget", unit, eventName, ...)
       end
     end
+  elseif eventName == "UPDATE_MOUSEOVER_UNIT" or eventName == "GLOBAL_MOUSE_UP" then
+    self:UnregisterEvent("GLOBAL_MOUSE_UP")
+    self:UpdateMouseover()
   else
     local kind = eventToKind[eventName]
     self:Process(kind, unit, eventName, ...)

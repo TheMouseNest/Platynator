@@ -39,7 +39,6 @@ end)
 local kindToEvent = {
   reaction = {"UNIT_FACTION"},
   tapped = {"UNIT_HEALTH"},
-  focus = {"PLAYER_FOCUS_CHANGED"},
   execute = {"UNIT_HEALTH"},
   eliteType = {"UNIT_CLASSIFICATION_CHANGED", "UNIT_FACTION"},
   rarity = {"UNIT_CLASSIFICATION_CHANGED"},
@@ -48,7 +47,6 @@ local kindToEvent = {
 }
 local kindToCallback = {
   quest = {"QuestInfoUpdate"},
-  mouseover = {"MouseoverUpdate"},
   threat = {"RoleChange"},
 }
 local kindToCache = {
@@ -68,6 +66,8 @@ local kindToCache = {
   target = {"target"},
   notTarget = {"target"},
   softTarget = {"softTarget"},
+  mouseover = {"target", "mouseover"},
+  mouseover = {"focus"},
 }
 
 function addonTable.Display.UnregisterForColorEvents(frame)
@@ -122,7 +122,7 @@ function addonTable.Display.RegisterForColorEvents(frame, settings, defaultColor
       for _, c in ipairs(cc) do
         if not frame.colorState.caches[c] then
           frame.colorState.caches[c] = true
-          addonTable.Display.Cache:RegisterCallback(frame.unit, c, function()
+          addonTable.Cache:RegisterCallback(frame.unit, c, function()
             frame:ColorEventHandler("FORCED")
           end)
         end
@@ -166,32 +166,32 @@ function addonTable.Display.GetColor(settings, state, unit)
         break
       end
     elseif s.kind == "target" then
-      if addonTable.Display.Cache:Get(unit, "target") then
+      if addonTable.Cache:Get(unit, "target") then
         table.insert(colorQueue, {color = s.colors.target})
         break
       end
     elseif s.kind == "notTarget" then
-      if not addonTable.Display.Cache:Get(unit, "target") then
+      if not addonTable.Cache:Get(unit, "target") then
         table.insert(colorQueue, {color = s.colors.notTarget})
         break
       end
     elseif s.kind == "softTarget" then
-      if not addonTable.Display.Cache:Get(unit, "softTarget") then
+      if not addonTable.Cache:Get(unit, "softTarget") then
         table.insert(colorQueue, {color = s.colors.softTarget})
         break
       end
     elseif s.kind == "focus" then
-      if UnitIsUnit("focus", unit) then
+      if addonTable.Cache:Get(unit, "focus") then
         table.insert(colorQueue, {color = s.colors.focus})
         break
       end
     elseif s.kind == "mouseover" then
-      if UnitIsUnit("mouseover", unit) and (s.includeTarget or not UnitIsUnit("target", unit)) then
+      if addonTable.Cache:Get(unit, "mouseover") and (s.includeTarget or not addonTable.Cache:Get(unit, "target")) then
         table.insert(colorQueue, {color = s.colors.mouseover})
         break
       end
     elseif s.kind == "threat" then
-      local threatDetails = addonTable.Display.Cache:Get(unit, "threat")
+      local threatDetails = addonTable.Cache:Get(unit, "threat")
       local threat = threatDetails.situation
       local doesOtherTankHaveAggro = threatDetails.otherTankAggro
       local hostile = state.hostile
@@ -278,7 +278,7 @@ function addonTable.Display.GetColor(settings, state, unit)
       table.insert(colorQueue, {color = s.colors[addonTable.Display.Utilities.GetUnitDifficulty(unit)]})
       break
     elseif s.kind == "interruptReady" then
-      local cacheInfo = addonTable.Display.Cache:Get(unit, "cast")
+      local cacheInfo = addonTable.Cache:Get(unit, "cast")
       local castInfo = cacheInfo.cast
       local channelInfo = cacheInfo.channel
       local notInterruptible = castInfo[8]
@@ -313,7 +313,7 @@ function addonTable.Display.GetColor(settings, state, unit)
         end
       end
     elseif s.kind == "interruptNotReady" then
-      local cacheInfo = addonTable.Display.Cache:Get(unit, "cast")
+      local cacheInfo = addonTable.Cache:Get(unit, "cast")
       local castInfo = cacheInfo.cast
       local channelInfo = cacheInfo.channel
       local notInterruptible = castInfo[8]
@@ -352,7 +352,7 @@ function addonTable.Display.GetColor(settings, state, unit)
         end
       end
     elseif s.kind == "castTargetsYou" then
-      local cacheInfo = addonTable.Display.Cache:Get(unit, "cast")
+      local cacheInfo = addonTable.Cache:Get(unit, "cast")
       local castInfo = cacheInfo.cast
       local channelInfo = cacheInfo.channel
       local name = castInfo[1]
@@ -368,7 +368,7 @@ function addonTable.Display.GetColor(settings, state, unit)
         end
       end
     elseif s.kind == "uninterruptableCast" then
-      local cacheInfo = addonTable.Display.Cache:Get(unit, "cast")
+      local cacheInfo = addonTable.Cache:Get(unit, "cast")
       local castInfo = cacheInfo.cast
       local channelInfo = cacheInfo.channel
       local uninterruptable = castInfo[8]
@@ -380,7 +380,7 @@ function addonTable.Display.GetColor(settings, state, unit)
       end
     elseif s.kind == "importantCast" then
       if C_Spell.IsSpellImportant then
-        local cacheInfo = addonTable.Display.Cache:Get(unit, "cast")
+        local cacheInfo = addonTable.Cache:Get(unit, "cast")
         local castInfo = cacheInfo.cast
         local channelInfo = cacheInfo.channel
         local spellID = castInfo[9]
@@ -399,7 +399,7 @@ function addonTable.Display.GetColor(settings, state, unit)
         end
       end
     elseif s.kind == "cast" then
-      local cacheInfo = addonTable.Display.Cache:Get(unit, "cast")
+      local cacheInfo = addonTable.Cache:Get(unit, "cast")
       local castInfo = cacheInfo.cast
       local channelInfo = cacheInfo.channel
       local text = castInfo[1]
@@ -417,7 +417,7 @@ function addonTable.Display.GetColor(settings, state, unit)
         break
       end
     elseif s.kind == "notCast" then
-      local cacheInfo = addonTable.Display.Cache:Get(unit, "cast")
+      local cacheInfo = addonTable.Cache:Get(unit, "cast")
       local castInfo = cacheInfo.cast
       local channelInfo = cacheInfo.channel
       if castInfo[1] == nil and channelInfo[1] == nil and cacheInfo.interrupted == nil then
@@ -425,7 +425,7 @@ function addonTable.Display.GetColor(settings, state, unit)
         break
       end
     elseif s.kind == "isCast" then
-      local cacheInfo = addonTable.Display.Cache:Get(unit, "cast")
+      local cacheInfo = addonTable.Cache:Get(unit, "cast")
       local castInfo = cacheInfo.cast
       local channelInfo = cacheInfo.channel
       if castInfo[1] ~= nil or channelInfo[1] ~= nil or cacheInfo.interrupted ~= nil then
@@ -463,13 +463,13 @@ function addonTable.Display.GetColor(settings, state, unit)
         break
       end
     elseif s.kind == "inRange" then
-      local range = addonTable.Display.Cache:Get(unit, "range")
+      local range = addonTable.Cache:Get(unit, "range")
       if range then
         table.insert(colorQueue, {color = s.colors.inRange})
         break
       end
     elseif s.kind == "outOfRange" then
-      local range = addonTable.Display.Cache:Get(unit, "range")
+      local range = addonTable.Cache:Get(unit, "range")
       if not range then
         table.insert(colorQueue, {color = s.colors.outOfRange})
         break
