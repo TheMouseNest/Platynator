@@ -75,7 +75,7 @@ local getter = {
     return result, not oldState or result.situation ~= oldState.situation or result.otherTankAggro ~= oldState.otherTankAggro
   end,
   ["range"] = function(oldState, unit)
-    local result = C_Spell.IsSpellInRange(49576, unit)
+    local result = addonTable.Display.Utilities.GetRangeChecker(unit)
     return result, result ~= oldState
   end,
   ["combat"] = function(oldState, unit)
