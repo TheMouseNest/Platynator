@@ -75,7 +75,7 @@ local getter = {
     return result, not oldState or result.situation ~= oldState.situation or result.otherTankAggro ~= oldState.otherTankAggro
   end,
   ["range"] = function(oldState, unit)
-    local result = addonTable.Display.Utilities.GetRangeChecker(unit)
+    local result = addonTable.Display.Utilities.GetRangeChecker()(unit)
     return result, result ~= oldState
   end,
   ["combat"] = function(oldState, unit)
