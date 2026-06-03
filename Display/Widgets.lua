@@ -986,7 +986,7 @@ function addonTable.Display.GetWidgets(design, parent, isEditor)
     w:ApplySize()
     w.pixelPerfectRequired = nil
     w:SetScript("OnShow", function()
-      if w.pixelPerfectRequired then
+      if w.pixelPerfectRequired and w.unit then
         w.pixelPerfectRequired = nil
         w:ApplyAnchor()
         w:ApplySize()
