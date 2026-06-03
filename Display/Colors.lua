@@ -487,6 +487,9 @@ function addonTable.Display.GetColor(settings, state, unit)
         table.insert(colorQueue, {color = s.colors.damage})
         break
       end
+    elseif s.kind == "myClassColor" then
+      local _, class = UnitClass("player")
+      table.insert(colorQueue, {color = s.colors[class] or RAID_CLASS_COLORS[class]})
     end
   end
 

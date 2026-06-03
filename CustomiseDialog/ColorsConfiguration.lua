@@ -528,6 +528,14 @@ addonTable.CustomiseDialog.ColorsConfig = {
     },
     entries = {},
   },
+  ["myClassColor"] = {
+    label = addonTable.Locales.MY_CLASS,
+    default = {
+      kind = "myClassColor",
+      colors = {},
+    },
+    entries = {},
+  },
   ["reaction"] = {
     label = addonTable.Locales.REACTION,
     default = {
@@ -1104,6 +1112,7 @@ addonTable.CustomiseDialog.ColorsConfigOrder = {
   "party",
   "guild",
   "classColors",
+  "myClassColor",
   "difficulty",
   "execute",
   "reaction",
