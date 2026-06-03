@@ -245,7 +245,7 @@ function addonTable.Display.ManagerMixin:OnLoad()
   end)
 end
 
-function addonTable.Display.ManagerMixin:GetPool(index, design, scale, shouldSimplify)
+function addonTable.Display.ManagerMixin:GetPool(index)
   if self.pools[index] then
     return self.pools[index]
   end
@@ -254,9 +254,6 @@ function addonTable.Display.ManagerMixin:GetPool(index, design, scale, shouldSim
     Mixin(frame, addonTable.Display.NameplateMixin)
     frame.kind = index
     frame:OnLoad()
-    local scaleOffset, scaleMod = addonTable.Core.GetDesignScale(shouldSimplify), scale
-    frame:InitializeWidgets(design, scaleOffset, scaleMod)
-    frame.styleIndex = self.styleIndex
   end)
 
   return self.pools[index]
@@ -509,7 +506,7 @@ function addonTable.Display.ManagerMixin:Install(unit)
     local globalScale = addonTable.Config.Get(addonTable.Config.Options.GLOBAL_SCALE)
     local designName, scale, shouldSimplify, index = addonTable.Display.Context:GetAssignedDesign(unit)
     local design = addonTable.Core.GetDesignByName(designName)
-    local newDisplay = self:GetPool(index, design, scale, shouldSimplify):Acquire()
+    local newDisplay = self:GetPool(index):Acquire()
     if C_NamePlateManager and C_NamePlateManager.SetNamePlateSimplified then
       C_NamePlateManager.SetNamePlateSimplified(unit, shouldSimplify)
     end
