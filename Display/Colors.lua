@@ -67,7 +67,7 @@ local kindToCache = {
   notTarget = {"target"},
   softTarget = {"softTarget"},
   mouseover = {"target", "mouseover"},
-  mouseover = {"focus"},
+  focus = {"focus"},
 }
 
 function addonTable.Display.UnregisterForColorEvents(frame)
