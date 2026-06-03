@@ -310,13 +310,13 @@ function addonTable.Display.NameplateMixin:OnLoad()
           end
         end
 
-        if aura.durationSecret then
-          auraFrame.Cooldown:SetCooldownFromDurationObject(aura.durationSecret)
+        if auraFrame.durationSecret then
+          auraFrame.Cooldown:SetCooldownFromDurationObject(auraFrame.durationSecret)
           if details.showPandemic then
             auraFrame.Pandemic:SetAlpha(C_CurveUtil.EvaluateColorValueFromBoolean(auraFrame.durationSecret:IsZero(), 0, auraFrame.durationSecret:EvaluateRemainingPercent(pandemicCurve)))
           end
           if details.showType then
-            local color = C_UnitAuras.GetAuraDispelTypeColor(self.unit, aura.auraInstanceID, dispelCurve)
+            local color = C_UnitAuras.GetAuraDispelTypeColor(self.unit, auraFrame.auraInstanceID, dispelCurve)
             auraFrame.Dispel.Border:SetVertexColor(color:GetRGBA())
           end
           if details.showStealable then
