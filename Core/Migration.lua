@@ -728,6 +728,16 @@ local function MigrateSettingsv4()
   end
 end
 
+local function MigrateSettingsv5()
+  local currentShow = addonTable.Config.Get(addonTable.Config.Options.SHOW_NAMEPLATES)
+  currentShow.friendlyMinionPet = true
+  currentShow.friendlyMinionTotem = true
+  currentShow.friendlyMinionGuardian = true
+  currentShow.enemyMinionPet = true
+  currentShow.enemyMinionTotem = true
+  currentShow.enemyMinionGuardian = true
+end
+
 function addonTable.Core.MigrateSettings()
   if addonTable.Config.Get(addonTable.Config.Options.MIGRATION) == 1 then
     MigrateSettingsv1()
@@ -747,6 +757,11 @@ function addonTable.Core.MigrateSettings()
   if addonTable.Config.Get(addonTable.Config.Options.MIGRATION) == 4 then
     MigrateSettingsv4()
     addonTable.Config.Set(addonTable.Config.Options.MIGRATION, 5)
+  end
+
+  if addonTable.Config.Get(addonTable.Config.Options.MIGRATION) == 5 then
+    MigrateSettingsv5()
+    addonTable.Config.Set(addonTable.Config.Options.MIGRATION, 6)
   end
 
   for _, design in pairs(addonTable.Config.Get(addonTable.Config.Options.DESIGNS)) do

@@ -262,21 +262,61 @@ local function SetupBehaviour(parent)
     applyNameplatesDropdown.DropDown:SetupMenu(function(_, rootDescription)
       if C_CVar.GetCVarInfo("nameplateShowFriendlyPlayers") ~= nil then
         local friendlyPlayer = GetCheckbox(rootDescription, addonTable.Locales.FRIENDLY_PLAYERS, "friendlyPlayer")
-        GetCheckbox(friendlyPlayer, addonTable.Locales.MINIONS, "friendlyMinion")
+        local friendlyMinions = GetCheckbox(friendlyPlayer, addonTable.Locales.MINIONS, "friendlyMinion")
+        GetCheckbox(friendlyMinions, addonTable.Locales.GUARDIANS, "friendlyMinionGuardian")
+        GetCheckbox(friendlyMinions, addonTable.Locales.PETS, "friendlyMinionPet")
+        GetCheckbox(friendlyMinions, addonTable.Locales.TOTEMS, "friendlyMinionTotem")
         GetCheckbox(rootDescription, addonTable.Locales.FRIENDLY_NPCS, "friendlyNPC")
         local enemies = GetCheckbox(rootDescription, addonTable.Locales.ENEMIES, "enemy")
-        GetCheckbox(enemies, addonTable.Locales.MINIONS, "enemyMinion")
+        local enemyMinions = GetCheckbox(enemies, addonTable.Locales.MINIONS, "enemyMinion")
+        GetCheckbox(enemyMinions, addonTable.Locales.GUARDIANS, "enemyMinionGuardian")
+        GetCheckbox(enemyMinions, addonTable.Locales.PETS, "enemyMinionPet")
+        GetCheckbox(enemyMinions, addonTable.Locales.TOTEMS, "enemyMinionTotem")
         GetCheckbox(enemies, addonTable.Locales.MINORS, "enemyMinor")
       else
         local friendlyPlayer = GetCheckbox(rootDescription, addonTable.Locales.PLAYERS_AND_FRIENDS, "friendlyPlayer")
         GetCheckbox(friendlyPlayer, addonTable.Locales.FRIENDLY_NPCS, "friendlyNPC")
-        GetCheckbox(friendlyPlayer, addonTable.Locales.MINIONS, "friendlyMinion")
+        local friendlyMinions = GetCheckbox(friendlyPlayer, addonTable.Locales.MINIONS, "friendlyMinion")
+        GetCheckbox(friendlyMinions, addonTable.Locales.GUARDIANS, "friendlyMinionGuardian")
+        GetCheckbox(friendlyMinions, addonTable.Locales.PETS, "friendlyMinionPet")
+        GetCheckbox(friendlyMinions, addonTable.Locales.TOTEMS, "friendlyMinionTotem")
         local enemies = GetCheckbox(rootDescription, addonTable.Locales.ENEMIES, "enemy")
-        GetCheckbox(enemies, addonTable.Locales.MINIONS, "enemyMinion")
+        local enemyMinions = GetCheckbox(enemies, addonTable.Locales.MINIONS, "enemyMinion")
+        GetCheckbox(enemyMinions, addonTable.Locales.GUARDIANS, "enemyMinionGuardian")
+        GetCheckbox(enemyMinions, addonTable.Locales.PETS, "enemyMinionPet")
+        GetCheckbox(enemyMinions, addonTable.Locales.TOTEMS, "enemyMinionTotem")
         GetCheckbox(enemies, addonTable.Locales.MINORS, "enemyMinor")
       end
     end)
   end
+  applyNameplatesDropdown.DropDown:SetSelectionText(function(selections)
+    local result = {}
+    local current = addonTable.Config.Get(addonTable.Config.Options.SHOW_NAMEPLATES)
+    if current.friendlyPlayer then
+      if C_CVar.GetCVarInfo("nameplateShowFriendlyPlayers") ~= nil then
+        table.insert(result, addonTable.Locales.FRIENDLY_PLAYERS)
+      else
+        table.insert(result, addonTable.Locales.PLAYERS_AND_FRIENDS)
+      end
+      if current.friendlyMinion then
+        table.insert(result, addonTable.Locales.MINIONS)
+      end
+    end
+    if current.friendlyNPC then
+      table.insert(result, addonTable.Locales.FRIENDLY_NPCS)
+    end
+    if current.enemy then
+      table.insert(result, addonTable.Locales.ENEMIES)
+      if current.enemyMinion then
+        table.insert(result, addonTable.Locales.MINIONS)
+      end
+      if current.enemyMinor then
+        table.insert(result, addonTable.Locales.MINORS)
+      end
+    end
+
+    return table.concat(result, ", ")
+  end)
   table.insert(allFrames, applyNameplatesDropdown)
 
   local friendlyInInstancesDropdown = addonTable.CustomiseDialog.Components.GetBasicDropdown(container, addonTable.Locales.SHOW_FRIENDLY_IN_INSTANCES, function(value)
