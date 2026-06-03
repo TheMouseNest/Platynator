@@ -150,6 +150,7 @@ addonTable.Display.NameplateMixin = {}
 function addonTable.Display.NameplateMixin:OnLoad()
   self:SetFlattensRenderLayers(true)
   self:SetCollapsesLayout(true)
+  self:SetScript("OnEvent", self.OnEvent)
 
   self.widgets = {}
 
@@ -523,6 +524,9 @@ function addonTable.Display.NameplateMixin:SetUnit(unit)
     end
 
     if UnitCanAttack("player", self.unit) and addonTable.Config.Get(addonTable.Config.Options.NOT_IN_PULL_ALPHA) ~= 1 then
+      self:RegisterEvent("PLAYER_REGEN_ENABLED")
+      self:RegisterEvent("PLAYER_REGEN_DISABLED")
+
       self.inCombat = addonTable.Display.Utilities.IsInCombatWith(self.unit)
       addonTable.Cache:RegisterCallback(self.unit, "combat", function(inCombat)
         self.inCombat = inCombat
@@ -620,6 +624,9 @@ function addonTable.Display.NameplateMixin:SetUnit(unit)
 
     self.AurasManager:SetUnit()
 
+    self:UnregisterEvent("PLAYER_REGEN_ENABLED")
+    self:UnregisterEvent("PLAYER_REGEN_DISABLED")
+
     self:UnregisterAllEvents()
     self.casting = false
 
@@ -666,6 +673,10 @@ function addonTable.Display.NameplateMixin:UpdateForFocus()
     end
   end
 
+  self:UpdateVisual()
+end
+
+function addonTable.Display.NameplateMixin:OnEvent()
   self:UpdateVisual()
 end
 
