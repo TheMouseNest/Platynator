@@ -60,7 +60,7 @@ function addonTable.Display.CastTimeLeftTextMixin:Strip()
 end
 
 
-if UnitChannelDuration then
+if addonTable.Constants.IsSecretsActive then
   function addonTable.Display.CastTimeLeftTextMixin:ApplyCasting(state)
     if self.timer then
       self.timer:Cancel()

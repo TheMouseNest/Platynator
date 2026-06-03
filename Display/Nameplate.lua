@@ -225,8 +225,9 @@ function addonTable.Display.NameplateMixin:OnLoad()
         auraFrame.auraInstanceID = auraInstanceID
         auraFrame.auraIndex = nil
         auraFrame.auraFilter = auraFilter
-        auraFrame.durationSecret = aura.durationSecret
-        if not C_Secrets then
+        if addonTable.Constants.IsSecretsActive then
+          auraFrame.durationSecret = aura.durationSecret
+        else
           auraFrame.duration = aura.duration
           auraFrame.expirationTime = aura.expirationTime
         end
@@ -269,7 +270,7 @@ function addonTable.Display.NameplateMixin:OnLoad()
             end
             local c2 = details.texts.countdown.color
             auraFrame.Cooldown.Text:SetTextColor(c2.r, c2.g, c2.b)
-            if auraFrame.Cooldown.SetCountdownFormatter then
+            if addonTable.Constants.IsCooldownFormattingAvailable then
               if details.texts.countdown.showFractions then
                 auraFrame.Cooldown:SetCountdownFormatter(auraFormatter)
               else

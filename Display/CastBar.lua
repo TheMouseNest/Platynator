@@ -40,6 +40,7 @@ function addonTable.Display.CastBarMixin:StripInternal()
     self.timer:Cancel()
     self.timer = nil
   end
+  self.uninterruptibleCheck = nil
 
   self:UnregisterAllEvents()
   addonTable.Display.UnregisterForColorEvents(self)
@@ -91,7 +92,7 @@ function addonTable.Display.CastBarMixin:ClearCast()
   self.uninterruptibleCheck = nil
 end
 
-if UnitCastingDuration then
+if addonTable.Constants.IsSecretsActive then
   function addonTable.Display.CastBarMixin:ApplyCasting(state)
     local isChanneled, isEmpowered = state.channelDuration ~= nil, state.empoweredDuration ~= nil
     local castDuration = state.empoweredDuration or state.channelDuration or state.castDuration
