@@ -403,7 +403,7 @@ function addonTable.Display.AurasManagerMixin:OnEvent(_, _, refreshData)
   self:SortAurasAndReport(changes)
 end
 
-if addonTable.Constants.IsRetail then
+if addonTable.Constants.IsSecretsActive then
   function addonTable.Display.AurasManagerMixin:AddAuras(addedAuras)
     local changes = {}
     if self.debuffsDetails and self.debuffsDetails.filters.important or self.buffsDetails and self.buffsDetails.filters.important then
