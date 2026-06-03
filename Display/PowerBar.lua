@@ -114,6 +114,7 @@ end
 
 function addonTable.Display.PowerBarMixin:SetUnit(unit)
   self.unit = unit
+  self:Hide()
 end
 
 function addonTable.Display.PowerBarMixin:ApplyTarget()
