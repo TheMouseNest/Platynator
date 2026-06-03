@@ -184,13 +184,10 @@ function addonTable.Display.CacheMixin:OnLoad()
 end
 
 function addonTable.Display.CacheMixin:AddUnit(unit)
-  local wasMonitoring = self.monitoring[unit] ~= nil
   self.monitoring[unit] = {}
   self.state[unit] = {}
   self.registeredCallbacks[unit] = {}
-  if not wasMonitoring then
-    table.insert(self.monitoringOrder, unit)
-  end
+  table.insert(self.monitoringOrder, unit)
   for kind in pairs(getter) do
     self.registeredCallbacks[unit][kind] = {}
   end
@@ -302,7 +299,7 @@ function addonTable.Display.CacheMixin:OnUpdate(elapsed)
   self.totalElapsed = 0
 
   for i = self.step, math.min(length, self.step + toProcess - 1) do
-    local unit = self.monitoringOrder[i]
+    local unit = self.monitoringOrder[self.step]
     local details = self.monitoring[unit]
     local state = self.state[unit]
 
