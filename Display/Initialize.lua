@@ -257,7 +257,7 @@ function addonTable.Display.ManagerMixin:GetPool(index, design, scale, shouldSim
     local scaleOffset, scaleMod = addonTable.Core.GetDesignScale(shouldSimplify), scale
     frame:InitializeWidgets(design, scaleOffset, scaleMod)
     frame.styleIndex = self.styleIndex
-  end, 40)
+  end)
 
   return self.pools[index]
 end
