@@ -172,9 +172,8 @@ function addonTable.Display.DesignForContextMixin:GetAssignedDesign(unit)
     addonTable.Cache:RegisterCallback(unit, "combat", function(inCombat)
       local state = self.unitStates[unit]
       if state then
-        local changes = state.updates.inCombat and inCombat ~= state.inCombat
         state.inCombat = inCombat
-        if changes then
+        if state.updates.inCombat then
           addonTable.CallbackRegistry:TriggerEvent("UnitDesignChange", unit)
         end
       end
@@ -182,13 +181,13 @@ function addonTable.Display.DesignForContextMixin:GetAssignedDesign(unit)
     addonTable.Cache:RegisterCallback(unit, "canAttack", function(canAttack)
       local state = self.unitStates[unit]
       if state then
-        local changes = canAttack ~= state.canAttack
         state.canAttack = canAttack
-        if changes then
+        if state.updates.canAttack then
           addonTable.CallbackRegistry:TriggerEvent("UnitDesignChange", unit)
         end
       end
     end)
+    self.unitStates[unit] = GenerateState(unit) -- Necessary to trigger registration
     self.unitsListening[unit] = true
   end
   if not self.unitStates[unit] then
