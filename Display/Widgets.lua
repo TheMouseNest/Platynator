@@ -269,8 +269,8 @@ function addonTable.Display.GetCastBar(frame, parent)
     frame.interruptMarker:SetFrameLevel(frame:GetFrameLevel() + 5)
     borderHolder:SetFrameLevel(frame:GetFrameLevel() + 6)
 
-    frame.interruptMarker:SetScale(borderSliceDetails.scaleModifier)
-    frame.interruptPositioner:SetScale(borderSliceDetails.scaleModifier)
+    frame.interruptMarker:SetScale(borderSliceDetails.scaleModifier * details.scale)
+    frame.interruptPositioner:SetScale(borderSliceDetails.scaleModifier * details.scale)
     if details.interruptMarker.asset ~= "none" then
       local markerDetails = addonTable.Assets.BarPositionHighlights[details.interruptMarker.asset]
       frame.interruptMarkerPoint:SetTexture(markerDetails.file)
