@@ -104,6 +104,9 @@ if addonTable.Constants.IsSecretsActive then
       else
         notInterruptible = state.cast[8]
       end
+      if notInterruptible == nil then
+        notInterruptible = false
+      end
 
       if self.timer then
         self.timer:Cancel()
