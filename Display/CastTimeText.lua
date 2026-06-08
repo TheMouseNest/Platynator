@@ -60,7 +60,7 @@ function addonTable.Display.CastTimeLeftTextMixin:Strip()
 end
 
 
-if addonTable.Constants.IsSecretsActive then
+if addonTable.Constants.IsModern then
   function addonTable.Display.CastTimeLeftTextMixin:ApplyCasting(state)
     if self.timer then
       self.timer:Cancel()

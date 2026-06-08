@@ -83,7 +83,7 @@ function addonTable.Display.ManagerMixin:OnLoad()
     end
     local nameplate = C_NamePlate.GetNamePlateForUnit(unit, issecure())
     if nameplate and unit and (addonTable.Constants.IsRetail or not UnitIsUnit("player", unit)) then
-      if addonTable.Constants.IsRetail then
+      if addonTable.Constants.IsModern then
         if not self.HookedUFs[nameplate.UnitFrame] then
           self.HookedUFs[nameplate.UnitFrame] = true
           hooksecurefunc(nameplate.UnitFrame.AurasFrame, "RefreshAuras", function(af, data)
@@ -95,6 +95,7 @@ function addonTable.Display.ManagerMixin:OnLoad()
             end
           end)
         end
+        nameplate.UnitFrame.AurasFrame:SetParent(addonTable.hiddenFrame)
       end
       nameplate.UnitFrame:SetParent(addonTable.hiddenFrame)
       nameplate.UnitFrame:UnregisterAllEvents()
@@ -432,7 +433,7 @@ function addonTable.Display.ManagerMixin:UpdateNamePlatePosition()
 end
 
 function addonTable.Display.ManagerMixin:ListenToBuffs(display, unit)
-  if addonTable.Constants.IsRetail and self.ModifiedUFs[unit] then
+  if addonTable.Constants.IsModern and self.ModifiedUFs[unit] then
     local UF = self.ModifiedUFs[unit]
     UF:RegisterUnitEvent("UNIT_AURA", unit)
 

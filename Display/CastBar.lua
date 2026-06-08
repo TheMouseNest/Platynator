@@ -92,7 +92,7 @@ function addonTable.Display.CastBarMixin:ClearCast()
   self.uninterruptibleCheck = nil
 end
 
-if addonTable.Constants.IsSecretsActive then
+if addonTable.Constants.IsModern then
   function addonTable.Display.CastBarMixin:ApplyCasting(state)
     local isChanneled, isEmpowered = state.channelDuration ~= nil, state.empoweredDuration ~= nil
     local castDuration = state.empoweredDuration or state.channelDuration or state.castDuration
