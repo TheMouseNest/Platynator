@@ -60,13 +60,13 @@ local kindToCache = {
   cast = {"cast"},
   notCast = {"cast"},
   isCast = {"cast"},
-  threat = {"threat"},
   inRange = {"range"},
   outOfRange = {"range"},
   target = {"target"},
   notTarget = {"target"},
   softTarget = {"softTarget"},
   mouseover = {"target", "mouseover"},
+  notMouseover = {"target", "mouseover"},
   focus = {"focus"},
 }
 
@@ -188,6 +188,11 @@ function addonTable.Display.GetColor(settings, state, unit)
     elseif s.kind == "mouseover" then
       if addonTable.Cache:Get(unit, "mouseover") and (s.includeTarget or not addonTable.Cache:Get(unit, "target")) then
         table.insert(colorQueue, {color = s.colors.mouseover})
+        break
+      end
+    elseif s.kind == "notMouseover" then
+      if not (addonTable.Cache:Get(unit, "mouseover") and (s.includeTarget or not addonTable.Cache:Get(unit, "target"))) then
+        table.insert(colorQueue, {color = s.colors.notMouseover})
         break
       end
     elseif s.kind == "threat" then

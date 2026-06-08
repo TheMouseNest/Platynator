@@ -941,6 +941,38 @@ addonTable.CustomiseDialog.ColorsConfig = {
       },
     }
   },
+  ["notMouseover"] = {
+    label = addonTable.Locales.NOT_MOUSEOVER,
+    default = {
+      kind = "notMouseover",
+      colors = {
+        notMouseover = GetColor("B15FEB"),
+      },
+    },
+    entries = {
+      {
+        label = addonTable.Locales.NOT_MOUSEOVER,
+        kind = "colorPicker",
+        setter = function(details, value)
+          details.colors.notMouseover = value
+        end,
+        getter = function(details)
+          return details.colors.notMouseover
+        end,
+      },
+      { kind = "spacer" },
+      {
+        label = addonTable.Locales.INCLUDE_TARGET,
+        kind = "checkbox",
+        setter = function(details, value)
+          details.includeTarget = value
+        end,
+        getter = function(details)
+          return details.includeTarget
+        end,
+      },
+    }
+  },
   ["inCombat"] = {
     label = addonTable.Locales.IN_COMBAT_WITH,
     default = {
@@ -1099,6 +1131,7 @@ addonTable.CustomiseDialog.ColorsConfigOrder = {
   "softTarget",
   "focus",
   "mouseover",
+  "notMouseover",
   "threat",
   "inCombat",
   "inRange",
