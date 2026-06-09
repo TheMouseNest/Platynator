@@ -198,7 +198,7 @@ function addonTable.Display.GetHealthBar(frame, parent)
   function frame:ApplySize()
     SizeBar(frame, frame.details)
     PixelUtil.SetSize(frame.statusBarAbsorb, frame.rawWidth * frame.lowerScale, frame.rawHeight * frame.lowerScale)
-    PixelUtil.SetSize(frame.statusBarCutawayMask, frame.rawWidth, frame.rawHeight)
+    PixelUtil.SetSize(frame.statusBarCutawayMask, frame.rawWidth * frame.lowerScale, frame.rawHeight * frame.lowerScale)
   end
 
   return frame
