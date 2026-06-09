@@ -574,6 +574,11 @@ local function UpgradeDesignv10(design)
       auras.texts.countdown.showFractions = false
     end
   end
+  for _, aura in ipairs(design.auras) do
+    if not aura.padding then
+      aura.padding = 0.1
+    end
+  end
 end
 
 function addonTable.Core.UpgradeDesign(design)
@@ -603,6 +608,10 @@ function addonTable.Core.UpgradeDesign(design)
   if design.version == 9 then
     UpgradeDesignv9(design)
     design.version = 10
+  end
+  if design.version == 10 then
+    UpgradeDesignv10(design)
+    design.version = 11
   end
 end
 

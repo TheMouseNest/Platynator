@@ -1134,6 +1134,18 @@ addonTable.CustomiseDialog.WidgetsConfig = {
             end,
           },
           {
+            label = addonTable.Locales.PADDING,
+            kind = "slider",
+            min = 0, max = 200,
+            valuePattern = "%d%%",
+            setter = function(details, value)
+              details.padding = value / 100
+            end,
+            getter = function(details)
+              return details.padding * 100
+            end,
+          },
+          {
             label = addonTable.Locales.DIRECTION,
             kind = "dropdown",
             getInitData = function()
@@ -1166,7 +1178,6 @@ addonTable.CustomiseDialog.WidgetsConfig = {
               return details.limit
             end,
           },
-          { kind = "spacer" },
           {
             label = addonTable.Locales.SHOW_TYPE_BORDER,
             kind = "checkbox",

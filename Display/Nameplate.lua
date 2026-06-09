@@ -192,12 +192,12 @@ function addonTable.Display.NameplateMixin:OnLoad()
 
       local pandemicDim = PixelUtil.ConvertPixelsToUIForRegion(1, frame)
 
-      local step = PixelUtil.ConvertPixelsToUIForRegion(22, frame)
+      local details = frame:GetParent().details
+      local step = PixelUtil.ConvertPixelsToUIForRegion(20 * (1 + details.padding), frame)
       local currentX = 0
       local currentY = 0
       local xOffset = 0
       local yOffset = 0
-      local details = frame:GetParent().details
       if details.direction == "LEFT" then
         xOffset = -step
       elseif details.direction == "RIGHT" then
