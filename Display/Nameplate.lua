@@ -226,7 +226,7 @@ function addonTable.Display.NameplateMixin:OnLoad()
         auraFrame.auraInstanceID = auraInstanceID
         auraFrame.auraIndex = nil
         auraFrame.auraFilter = auraFilter
-        if addonTable.Constants.IsModern then
+        if addonTable.Constants.IsSecretsActive then
           auraFrame.durationSecret = aura.durationSecret
         else
           auraFrame.duration = aura.duration

@@ -52,7 +52,7 @@ local getter = {
     if oldState and oldState.interrupted and math.ceil(GetTime()*1000) - math.floor(oldState.interrupted.time) < addonTable.Config.Get(addonTable.Config.Options.CAST_INTERRUPTED_TIMEOUT) * 1000 and next(new.cast) == nil and next(new.channel) == nil then
       new.interrupted = oldState.interrupted
     end
-    if addonTable.Constants.IsModern then
+    if addonTable.Constants.IsSecretsActive then
       if new.cast[1] then
         new.castDuration = UnitCastingDuration(unit)
       end
