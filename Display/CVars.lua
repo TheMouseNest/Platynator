@@ -20,6 +20,7 @@ local cvars = {
   ["nameplateTargetBehindMaxDistance"] = "30",
   ["nameplateTargetRadialPosition"] = "1",
   ["clampTargetNameplateToScreen"] = "1",
+  ["nameplateNotSelectedAlpha"] = "1",
 }
 
 if addonTable.Constants.IsRetail then
