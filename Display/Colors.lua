@@ -123,7 +123,9 @@ function addonTable.Display.RegisterForColorEvents(frame, settings, defaultColor
         if not frame.colorState.caches[c] then
           frame.colorState.caches[c] = true
           addonTable.Cache:RegisterCallback(frame.unit, c, function()
-            frame:ColorEventHandler("FORCED")
+            if frame.unit then -- Shield against deactivation of the widget
+              frame:ColorEventHandler("FORCED")
+            end
           end)
         end
       end
