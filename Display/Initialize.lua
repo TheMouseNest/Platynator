@@ -63,12 +63,12 @@ function addonTable.Display.ManagerMixin:OnLoad()
   end)
 
   NamePlateDriverFrame:UnregisterEvent("DISPLAY_SIZE_CHANGED")
-  if not addonTable.Constants.IsRetail then
+  if not addonTable.Constants.IsModern then
     NamePlateDriverFrame:UnregisterEvent("CVAR_UPDATE")
   end
 
   -- Remove realm name from friendly plates in instances
-  if addonTable.Constants.IsRetail then
+  if addonTable.Constants.IsModern then
     addonTable.Utilities.PurgeKey(NamePlateFriendlyFrameOptions, "updateNameUsesGetUnitName")
   end
 
@@ -82,7 +82,7 @@ function addonTable.Display.ManagerMixin:OnLoad()
       return
     end
     local nameplate = C_NamePlate.GetNamePlateForUnit(unit, issecure())
-    if nameplate and unit and (addonTable.Constants.IsRetail or not UnitIsUnit("player", unit)) then
+    if nameplate and unit and (addonTable.Constants.IsModern or not UnitIsUnit("player", unit)) then
       if addonTable.Constants.IsModern then
         if not self.HookedUFs[nameplate.UnitFrame] then
           self.HookedUFs[nameplate.UnitFrame] = true
@@ -95,7 +95,6 @@ function addonTable.Display.ManagerMixin:OnLoad()
             end
           end)
         end
-        nameplate.UnitFrame.AurasFrame:SetParent(addonTable.hiddenFrame)
       end
       nameplate.UnitFrame:SetParent(addonTable.hiddenFrame)
       nameplate.UnitFrame:UnregisterAllEvents()
@@ -112,7 +111,7 @@ function addonTable.Display.ManagerMixin:OnLoad()
   hooksecurefunc(NamePlateDriverFrame, "OnNamePlateRemoved", function(_, unit)
     if self.ModifiedUFs[unit] then
       local UF = self.ModifiedUFs[unit]
-      if addonTable.Constants.IsRetail then
+      if addonTable.Constants.IsModern then
         UF:UnregisterEvent("UNIT_AURA")
       end
       if UF.WidgetContainer then
@@ -532,7 +531,7 @@ function addonTable.Display.ManagerMixin:Install(unit)
   end
   local nameplate = C_NamePlate.GetNamePlateForUnit(unit, issecure())
   -- NOTE: the nameplate _name_ does not correspond to the unit
-  if nameplate and unit and (addonTable.Constants.IsRetail or not UnitIsUnit("player", unit)) then
+  if nameplate and unit and (addonTable.Constants.IsModern or not UnitIsUnit("player", unit)) then
     addonTable.Cache:AddUnit(unit)
     local globalScale = addonTable.Config.Get(addonTable.Config.Options.GLOBAL_SCALE)
     local designName, scale, shouldSimplify, index = addonTable.Display.Context:GetAssignedDesign(unit)
@@ -874,7 +873,7 @@ function addonTable.Display.ManagerMixin:UpdateFriendlyFont()
 end
 
 function addonTable.Display.ManagerMixin:UpdateBaseNamePlateInfo()
-  if addonTable.Constants.IsRetail then
+  if addonTable.Constants.IsModern then
     local namePlateSize = GetCVarNumberOrDefault(NamePlateConstants.SIZE_CVAR);
     -- Remove aura height
     local namePlateScale = NamePlateConstants.NAME_PLATE_SCALES[namePlateSize] or NamePlateConstants.NAME_PLATE_SCALES[Enum.NamePlateSize.Medium];
@@ -956,7 +955,7 @@ function addonTable.Display.ManagerMixin:OnEvent(eventName, ...)
     addonTable.CurrentFont, addonTable.CurrentFontUsesSmoothing = addonTable.Core.GetFontByDesign(defaultEnemyDesign)
     self:UpdateFriendlyFont()
   elseif eventName == "VARIABLES_LOADED" then
-    if addonTable.Constants.IsRetail then
+    if addonTable.Constants.IsModern then
       C_CVar.SetCVarBitfield(NamePlateConstants.ENEMY_NPC_AURA_DISPLAY_CVAR, Enum.NamePlateEnemyNpcAuraDisplay.Debuffs, true)
       C_CVar.SetCVarBitfield(NamePlateConstants.ENEMY_NPC_AURA_DISPLAY_CVAR, Enum.NamePlateEnemyNpcAuraDisplay.Buffs, true)
       C_CVar.SetCVarBitfield(NamePlateConstants.ENEMY_PLAYER_AURA_DISPLAY_CVAR, Enum.NamePlateEnemyPlayerAuraDisplay.Debuffs, true)

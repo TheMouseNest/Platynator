@@ -18,7 +18,7 @@ end
 
 function addonTable.Display.AurasManagerMixin:PostInit(buffs, debuffs, crowdControl)
   self.processingAuras = (buffs or debuffs or crowdControl) and (
-    not addonTable.Constants.IsRetail or debuffs and not debuffs.filters.important or buffs and not buffs.filters.important
+    not addonTable.Constants.IsModern or debuffs and not debuffs.filters.important or buffs and not buffs.filters.important
   )
 
   self:Reset()
@@ -26,7 +26,7 @@ function addonTable.Display.AurasManagerMixin:PostInit(buffs, debuffs, crowdCont
   self.buffFilter = "HELPFUL|INCLUDE_NAME_PLATE_ONLY"
   self.buffsDetails = buffs
   if buffs then
-    if addonTable.Constants.IsRetail then
+    if addonTable.Constants.IsModern then
       if buffs.sorting.kind == "blizzard" then
         self.buffSort = Enum.UnitAuraSortRule.Default
       else
@@ -73,7 +73,7 @@ function addonTable.Display.AurasManagerMixin:PostInit(buffs, debuffs, crowdCont
     if debuffs.filters.fromYou then
       self.debuffFilter = self.debuffFilter .. "|PLAYER"
     end
-    if addonTable.Constants.IsRetail then
+    if addonTable.Constants.IsModern then
       if debuffs.sorting.kind == "blizzard" then
         self.debuffSort = Enum.UnitAuraSortRule.Default
       else
@@ -161,7 +161,7 @@ function addonTable.Display.AurasManagerMixin:PostInit(buffs, debuffs, crowdCont
     if crowdControl.filters.fromYou then
       self.crowdControlFilter = self.crowdControlFilter .. "|PLAYER"
     end
-    if addonTable.Constants.IsRetail then
+    if addonTable.Constants.IsModern then
       self.crowdControlFilter = self.crowdControlFilter .. "|CROWD_CONTROL"
       if crowdControl.sorting.kind == "blizzard" then
         self.crowdControlSort = Enum.UnitAuraSortRule.Default
@@ -254,7 +254,7 @@ function addonTable.Display.AurasManagerMixin:SetUnit(unit)
     self.isPlayer = UnitIsPlayer(self.unit)
     self.isFriendly = UnitIsFriend("player", self.unit) and not UnitCanAttack("player", self.unit)
 
-    if UnitCanAttack("player", self.unit) or addonTable.Constants.IsRetail then
+    if UnitCanAttack("player", self.unit) or addonTable.Constants.IsModern then
       self:FullRefresh()
     else
       self:Reset()
@@ -338,7 +338,7 @@ end
 
 function addonTable.Display.AurasManagerMixin:OnEvent(_, _, refreshData)
   local canAttack = UnitCanAttack("player", self.unit)
-  if not canAttack and not addonTable.Constants.IsRetail then
+  if not canAttack and not addonTable.Constants.IsModern then
     if next(self.buffs) or next(self.debuffs) or next(self.crowdControl) then
       self.buffs = {}
       self.debuffs = {}
