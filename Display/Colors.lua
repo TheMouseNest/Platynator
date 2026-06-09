@@ -50,7 +50,7 @@ local kindToCallback = {
   threat = {"RoleChange"},
 }
 local kindToCache = {
-  threat = {"combat"},
+  threat = {"combat", "threat"},
   inCombat = {"combat"},
   interruptReady = {"cast"},
   interruptNotReady = {"cast"},
