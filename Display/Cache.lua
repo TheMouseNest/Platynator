@@ -227,7 +227,9 @@ function addonTable.Display.CacheMixin:Process(kind, unit, eventName, ...)
   if update then
     self.state[unit][kind] = data
     for index, callback in ipairs(self.registeredCallbacks[unit][kind]) do
-      callback(data)
+      if self.monitoring[unit] then
+        callback(data)
+      end
     end
   end
   if timer then
@@ -319,7 +321,9 @@ function addonTable.Display.CacheMixin:OnUpdate(elapsed)
       state[kind] = data
       if update then
         for _, callback in ipairs(self.registeredCallbacks[unit][kind]) do
-          callback(data)
+          if self.monitoring[unit] then
+            callback(data)
+          end
         end
       end
     end
@@ -329,7 +333,9 @@ function addonTable.Display.CacheMixin:OnUpdate(elapsed)
       state[kind] = data
       if update then
         for _, callback in ipairs(self.registeredCallbacks[unit][kind]) do
-          callback(data)
+          if self.monitoring[unit] then
+            callback(data)
+          end
         end
       end
     end
