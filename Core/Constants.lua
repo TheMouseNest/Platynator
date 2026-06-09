@@ -15,7 +15,7 @@ addonTable.Constants = {
   IsSimplifiedAvailable = C_NamePlateManager and C_NamePlateManager.SetNamePlateSimplified ~= nil,
   -- Restricted to secrets clients due to MoP bug where the duration objects don't work properly
   IsCooldownFormattingAvailable = CreateFrame("Cooldown").SetCountdownFormatter ~= nil and C_Secrets.HasSecretRestrictions(),
-  IsModern = C_NamePlate.SetNamePlateSize ~= nil,
+  IsModern = NamePlateConstants ~= nil,
 
   DeathKnightMaxRunes = 6,
 
