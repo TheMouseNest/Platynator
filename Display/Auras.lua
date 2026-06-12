@@ -304,7 +304,7 @@ function addonTable.Display.AurasManagerMixin:FullRefresh()
   }
 
   local all = {}
-  if C_UnitAuras.GetUnitAuras then
+  if addonTable.Constants.IsRetail then
     if self.buffsDetails then
       tAppendAll(all, C_UnitAuras.GetUnitAuras(self.unit, "HELPFUL"))
     end
@@ -370,7 +370,7 @@ function addonTable.Display.AurasManagerMixin:OnEvent(_, _, refreshData)
         local aura = C_UnitAuras.GetAuraDataByAuraInstanceID(self.unit, auraInstanceID)
         if aura then
           aura.kind = stored.kind
-          if C_UnitAuras.GetAuraDuration then
+          if addonTable.Constants.IsRetail then
             aura.applicationsString = C_UnitAuras.GetAuraApplicationDisplayCount(self.unit, auraInstanceID, 2, 1000)
             aura.durationSecret = C_UnitAuras.GetAuraDuration(self.unit, auraInstanceID)
           else
