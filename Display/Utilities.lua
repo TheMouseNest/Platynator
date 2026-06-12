@@ -462,6 +462,8 @@ do
         return roleType.Tank
       elseif isDiscovery and playerClass == "WARLOCK" and C_UnitAuras.GetUnitAuraBySpellID("player", 403789) then
         return roleType.Tank
+      elseif isDiscovery and playerClass == "ROGUE" and C_UnitAuras.GetUnitAuraBySpellID("player", 400014) then
+        return roleType.Tank
       end
     else
       local specIndex = C_SpecializationInfo.GetSpecialization()
@@ -495,7 +497,7 @@ do
     if addonTable.Constants.IsEra or addonTable.Constants.IsBC or addonTable.Constants.IsWrath then
       if playerClass == "WARRIOR" or playerClass == "DRUID" then
         specializationMonitor:RegisterEvent("UPDATE_SHAPESHIFT_FORM")
-      elseif playerClass == "PALADIN" or isDiscovery and (playerClass == "SHAMAN" or playerClass == "WARLOCK") then
+      elseif playerClass == "PALADIN" or isDiscovery and (playerClass == "SHAMAN" or playerClass == "WARLOCK" or playerClass == "ROGUE") then
         specializationMonitor:RegisterUnitEvent("UNIT_AURA", "player")
       end
     elseif C_EventUtils.IsEventValid("PLAYER_SPECIALIZATION_CHANGED") then
