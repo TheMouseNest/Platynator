@@ -445,13 +445,18 @@ do
   local RangeCheck = LibStub("LibRangeCheck-3.0")
   RangeCheck.RegisterCallback("Platynator", RangeCheck.CHECKERS_CHANGED, function() harmChecker = RangeCheck:GetHarmMaxChecker(addonTable.Display.Utilities.GetRangedLimit() or RangeCheck.MeleeRange) end)
 
+  local isDiscovery = C_Seasons and C_Seasons.GetActiveSeason() == Enum.SeasonID.SeasonOfDiscovery or false
+
   local function GetPlayerRole()
     if addonTable.Constants.IsEra or addonTable.Constants.IsBC or addonTable.Constants.IsWrath then
       -- we're in classic
       local form = GetShapeshiftForm()
       if (playerClass == "WARRIOR" and form == 2) or (playerClass == "DRUID" and form == 1) then
         return roleType.Tank
-      elseif playerClass == "PALADIN" and C_UnitAuras.GetUnitAuraBySpellID("player", 25780) ~= nil then
+      elseif playerClass == "PALADIN" and (
+        C_UnitAuras.GetUnitAuraBySpellID("player", 25780) ~= nil or
+        isDiscovery and C_UnitAuras.GetUnitAuraBySpellID("player", 407627)
+      ) then
         return roleType.Tank
       end
     else
