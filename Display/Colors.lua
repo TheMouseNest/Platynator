@@ -178,7 +178,7 @@ function addonTable.Display.GetColor(settings, state, unit)
         break
       end
     elseif s.kind == "softTarget" then
-      if not addonTable.Cache:Get(unit, "softTarget") then
+      if addonTable.Cache:Get(unit, "softTarget") then
         table.insert(colorQueue, {color = s.colors.softTarget})
         break
       end
