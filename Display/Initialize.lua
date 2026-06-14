@@ -439,18 +439,15 @@ function addonTable.Display.ManagerMixin:ListenToBuffs(display, unit)
     UF:RegisterUnitEvent("UNIT_AURA", unit)
 
     if display.DebuffDisplay.details and display.DebuffDisplay.details.filters.important or display.BuffDisplay.details and display.BuffDisplay.details.filters.important then
-      local DebuffListFrame = UF.AurasFrame.DebuffListFrame
-      local BuffListFrame = UF.AurasFrame.BuffListFrame
       display.AurasManager:SetGetImportantAuras(function()
         local important = {}
 
-        for _, child in ipairs(DebuffListFrame:GetLayoutChildren()) do
-          important[child.auraInstanceID] = true
-        end
-
-        for _, child in ipairs(BuffListFrame:GetLayoutChildren()) do
-          important[child.auraInstanceID] = true
-        end
+        UF.AurasFrame.buffList:Iterate(function(auraInstanceID)
+          important[auraInstanceID] = true
+        end)
+        UF.AurasFrame.debuffList:Iterate(function(auraInstanceID)
+          important[auraInstanceID] = true
+        end)
 
         return important
       end)
