@@ -172,7 +172,7 @@ local function UpgradeDesignv1(design)
     end
   end
 
-  local function UpdateAutoColors(autoColors)
+  local function UpdateAutoColorsv1(autoColors)
     local index = 1
     while index <= #autoColors do
       local ac = autoColors[index]
@@ -377,7 +377,7 @@ local function UpgradeDesignv1(design)
       bar.interruptMarker.color = GetColor("FFFFFF")
     end
     if bar.autoColors then
-      UpdateAutoColors(bar.autoColors)
+      UpdateAutoColorsv1(bar.autoColors)
       RemoveAutoColorsAlpha(bar.autoColors)
     end
     if addonTable.Assets.BarBackgroundsLegacyMap[bar.background.asset] then
@@ -455,7 +455,7 @@ local function UpgradeDesignv1(design)
       text.formatMultiple = "%s (%s)"
     end
     if text.autoColors then
-      UpdateAutoColors(text.autoColors)
+      UpdateAutoColorsv1(text.autoColors)
       RemoveAutoColorsAlpha(text.autoColors)
     end
   end
@@ -503,7 +503,7 @@ local function UpgradeDesignv1(design)
     end
 
     if highlight.autoColors then
-      UpdateAutoColors(highlight.autoColors)
+      UpdateAutoColorsv1(highlight.autoColors)
     end
   end
 
@@ -581,6 +581,34 @@ local function UpgradeDesignv10(design)
   end
 end
 
+local function UpgradeDesignv11(design)
+  local function UpdateAutoColorsv11(autoColors)
+    for _, ac in ipairs(autoColors) do
+      if ac.kind == "execute" then
+        ac.colors.inCombat = GetColor("FF0000")
+      end
+    end
+  end
+
+  for _, b in ipairs(design.bars) do
+    if b.autoColors then
+      UpdateAutoColorsv11(b.autoColors)
+    end
+  end
+
+  for _, h in ipairs(design.highlights) do
+    if h.autoColors then
+      UpdateAutoColorsv11(h.autoColors)
+    end
+  end
+
+  for _, t in ipairs(design.texts) do
+    if t.autoColors then
+      UpdateAutoColorsv11(t.autoColors)
+    end
+  end
+end
+
 function addonTable.Core.UpgradeDesign(design)
   if design.version == 1 or design.version == nil then
     UpgradeDesignv1(design)
@@ -612,6 +640,10 @@ function addonTable.Core.UpgradeDesign(design)
   if design.version == 10 then
     UpgradeDesignv10(design)
     design.version = 11
+  end
+  if design.version == 11 then
+    UpgradeDesignv11(design)
+    design.version = 12
   end
 end
 

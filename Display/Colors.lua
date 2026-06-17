@@ -444,16 +444,22 @@ function addonTable.Display.GetColor(settings, state, unit)
       break
     elseif s.kind == "execute" then
       local executeRange = addonTable.Display.Utilities.GetExecuteRange()
-      if executeRange > 0 then
+      if executeRange > 0 and IsInCombatWith(unit) then
         if UnitHealthPercent then
-          -- Unable to do the execute colour currently, waiting on a solution from Blizzard
-          --local alpha = UnitHealthPercent(unit, true, executeCurve)
-          --table.insert(colorQueue, {state = {{value = Convert10ToBoolean(alpha)}}, color = s.colors.execute})
+          local curve = addonTable.Display.Utilities.GetExecuteCurve()
+          curve:ClearPoints()
+          curve:AddPoint(0, CreateColor(s.colors.execute.r ,s.colors.execute.g, s.colors.execute.b, s.colors.execute.a))
+          curve:AddPoint(executeRange, CreateColor(s.colors.inCombat.r ,s.colors.inCombat.g, s.colors.inCombat.b, s.colors.inCombat.a))
+          local color = UnitHealthPercent(unit, nil, curve)
+          table.insert(colorQueue, {color = color})
+          break
         else
           local percent = UnitHealth(unit) / UnitHealthMax(unit)
-          if percent <= addonTable.Display.Utilities.GetExecuteRange() then
+          if percent <= executeRange then
             table.insert(colorQueue, {color = s.colors.execute})
             break
+          else
+            table.insert(colorQueue, {color = s.colors.inCombat})
           end
         end
       end

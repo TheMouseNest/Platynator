@@ -183,7 +183,7 @@ local sootheSpells = {
 
 local executeCurve
 if C_CurveUtil then
-  executeCurve = C_CurveUtil.CreateCurve()
+  executeCurve = C_CurveUtil.CreateColorCurve()
   executeCurve:SetType(Enum.LuaCurveType.Step)
 end
 
@@ -210,12 +210,6 @@ do
       if C_SpellBook.IsSpellKnown(s) then
         currentExecute = math.max(amount, currentExecute)
       end
-    end
-
-    if executeCurve and currentExecute > 0 then
-      executeCurve:ClearPoints()
-      executeCurve:AddPoint(0, 1)
-      executeCurve:AddPoint(currentExecute, 0)
     end
 
     isSootheAvailable = false

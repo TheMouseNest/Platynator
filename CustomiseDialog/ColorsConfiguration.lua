@@ -889,11 +889,12 @@ addonTable.CustomiseDialog.ColorsConfig = {
     }
   },
   ["execute"] = {
-    label = addonTable.Locales.EXECUTE_CLASSIC,
+    label = addonTable.Locales.EXECUTE,
     default = {
       kind = "execute",
       colors = {
         execute = GetColor("D1D1D1"),
+        inCombat = GetColor("FF0000"),
       },
     },
     entries = {
@@ -905,6 +906,16 @@ addonTable.CustomiseDialog.ColorsConfig = {
         end,
         getter = function(details)
           return details.colors.execute
+        end,
+      },
+      {
+        label = addonTable.Locales.IN_COMBAT_WITH,
+        kind = "colorPicker",
+        setter = function(details, value)
+          details.colors.inCombat = value
+        end,
+        getter = function(details)
+          return details.colors.inCombat
         end,
       },
     }
