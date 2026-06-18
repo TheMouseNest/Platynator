@@ -1492,6 +1492,19 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
         for index, w in ipairs(widgets) do
           if w.details == autoSelectedDetails then
             selectionIndexes = {index}
+
+            -- Update hidden widget indexes
+            local keys = GetKeysArray(hiddenIndexes)
+            hiddenIndexes = {}
+            for _, k in ipairs(keys) do
+              if k >= index then
+                hiddenIndexes[k + 1] = true
+              elseif k ~= index then
+                hiddenIndexes[k] = true
+              end
+            end
+            UpdateHiding()
+
             break
           end
         end
