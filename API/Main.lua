@@ -32,10 +32,35 @@ end
 
 function Platynator.API.ImportString(importText, resultName)
   assert(type(importText) == "string")
-
-  local status, data = pcall(C_EncodingUtil.DeserializeJSON, importText)
-  if not status then
-    error("Invalid Platynator import")
+  local data
+  if importText:sub(1, 1) == "{" then
+    local status
+    status, import = pcall(C_EncodingUtil.DeserializeJSON, importText)
+    if not status or type(import) ~= "table" or import.addon ~= "Platynator" then
+      error("Invalid Platynator import")
+      return
+    end
+  else
+    local prefix = importText:match("^PLATY!1!")
+    if not prefix then
+      error("Invalid Platynator import")
+      return
+    end
+    local status, decoded = pcall(C_EncodingUtil.DecodeBase64, importText:sub(9))
+    if not status then
+      error("Invalid Platynator import")
+      return
+    end
+    local status, decompressed = pcall(C_EncodingUtil.DecompressString, decoded)
+    if not status then
+      error("Invalid Platynator import")
+      return
+    end
+    status, data = pcall(C_EncodingUtil.DeserializeCBOR, decompressed)
+    if not status or type(data) ~= "table" or data.addon ~= "Platynator" then
+      error("Invalid Platynator import")
+      return
+    end
   end
 
   local result, reason = addonTable.CustomiseDialog.ImportData(data, resultName, true)

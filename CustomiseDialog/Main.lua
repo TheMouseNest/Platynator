@@ -139,7 +139,7 @@ local function SetupGeneral(parent)
   end
   table.insert(allFrames, profileDropdown)
 
-  if C_EncodingUtil then
+  do
     local exportButton = CreateFrame("Button", nil, container, "UIPanelDynamicResizeButtonTemplate")
     exportButton:SetPoint("TOPLEFT", allFrames[#allFrames], "BOTTOM", -33, -10)
     exportButton:SetText(addonTable.Locales.EXPORT)
@@ -150,13 +150,13 @@ local function SetupGeneral(parent)
           local design = CopyTable(addonTable.Core.GetDesignByName(addonTable.Config.Get(addonTable.Config.Options.STYLE)))
           design.addon = "Platynator"
           design.kind = "style"
-          addonTable.Dialogs.ShowCopy(C_EncodingUtil.SerializeJSON(design):gsub("%|%|", "|"):gsub("%|", "||"))
+          addonTable.Dialogs.ShowCopy("PLATY!1!" .. C_EncodingUtil.EncodeBase64(C_EncodingUtil.CompressString(C_EncodingUtil.SerializeCBOR(design))))
         end, function()
           local options = addonTable.Config.DumpCurrentProfile()
           options.addon = "Platynator"
           options.version = 1
           options.kind = "profile"
-          addonTable.Dialogs.ShowCopy(C_EncodingUtil.SerializeJSON(options):gsub("%|%|", "|"):gsub("%|", "||"))
+          addonTable.Dialogs.ShowCopy("PLATY!1!" .. C_EncodingUtil.EncodeBase64(C_EncodingUtil.CompressString(C_EncodingUtil.SerializeCBOR(options))))
         end
       )
     end)
@@ -168,10 +168,35 @@ local function SetupGeneral(parent)
     DynamicResizeButton_Resize(importButton)
     importButton:SetScript("OnClick", function()
       addonTable.CustomiseDialog.ShowImportDialog(function(text)
-        local status, import = pcall(C_EncodingUtil.DeserializeJSON, text)
-        if not status or type(import) ~= "table" or import.addon ~= "Platynator" then
-          addonTable.Dialogs.ShowAcknowledge(addonTable.Locales.INVALID_IMPORT)
-          return
+        local import
+        if text:sub(1, 1) == "{" then
+          local status
+          status, import = pcall(C_EncodingUtil.DeserializeJSON, text)
+          if not status or type(import) ~= "table" or import.addon ~= "Platynator" then
+            addonTable.Dialogs.ShowAcknowledge(addonTable.Locales.INVALID_IMPORT)
+            return
+          end
+        else
+          local prefix = text:match("^PLATY!1!")
+          if not prefix then
+            addonTable.Dialogs.ShowAcknowledge(addonTable.Locales.INVALID_IMPORT)
+            return
+          end
+          local status, decoded = pcall(C_EncodingUtil.DecodeBase64, text:sub(9))
+          if not status then
+            addonTable.Dialogs.ShowAcknowledge(addonTable.Locales.INVALID_IMPORT)
+            return
+          end
+          local status, decompressed = pcall(C_EncodingUtil.DecompressString, decoded)
+          if not status then
+            addonTable.Dialogs.ShowAcknowledge(addonTable.Locales.INVALID_IMPORT)
+            return
+          end
+          status, import = pcall(C_EncodingUtil.DeserializeCBOR, decompressed)
+          if not status or type(import) ~= "table" or import.addon ~= "Platynator" then
+            addonTable.Dialogs.ShowAcknowledge(addonTable.Locales.INVALID_IMPORT)
+            return
+          end
         end
         if import.kind == nil or import.kind == "style" then
           addonTable.Dialogs.ShowEditBox(addonTable.Locales.ENTER_THE_NEW_STYLE_NAME, OKAY, CANCEL, function(value)
