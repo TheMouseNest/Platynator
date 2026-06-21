@@ -20,20 +20,21 @@ end
 
 addonTable.Display.GuildTextMixin = {}
 
-function addonTable.Display.GuildTextMixin:SetUnit(unit)
-  self.unit = unit
-  if self.unit then
-    self.defaultText = ""
-    if UnitIsPlayer(self.unit) then
-      if self.details.playerGuild then
-        local guild = GetGuildInfo(self.unit)
-        if guild then
-          self.defaultText = guild
-        end
+function addonTable.Display.GuildTextMixin:UpdateText()
+  self.defaultText = ""
+
+  if UnitIsPlayer(self.unit) then
+    if self.details.playerGuild then
+      local guild = GetGuildInfo(self.unit)
+      if guild then
+        self.defaultText = guild
       end
-    elseif not UnitIsBattlePetCompanion(self.unit) and not addonTable.Display.Utilities.IsInRelevantInstance({dungeon = true, raid = true, delve = true, pvp = true}) then
-      if self.details.npcRole then
-        local text
+    end
+  elseif not UnitIsBattlePetCompanion(self.unit)
+    and not addonTable.Display.Utilities.IsInRelevantInstance({dungeon = true, raid = true, delve = true, pvp = true}) then
+
+    if self.details.npcRole then
+      local text
         if C_TooltipInfo then
           local tooltipData = C_TooltipInfo.GetUnit(self.unit)
           local line = tooltipData.lines[isColorBlindMode and 3 or 2]
@@ -48,17 +49,29 @@ function addonTable.Display.GuildTextMixin:SetUnit(unit)
             text = line:GetText()
           end
         end
-        if text and not text:match(invalidPattern1) and not text:match(invalidPattern2) then
-          self.defaultText = text
-        end
+      if text and not text:match(invalidPattern1) and not text:match(invalidPattern2) then
+        self.defaultText = text
       end
     end
-    self.text:SetText(self.defaultText)
+  end
+
+  local override = addonTable.API.TextOverrides.guild[self.unit]
+  self.text:SetText(override or self.defaultText)
+end
+
+function addonTable.Display.GuildTextMixin:SetUnit(unit)
+  self.unit = unit
+  if self.unit then
+    self:UpdateText()
+    self:RegisterUnitEvent("UNIT_NAME_UPDATE", self.unit)
     if self.details.showWhenWowDoes then
       self:SetShown(UnitIsUnit(self.unit, "target") or UnitShouldDisplayName(self.unit))
       self:RegisterUnitEvent("UNIT_HEALTH", self.unit)
     end
+
+    addonTable.Display.RegisterForColorEvents(self, self.details.autoColors, self.details.color)
   else
+    addonTable.Display.UnregisterForColorEvents(self)
     self.defaultText = nil
     self:UnregisterAllEvents()
   end
@@ -69,11 +82,26 @@ function addonTable.Display.GuildTextMixin:Strip()
   self.ApplyTextOverride = nil
 
   self.defaultText = nil
+  addonTable.Display.UnregisterForColorEvents(self)
   self:UnregisterAllEvents()
 end
 
-function addonTable.Display.GuildTextMixin:OnEvent()
-  self:ApplyTarget()
+function addonTable.Display.GuildTextMixin:SetColor(r, g, b)
+  if not r then
+    local c = self.details.color
+    r, g, b = c.r, c.g, c.b
+  end
+  self.text:SetTextColor(r, g, b)
+end
+
+function addonTable.Display.GuildTextMixin:OnEvent(eventName, ...)
+  if eventName == "UNIT_HEALTH" then
+    self:ApplyTarget()
+  elseif eventName == "UNIT_NAME_UPDATE" then
+    self:UpdateText()
+  end
+
+  self:ColorEventHandler(eventName)
 end
 
 function addonTable.Display.GuildTextMixin:ApplyTarget()

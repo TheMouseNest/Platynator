@@ -436,6 +436,7 @@ addonTable.CustomiseDialog.DesignWidgets = {
       truncate = false,
       playerGuild = true,
       npcRole = true,
+      autoColors = {}
     },
   },
   {

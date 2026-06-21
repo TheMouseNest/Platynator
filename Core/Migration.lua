@@ -449,6 +449,9 @@ local function UpgradeDesignv1(design)
       text.playerGuild = true
       text.npcRole = true
     end
+    if text.kind == "guild" and not text.autoColors then
+      text.autoColors = {}
+    end
     if text.kind == "mythicPlusForces" and not text.displayTypes then
       text.displayTypes = {"percentage"}
       text.showPercentSymbol = true
@@ -609,6 +612,14 @@ local function UpgradeDesignv11(design)
   end
 end
 
+local function UpgradeDesignv12(design)
+  for _, text in ipairs(design.texts) do
+    if text.kind == "guild" and not text.autoColors then
+      text.autoColors = {}
+    end
+  end
+end
+
 function addonTable.Core.UpgradeDesign(design)
   if design.version == 1 or design.version == nil then
     UpgradeDesignv1(design)
@@ -644,6 +655,10 @@ function addonTable.Core.UpgradeDesign(design)
   if design.version == 11 then
     UpgradeDesignv11(design)
     design.version = 12
+  end
+  if design.version == 12 then
+    UpgradeDesignv12(design)
+    design.version = 13
   end
 end
 

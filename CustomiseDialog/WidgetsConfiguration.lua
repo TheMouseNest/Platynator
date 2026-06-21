@@ -901,6 +901,21 @@ addonTable.CustomiseDialog.WidgetsConfig = {
             end,
           },
         }
+      },
+      {
+        label = addonTable.Locales.COLORS,
+        entries = {
+          {
+            label = "",
+            kind = "autoColors",
+            lockedElements = {},
+            setter = function() end,
+            getter = function(details)
+              details.autoColors = details.autoColors or {}
+              return details.autoColors
+            end,
+          },
+        },
       }
     },
     ["mythicPlusForces"] = {
