@@ -911,7 +911,6 @@ addonTable.CustomiseDialog.WidgetsConfig = {
             lockedElements = {},
             setter = function() end,
             getter = function(details)
-              details.autoColors = details.autoColors or {}
               return details.autoColors
             end,
           },
