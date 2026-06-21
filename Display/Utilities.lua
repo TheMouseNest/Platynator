@@ -433,6 +433,7 @@ do
   local role = roleType.Damage
   local isTank = false
   local rangeLimit = 0
+  local lastSpecialization = 0
   local harmChecker
   local _, playerClass = UnitClass("player")
 
@@ -472,7 +473,8 @@ do
     if addonTable.Constants.IsEra or addonTable.Constants.IsBC or addonTable.Constants.IsWrath then
       rangeLimit = addonTable.Constants.DefaultRange[playerClass]
     else
-      local specIndex = C_SpecializationInfo.GetSpecialization()
+      local specIndex = C_SpecializationInfo.GetSpecialization() or lastSpecialization
+      lastSpecialization = specIndex
       local specID = C_SpecializationInfo.GetSpecializationInfo(specIndex)
       rangeLimit = addonTable.Constants.DefaultRange[specID]
       for spellID, range in pairs(addonTable.Constants.RangeModifier) do
