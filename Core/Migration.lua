@@ -449,9 +449,6 @@ local function UpgradeDesignv1(design)
       text.playerGuild = true
       text.npcRole = true
     end
-    if text.kind == "guild" and not text.autoColors then
-      text.autoColors = {}
-    end
     if text.kind == "mythicPlusForces" and not text.displayTypes then
       text.displayTypes = {"percentage"}
       text.showPercentSymbol = true
