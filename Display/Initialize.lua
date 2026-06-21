@@ -95,8 +95,10 @@ function addonTable.Display.ManagerMixin:OnLoad()
             end
           end)
         end
+      elseif nameplate.UnitFrame.AurasFrame then -- Mists fix
+        nameplate.UnitFrame.AurasFrame:SetParent(addonTable.hiddenFrame)
       end
-      nameplate.UnitFrame:Hide()
+      nameplate.UnitFrame:SetParent(addonTable.hiddenFrame)
       nameplate.UnitFrame:UnregisterAllEvents()
       if nameplate.UnitFrame.castBar then
         nameplate.UnitFrame.castBar:UnregisterAllEvents()
