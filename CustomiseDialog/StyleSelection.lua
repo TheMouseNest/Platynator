@@ -423,7 +423,7 @@ local function GetCustomOptions(container)
     end
   end)
 
-  local addButton = CreateFrame("Button", nil, customContainer, "UIPanelButtonTemplate")
+  local addButton = CreateFrame("Button", nil, customContainer, "UIPanelDynamicResizeButtonTemplate")
   addButton:SetText(addonTable.Locales.ADD)
   DynamicResizeButton_Resize(addButton)
   addButton:SetPoint("BOTTOM", 0, 25)
@@ -435,7 +435,7 @@ local function GetCustomOptions(container)
     Announce()
   end)
 
-  local resetButton = CreateFrame("Button", nil, customContainer, "UIPanelButtonTemplate")
+  local resetButton = CreateFrame("Button", nil, customContainer, "UIPanelDynamicResizeButtonTemplate")
   resetButton:SetText(addonTable.Locales.DEFAULT)
   DynamicResizeButton_Resize(resetButton)
   resetButton:SetPoint("BOTTOM", 0, 25)
