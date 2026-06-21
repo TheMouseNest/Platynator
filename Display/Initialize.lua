@@ -562,6 +562,7 @@ function addonTable.Display.ManagerMixin:Install(unit)
         end
       end
       newDisplay.stackRegionWrapper:SetParent(nameplate)
+      newDisplay.stackRegionWrapper:SetAllPoints()
       newDisplay.stackRegion.rect = addonTable.Utilities.GetRectFromRegion(design.regions.stack, scale * design.scale * globalScale, design.regions.stack.anchor, true)
       nameplate:SetStackingBoundsFrame(newDisplay.stackRegion)
       self:UpdateStackingRegion(unit)
