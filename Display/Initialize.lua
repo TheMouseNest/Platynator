@@ -67,11 +67,6 @@ function addonTable.Display.ManagerMixin:OnLoad()
     NamePlateDriverFrame:UnregisterEvent("CVAR_UPDATE")
   end
 
-  -- Remove realm name from friendly plates in instances
-  if addonTable.Constants.IsRetail then
-    addonTable.Utilities.PurgeKey(NamePlateFriendlyFrameOptions, "updateNameUsesGetUnitName")
-  end
-
   self:RegisterEvent("VARIABLES_LOADED")
 
   self.ModifiedUFs = {}
@@ -95,14 +90,17 @@ function addonTable.Display.ManagerMixin:OnLoad()
             end
           end)
         end
-      elseif nameplate.UnitFrame.AurasFrame then -- Mists fix
-        nameplate.UnitFrame.AurasFrame:SetParent(addonTable.hiddenFrame)
       end
+
       nameplate.UnitFrame:SetParent(addonTable.hiddenFrame)
       nameplate.UnitFrame:UnregisterAllEvents()
+
       if nameplate.UnitFrame.castBar then
         nameplate.UnitFrame.castBar:UnregisterAllEvents()
+      elseif nameplate.UnitFrame.CastBarContainer then
+        nameplate.UnitFrame.CastBarContainer.castBar:UnregisterAllEvents()
       end
+
       if nameplate.UnitFrame.WidgetContainer then
         nameplate.UnitFrame.WidgetContainer:SetParent(nameplate)
         nameplate.UnitFrame.WidgetContainer:SetScale(addonTable.Config.Get(addonTable.Config.Options.BLIZZARD_WIDGET_SCALE))
@@ -463,14 +461,19 @@ function addonTable.Display.ManagerMixin:UpdateStackingRegion(unit)
   stackRegion.visual:SetSize(stackRegion.rect.width, stackRegion.rect.height)
   local uiParentScale = UIParent:GetScale()
   -- Avoid UIScale affecting stack regions
-  local newHeight = stackRegion.rect.height / uiParentScale - 1 / uiParentScale^2
-	stackRegion:SetPoint(
-		"BOTTOMLEFT",
-		stackRegion:GetParent(),
-		"CENTER",
-		stackRegion.rect.left,
-		stackRegion.rect.bottom - (newHeight - stackRegion.rect.height) / 2 + self:GetBaseOffset(unit)
-	)
+  local newHeight
+  if addonTable.Constants.IsMidnightNext then
+    newHeight = stackRegion.rect.height
+  else
+    newHeight = stackRegion.rect.height / uiParentScale - 1 / uiParentScale^2
+  end
+  stackRegion:SetPoint(
+    "BOTTOMLEFT",
+    stackRegion:GetParent(),
+    "CENTER",
+    stackRegion.rect.left,
+    stackRegion.rect.bottom - (newHeight - stackRegion.rect.height) / 2 + self:GetBaseOffset(unit)
+  )
   stackRegion:SetSize(stackRegion.rect.width, newHeight)
 
   stackRegion.visual:SetShown(self.showingRegion.stack)
@@ -546,20 +549,19 @@ function addonTable.Display.ManagerMixin:Install(unit)
     newDisplay:SetParent(nameplate)
     if nameplate.SetStackingBoundsFrame then
       if not newDisplay.stackRegion then
-        newDisplay.stackRegion = CreateFrame("Frame", nil, newDisplay)
+        newDisplay.stackRegionWrapper = CreateFrame("Frame", nil, newDisplay)
+        newDisplay.stackRegion = CreateFrame("Frame", nil, newDisplay.stackRegionWrapper)
         local tex = newDisplay.stackRegion:CreateTexture()
         tex:SetColorTexture(1, 0, 0, 0)
         tex:SetAllPoints(newDisplay.stackRegion)
-        newDisplay.stackRegion.visual = nameplate:CreateTexture()
+        newDisplay.stackRegion.visual = newDisplay.stackRegion:CreateTexture()
         newDisplay.stackRegion.visual:SetColorTexture(addonTable.Constants.StackRegionColor.r, addonTable.Constants.StackRegionColor.g, addonTable.Constants.StackRegionColor.b, addonTable.Constants.StackRegionColor.a)
         newDisplay.stackRegion.visual:SetPoint("CENTER", newDisplay.stackRegion)
         if addonTable.Constants.IsClassic then
           newDisplay.stackRegion:SetScale(UIParent:GetScale())
-          newDisplay.stackRegion.visual:SetScale(UIParent:GetScale())
         end
       end
-      newDisplay.stackRegion:SetParent(nameplate)
-      newDisplay.stackRegion.visual:SetParent(nameplate)
+      newDisplay.stackRegionWrapper:SetParent(nameplate)
       newDisplay.stackRegion.rect = addonTable.Utilities.GetRectFromRegion(design.regions.stack, scale * design.scale * globalScale, design.regions.stack.anchor, true)
       nameplate:SetStackingBoundsFrame(newDisplay.stackRegion)
       self:UpdateStackingRegion(unit)
@@ -966,6 +968,11 @@ function addonTable.Display.ManagerMixin:OnEvent(eventName, ...)
       --C_CVar.SetCVarBitfield(NamePlateConstants.FRIENDLY_PLAYER_AURA_DISPLAY_CVAR, Enum.NamePlateFriendlyPlayerAuraDisplay.Debuffs, true)
     end
     addonTable.Display.SetCVars()
+
+    -- Remove realm name from friendly plates in instances
+    if not addonTable.Constants.IsMidnightNext and addonTable.Constants.IsRetail then
+      addonTable.Utilities.PurgeKey(NamePlateFriendlyFrameOptions, "updateNameUsesGetUnitName")
+    end
 
     self:UpdateInstanceShowState()
     self:UpdateFriendlyFont()

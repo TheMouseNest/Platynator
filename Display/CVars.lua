@@ -21,6 +21,7 @@ local cvars = {
   ["nameplateTargetRadialPosition"] = "1",
   ["clampTargetNameplateToScreen"] = "1",
   ["nameplateNotSelectedAlpha"] = "1",
+  ["nameplateShowOnlyNameForFriendlyPlayerUnits"] = "1",
 }
 
 if addonTable.Constants.IsRetail then
