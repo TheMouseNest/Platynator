@@ -24,7 +24,7 @@ local cvars = {
   ["nameplateShowOnlyNameForFriendlyPlayerUnits"] = "1",
 }
 
-if addonTable.Constants.IsRetail then
+if addonTable.Constants.IsModernPlates then
   cvars["nameplateOverlapH"] = "1"
   cvars["nameplateOverlapV"] = "1"
 end
