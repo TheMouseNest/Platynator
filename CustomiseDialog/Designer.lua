@@ -1428,7 +1428,7 @@ function addonTable.CustomiseDialog.GetMainDesigner(parent)
       end
       container.auras[1].Cooldown:SetHideCountdownNumbers(not details.texts.countdown.visible)
       container.auras[1].Cooldown:SetDrawSwipe(details.showSwipe)
-      container.auras[1].Cooldown:SetDrawEdge(details.showSwipe)
+      container.auras[1].Cooldown:SetDrawEdge(details.showEdge)
       addonTable.Display.ApplyAnchor(cdText, details.texts.countdown.anchor, addonTable.CurrentFontUsesSmoothing and 1/details.texts.countdown.scale or 1)
       container.auras[1].CountFrame.Count:SetText(2)
       container.auras[1].CountFrame.Count:SetFontObject(addonTable.CurrentFont)
