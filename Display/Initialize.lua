@@ -588,7 +588,7 @@ function addonTable.Display.ManagerMixin:Uninstall(unit)
     addonTable.Display.Context:RevokedUnitListeners(unit)
     display:SetUnit(nil)
     if display.stackRegion then
-      display.stackRegion:SetParent(display)
+      display.stackRegionWrapper:SetParent(display)
     end
     self.pools[display.kind]:Release(display)
     self.nameplateDisplays[unit] = nil
