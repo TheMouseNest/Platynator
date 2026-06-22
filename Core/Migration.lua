@@ -617,6 +617,14 @@ local function UpgradeDesignv12(design)
   end
 end
 
+local function UpgradeDesignv13(design)
+  for _, text in ipairs(design.texts) do
+    if text.kind == "castSpellName" and text.showInterrupted == nil then
+      text.showInterrupted = true
+    end
+  end
+end
+
 function addonTable.Core.UpgradeDesign(design)
   if design.version == 1 or design.version == nil then
     UpgradeDesignv1(design)
@@ -656,6 +664,10 @@ function addonTable.Core.UpgradeDesign(design)
   if design.version == 12 then
     UpgradeDesignv12(design)
     design.version = 13
+  end
+  if design.version == 13 then
+    UpgradeDesignv13(design)
+    design.version = 14
   end
 end
 

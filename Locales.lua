@@ -148,6 +148,7 @@ L["DEFAULT"] = "Default"
 L["COMBAT"] = "Combat"
 L["FRIENDLY_PLAYER"] = "Friendly Player"
 L["ENEMY_PLAYER"] = "Enemy Player"
+L["SHOW_ON_INTERRUPT"] = "Show on interrupt"
 
 L["FOREGROUND"] = "Foreground"
 L["VISUAL"] = "Visual"
