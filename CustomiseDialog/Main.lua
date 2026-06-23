@@ -371,6 +371,15 @@ local function SetupBehaviour(parent)
   end
   table.insert(allFrames, friendlyInInstancesDropdown)
 
+  if C_CVar.GetCVarInfo("nameplateShowOnlyNameForFriendlyPlayerUnits") then
+    local nameOnlySizeSlider = addonTable.CustomiseDialog.Components.GetSlider(container, addonTable.Locales.INSTANCES_NAME_ONLY_SIZE, 1, 5, function(value) return ("%d"):format(value) end, function(value)
+      addonTable.Config.Set(addonTable.Config.Options.INSTANCES_NAME_ONLY_SIZE, value)
+    end)
+    nameOnlySizeSlider.option = addonTable.Config.Options.INSTANCES_NAME_ONLY_SIZE
+    nameOnlySizeSlider:SetPoint("TOP", allFrames[#allFrames], "BOTTOM")
+    table.insert(allFrames, nameOnlySizeSlider)
+  end
+
   local clickableNameplatesDropdown = addonTable.CustomiseDialog.Components.GetBasicDropdown(container, addonTable.Locales.CLICKABLE_NAMEPLATES)
   clickableNameplatesDropdown:SetPoint("TOP", allFrames[#allFrames], "BOTTOM", 0, -30)
   local values = {

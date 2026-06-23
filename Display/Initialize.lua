@@ -832,7 +832,6 @@ function addonTable.Display.ManagerMixin:UpdateFriendlyFont()
               self.friendlyNameOnlyClassColors = true
             end
           end
-          scale = t.scale
           break
         end
       end
@@ -845,32 +844,14 @@ function addonTable.Display.ManagerMixin:UpdateFriendlyFont()
               self.friendlyNameOnlyClassColors = true
             end
           end
-          scale = t.scale
           break
         end
       end
     end
     C_CVar.SetCVar("nameplateUseClassColorForFriendlyPlayerUnitNames", addonTable.Display.Utilities.IsInRelevantInstance({dungeon = true, raid = true, delve = true}) and self.friendlyNameOnlyClassColors and "1" or "0")
-    if scale then
-      ChangeFont(SystemFont_NamePlate_Outlined, _G[addonTable.CurrentFont])
-      ChangeFont(SystemFont_NamePlate, _G[addonTable.CurrentFont])
-
-      scale = scale * addonTable.Config.Get(addonTable.Config.Options.GLOBAL_SCALE) * design.scale * scaleMult * addonTable.Core.GetDesignScale(shouldSimplify)
-      local friendlyFontSize = _G[addonTable.CurrentFont]:GetFontHeight() * scale
-      for index, size in ipairs(systemFontSizes) do
-        if size >= friendlyFontSize or index == 5 then
-          if systemFontSizes[index - 1] and math.abs(systemFontSizes[index - 1] - friendlyFontSize) < math.abs(size - friendlyFontSize) then
-            index = index - 1
-          end
-          local oldSize = C_CVar.GetCVar("nameplateSize")
-          C_CVar.SetCVar("nameplateSize", tostring(index))
-          if oldSize ~= tostring(index) then
-            self:UpdateBaseNamePlateInfo()
-          end
-          break
-        end
-      end
-    end
+    C_CVar.SetCVar("nameplateSize", addonTable.Config.Get(addonTable.Config.Options.INSTANCES_NAME_ONLY_SIZE))
+    ChangeFont(SystemFont_NamePlate_Outlined, _G[addonTable.CurrentFont])
+    ChangeFont(SystemFont_NamePlate, _G[addonTable.CurrentFont])
   else
     ChangeFont(SystemFont_NamePlate_Outlined, PlatynatorOriginalSystemFontOutlined)
     ChangeFont(SystemFont_NamePlate, PlatynatorOriginalSystemFont)
