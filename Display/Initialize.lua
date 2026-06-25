@@ -461,7 +461,7 @@ function addonTable.Display.ManagerMixin:UpdateStackingRegion(unit)
   stackRegion.visual:SetSize(stackRegion.rect.width, stackRegion.rect.height)
   -- Avoid UIScale affecting stack regions
   local newHeight
-  if addonTable.Constants.IsMidnightNext or addonTable.Constants.IsMists then
+  if addonTable.Constants.IsMidnightNext or (not addonTable.Constants.IsRetail and addonTable.Constants.IsHitTestPointsAvailable)  then
     newHeight = stackRegion.rect.height
   else
     local uiParentScale = UIParent:GetScale()
