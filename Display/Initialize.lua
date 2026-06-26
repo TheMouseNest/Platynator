@@ -26,6 +26,7 @@ function addonTable.Display.ManagerMixin:OnLoad()
 
   self.nameplateDisplays = {}
   self.nameplateClickRegions = {}
+  self.nameplateStackRegions = {}
 
   self:SetScript("OnEvent", self.OnEvent)
 
@@ -548,21 +549,20 @@ function addonTable.Display.ManagerMixin:Install(unit)
     self.nameplateDisplays[unit] = newDisplay
     newDisplay:SetParent(nameplate)
     if nameplate.SetStackingBoundsFrame then
-      if not newDisplay.stackRegion then
-        newDisplay.stackRegionWrapper = CreateFrame("Frame", nil, newDisplay)
-        newDisplay.stackRegion = CreateFrame("Frame", nil, newDisplay.stackRegionWrapper)
-        local tex = newDisplay.stackRegion:CreateTexture()
+      if not self.nameplateStackRegions[nameplate:GetName()] then
+        local stackRegion = CreateFrame("Frame", nil, nameplate)
+        local tex = stackRegion:CreateTexture()
         tex:SetColorTexture(1, 0, 0, 0)
-        tex:SetAllPoints(newDisplay.stackRegion)
-        newDisplay.stackRegion.visual = newDisplay.stackRegion:CreateTexture()
-        newDisplay.stackRegion.visual:SetColorTexture(addonTable.Constants.StackRegionColor.r, addonTable.Constants.StackRegionColor.g, addonTable.Constants.StackRegionColor.b, addonTable.Constants.StackRegionColor.a)
-        newDisplay.stackRegion.visual:SetPoint("CENTER", newDisplay.stackRegion)
+        tex:SetAllPoints(stackRegion)
+        stackRegion.visual = stackRegion:CreateTexture()
+        stackRegion.visual:SetColorTexture(addonTable.Constants.StackRegionColor.r, addonTable.Constants.StackRegionColor.g, addonTable.Constants.StackRegionColor.b, addonTable.Constants.StackRegionColor.a)
+        stackRegion.visual:SetPoint("CENTER", stackRegion)
         if addonTable.Constants.IsClassic then
-          newDisplay.stackRegion:SetScale(UIParent:GetScale())
+          stackRegion:SetScale(UIParent:GetScale())
         end
+        self.nameplateStackRegions[nameplate:GetName()] = stackRegion
       end
-      newDisplay.stackRegionWrapper:SetParent(nameplate)
-      newDisplay.stackRegionWrapper:SetAllPoints()
+      newDisplay.stackRegion = self.nameplateStackRegions[nameplate:GetName()]
       newDisplay.stackRegion.rect = addonTable.Utilities.GetRectFromRegion(design.regions.stack, scale * design.scale * globalScale, design.regions.stack.anchor, true)
       nameplate:SetStackingBoundsFrame(newDisplay.stackRegion)
       self:UpdateStackingRegion(unit)
@@ -587,9 +587,6 @@ function addonTable.Display.ManagerMixin:Uninstall(unit)
     addonTable.Cache:RemoveUnit(unit)
     addonTable.Display.Context:RevokedUnitListeners(unit)
     display:SetUnit(nil)
-    if display.stackRegion then
-      display.stackRegionWrapper:SetParent(display)
-    end
     self.pools[display.kind]:Release(display)
     self.nameplateDisplays[unit] = nil
   end
