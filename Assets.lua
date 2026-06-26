@@ -119,13 +119,18 @@ addonTable.Assets.Highlights = {
   ["Platy: Arrows Out Close"] = {file = "Interface/AddOns/Platynator/Assets/%s/Highlights/arrows-out-close.png", width = 1000, height = 125, has4k = true, mode = renderMode.Stretch, tag = "arrows-out-close"},
 
   ["Platy: Arrow"] = {file = "Interface/AddOns/Platynator/Assets/%s/Highlights/arrows.png", width = 86, height = 66, has4k = true, margin = 0.5, extra = 0, modifier = 0.29, DPIScale = 8/10, mode = renderMode.Sliced, tag = "arrows"},
+  ["Platy: Arrow Out"] = {file = "Interface/AddOns/Platynator/Assets/%s/Highlights/arrows-basic-out.png", width = 86, height = 66, has4k = true, margin = 0.5, extra = 0, modifier = 0.29, DPIScale = 8/10, mode = renderMode.Sliced, tag = "arrows"},
   ["Platy: Arrow Double"] = {file = "Interface/AddOns/Platynator/Assets/%s/Highlights/double-arrows.png", width = 149, height = 69, has4k = true, margin = 0.5, extra = 0, modifier = 0.31, DPIScale = 8/10, mode = renderMode.Sliced, tag = "arrows"},
+  ["Platy: Arrow Double Out"] = {file = "Interface/AddOns/Platynator/Assets/%s/Highlights/double-arrows-out.png", width = 149, height = 69, has4k = true, margin = 0.5, extra = 0, modifier = 0.31, DPIScale = 8/10, mode = renderMode.Sliced, tag = "arrows"},
   ["Platy: Arrow Double Down"] = {file = "Interface/AddOns/Platynator/Assets/%s/Highlights/double-arrows-down.png", width = 173, height = 153, has4k = true, mode = renderMode.Fixed, tag = "arrows"},
   ["Platy: Arrow Solid"] = {file = "Interface/AddOns/Platynator/Assets/%s/Highlights/arrows-solid.png", width = 97, height = 69, has4k = true, margin = 0.5, extra = 0, modifier = 0.30, DPIScale = 8/10, mode = renderMode.Sliced, tag = "arrows"},
+  ["Platy: Arrow Solid Out"] = {file = "Interface/AddOns/Platynator/Assets/%s/Highlights/arrows-solid-out.png", width = 97, height = 69, has4k = true, margin = 0.5, extra = 0, modifier = 0.30, DPIScale = 8/10, mode = renderMode.Sliced, tag = "arrows"},
   ["Platy: Arrow Solid Down"] = {file = "Interface/AddOns/Platynator/Assets/%s/Highlights/arrow-solid-down.png", width = 207, height = 132, has4k = true, mode = renderMode.Fixed, tag = "arrows"},
   ["Platy: Arrow Hi-vis"] = {file = "Interface/AddOns/Platynator/Assets/%s/Highlights/hi-vis-arrows.png", width = 158, height = 50, has4k = true, margin = 0.5, extra = 0, modifier = 0.42, shiftModifierV = 1, DPIScale = 8/10, mode = renderMode.Sliced, tag = "arrows"},
+  ["Platy: Arrow Hi-vis Out"] = {file = "Interface/AddOns/Platynator/Assets/%s/Highlights/hi-vis-arrows-out.png", width = 158, height = 50, has4k = true, margin = 0.5, extra = 0, modifier = 0.42, shiftModifierV = 1, DPIScale = 8/10, mode = renderMode.Sliced, tag = "arrows"},
   ["Platy: Arrow Hi-vis Down"] = {file = "Interface/AddOns/Platynator/Assets/%s/Highlights/hi-vis-arrow-down.png", width = 125, height = 185, has4k = true, mode = renderMode.Fixed, tag = "arrows"},
   ["Platy: Arrow Blocky"] = {file = "Interface/AddOns/Platynator/Assets/%s/Highlights/arrows-blocky.png", width = 68, height = 50, has4k = true, margin = 0.5, extra = 0, modifier = 0.42, shiftModifierV = 1, DPIScale = 8/10, mode = renderMode.Sliced, tag = "arrows"},
+  ["Platy: Arrow Blocky Out"] = {file = "Interface/AddOns/Platynator/Assets/%s/Highlights/arrows-blocky-out.png", width = 68, height = 50, has4k = true, margin = 0.5, extra = 0, modifier = 0.42, shiftModifierV = 1, DPIScale = 8/10, mode = renderMode.Sliced, tag = "arrows"},
 
   ["Platy: Brackets"] = {file = "Interface/AddOns/Platynator/Assets/%s/Highlights/brackets.png", width = 154, height = 56, has4k = true, margin = 0.45, extra = 0, modifier = 0.3, shiftModifierV = 1, DPIScale = 8/10, mode = renderMode.Sliced},
 
