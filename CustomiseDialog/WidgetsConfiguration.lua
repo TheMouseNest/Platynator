@@ -1230,6 +1230,16 @@ addonTable.CustomiseDialog.WidgetsConfig = {
             end,
           },
           {
+            label = addonTable.Locales.SHOW_COOLDOWN_EDGE,
+            kind = "checkbox",
+            setter = function(details, value)
+              details.showEdge = value
+            end,
+            getter = function(details)
+              return details.showEdge
+            end,
+          },
+          {
             label = addonTable.Locales.SHOW_TOOLTIPS,
             kind = "checkbox",
             setter = function(details, value)

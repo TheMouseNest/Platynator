@@ -286,7 +286,7 @@ function addonTable.Display.NameplateMixin:OnLoad()
             auraFrame.Cooldown.Text:SetSmoothScaling(addonTable.CurrentFontUsesSmoothing)
           end
 
-          auraFrame.Cooldown:SetDrawEdge(details.showSwipe)
+          auraFrame.Cooldown:SetDrawEdge(details.showEdge)
           auraFrame.Cooldown:SetDrawSwipe(details.showSwipe)
 
           PixelUtil.SetSize(auraFrame, 20, 20 * details.height)
