@@ -817,9 +817,8 @@ function addonTable.Display.ManagerMixin:UpdateFriendlyFont()
 
   local state = addonTable.Config.Get(addonTable.Config.Options.SHOW_FRIENDLY_IN_INSTANCES)
   if state == "name_only" then
-    local designName, scaleMult, shouldSimplify = addonTable.Display.Context:GetDefaultFriendlyPlayerDesign()
+    local designName = addonTable.Display.Context:GetDefaultFriendlyPlayerDesign()
     local design = addonTable.Core.GetDesignByName(designName)
-    local scale
     self.friendlyNameOnlyClassColors = false
     do
       for _, t in ipairs(design.texts) do
