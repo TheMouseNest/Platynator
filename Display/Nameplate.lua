@@ -676,6 +676,15 @@ function addonTable.Display.NameplateMixin:SetUnit(unit)
       self.inRange = true
     end
 
+    -- The not-target alpha depends on whether the player has *any* target, a global
+    -- state, so every plate must refresh when the target changes (not just the one
+    -- whose own target status flipped). OnEvent calls UpdateVisual.
+    if addonTable.Config.Get(addonTable.Config.Options.NOT_TARGET_ALPHA) ~= 1 then
+      self:RegisterEvent("PLAYER_TARGET_CHANGED")
+      self:RegisterEvent("PLAYER_SOFT_ENEMY_CHANGED")
+      self:RegisterEvent("PLAYER_SOFT_FRIEND_CHANGED")
+    end
+
     if UnitCanAttack("player", self.unit) and addonTable.Config.Get(addonTable.Config.Options.NOT_IN_PULL_ALPHA) ~= 1 then
       self:RegisterEvent("PLAYER_REGEN_ENABLED")
       self:RegisterEvent("PLAYER_REGEN_DISABLED")
@@ -858,23 +867,29 @@ function addonTable.Display.NameplateMixin:UpdateVisual()
   if isTarget then
     alpha = 1
   else
+    local haveTarget = UnitExists("target") or UnitExists("softenemy") or UnitExists("softfriend")
+    alpha = haveTarget and addonTable.Config.Get(addonTable.Config.Options.NOT_TARGET_ALPHA) or 1
+
     local isMouseover = UnitIsUnit("mouseover", self.unit)
     if isMouseover then
       alpha = math.max(alpha, addonTable.Config.Get(addonTable.Config.Options.MOUSEOVER_ALPHA))
     end
     if self.casting then
       scale = addonTable.Config.Get(addonTable.Config.Options.CAST_SCALE)
-      alpha = math.max(alpha, addonTable.Config.Get(addonTable.Config.Options.CAST_ALPHA))
-    end
-    if not isMouseover and not self.casting then
-      alpha = addonTable.Config.Get(addonTable.Config.Options.NOT_TARGET_ALPHA)
+      -- When the player has a target, keep non-target casters at the not-target
+      -- fade so casting doesn't pull them back to normal alpha.
+      if not haveTarget then
+        alpha = math.max(alpha, addonTable.Config.Get(addonTable.Config.Options.CAST_ALPHA))
+      end
     end
   end
+  -- These fade modifiers override each other rather than compounding: the lowest
+  -- (most transparent) value wins instead of multiplying them together.
   if not self.inRange then
-    alpha = alpha * addonTable.Config.Get(addonTable.Config.Options.OUT_OF_RANGE_ALPHA)
+    alpha = math.min(alpha, addonTable.Config.Get(addonTable.Config.Options.OUT_OF_RANGE_ALPHA))
   end
   if not self.inCombat and UnitAffectingCombat("player") then
-    alpha = alpha * addonTable.Config.Get(addonTable.Config.Options.NOT_IN_PULL_ALPHA)
+    alpha = math.min(alpha, addonTable.Config.Get(addonTable.Config.Options.NOT_IN_PULL_ALPHA))
   end
   self:SetScale(self.scale * scale * addonTable.Config.Get(addonTable.Config.Options.GLOBAL_SCALE) * scaleMod)
   self:SetAlpha(alpha)
