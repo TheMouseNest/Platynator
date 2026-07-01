@@ -49,11 +49,13 @@ function addonTable.Display.ManagerMixin:OnLoad()
   self:RegisterEvent("PLAYER_REGEN_DISABLED")
   self:RegisterEvent("PLAYER_REGEN_ENABLED")
 
-  C_Timer.NewTicker(0.1, function()
-    for _, display in pairs(self.nameplateDisplays) do
-      display:UpdateAurasForPandemic()
-    end
-  end)
+  if not addonTable.Constants.IsMidnightNext then
+    C_Timer.NewTicker(0.1, function()
+      for _, display in pairs(self.nameplateDisplays) do
+        display:UpdateAurasForPandemic()
+      end
+    end)
+  end
 
   addonTable.CallbackRegistry:RegisterCallback("UnitDesignChange", function(_, unit)
     local display = self.nameplateDisplays[unit]
@@ -79,7 +81,7 @@ function addonTable.Display.ManagerMixin:OnLoad()
     end
     local nameplate = C_NamePlate.GetNamePlateForUnit(unit, issecure())
     if nameplate and unit and (addonTable.Constants.IsRetail or not UnitIsUnit("player", unit)) then
-      if addonTable.Constants.IsRetail then
+      if addonTable.Constants.IsRetail and not addonTable.Constants.IsMidnightNext then
         if not self.HookedUFs[nameplate.UnitFrame] then
           self.HookedUFs[nameplate.UnitFrame] = true
           hooksecurefunc(nameplate.UnitFrame.AurasFrame, "RefreshAuras", function(af, data)
@@ -112,7 +114,7 @@ function addonTable.Display.ManagerMixin:OnLoad()
   hooksecurefunc(NamePlateDriverFrame, "OnNamePlateRemoved", function(_, unit)
     if self.ModifiedUFs[unit] then
       local UF = self.ModifiedUFs[unit]
-      if addonTable.Constants.IsRetail then
+      if addonTable.Constants.IsRetail and not addonTable.Constants.IsMidnightNext then
         UF:UnregisterEvent("UNIT_AURA")
       end
       if UF.WidgetContainer then
@@ -573,10 +575,12 @@ function addonTable.Display.ManagerMixin:Install(unit)
     newDisplay:Install(nameplate, self:GetBaseOffset(unit) / scale / design.scale / globalScale)
     if newDisplay.styleIndex ~= self.styleIndex then
       local scaleOffset, scaleMod = addonTable.Core.GetDesignScale(shouldSimplify), scale
-      newDisplay:InitializeWidgets(design, scaleOffset, scaleMod)
       newDisplay.styleIndex = self.styleIndex
+      newDisplay:InitializeWidgets(design, scaleOffset, scaleMod)
     end
-    self:ListenToBuffs(newDisplay, unit)
+    if not addonTable.Constants.IsMidnightNext then
+      self:ListenToBuffs(newDisplay, unit)
+    end
     newDisplay:SetUnit(unit)
   end
 end
